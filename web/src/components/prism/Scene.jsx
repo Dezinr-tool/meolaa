@@ -36,9 +36,10 @@ import {
 } from './animation/timeline'
 import usePrefersReducedMotion from './hooks/usePrefersReducedMotion'
 import { markPrismSceneReady } from '../../lib/prismReady'
-import { TETRA_REST_EULER } from './constants/prism'
+import { PYRAMID_REST_EULER } from './constants/prism'
 import {
-  PAUSE_LIGHT_AND_SCROLL,
+  PAUSE_LIGHT_ANIMATION,
+  PAUSE_SCROLL_PIN,
   PRISM_SECTION_BG,
 } from './debugFlags'
 
@@ -52,15 +53,15 @@ const ENABLE_HERO_REFRACTION = true
  */
 const Z_AXIS = new THREE.Vector3(0, 0, 1)
 /**
- * Extra yaw around the vertex-forward rest pose (TETRA_REST_EULER).
- * 0 keeps apex-up / centered seam / visible base; OrbitControls still free-look.
+ * Extra yaw around the pyramid rest pose (PYRAMID_REST_EULER).
+ * 0 keeps apex-up / seam-forward; OrbitControls still free-look.
  */
 const PRISM_YAW_DEG = 0
 const PRISM_YAW_RAD = THREE.MathUtils.degToRad(PRISM_YAW_DEG)
 const PRISM_ROTATION = [
-  TETRA_REST_EULER[0],
-  TETRA_REST_EULER[1] + PRISM_YAW_RAD,
-  TETRA_REST_EULER[2],
+  PYRAMID_REST_EULER[0],
+  PYRAMID_REST_EULER[1] + PRISM_YAW_RAD,
+  PYRAMID_REST_EULER[2],
 ]
 
 /**
@@ -208,7 +209,7 @@ export default function Scene({ enableHeroRefraction = ENABLE_HERO_REFRACTION })
   )
 
   useLayoutEffect(() => {
-    if (PAUSE_LIGHT_AND_SCROLL) return
+    if (PAUSE_LIGHT_ANIMATION) return
 
     const mesh = prismRef.current
     if (!mesh) return
@@ -255,7 +256,7 @@ export default function Scene({ enableHeroRefraction = ENABLE_HERO_REFRACTION })
   }, [trace, ribbon])
 
   useEffect(() => {
-    if (PAUSE_LIGHT_AND_SCROLL) return
+    if (PAUSE_LIGHT_ANIMATION) return
     if (!trace?.entryPoint || !ribbon || !internalBeam) return
 
     const entry = entryBeamRef.current
@@ -274,8 +275,8 @@ export default function Scene({ enableHeroRefraction = ENABLE_HERO_REFRACTION })
       exitFlare,
     }
 
-    // Reduced motion / debug: skip pin+scrub, show the finished hero.
-    if (reducedMotion || DEBUG_BYPASS_GSAP) {
+    // Scroll pin paused: show finished light state (or reduced-motion / ?full).
+    if (PAUSE_SCROLL_PIN || reducedMotion || DEBUG_BYPASS_GSAP) {
       applyHeroFinalState(targets)
       return
     }
@@ -289,7 +290,7 @@ export default function Scene({ enableHeroRefraction = ENABLE_HERO_REFRACTION })
     }
   }, [trace, ribbon, internalBeam, reducedMotion])
 
-  const showLights = !PAUSE_LIGHT_AND_SCROLL
+  const showLights = !PAUSE_LIGHT_ANIMATION
 
   return (
     <>

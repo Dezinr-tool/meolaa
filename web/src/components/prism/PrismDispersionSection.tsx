@@ -14,7 +14,7 @@ import {
   markPrismSceneReady,
   resetPrismSceneReady,
 } from '../../lib/prismReady'
-import { PAUSE_LIGHT_AND_SCROLL, PRISM_SECTION_BG } from './debugFlags'
+import { PAUSE_SCROLL_PIN, PRISM_SECTION_BG } from './debugFlags'
 import './PrismDispersionSection.css'
 
 /**
@@ -104,7 +104,7 @@ export function PrismDispersionSection() {
           </Suspense>
         </Canvas>
       </HeroErrorBoundary>
-      {!PAUSE_LIGHT_AND_SCROLL ? <ScrollToContinue /> : null}
+      {!PAUSE_SCROLL_PIN ? <ScrollToContinue /> : null}
     </section>
   )
 }

@@ -3,12 +3,11 @@ import { MeshTransmissionMaterial } from '@react-three/drei'
 import {
   PRISM_DEPTH,
   PRISM_SCALE,
-  createTetrahedronGeometry,
+  createPyramidGeometry,
 } from './constants/prism'
 
 /**
- * Same regular tetrahedron as Prism.jsx, with MeshTransmissionMaterial so
- * scene content (hero text) refracts through glass.
+ * Same square pyramid as Prism.jsx, with MeshTransmissionMaterial.
  *
  * Raytracer only flips `material.side` for intersection tests — it does not
  * read IOR/transmission from the material.
@@ -20,7 +19,7 @@ const TransmissionPrism = forwardRef(function TransmissionPrism(
   { position = [0, 0, 0], rotation = [0, 0, 0] },
   ref,
 ) {
-  const geometry = useMemo(() => createTetrahedronGeometry(), [])
+  const geometry = useMemo(() => createPyramidGeometry(), [])
 
   return (
     <mesh

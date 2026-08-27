@@ -1,40 +1,45 @@
 import * as THREE from 'three'
-import { PRISM_SCALE, TETRA_RADIUS } from '../constants/prism.js'
+import {
+  PRISM_SCALE,
+  PYRAMID_RADIUS,
+  PYRAMID_HEIGHT,
+  PYRAMID_BASE_SIDE,
+} from '../constants/prism.js'
 
 /**
- * Optical path for the diamond-resting tetrahedron (see TETRA_REST_EULER).
+ * Optical path for the square-pyramid rest pose (PYRAMID_REST_EULER).
  *
- * Local face normals (outward), detail:0 TetrahedronGeometry:
- *   0: (−√3/3, +√3/3, +√3/3)  — RIGHT (after diamond rest)
- *   1: (+√3/3, +√3/3, −√3/3)  — UP
- *   2: (+√3/3, −√3/3, +√3/3)  — LEFT
- *   3: (−√3/3, −√3/3, −√3/3)  — DOWN / lower-right
+ * ConeGeometry(radius, height, 4) triangle indices:
+ *   0–3: slant faces (isosceles), adjacent around the apex
+ *   4–7: square base (four tris, common outward normal −Y)
  *
- * Path: enter face 2 (left, mid-height) → exit face 0 (right, mid-height).
- * World direction is roughly screen-left → screen-right (near-horizontal).
+ * Adjacent slant→slant cannot transmit through the solid (a ray that enters
+ * one slant hits the opposite slant or the base). Pairing used:
+ *   enter face 2 → exit face 0  (opposite slants)
+ * Nearly horizontal world +X, left→right under the apex.
  */
 
-/** Outward normal of entry face 2 (local). */
+/** Outward normal of entry slant face 2 (local ConeGeometry). */
 export const ENTRY_FACE_NORMAL_LOCAL = new THREE.Vector3(
-  1 / Math.sqrt(3),
-  -1 / Math.sqrt(3),
-  1 / Math.sqrt(3),
-)
+  -0.6527139516650942,
+  0.38461538529220857,
+  -0.6527139516650945,
+).normalize()
 
 /**
- * Aim on face 2 near the face centroid (slightly inset) so the hit sits at
- * mid-height on the left facet of the diamond silhouette.
+ * Aim near face-2 centroid (local). Slightly inset toward the apex (+Y)
+ * keeps the hit on the slant body rather than the base edge.
  */
-export const ENTRY_AIM_LOCAL = new THREE.Vector3(0.1732, -0.1732, 0.1732)
+export const ENTRY_AIM_LOCAL = new THREE.Vector3(-0.231, -0.196, -0.231)
 
 /**
  * Incidence from the entry-face outward normal (0° = head-on).
- * Tuned with ENTRY_AZIMUTH_DEG for 7/7 transmit on the diamond-rest mesh.
+ * Tuned with ENTRY_AZIMUTH_DEG for 7/7 transmit on this pyramid.
  */
-export const ENTRY_ANGLE_DEG = 72
+export const ENTRY_ANGLE_DEG = 30
 
 /** Azimuth of the incidence tilt around the entry-face normal (degrees). */
-export const ENTRY_AZIMUTH_DEG = 325
+export const ENTRY_AZIMUTH_DEG = 270
 
 /** Expected faces for diagnostics. */
 export const ENTRY_FACE_INDEX = 2
@@ -166,9 +171,11 @@ export function logHeroBeamDiagnostics(
       ? +(Math.max(...exitAngles) - Math.min(...exitAngles)).toFixed(3)
       : null
 
-  console.log('[hero-beam] tetra diamond-rest setup', {
+  console.log('[hero-beam] square-pyramid setup', {
     PRISM_SCALE,
-    TETRA_RADIUS,
+    PYRAMID_BASE_SIDE,
+    PYRAMID_RADIUS,
+    PYRAMID_HEIGHT,
     meshScale: setup.scale,
     ENTRY_ANGLE_DEG: setup.angleDeg ?? ENTRY_ANGLE_DEG,
     ENTRY_AZIMUTH_DEG: setup.azimuthDeg ?? ENTRY_AZIMUTH_DEG,

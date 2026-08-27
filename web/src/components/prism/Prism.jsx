@@ -2,18 +2,18 @@ import { forwardRef, useMemo } from 'react'
 import {
   PRISM_DEPTH,
   PRISM_SCALE,
-  createTetrahedronGeometry,
+  createPyramidGeometry,
 } from './constants/prism'
 
 /**
- * Regular tetrahedron glass solid (4 equilateral faces). Geometry is shared
- * with TransmissionPrism via createTetrahedronGeometry.
+ * Square-based pyramid glass solid (4 isosceles slant faces + square base).
+ * Geometry shared with TransmissionPrism via createPyramidGeometry.
  */
 const Prism = forwardRef(function Prism(
   { position = [0, 0, 0], rotation = [0, 0, 0] },
   ref,
 ) {
-  const geometry = useMemo(() => createTetrahedronGeometry(), [])
+  const geometry = useMemo(() => createPyramidGeometry(), [])
 
   return (
     <mesh
