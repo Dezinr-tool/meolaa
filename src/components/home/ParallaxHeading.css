@@ -1,0 +1,12 @@
+/**
+ * Display heading wrapper — static layout only (no scroll transforms).
+ */
+
+.parallax-heading {
+  position: relative;
+  display: block;
+}
+
+.parallax-heading__mid {
+  position: relative;
+}

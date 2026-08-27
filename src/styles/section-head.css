@@ -1,0 +1,277 @@
+/**
+ * Shared section header — eyebrow → title → subline.
+ *
+ * Design system (do not restyle per section):
+ *   1. Equal gap eyebrow ↔ title ↔ sub via --section-head-gap (flex gap only)
+ *   2. Eyebrow = brand Sustainable Green (--section-head-accent) on every ground
+ *   3. On light → black title + muted black sub
+ *   4. On dark  → white title + muted white sub
+ *
+ * Tone modifiers:
+ *   default / on-dark  → white type on primary/teal grounds
+ *   --on-light         → black type on white/ecru/cream/yellow grounds
+ *
+ * Alignment:
+ *   default            → centred stack
+ *   --start / --split  → left (same type tokens)
+ */
+
+.section-head {
+  /* Local aliases → root tokens (ink only; size/gap stay global) */
+  --sh-gap: var(--section-head-gap);
+  --sh-accent: var(--section-head-accent);
+  --sh-title: var(--section-head-on-dark-ink);
+  --sh-sub: var(--section-head-on-dark-muted);
+
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--sh-gap);
+  max-width: min(64rem, 94vw);
+  margin-inline: auto;
+}
+
+.section-head--on-light {
+  --sh-accent: var(--section-head-accent);
+  --sh-title: var(--section-head-on-light-ink);
+  --sh-sub: var(--section-head-on-light-muted);
+}
+
+/* Left-aligned editorial — same type system, start alignment. */
+.section-head--start {
+  align-items: flex-start;
+  text-align: left;
+  margin-inline: 0;
+  max-width: min(48rem, 100%);
+}
+
+/* Left type stack + action on the right, bottom-aligned to the subline.
+   Needs eyebrow/title/sub wrapped in .section-head__stack. */
+.section-head--split {
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: clamp(24px, 4vw, 64px);
+  text-align: left;
+  max-width: min(72rem, 100%);
+  margin-inline: 0;
+}
+
+.section-head--split .section-head__stack {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sh-gap);
+}
+
+.section-head--split > :not(.section-head__stack) {
+  flex: 0 0 auto;
+}
+
+@media (max-width: 720px) {
+  .section-head--split {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--sh-gap);
+  }
+}
+
+.section-head__eyebrow {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: var(--section-head-eyebrow-size);
+  font-weight: var(--section-head-eyebrow-weight);
+  letter-spacing: var(--section-head-eyebrow-tracking);
+  text-transform: uppercase;
+  line-height: 1.2;
+  color: var(--sh-accent);
+}
+
+.section-head .section-head__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--section-head-title-size);
+  font-weight: var(--section-head-title-weight);
+  line-height: var(--section-head-title-lh);
+  letter-spacing: var(--section-head-title-tracking);
+  color: var(--sh-title);
+  text-transform: none;
+  text-wrap: balance;
+}
+
+.section-head__sub {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: var(--section-head-sub-size);
+  font-weight: var(--section-head-sub-weight);
+  line-height: var(--section-head-sub-lh);
+  color: var(--sh-sub);
+  max-width: var(--section-head-sub-max);
+  text-wrap: balance;
+}
+
+/* Extra children after the trio (ghost CTA, filter row) stay centred. */
+.section-head:not(.section-head--split)
+  > :not(.section-head__eyebrow):not(.section-head__title):not(
+    .section-head__sub
+  ):not(.parallax-heading) {
+  margin-top: clamp(8px, 1.2vh, 16px);
+}
+
+@media (max-width: 720px) {
+  .section-head {
+    /* Keep the same equal step — don’t compress hierarchy on small screens. */
+    --sh-gap: var(--section-head-gap);
+  }
+
+  .section-head__sub {
+    max-width: 38ch;
+  }
+}
+
+/* ——— Section shells that reuse the header ——— */
+
+/* Metrics: white header + intentional full-bleed primary band (not half-page void).
+   Four absolute columns keep .metric:nth-child(n) for the stair reveal. */
+.metrics {
+  --metrics-pad-x: clamp(24px, 4vw, 64px);
+
+  display: flex;
+  flex-direction: column;
+  gap: clamp(28px, 4vh, 48px);
+  /* Extra top pad so the header breathes from the section above. */
+  padding: clamp(72px, 11vh, 120px) var(--metrics-pad-x) 0;
+}
+
+.metrics .section-head {
+  --sh-accent: var(--section-head-accent);
+  --sh-title: var(--section-head-on-light-ink);
+  --sh-sub: var(--section-head-on-light-muted);
+}
+
+/* Investors: primary (Planet Blue) ground → white type + green eyebrow. */
+.investors .section-head {
+  --sh-accent: var(--section-head-accent);
+  --sh-title: var(--section-head-on-dark-ink);
+  --sh-sub: var(--section-head-on-dark-muted);
+  max-width: min(52rem, 94vw);
+}
+
+.investors .section-head__eyebrow {
+  color: var(--sh-accent);
+}
+
+.investors .section-head__title {
+  color: var(--sh-title);
+}
+
+.investors__title {
+  max-width: min(52rem, 92vw);
+  text-wrap: wrap;
+  color: var(--section-head-on-dark-ink, #fff) !important;
+  opacity: 1 !important;
+}
+
+.investors__title-line {
+  display: block;
+  white-space: nowrap;
+  color: inherit;
+  opacity: 1;
+}
+
+.investors .section-head__sub {
+  color: var(--sh-sub);
+}
+
+.metrics__chart {
+  position: relative;
+  flex: 0 0 auto;
+  /* Settled equal-height band — tall enough for count-up, not a teal void. */
+  height: clamp(168px, 24svh, 220px);
+  min-height: clamp(168px, 24svh, 220px);
+  /* Bars stay full-bleed despite the section's padding. */
+  margin-inline: calc(var(--metrics-pad-x) * -1);
+}
+
+@media (max-width: 900px) {
+  .metrics__chart {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    height: auto;
+    min-height: 0;
+  }
+}
+
+/* Press: split header needs full content measure. */
+.press-feed__head.section-head {
+  max-width: 100%;
+}
+
+.press-feed__head .press-feed__title,
+.press-feed__head .section-head__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--section-head-title-size);
+  font-weight: var(--section-head-title-weight);
+  line-height: var(--section-head-title-lh);
+  letter-spacing: var(--section-head-title-tracking);
+  text-transform: none;
+  color: var(--sh-title);
+}
+
+/* Loop: Joyous Yellow ground — same on-light system (green / black / muted). */
+.loop__header.section-head {
+  padding-inline: clamp(20px, 4vw, 64px);
+  --sh-accent: var(--section-head-accent);
+  --sh-title: var(--section-head-on-light-ink);
+  --sh-sub: var(--section-head-on-light-muted);
+}
+
+/* Portfolio: white ground — shared tokens only. */
+.portfolio-title.section-head {
+  --sh-accent: var(--section-head-accent);
+  --sh-title: var(--section-head-on-light-ink);
+  --sh-sub: var(--section-head-on-light-muted);
+}
+
+/* ——— Compat: Lab intro (left editorial) ——— */
+
+.meola-lab__eyebrow {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: var(--section-head-eyebrow-size);
+  font-weight: var(--section-head-eyebrow-weight);
+  letter-spacing: var(--section-head-eyebrow-tracking);
+  text-transform: uppercase;
+  line-height: 1.2;
+  color: var(--section-head-accent);
+}
+
+.meola-lab__headline {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--section-head-title-size);
+  font-weight: var(--section-head-title-weight);
+  line-height: var(--section-head-title-lh);
+  letter-spacing: var(--section-head-title-tracking);
+  color: var(--section-head-on-light-ink);
+  text-transform: none;
+  text-align: left;
+  text-wrap: balance;
+}
+
+.meola-lab__sub {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: var(--section-head-sub-size);
+  font-weight: var(--section-head-sub-weight);
+  line-height: var(--section-head-sub-lh);
+  color: var(--section-head-on-light-muted);
+  max-width: var(--section-head-sub-max);
+  text-wrap: balance;
+}
+
+/* Founding title type owned by FoundingSection.css */

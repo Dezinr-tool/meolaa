@@ -1,0 +1,81 @@
+/* Meolaa button primitives — brand guidelines colour pairings */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  font-family: var(--font-sans);
+  font-size: 14.5px;
+  font-weight: var(--fw-medium);
+  letter-spacing: var(--tracking-body);
+  line-height: 1;
+  padding: 15px 26px;
+  border-radius: var(--radius-sharp);
+  text-decoration: none;
+  border: 1px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    opacity var(--ease-fast),
+    background var(--ease-fast),
+    color var(--ease-fast),
+    border-color var(--ease-fast);
+}
+
+.btn:hover {
+  opacity: 0.92;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--color-joyous-yellow);
+  outline-offset: 3px;
+}
+
+/* Primary CTA — secondary pale yellow on Planet Blue / dark */
+.btn--solid {
+  background: var(--color-secondary, #fef8c0);
+  color: var(--color-planet-blue);
+}
+
+/* Inverse solid — Planet Blue on Ecru / light */
+.btn--solid-dark {
+  background: var(--color-planet-blue);
+  color: var(--color-ecru);
+}
+
+/* Accent solid — Sustainable Green (balance Planet Blue) */
+.btn--solid-green {
+  background: var(--color-sustainable-green);
+  color: var(--color-white);
+}
+
+.btn--ghost {
+  background: transparent;
+  color: var(--color-ecru);
+  border-color: var(--color-border-ghost);
+  padding: 13px 24px;
+  font-size: 14px;
+}
+
+.btn--ghost-dark {
+  background: transparent;
+  color: var(--color-planet-blue);
+  border-color: var(--color-border-dark);
+  padding: 13px 24px;
+  font-size: 14px;
+}
+
+.btn--pill {
+  border-radius: var(--radius-pill);
+}
+
+.eyebrow {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--text-eyebrow);
+  font-weight: var(--fw-medium);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  line-height: 1.2;
+}

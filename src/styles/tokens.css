@@ -1,0 +1,158 @@
+/**
+ * Meolaa design tokens
+ * Source: official Brand Guidelines (docs/Meolaa_Brand_Guidelines.pdf)
+ * Visual layout reference only: Vercel prototype / uploads/Meolaa/prototype
+ */
+
+:root {
+  /* ——— Type families ———
+     Geist across the board — display, body and mono. Note this overrides the
+     official guidelines (Poppins headlines, Acumin body); see docs/BRAND.md. */
+  --font-display: "Geist", system-ui, sans-serif;
+  --font-sans: "Geist", system-ui, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, monospace;
+
+  /* Legacy aliases */
+  --serif: var(--font-display);
+  --sans: var(--font-sans);
+  --mono: var(--font-mono);
+
+  /* ——— Colour — Primary ——— */
+  --color-planet-blue: #002f3a;
+  --color-joyous-yellow: #fdf28c;
+  /* Warm peach — on-dark ink / footer only (not semantic secondary) */
+  --color-ecru: #f8ece4;
+  --color-white: #ffffff;
+
+  /* Semantic primary / secondary (Planet Blue + pale creamy yellow) */
+  --color-primary: var(--color-planet-blue);
+  /* Sampled from brand secondary swatch PNG */
+  --color-secondary: #fef8c0;
+
+  /* ——— Colour — accents (do not overpower primary) ——— */
+  --color-lilac: #a8a3e3;
+  --color-lilac-deep: #5656ad; /* Generous Lilac */
+  --color-ecru-deep: #f0d5cc;
+  --color-sustainable-green: #41857a;
+
+  /* Neutrals / utilities */
+  --color-black: #000000;
+  --color-ink: var(--color-planet-blue);
+
+  /* Semantic aliases — light brand ground follows secondary */
+  --color-cream: var(--color-secondary);
+  --color-lab-bg: var(--color-secondary);
+  --color-surface: var(--color-secondary);
+  --color-sage: var(--color-sustainable-green);
+
+  /* Default dark shell (brand primary dark, not pure black) */
+  --color-bg: var(--color-planet-blue);
+  --color-fg: var(--color-ecru);
+  --color-fg-muted: rgba(248, 236, 228, 0.78);
+  --color-fg-soft: rgba(248, 236, 228, 0.55);
+  --color-border-ghost: rgba(248, 236, 228, 0.4);
+  --color-border-dark: rgba(0, 47, 58, 0.28);
+
+  /* ——— Type scale ——— */
+  --text-display: clamp(2.5rem, 5.5vw, 4.5rem); /* 40–72 · H1 / hero */
+  --text-display-sm: clamp(2.25rem, 5vw, 4rem); /* 36–64 · compact H1 */
+  --text-h2: clamp(1.75rem, 3.6vw, 2.75rem); /* 28–44 · section */
+  --text-h2-lg: clamp(2rem, 4.2vw, 3.5rem); /* 32–56 · large section */
+  --text-h3: clamp(1.25rem, 2.2vw, 1.75rem); /* 20–28 · card / stage */
+  --text-body: 0.9375rem; /* 15 */
+  --text-body-lg: 1rem; /* 16 · lede */
+  --text-sm: 0.875rem; /* 14 */
+  --text-xs: 0.8125rem; /* 13 */
+  --text-eyebrow: 0.6875rem; /* 11 */
+
+  --lh-display: 1.05;
+  --lh-tight: 1.08;
+  --lh-body: 1.65;
+
+  /* Guidelines: Acumin kerning ~0–10; Poppins headlines slightly tight */
+  --tracking-tight: -0.02em;
+  --tracking-display: -0.03em;
+  --tracking-body: 0.01em;
+  /* Loop-style section eyebrows: wide tracking (~0.15–0.2em) */
+  --tracking-eyebrow: 0.18em;
+  --tracking-logo: 0.12em;
+
+  --fw-light: 300;
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+
+  /* ——— Section head (eyebrow → title → sub) ———
+     One system, every homepage section:
+       • Equal vertical gap eyebrow ↔ title ↔ sub (--section-head-gap)
+       • Eyebrow = brand Sustainable Green (never terracotta / yellow)
+       • On light grounds → black title + muted black sub
+       • On dark grounds  → white title + muted white sub
+     Alignment (center / start / split) is layout-only. */
+  --section-head-gap: 1.5rem; /* 24px — equal step between all three levels */
+  --section-head-eyebrow-size: var(--text-eyebrow);
+  --section-head-eyebrow-weight: var(--fw-semibold);
+  --section-head-eyebrow-tracking: var(--tracking-eyebrow);
+  /* Brand Lab headline scale — one size for every homepage section title. */
+  --section-head-title-size: clamp(1.85rem, 3.4vw, 3.15rem);
+  /* Medium ground with hero H1 — was bold 700 (too heavy vs light hero). */
+  --section-head-title-weight: var(--fw-medium);
+  --section-head-title-tracking: var(--tracking-display);
+  --section-head-title-lh: 1.02;
+  --section-head-sub-size: clamp(1rem, 1.35vw, 1.25rem);
+  --section-head-sub-weight: var(--fw-regular);
+  --section-head-sub-lh: 1.55;
+  /* Narrower than title → inverted-pyramid stack. */
+  --section-head-sub-max: 42ch;
+
+  /* Brand accent for EVERY eyebrow (light + dark). */
+  --section-head-accent: var(--color-sustainable-green, #41857a);
+
+  /* On-light (white / ecru / cream / yellow grounds) */
+  --section-head-on-light-ink: var(--color-black, #000000);
+  --section-head-on-light-accent: var(--section-head-accent);
+  --section-head-on-light-muted: color-mix(
+    in srgb,
+    var(--color-black, #000000) 58%,
+    transparent
+  );
+
+  /* On-dark (planet blue / teal / photo grounds) — white family only */
+  --section-head-on-dark-ink: var(--color-white, #ffffff);
+  --section-head-on-dark-accent: var(--section-head-accent);
+  --section-head-on-dark-muted: color-mix(
+    in srgb,
+    var(--color-white, #ffffff) 70%,
+    transparent
+  );
+
+  /* ——— Space / layout ——— */
+  --pad-x: clamp(24px, 5vw, 72px);
+  --pad-x-sm: clamp(24px, 4vw, 64px);
+  --content-max: 1180px;
+  --nav-height: 92px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 72px;
+
+  /* ——— Radius / motion ——— */
+  --radius-sharp: 2px;
+  --radius-card: 12px;
+  --radius-pill: 999px;
+  --ease-fast: 0.2s ease;
+  --ease-nav: 0.35s ease;
+
+  /* Logo sizing (guidelines) */
+  --logo-min-digital: 8px; /* height floor for digital */
+  --logo-clearspace: 1em; /* approx. height of letter “M” */
+
+  /* Full-colour brand — no sitewide greyscale */
+  --meolaa-grayscale: 0;
+}

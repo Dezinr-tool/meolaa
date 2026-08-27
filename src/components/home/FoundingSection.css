@@ -1,0 +1,420 @@
+/**
+ * Founding — white section ground + full-bleed cutout photo stage (hero-like).
+ * Sandwich: bg → primary Planet Blue watermark → people cutout PNG → veil → copy.
+ * Logo sits behind subjects via PNG alpha (shows on wall/sky), not over faces.
+ */
+
+.founding {
+  --founding-cream: var(--color-secondary, #fef8c0);
+  --founding-ink: var(--color-planet-blue, #002f3a);
+  --founding-white: var(--color-white, #fff);
+  --founding-pad-x: clamp(24px, 2.8vw, 40px);
+  --founding-pad-y: clamp(24px, 4vh, 40px);
+
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
+  box-sizing: border-box;
+  min-height: 100svh;
+  height: 100svh;
+  max-height: 100svh;
+  overflow: hidden;
+  color: var(--founding-white);
+  background: var(--founding-white);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ——— White ground (underlay / loading fallback) ——— */
+.founding__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: var(--founding-white);
+}
+
+/* ——— Primary wordmark watermark UNDER cutout (reads on wall behind people) ——— */
+.founding__mark {
+  position: absolute;
+  left: 50%;
+  top: 24%;
+  /* Under .founding__cutout (2); above frame bg. Veil (3) + copy (4) stay above. */
+  z-index: 1;
+  margin: 0;
+  transform: translate(-50%, -50%);
+  /* Tighter watermark — ~62vw so M/A sit inward, still behind cutout */
+  width: 62vw;
+  max-width: 62vw;
+  height: auto;
+  aspect-ratio: 1065.3 / 213.8;
+  pointer-events: none;
+  user-select: none;
+}
+
+.founding__mark-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  /* Subtle primary wash — kept on SVG so GSAP can fade the wrapper. */
+  opacity: 0.16;
+}
+
+.founding__mark-svg .meolaa-logo-mark__path {
+  fill: var(--color-primary, var(--founding-ink));
+  stroke: none;
+}
+
+/* ——— Content stage ——— */
+.founding__inner {
+  position: relative;
+  z-index: 2;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  min-height: 0;
+}
+
+/* ——— Edge-to-edge full-bleed photo (hero stage) ——— */
+.founding__photo {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  max-height: none;
+  aspect-ratio: auto;
+  transform: none;
+}
+
+.founding__frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--founding-white);
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+
+/* People cutout (transparent PNG) — above watermark so logo sits “on the wall” */
+.founding__cutout,
+.founding__photo img {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 40%;
+  pointer-events: none;
+}
+
+/* Soft gradient veil for bottom copy contrast over photo */
+.founding__veil {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    transparent 42%,
+    color-mix(in srgb, var(--founding-ink) 28%, transparent) 68%,
+    color-mix(in srgb, var(--founding-ink) 72%, #000 6%) 100%
+  );
+}
+
+/* ——— Bottom row: mirrors .hero__bottom (title | panel) ——— */
+.founding__bottom {
+  position: relative;
+  z-index: 4;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: clamp(24px, 4vw, 48px);
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  margin-top: auto;
+  padding: 0 var(--founding-pad-x) clamp(28px, 4.2vw, 48px);
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+.founding__bottom > * {
+  pointer-events: auto;
+}
+
+.founding__lead {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--section-head-gap, 1.5rem);
+  max-width: min(720px, 56vw);
+  min-width: 0;
+}
+
+.founding__eyebrow {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: var(--section-head-eyebrow-size);
+  font-weight: var(--section-head-eyebrow-weight);
+  letter-spacing: var(--section-head-eyebrow-tracking);
+  text-transform: uppercase;
+  line-height: 1.2;
+  color: var(--section-head-accent, var(--color-sustainable-green, #41857a));
+}
+
+.founding__title {
+  margin: 0;
+  font-family: var(--font-display, var(--sans));
+  font-size: var(--section-head-title-size);
+  font-weight: var(--section-head-title-weight, 500);
+  line-height: var(--section-head-title-lh, 1.02);
+  letter-spacing: var(--section-head-title-tracking, -0.03em);
+  color: var(--section-head-on-dark-ink, var(--founding-white, #fff));
+  text-wrap: balance;
+  max-width: none;
+  text-shadow: 0 1px 18px color-mix(in srgb, #000 35%, transparent);
+}
+
+.founding__sub {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: var(--section-head-sub-size);
+  font-weight: var(--section-head-sub-weight);
+  line-height: var(--section-head-sub-lh);
+  color: var(--section-head-on-dark-muted, color-mix(in srgb, #fff 70%, transparent));
+  max-width: min(var(--section-head-sub-max, 42ch), 100%);
+  text-wrap: balance;
+  text-shadow: 0 1px 14px color-mix(in srgb, #000 28%, transparent);
+}
+
+.founding__title-line {
+  display: block;
+  overflow: hidden;
+}
+
+.founding__title-inner {
+  display: block;
+}
+
+.founding__panel {
+  max-width: min(424px, 36vw);
+  margin-left: auto;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 15px;
+  width: 100%;
+}
+
+.founding__lede {
+  margin: 0;
+  font-family: var(--font-sans, var(--sans));
+  font-size: var(--text-body, clamp(0.95rem, 1.15vw, 1.1rem));
+  line-height: 1.55;
+  letter-spacing: -0.01em;
+  color: color-mix(in srgb, var(--founding-cream) 88%, transparent);
+  text-wrap: pretty;
+  text-shadow: 0 1px 14px color-mix(in srgb, #000 30%, transparent);
+}
+
+.founding__accent {
+  color: var(--founding-cream);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+  text-decoration-color: color-mix(
+    in srgb,
+    var(--color-joyous-yellow, #fdf28c) 70%,
+    transparent
+  );
+  transition:
+    color 0.2s ease,
+    text-decoration-color 0.2s ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .founding__accent:hover {
+    color: var(--color-joyous-yellow, #fdf28c);
+    text-decoration-color: var(--color-joyous-yellow, #fdf28c);
+  }
+}
+
+.founding__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.founding__cta {
+  margin-top: 0;
+  background: var(--founding-cream);
+  color: var(--founding-ink);
+  border-color: transparent;
+  pointer-events: auto;
+}
+
+.founding__cta:hover {
+  opacity: 0.92;
+}
+
+/* ——— Tablet / mobile: photo stage, then type stack on white ——— */
+@media (max-width: 1023px) {
+  .founding {
+    height: auto;
+    max-height: none;
+    min-height: 0;
+    overflow: visible;
+  }
+
+  .founding__mark {
+    top: 22%;
+    width: 68vw;
+    max-width: 68vw;
+  }
+
+  .founding__mark-svg {
+    opacity: 0.18;
+  }
+
+  .founding__inner {
+    justify-content: flex-start;
+    padding: 0;
+    gap: 0;
+  }
+
+  .founding__photo {
+    position: relative;
+    inset: auto;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: min(72svh, 640px);
+    min-height: 320px;
+    transform: none;
+  }
+
+  .founding__frame {
+    position: absolute;
+    inset: 0;
+    border-radius: 0;
+  }
+
+  .founding__veil {
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      transparent 55%,
+      color-mix(in srgb, var(--founding-ink) 40%, transparent) 100%
+    );
+  }
+
+  .founding__bottom {
+    position: relative;
+    z-index: 4;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: clamp(18px, 2.5vh, 24px);
+    max-width: none;
+    margin: 0;
+    padding: clamp(28px, 5vh, 40px) var(--founding-pad-x)
+      clamp(36px, 6vh, 56px);
+    background: var(--founding-white);
+    pointer-events: auto;
+  }
+
+  .founding__lead {
+    max-width: 100%;
+  }
+
+  .founding__eyebrow {
+    color: var(--section-head-accent, var(--color-sustainable-green, #41857a));
+  }
+
+  .founding__title {
+    max-width: 100%;
+    color: var(--section-head-on-light-ink, var(--founding-ink, #000));
+    text-shadow: none;
+  }
+
+  .founding__sub {
+    color: var(--section-head-on-light-muted);
+    text-shadow: none;
+  }
+
+  .founding__panel {
+    margin-left: 0;
+    max-width: 100%;
+  }
+
+  .founding__lede {
+    color: color-mix(in srgb, var(--founding-ink) 78%, transparent);
+    text-shadow: none;
+  }
+
+  .founding__accent {
+    color: var(--founding-ink);
+  }
+}
+
+/* ——— Phone ——— */
+@media (max-width: 560px) {
+  .founding__mark {
+    top: 20%;
+    width: 70vw;
+    max-width: 70vw;
+  }
+
+  .founding__mark-svg {
+    opacity: 0.18;
+  }
+
+  .founding__photo {
+    width: 100%;
+    height: min(62svh, 520px);
+  }
+
+  .founding__lede {
+    font-size: clamp(0.98rem, 3.8vw, 1.08rem);
+  }
+}
+
+/* Hero mobile breakpoint parity for bottom stack */
+@media (max-width: 900px) {
+  .founding__bottom {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .founding__lead {
+    max-width: 100%;
+  }
+
+  .founding__panel {
+    margin-left: 0;
+    max-width: 100%;
+  }
+
+  .founding__title {
+    max-width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .founding__accent {
+    transition: none;
+  }
+}

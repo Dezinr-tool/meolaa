@@ -1,0 +1,614 @@
+/**
+ * Overrides for React rebuild — photo hero on Planet Blue, keep prototype layout.
+ */
+
+html {
+  -webkit-filter: none !important;
+  filter: none !important;
+}
+
+/*
+ * Frosted glass header on scroll.
+ *
+ * Readability first: mid-tone teal glass + light ink was too low-contrast
+ * over Loop/Lab/white folds. Use a near-opaque white veil + black ink so
+ * links and the wordmark stay sharp on every ground. Hero (not scrolled)
+ * keeps transparent + white type.
+ */
+.site-nav.is-scrolled {
+  background: color-mix(in srgb, var(--color-white, #fff) 92%, transparent);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  backdrop-filter: blur(18px) saturate(140%);
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--color-black, #000) 10%, transparent);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--color-black, #000) 4%, transparent);
+}
+
+.site-nav.is-scrolled .site-nav__logo,
+.site-nav.is-scrolled .site-nav__links a {
+  color: var(--color-black, #000000);
+  opacity: 1;
+}
+
+/* Dark fill only with .is-scrolled — applied at dock progress ≥ ~0.98
+ * (HomeAnimations dock ScrollTrigger), never mid-morph. */
+.site-nav.is-scrolled .site-nav__logo-img .meolaa-logo-mark__path {
+  fill: var(--color-primary, #002f3a);
+}
+
+.site-nav:not(.is-scrolled) .site-nav__logo-img .meolaa-logo-mark__path {
+  fill: var(--color-ecru, #f8ece4);
+}
+
+/* Solid bar when blur is disallowed or unwanted. */
+@media (prefers-reduced-transparency: reduce) {
+  .site-nav.is-scrolled {
+    background: var(--color-white, #fff);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+/*
+ * Centre logo, 3+3 links either side.
+ *
+ * proto-style.css's `.site-nav` is a plain space-between flex row built for
+ * two children (logo left, links right); it never had a middle slot. Giving
+ * both link groups `flex: 1 1 0` makes them claim equal width regardless of
+ * their own content, which is what actually centres the logo between them —
+ * text-align or margin tricks on the logo itself can't do that once the two
+ * groups aren't the same width.
+ */
+.site-nav__links {
+  flex: 1 1 0;
+  flex-wrap: nowrap;
+}
+
+.site-nav__links--left {
+  justify-content: flex-start;
+}
+
+.site-nav__links--right {
+  justify-content: flex-end;
+}
+
+/* Visible at every scroll position — at the top of the page this same mark is
+   the hero centrepiece, and it scrubs back into this slot as the fold scrolls
+   away. No opacity handoff: there's only ever one mark on screen.
+   This is the docked footprint, and the ONLY box the nav's flex layout sees —
+   the mark inside is absolutely positioned, so it can be laid out far larger
+   without pushing the link groups around, and this rect stays a stable
+   reference for the dock maths. Sized to what the mark measured before it was
+   given a tight viewBox, so the docked logo itself is unchanged. */
+.site-nav__logo {
+  flex: 0 0 auto;
+  position: relative;
+  display: block;
+  width: 85px;
+  aspect-ratio: 1065.3 / 213.8; /* tight viewBox — keeps the height honest */
+  font-size: 0; /* no stray inline whitespace around the mark */
+  letter-spacing: 0;
+  /* Clickable even while scaled up over the hero (.site-nav is
+     pointer-events: none, so this has to opt back in). */
+  pointer-events: auto;
+}
+
+/* Laid out at the hero's MAXIMUM width, then scaled DOWN to wherever it needs
+   to be — hero (~1.0) or docked (~0.1).
+   This direction is the whole point: `will-change` promotes this to its own
+   compositing layer, and a promoted layer is rasterised once at its LAYOUT size
+   and then texture-scaled. Laid out nav-sized and scaled up 3.5×, the hero mark
+   rendered as a stretched 85px bitmap — visibly pixelated despite being vector.
+   Laid out large and scaled down, every size is a clean downsample.
+   Width must stay >= the largest heroWidth in HomeAnimations' dock maths. */
+.site-nav__logo-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 860px;
+  height: auto;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+
+@media (max-width: 900px) {
+  /* Hero maxes out at 300px here, so a 320px raster is plenty — no reason to
+     hold an 860px texture on the memory-tightest devices. */
+  .site-nav__logo-img {
+    width: 320px;
+  }
+}
+
+.site-nav__logo-img .meolaa-logo-mark__path {
+  fill: var(--color-ecru, #f8ece4);
+  /* Switches to primary only once .is-scrolled lands at dock-end (see syncNav). */
+  transition: fill 0.35s ease;
+}
+
+/* Hero fold — Planet Blue base while photo loads; copy + CTAs at bottom */
+.hero--blank {
+  position: relative;
+  background: var(--color-planet-blue, #002f3a);
+}
+
+.hero--blank .hero__stage {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.hero--blank .hero__bg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Bias right/lower so the hand + orb stay in frame when cover crops. */
+  object-position: 68% 55%;
+}
+
+/* Soft Planet Blue veil — light mid-fold so the yellow glow reads; stronger
+   at the bottom where headline / lede / CTAs sit. Avoids a flat black wash. */
+.hero--blank .hero__shade {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 47, 58, 0.28) 0%,
+    rgba(0, 47, 58, 0.12) 36%,
+    rgba(0, 47, 58, 0.42) 70%,
+    rgba(0, 47, 58, 0.82) 100%
+  );
+}
+
+/* Keep prototype .hero__bottom absolute bottom bar — headline bottom-left,
+   lede + CTAs bottom-right. Do not restyle into a column. */
+.hero--blank .hero__bottom {
+  z-index: 4;
+  pointer-events: none;
+}
+
+.hero--blank .hero__bottom a,
+.hero--blank .hero__bottom button {
+  pointer-events: auto;
+}
+
+/* Hero H1: medium weight — paired with section titles at the same ground. */
+.hero--blank .hero__headline {
+  color: var(--color-ecru, #f8ece4);
+  font-family: var(--font-display);
+  /* Up from --text-display-sm (36–64). The vw step is capped by what fits
+     beside the panel on the same row — see .hero--blank .hero__panel. */
+  font-size: clamp(2.375rem, 5.4vw, 4.5rem);
+  /* Was light 300 (too thin vs bold section titles). Medium matches sections. */
+  font-weight: var(--fw-medium);
+  line-height: var(--lh-display);
+  letter-spacing: var(--tracking-display);
+  max-width: min(820px, 58vw);
+  font-variation-settings: normal;
+}
+
+.hero--blank .hero__headline span {
+  display: block;
+  white-space: nowrap; /* each span = one line on desktop */
+}
+
+/* Trimmed from 424/36vw to buy the bigger headline room on the same row. */
+.hero--blank .hero__panel {
+  max-width: min(380px, 32vw);
+}
+
+.hero--blank .hero__lede {
+  color: var(--color-fg-muted, rgba(248, 236, 228, 0.78));
+}
+
+@media (max-width: 900px) {
+  .hero--blank .hero__headline {
+    max-width: 100%;
+  }
+}
+
+/* The fixed two-line break stops fitting once the type is this big. */
+@media (max-width: 640px) {
+  .hero--blank .hero__headline span {
+    white-space: normal;
+  }
+}
+
+/* Prism stage retired; photo hero uses .hero__stage / .hero__bg again. */
+.hero-prism {
+  display: none !important;
+}
+
+/* The big centre wordmark is now the nav logo scaled up — see
+   .site-nav__logo above and the dock ScrollTrigger in HomeAnimations.
+   These legacy hooks are gone from the markup; kept out of the file
+   deliberately rather than left as dead rules. */
+
+/* Brand CTAs — secondary pale yellow on Planet Blue */
+.hero__btn--solid {
+  background: var(--color-secondary, #fef8c0) !important;
+  color: var(--color-planet-blue, #002f3a) !important;
+  border-color: var(--color-secondary, #fef8c0) !important;
+}
+
+.portfolio__cat.is-active {
+  background: var(--color-primary, #002f3a) !important;
+  color: var(--color-ecru, #f8ece4) !important;
+  border-color: var(--color-primary, #002f3a) !important;
+}
+
+/* The `.site-nav__logo` / `.site-nav__logo-img` rules that used to sit here
+   were written for the old <img> wordmark (height: 20px, width: auto) and,
+   being later in the file, silently beat the sizing above — which is what kept
+   the hero mark rasterising at 100px and scaling up. Consolidated into the
+   single pair of rules near the top of this file; don't reintroduce a second
+   block for these selectors. */
+
+/* Nav links: clearer weight + full opacity (proto dimmed inactive to 0.75). */
+.site-nav__links a {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: var(--fw-semibold, 600);
+  letter-spacing: 0.01em;
+  color: var(--color-white, #fff);
+  opacity: 1 !important;
+  text-shadow: 0 1px 12px color-mix(in srgb, #000 28%, transparent);
+}
+
+.site-nav.is-scrolled .site-nav__links a {
+  text-shadow: none;
+}
+
+.site-nav__links a:hover,
+.site-nav__links a.is-active {
+  opacity: 1 !important;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/*
+ * Vision fold 2 — video above thesis in one fold, then scrub-expands full-bleed.
+ * Media height capped so copy stays readable before/as pin scrub starts.
+ */
+.vision {
+  --vision-media-w: min(52rem, 86vw);
+  --vision-media-h: clamp(10.5rem, 46vh, 28rem);
+  /* White fold → true black text, not the brand's dark-teal ink. */
+  color: var(--color-black, #000);
+  overflow: hidden;
+}
+
+.vision__stage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  /* Only two children, so this is the breathing room under the video. */
+  gap: clamp(2.25rem, 7vh, 4.5rem);
+  padding: clamp(4.5rem, 10vh, 6.5rem) var(--pad-x) clamp(1.5rem, 4vh, 2.75rem);
+  height: 100%;
+  min-height: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.vision__video-wrap {
+  position: relative;
+  inset: auto;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: var(--vision-media-w);
+  padding: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.vision__video {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  width: 100%;
+  height: var(--vision-media-h);
+  max-height: 52vh;
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--color-planet-blue, #002f3a);
+  will-change: width, height, border-radius;
+  pointer-events: auto;
+}
+
+.vision__video video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 40%;
+  display: block;
+}
+
+.vision__copy {
+  position: relative;
+  flex: 0 0 auto;
+  margin: 0 auto;
+  /* Widened from 46rem so each line still fits without wrapping. */
+  max-width: min(52rem, 92vw);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 2;
+}
+
+/* Same treatment as the hero H1 — Poppins Semibold, display tracking — scaled
+   to the three lines that share this fold with the video. Each line is its own
+   <p>, so the pitch between them is line-height plus the margin below. */
+.vision__copy p {
+  font-family: var(--font-display, var(--serif));
+  font-size: clamp(1.375rem, 2.8vw, 2.5rem);
+  font-weight: var(--fw-light);
+  line-height: 1.02;
+  letter-spacing: var(--tracking-display);
+  color: var(--color-black, #000);
+  margin: 0 0 0.1em;
+  text-wrap: balance;
+  white-space: nowrap;
+}
+
+.vision__copy p:last-child {
+  margin-bottom: 0;
+}
+
+@media (max-width: 900px) {
+  .vision__copy p {
+    white-space: normal;
+  }
+}
+
+@media (max-width: 720px) {
+  .vision {
+    --vision-media-w: min(100%, 92vw);
+    --vision-media-h: clamp(9rem, 40vh, 18rem);
+  }
+
+  .vision__stage {
+    gap: clamp(1.25rem, 3.5vh, 2rem);
+    padding-top: clamp(4rem, 9vh, 5.5rem);
+  }
+
+  .vision__video {
+    max-height: 42vh;
+  }
+
+  .vision__copy {
+    max-width: min(22rem, 92vw);
+  }
+
+  .vision__copy p {
+    font-size: clamp(1.125rem, 4.4vw, 1.5rem);
+    white-space: normal;
+    /* Display leading is too tight once these wrap to several lines. */
+    line-height: 1.22;
+  }
+}
+
+/* Loop header type owned by section-head.css (--section-head-* tokens). */
+
+/* ——— One-fold section shells (homepage) ——— */
+.fold.hero,
+.fold.vision,
+.fold.loop,
+.fold.meola-lab,
+.portfolio--fold {
+  height: 100vh;
+  height: 100svh;
+  min-height: 100svh;
+  max-height: 100svh;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* Founding layout owned by FoundingSection.css (full-bleed layered hero). */
+
+.portfolio--fold .portfolio__intro,
+.portfolio--fold .portfolio-title {
+  padding: clamp(56px, 8vh, 80px) clamp(20px, 4vw, 48px) clamp(6px, 1.2vh, 12px);
+}
+
+.portfolio--fold .portfolio__deck {
+  padding-top: clamp(28px, 4.5vh, 44px);
+}
+
+/* Metrics + investors share ~one fold without forcing empty min-heights. */
+.metrics {
+  height: auto;
+  min-height: 0;
+  max-height: none;
+  box-sizing: border-box;
+}
+
+/*
+ * Investors / Partners — force Planet Blue primary ground.
+ * Last in cascade vs proto-style; !important blocks secondary `#fef8c0` sweeps.
+ */
+.investors,
+section.investors,
+[data-section='investors'] {
+  height: auto;
+  min-height: 0;
+  max-height: none;
+  box-sizing: border-box;
+  justify-content: flex-start;
+  background: var(--color-primary, #002f3a) !important;
+  background-color: var(--color-primary, #002f3a) !important;
+  color: var(--color-ecru, #f8ece4) !important;
+  /* Kill any full-bleed top edge; short centered rule via ::before. */
+  border-top: none;
+  position: relative;
+  /* Overlap metrics join by 1px so compositor hairlines don't read full-bleed. */
+  margin-top: -1px;
+}
+
+/* Metrics stairs → Investors: short centered hairline (not full-bleed). */
+.investors::before,
+section.investors::before,
+[data-section='investors']::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: clamp(120px, 28vw, 200px);
+  height: 1px;
+  background: color-mix(in srgb, var(--color-ecru, #f8ece4) 28%, transparent);
+  pointer-events: none;
+}
+
+.investors .section-head,
+[data-section='investors'] .section-head {
+  --sh-accent: var(--section-head-accent) !important;
+  --sh-title: var(--section-head-on-dark-ink) !important;
+  --sh-sub: var(--section-head-on-dark-muted) !important;
+}
+
+.investors .section-head__eyebrow,
+[data-section='investors'] .section-head__eyebrow {
+  color: var(--sh-accent) !important;
+}
+
+.investors .section-head__title,
+[data-section='investors'] .section-head__title {
+  color: var(--sh-title) !important;
+  opacity: 1 !important;
+}
+
+.investors .section-head__title .investors__title-line,
+[data-section='investors'] .section-head__title .investors__title-line {
+  color: inherit !important;
+  opacity: 1 !important;
+}
+
+.investors .section-head__sub,
+[data-section='investors'] .section-head__sub {
+  color: var(--sh-sub) !important;
+}
+
+.investors .btn-ghost,
+[data-section='investors'] .btn-ghost {
+  background: transparent !important;
+  color: var(--color-ecru, #f8ece4) !important;
+  border-color: color-mix(in srgb, var(--color-ecru, #f8ece4) 40%, transparent) !important;
+}
+
+.investors .investor-logos__item img,
+[data-section='investors'] .investor-logos__item img {
+  filter: grayscale(1) brightness(0) invert(1) !important;
+  opacity: 0.7;
+}
+
+.investor-logos {
+  max-width: min(1100px, 100%);
+}
+
+.press-feed {
+  position: relative;
+  z-index: 2;
+  height: 100vh;
+  height: 100svh;
+  min-height: 100svh;
+  max-height: 100svh;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(56px, 8vh, 80px) clamp(24px, 4vw, 64px);
+  overflow: hidden;
+}
+
+.press-feed__head {
+  margin-bottom: clamp(20px, 3vh, 36px);
+  flex: 0 0 auto;
+}
+
+/* Press title scale owned by section-head.css (no mega statement word). */
+
+.press-feed__grid {
+  flex: 0 1 auto;
+  min-height: 0;
+  gap: clamp(16px, 2vw, 28px);
+}
+
+.press-card__media {
+  aspect-ratio: 16 / 10;
+  margin-bottom: 12px;
+}
+
+.press-card h3 {
+  font-size: clamp(0.95rem, 1.2vw, 1.15rem);
+  margin-bottom: 6px;
+}
+
+.press-card__excerpt {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+
+
+@media (max-width: 900px) {
+  .fold.loop,
+  .fold.meola-lab,
+  .portfolio--fold,
+  .press-feed {
+    height: auto;
+    max-height: none;
+    min-height: 100svh;
+  }
+
+  .metrics {
+    height: auto;
+    max-height: none;
+    min-height: 0;
+  }
+
+  .investors {
+    height: auto;
+    max-height: none;
+    min-height: 0;
+  }
+
+  .press-feed__grid {
+    grid-template-columns: 1fr;
+    overflow: auto;
+  }
+
+  .press-card:nth-child(n + 3) {
+    display: none;
+  }
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  .portfolio-title h2,
+  .portfolio__intro h2 {
+    filter: none !important;
+    opacity: 1 !important;
+  }
+
+  .word-split__word {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* Manual SplitText word spans — y-stagger needs inline-block */
+.word-split__word {
+  display: inline-block;
+}
