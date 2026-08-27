@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 40" fill="none">
+  <g fill="#1a1a1a">
+    <circle cx="10" cy="20" r="8" fill="none" stroke="#1a1a1a" stroke-width="1.6"/>
+    <path d="M10 14.5v11M6.5 20h7" stroke="#1a1a1a" stroke-width="1.4" stroke-linecap="square"/>
+    <text x="26" y="25" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="15" font-weight="500" letter-spacing="-0.01em">General Catalyst</text>
+  </g>
+</svg>

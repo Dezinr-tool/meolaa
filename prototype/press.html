@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Press &amp; Media — Meolaa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=IBM+Plex+Mono&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/pages.css" />
+    <script src="js/figma-capture-prep.js?v=8"></script>
+<script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+</head>
+<body data-page="press" class="page-editorial">
+  <header class="site-nav site-nav--over-dark">
+    <a class="site-nav__logo" href="index.html">MEOLAA</a>
+    <nav class="site-nav__links" aria-label="Main">
+      <a href="about-us.html" data-nav="about">About Us</a>
+      <a href="our-story.html" data-nav="story">Our Story</a>
+      <a href="platform.html" data-nav="platform">Meolaa Lab</a>
+      <a href="press.html" data-nav="press">Press</a>
+      <a href="partners.html" data-nav="partners">Partners</a>
+      <a href="careers.html" data-nav="careers">Careers</a>
+    </nav>
+  </header>
+
+  <!-- 5.1 Hero -->
+  <section class="press-hero ct-hero" data-pg-hero aria-label="Press and Media">
+    <img class="ct-hero__bg" src="assets/pages/story-system-hero.jpg" alt="" />
+    <div class="ct-hero__shade"></div>
+    <div class="ct-hero__inner press-hero__inner">
+      <nav class="press-hero__crumb" aria-label="Breadcrumb">
+        <a href="index.html">Home</a>
+        <span aria-hidden="true">/</span>
+        <span>Press &amp; Media</span>
+      </nav>
+      <p class="pg-eyebrow pg-eyebrow--light">LATEST RELEASE · JAN 12, 2026</p>
+      <p class="press-hero__label">PRESS &amp; MEDIA</p>
+      <h1 class="pg-display ct-hero__title">News, coverage<br />and brand assets.</h1>
+      <p class="pg-body ct-hero__body">A single hub for journalists and stakeholders — funding announcements, brand coverage and downloadable media resources, ordered for fast scanning.</p>
+      <div class="ct-hero__ctas">
+        <a class="ct-btn ct-btn--solid" href="#releases">Browse releases</a>
+        <a class="ct-btn" href="#media-kit">Download media kit</a>
+      </div>
+    </div>
+    <p class="ct-hero__cue">SCROLL</p>
+  </section>
+
+  <!-- 5.2 Featured coverage -->
+  <section class="press-featured" aria-labelledby="press-featured-title">
+    <div class="press-featured__flag">
+      <span class="press-featured__flag-dot" aria-hidden="true"></span>
+      Latest Release
+    </div>
+    <div class="press-featured__layout">
+      <div class="press-featured__copy">
+        <p class="press-featured__meta">
+          <span class="press-cat">Funding</span>
+          <span class="press-featured__date">Jan 12, 2026</span>
+        </p>
+        <h2 class="pg-display press-featured__title" id="press-featured-title">Meolaa raises $6M to build an AI-native house of brands</h2>
+        <p class="pg-body press-featured__excerpt">Seed funding from Colossa Ventures, General Catalyst and Turbostart to scale the operating system behind consumer brand launches — with HIRA live and two more brands in the pipeline.</p>
+        <a class="press-featured__cta" href="#releases">Read more →</a>
+      </div>
+      <figure class="press-featured__media">
+        <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&amp;fit=crop&amp;w=1200&amp;h=1500&amp;q=80" alt="" />
+      </figure>
+    </div>
+  </section>
+
+  <!-- 5.3 News list + 5.4 Pagination -->
+  <section class="press-releases" id="releases" aria-labelledby="press-releases-title">
+    <div class="press-releases__head">
+      <p class="pg-eyebrow pg-eyebrow--dark">ALL RELEASES</p>
+      <h2 class="pg-display ct-section-title" id="press-releases-title">Every announcement, chronologically.</h2>
+      <p class="pg-body ct-section-lede">Filter by category. Newest first. Filter state stays in the URL so you can share a view.</p>
+    </div>
+
+    <div class="press-filters" role="group" aria-label="Filter by category">
+      <span class="press-filters__label">CATEGORY</span>
+      <button class="press-chip is-active" type="button" data-press-cat="all">All</button>
+      <button class="press-chip" type="button" data-press-cat="funding">Funding</button>
+      <button class="press-chip" type="button" data-press-cat="brand">Brand</button>
+      <button class="press-chip" type="button" data-press-cat="product">Product &amp; Launches</button>
+      <button class="press-chip" type="button" data-press-cat="partnerships">Partnerships</button>
+      <button class="press-chip" type="button" data-press-cat="company">Company</button>
+    </div>
+
+    <div class="press-list" data-press-list>
+      <article class="press-row" data-press-item data-cat="funding" data-date="2026-01-12">
+        <span class="press-row__cat press-cat">Funding</span>
+        <time class="press-row__date" datetime="2026-01-12">Jan 12, 2026</time>
+        <h3 class="press-row__title">Meolaa raises $6M to build an AI-native house of brands</h3>
+        <p class="press-row__excerpt">Seed round to scale the platform that reads demand, builds brands and runs them as a portfolio.</p>
+        <a class="press-row__cta" href="#">Read more →</a>
+      </article>
+      <article class="press-row" data-press-item data-cat="company" data-date="2025-11-03">
+        <span class="press-row__cat press-cat">Company</span>
+        <time class="press-row__date" datetime="2025-11-03">Nov 3, 2025</time>
+        <h3 class="press-row__title">Platform v2 unifies intelligence and brand operations</h3>
+        <p class="press-row__excerpt">A single data layer now connects demand models, formulation briefs and go-to-market loops.</p>
+        <a class="press-row__cta" href="#">Read more →</a>
+      </article>
+      <article class="press-row" data-press-item data-cat="brand" data-date="2025-09-18">
+        <span class="press-row__cat press-cat">Brand</span>
+        <time class="press-row__date" datetime="2025-09-18">Sep 18, 2025</time>
+        <h3 class="press-row__title">HIRA: from signal to shelf in under four months</h3>
+        <p class="press-row__excerpt">How Meolaa's first live brand moved from consumer insight to retail presence on the system.</p>
+        <a class="press-row__cta" href="#">Read more →</a>
+      </article>
+      <article class="press-row" data-press-item data-cat="partnerships" data-date="2025-06-20">
+        <span class="press-row__cat press-cat">Partnerships</span>
+        <time class="press-row__date" datetime="2025-06-20">Jun 20, 2025</time>
+        <h3 class="press-row__title">Distribution agreement signed across quick-commerce platforms</h3>
+        <p class="press-row__excerpt">Portfolio brands gain shared retail access without per-brand onboarding cycles.</p>
+        <a class="press-row__cta" href="#">Read more →</a>
+      </article>
+      <article class="press-row" data-press-item data-cat="product" data-date="2025-04-14">
+        <span class="press-row__cat press-cat">Product &amp; Launches</span>
+        <time class="press-row__date" datetime="2025-04-14">Apr 14, 2025</time>
+        <h3 class="press-row__title">Two new brands enter formulation — fragrance and kitchen</h3>
+        <p class="press-row__excerpt">Pipeline brands progress through the same four-stage OS that launched HIRA.</p>
+        <a class="press-row__cta" href="#">Read more →</a>
+      </article>
+      <article class="press-row" data-press-item data-cat="funding" data-date="2025-02-08">
+        <span class="press-row__cat press-cat">Funding</span>
+        <time class="press-row__date" datetime="2025-02-08">Feb 8, 2025</time>
+        <h3 class="press-row__title">Pre-seed extension led by Ranjan Pai family office</h3>
+        <p class="press-row__excerpt">Additional capital to deepen the intelligence layer and expand manufacturing partnerships.</p>
+        <a class="press-row__cta" href="#">Read more →</a>
+      </article>
+      <article class="press-row" data-press-item data-cat="company" data-date="2024-11-22">
+        <span class="press-row__cat press-cat">Company</span>
+        <time class="press-row__date" datetime="2024-11-22">Nov 22, 2024</time>
+        <h3 class="press-row__title">Meolaa positions as an AI-native consumer company</h3>
+        <p class="press-row__excerpt">Not a holding company — a technology company that builds consumer brands on one operating system.</p>
+        <a class="press-row__cta" href="#">Read more →</a>
+      </article>
+      <article class="press-row" data-press-item data-cat="brand" data-date="2024-08-05">
+        <span class="press-row__cat press-cat">Brand</span>
+        <time class="press-row__date" datetime="2024-08-05">Aug 5, 2024</time>
+        <h3 class="press-row__title">First brand thesis locked: personal care for modern India</h3>
+        <p class="press-row__excerpt">Demand signals define the category brief before a name, pack or campaign exists.</p>
+        <a class="press-row__cta" href="#">Read more →</a>
+      </article>
+      <article class="press-row" data-press-item data-cat="partnerships" data-date="2024-05-16">
+        <span class="press-row__cat press-cat">Partnerships</span>
+        <time class="press-row__date" datetime="2024-05-16">May 16, 2024</time>
+        <h3 class="press-row__title">Manufacturing network opens for multi-category capacity</h3>
+        <p class="press-row__excerpt">Supply partners connect once and serve every brand Meolaa launches.</p>
+        <a class="press-row__cta" href="#">Read more →</a>
+      </article>
+      <article class="press-row" data-press-item data-cat="product" data-date="2024-02-28">
+        <span class="press-row__cat press-cat">Product &amp; Launches</span>
+        <time class="press-row__date" datetime="2024-02-28">Feb 28, 2024</time>
+        <h3 class="press-row__title">Lab capability stack: four stages from signal to scale</h3>
+        <p class="press-row__excerpt">Intelligence, brand build, launch and growth — documented as the Meolaa operating system.</p>
+        <a class="press-row__cta" href="#">Read more →</a>
+      </article>
+      <article class="press-row" data-press-item data-cat="company" data-date="2023-10-10">
+        <span class="press-row__cat press-cat">Company</span>
+        <time class="press-row__date" datetime="2023-10-10">Oct 10, 2023</time>
+        <h3 class="press-row__title">Bengaluru HQ and founding team in place</h3>
+        <p class="press-row__excerpt">A compact team across intelligence, brand build and growth &amp; ops, sharing one data layer.</p>
+        <a class="press-row__cta" href="#">Read more →</a>
+      </article>
+      <article class="press-row" data-press-item data-cat="funding" data-date="2023-06-01">
+        <span class="press-row__cat press-cat">Funding</span>
+        <time class="press-row__date" datetime="2023-06-01">Jun 1, 2023</time>
+        <h3 class="press-row__title">Founding capital closes; platform build begins</h3>
+        <p class="press-row__excerpt">Initial backing to prove that consumer brands can be built as a system, not a sequence of one-offs.</p>
+        <a class="press-row__cta" href="#">Read more →</a>
+      </article>
+    </div>
+
+    <p class="press-empty" data-press-empty hidden>No releases in this category yet.</p>
+
+    <nav class="press-pager" data-press-pager aria-label="Release pagination">
+      <button class="press-pager__btn" type="button" data-press-prev aria-label="Previous page">← Prev</button>
+      <div class="press-pager__nums" data-press-pages></div>
+      <button class="press-pager__btn" type="button" data-press-next aria-label="Next page">Next →</button>
+    </nav>
+  </section>
+
+  <!-- 5.5 Media kit -->
+  <section class="press-kit" id="media-kit" aria-labelledby="press-kit-title">
+    <div class="press-kit__head">
+      <p class="pg-eyebrow pg-eyebrow--light">MEDIA KIT</p>
+      <h2 class="pg-display ct-section-title ct-section-title--light" id="press-kit-title">Brand assets, ready to download.</h2>
+      <p class="pg-body press-kit__lede">Logo packs, guidelines, photography and boilerplate for accurate coverage. Each file lists format and size.</p>
+    </div>
+
+    <div class="press-kit__grid">
+      <a class="press-kit__item" href="#" download>
+        <span class="press-kit__icon" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M12 4v12m0 0l-4-4m4 4l4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <div class="press-kit__body">
+          <h3 class="press-kit__name">Logo pack</h3>
+          <p class="press-kit__desc">Primary wordmark, monochrome and reverse variants.</p>
+        </div>
+        <span class="press-kit__meta">ZIP · 4.2 MB</span>
+      </a>
+      <a class="press-kit__item" href="#" download>
+        <span class="press-kit__icon" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M12 4v12m0 0l-4-4m4 4l4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <div class="press-kit__body">
+          <h3 class="press-kit__name">Brand guidelines</h3>
+          <p class="press-kit__desc">Typography, colour, spacing and usage rules.</p>
+        </div>
+        <span class="press-kit__meta">PDF · 8.1 MB</span>
+      </a>
+      <a class="press-kit__item" href="#" download>
+        <span class="press-kit__icon" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M12 4v12m0 0l-4-4m4 4l4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <div class="press-kit__body">
+          <h3 class="press-kit__name">Founder photography</h3>
+          <p class="press-kit__desc">Approved portraits for print and digital.</p>
+        </div>
+        <span class="press-kit__meta">ZIP · 18 MB</span>
+      </a>
+      <a class="press-kit__item" href="#" download>
+        <span class="press-kit__icon" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M12 4v12m0 0l-4-4m4 4l4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <div class="press-kit__body">
+          <h3 class="press-kit__name">Product imagery</h3>
+          <p class="press-kit__desc">HIRA and portfolio product stills.</p>
+        </div>
+        <span class="press-kit__meta">ZIP · 42 MB</span>
+      </a>
+      <a class="press-kit__item" href="#" download>
+        <span class="press-kit__icon" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M12 4v12m0 0l-4-4m4 4l4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <div class="press-kit__body">
+          <h3 class="press-kit__name">Company boilerplate</h3>
+          <p class="press-kit__desc">Short and long company descriptions.</p>
+        </div>
+        <span class="press-kit__meta">DOCX · 48 KB</span>
+      </a>
+    </div>
+
+    <a class="ct-btn press-kit__all" href="#" download>Download full media kit →</a>
+  </section>
+
+  <!-- 5.6 Media contact -->
+  <section class="press-contact" id="media-contact" aria-labelledby="press-contact-title">
+    <div class="press-contact__grid">
+      <div class="press-contact__intro">
+        <p class="pg-eyebrow pg-eyebrow--dark">MEDIA CONTACT</p>
+        <h2 class="pg-display ct-section-title" id="press-contact-title">Talk to communications.</h2>
+        <p class="pg-body ct-section-lede">For interviews, fact checks, embargoed briefings and asset requests — one named contact, clear response window.</p>
+      </div>
+      <aside class="press-contact__card">
+        <div class="press-contact__portrait">
+          <img src="assets/founder-meolaa.png" alt="" />
+        </div>
+        <div class="press-contact__info">
+          <p class="press-contact__name">Communications Desk</p>
+          <p class="press-contact__role">Meolaa Press &amp; Media</p>
+          <a class="press-contact__email" href="mailto:press@meolaa.com">press@meolaa.com</a>
+          <p class="press-contact__sla">We aim to respond within one business day.</p>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="pg-where-next">
+    <p class="pg-eyebrow pg-eyebrow--light">WHERE TO NEXT</p>
+    <div class="pg-where-next__grid">
+      <a class="pg-where-next__card" href="platform.html">
+        <span class="num">04</span>
+        <h3>Meolaa Lab</h3>
+        <p>The operating system behind every launch. →</p>
+      </a>
+      <a class="pg-where-next__card" href="partners.html">
+        <span class="num">06</span>
+        <h3>Partners</h3>
+        <p>Investors and partnership routes. →</p>
+      </a>
+      <a class="pg-where-next__card" href="careers.html">
+        <span class="num">07</span>
+        <h3>Careers</h3>
+        <p>The team behind the portfolio. →</p>
+      </a>
+    </div>
+  </section>
+
+  <footer class="site-footer site-footer--svg">
+    <img class="site-footer__art" src="assets/footer.svg" alt="" />
+    <img class="site-footer__wordmark" src="assets/logo-white.png" alt="Meolaa" />
+  </footer>
+
+  <script src="js/static-pages.js"></script>
+  <script src="js/press.js"></script>
+</body>
+</html>

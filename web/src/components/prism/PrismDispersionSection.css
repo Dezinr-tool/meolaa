@@ -1,0 +1,64 @@
+/* Physics prism dispersion section — full-viewport pin target */
+
+.prism-dispersion {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  background: #030303;
+  /* Matches prism-old: pin/scrub must not steal scrollbar width mid-sequence */
+  scrollbar-gutter: stable;
+}
+
+.prism-dispersion__canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  /* OrbitControls owns pointer drag; wheel still bubbles for Lenis/page scroll */
+  touch-action: none;
+}
+
+.scroll-to-continue {
+  position: absolute;
+  left: 50%;
+  bottom: 1.75rem;
+  transform: translateX(-50%);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  color: rgba(255, 255, 255, 0.72);
+  pointer-events: none;
+  user-select: none;
+  font-family: var(--font-sans, 'Geist', system-ui, sans-serif);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-size: 0.65rem;
+  opacity: 1;
+}
+
+.scroll-to-continue__icon {
+  display: block;
+  color: inherit;
+}
+
+.scroll-to-continue__label {
+  display: block;
+}
+
+/* Approximate-pyramid HeroPrism stage — full fold below dispersion section */
+.pyramid-hero {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  background: #000000;
+}
+
+.pyramid-hero .hero-prism {
+  position: absolute;
+  inset: 0;
+}

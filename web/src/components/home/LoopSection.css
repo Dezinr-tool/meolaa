@@ -1,0 +1,387 @@
+/**
+ * THE LOOP — Figma node 0:3 · fixed full-bleed viewport, scroll-drawn path, camera zoom.
+ * Geometry: src/lib/loopPath.ts
+ */
+
+.loop {
+  --loop-ecru: var(--color-ecru, #f8ece4);
+  --loop-stroke: rgba(248, 236, 228, 0.94);
+  --loop-dot: 34px;
+  --loop-dot-inner: 18px;
+  --loop-line: 21px;
+  --loop-copy-w: 289px;
+  --loop-copy-gap-below: 34px;
+  --loop-copy-gap-above: 47px;
+  --loop-copy-gap-right: 24px;
+
+  position: relative;
+  z-index: 1;
+  background: var(--color-planet-blue, #002f3a);
+  color: var(--loop-ecru);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.loop__inner {
+  height: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: clamp(6px, 1.2vh, 16px);
+  padding: clamp(48px, 8vh, 82px) 0 clamp(12px, 1.8vh, 24px);
+}
+
+/* ——— Header (center-aligned, hero display tokens) ——— */
+.loop__header {
+  text-align: center;
+  padding-inline: clamp(20px, 4vw, 64px);
+  will-change: transform, opacity;
+}
+
+.loop__eyebrow {
+  margin: 0 0 10px;
+  font-family: var(--sans);
+  font-size: var(--text-eyebrow, 11px);
+  font-weight: var(--fw-medium, 500);
+  letter-spacing: var(--tracking-eyebrow, 0.12em);
+  text-transform: uppercase;
+  color: rgba(248, 236, 228, 0.52);
+}
+
+.loop__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-display-sm);
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-display);
+  letter-spacing: var(--tracking-display);
+  text-transform: uppercase;
+  color: rgba(248, 236, 228, 0.94);
+}
+
+/* ——— Fixed viewport — full bleed ——— */
+.loop__viewport {
+  position: relative;
+  min-height: 0;
+  height: 100%;
+  width: 100vw;
+  max-width: 100vw;
+  margin-left: calc(50% - 50vw);
+  overflow: hidden;
+}
+
+.loop__camera {
+  --loop-cam-scale: 1;
+  --loop-ui-scale: calc(1 / var(--loop-cam-scale));
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  will-change: transform;
+  transform-origin: 0 0;
+}
+
+.loop__svg {
+  position: relative;
+  z-index: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.loop:not(.is-loop-ready):not(.is-static) .loop__drawn,
+.loop:not(.is-loop-ready):not(.is-static) .loop__tip {
+  opacity: 0;
+}
+
+.loop__drawn {
+  fill: none;
+  stroke: url(#loop-path-gradient);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 6px rgba(248, 236, 228, 0.4));
+}
+
+/* Leading draw-head glow — sampled on path each frame via getPointAtLength. */
+.loop__tip {
+  fill: var(--loop-ecru);
+  filter: drop-shadow(0 0 10px rgba(248, 236, 228, 0.85))
+    drop-shadow(0 0 22px rgba(248, 236, 228, 0.35));
+  pointer-events: none;
+}
+
+/* ——— Steps (HTML overlays on camera) ——— */
+.loop__step {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 2;
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+}
+
+/* Figma dot: 34px — ring + centre (0:28). Hidden until path reaches step. */
+.loop__dot {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--loop-dot);
+  height: var(--loop-dot);
+  margin: calc(var(--loop-dot) / -2) 0 0 calc(var(--loop-dot) / -2);
+  border-radius: 50%;
+  background: var(--color-planet-blue, #002f3a);
+  opacity: 0;
+  transform: scale(calc(0.5 * var(--loop-ui-scale)));
+  transform-origin: center;
+  box-shadow: inset 0 0 0 8px var(--loop-ecru);
+  transition:
+    opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.loop__dot::after {
+  content: '';
+  position: absolute;
+  inset: 50%;
+  width: var(--loop-dot-inner);
+  height: var(--loop-dot-inner);
+  margin: calc(var(--loop-dot-inner) / -2) 0 0 calc(var(--loop-dot-inner) / -2);
+  border-radius: 50%;
+  background: var(--loop-ecru);
+}
+
+/* Copy floats clean — no box, border, or background (Figma). */
+.loop__copy {
+  position: absolute;
+  z-index: 3;
+  width: var(--loop-copy-w);
+  max-width: min(var(--loop-copy-w), 42vw);
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(calc(0.94 * var(--loop-ui-scale))) translateY(6px);
+  transform-origin: var(--copy-origin-x, left) var(--copy-origin-y, top);
+  border: none;
+  outline: none;
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+  transition:
+    opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0s linear 0.5s;
+}
+
+/* Copy placement — Figma start frame (right of tip) + 0:28 (below / above) */
+.loop__step--below-left .loop__copy {
+  left: calc(-1 * var(--loop-dot) / 2);
+  top: calc(var(--loop-dot) / 2 + var(--loop-copy-gap-below));
+  text-align: left;
+  --copy-origin-x: left;
+  --copy-origin-y: top;
+}
+
+.loop__step--above-left .loop__copy {
+  left: calc(-1 * var(--loop-dot) / 2);
+  bottom: calc(var(--loop-dot) / 2 + var(--loop-copy-gap-above));
+  text-align: left;
+  --copy-origin-x: left;
+  --copy-origin-y: bottom;
+}
+
+.loop__step--right .loop__copy {
+  left: calc(var(--loop-dot) / 2 + var(--loop-copy-gap-right));
+  top: -10px;
+  text-align: left;
+  --copy-origin-x: left;
+  --copy-origin-y: center;
+}
+
+/* Zoomed-out stages: Build copy sits below the path (Figma 0:28). */
+.loop:not([data-loop-stage='0']) .loop__step--right .loop__copy {
+  left: calc(-1 * var(--loop-dot) / 2);
+  top: calc(var(--loop-dot) / 2 + var(--loop-copy-gap-below));
+  --copy-origin-y: top;
+}
+
+.loop__copy-label {
+  margin: 0 0 8px;
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: var(--fw-regular, 400);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(248, 236, 228, 0.72);
+}
+
+.loop__copy-title {
+  margin: 0 0 12px;
+  font-family: var(--sans);
+  font-size: 24px;
+  font-weight: var(--fw-regular, 400);
+  line-height: 1;
+  letter-spacing: var(--tracking-tight, -0.01em);
+  color: rgba(248, 236, 228, 0.94);
+}
+
+.loop__copy-body {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 16px;
+  font-weight: var(--fw-light, 300);
+  line-height: 1.2;
+  color: rgba(248, 236, 228, 0.72);
+  max-width: var(--loop-copy-w);
+}
+
+/* ——— Reached step — dot stays visible (ring), no highlight ——— */
+.loop__step.is-reached .loop__dot {
+  opacity: 1;
+  transform: scale(var(--loop-ui-scale));
+}
+
+/* ——— Active step — filled dot + glow/zoom (only one at a time) ——— */
+.loop__step.is-active .loop__dot {
+  opacity: 1;
+  transform: scale(calc(1.1 * var(--loop-ui-scale)));
+  background: var(--loop-ecru);
+  box-shadow:
+    0 0 0 6px rgba(248, 236, 228, 0.14),
+    0 0 28px rgba(248, 236, 228, 0.42);
+}
+
+.loop__step.is-active .loop__dot::after {
+  background: var(--loop-ecru);
+  opacity: 0;
+}
+
+/* Live draw-head uses the SVG tip — hide the HTML dot while they coincide. */
+.loop__step.is-at-head .loop__dot {
+  opacity: 0;
+}
+
+/* ——— Copy reveal — separate from dot; Figma frame timing ——— */
+.loop__step.is-copy-visible .loop__copy {
+  opacity: 1;
+  visibility: visible;
+  transform: scale(var(--loop-ui-scale)) translateY(0);
+  transition:
+    opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0s linear 0s;
+}
+
+.loop__step.is-copy-visible.is-active .loop__copy-label {
+  color: rgba(248, 236, 228, 0.88);
+}
+
+.loop__step.is-copy-visible.is-active .loop__copy-title {
+  color: rgba(248, 236, 228, 0.98);
+}
+
+.loop__step.is-copy-visible.is-active .loop__copy-body {
+  color: rgba(248, 236, 228, 0.78);
+}
+
+/* Initial + unreached: no dots, no copy, no ghost blocks */
+.loop__step:not(.is-reached) .loop__dot {
+  opacity: 0;
+  transform: scale(calc(0.5 * var(--loop-ui-scale)));
+  box-shadow: inset 0 0 0 8px var(--loop-ecru);
+}
+
+.loop__step:not(.is-copy-visible) .loop__copy {
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(calc(0.94 * var(--loop-ui-scale))) translateY(6px);
+  transition:
+    opacity 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0s linear 0.35s;
+}
+
+/* ——— Reduced motion / static fallback ——— */
+.loop.is-static .loop__drawn {
+  stroke-dashoffset: 0 !important;
+}
+
+.loop.is-static .loop__camera {
+  transform: none !important;
+  --loop-cam-scale: 1;
+}
+
+.loop.is-static .loop__step .loop__copy {
+  opacity: 1;
+  visibility: visible;
+  transform: scale(1) translateY(0);
+}
+
+.loop.is-static .loop__step:last-child .loop__dot {
+  opacity: 1;
+  transform: scale(1.1);
+  background: var(--loop-ecru);
+  box-shadow:
+    0 0 0 6px rgba(248, 236, 228, 0.14),
+    0 0 28px rgba(248, 236, 228, 0.42);
+}
+
+.loop.is-static .loop__step .loop__dot {
+  opacity: 1;
+  transform: scale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loop__dot,
+  .loop__copy {
+    transition: none;
+  }
+}
+
+/* ——— Mobile ——— */
+@media (max-width: 900px) {
+  .loop__inner {
+    padding-top: clamp(40px, 6vh, 56px);
+    gap: clamp(4px, 1vh, 12px);
+  }
+
+  .loop__title {
+    font-size: clamp(1.65rem, 7vw, 2.25rem);
+  }
+
+  .loop__copy {
+    --loop-copy-w: min(289px, 78vw);
+  }
+
+  .loop__copy-title {
+    font-size: clamp(18px, 4.8vw, 24px);
+  }
+
+  .loop__copy-body {
+    font-size: clamp(14px, 3.6vw, 16px);
+  }
+
+  .loop__step--above-left .loop__copy,
+  .loop__step--right .loop__copy {
+    left: calc(-1 * var(--loop-dot) / 2);
+    top: calc(var(--loop-dot) / 2 + var(--loop-copy-gap-below));
+    bottom: auto;
+    --copy-origin-y: top;
+  }
+}
+
+@media (max-width: 520px) {
+  .loop__copy-body {
+    display: none;
+  }
+
+  .loop.is-static .loop__copy-body,
+  .loop__step.is-copy-visible .loop__copy-body {
+    display: block;
+  }
+}

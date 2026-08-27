@@ -1,0 +1,372 @@
+/* Meolaa Lab — full-bleed expand-on-hover process rail */
+
+.meola-lab {
+  --meola-lab-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --meola-lab-dur: 0.72s;
+  --meola-lab-spine: clamp(64px, 7vw, 88px);
+  --meola-lab-ink: var(--color-planet-blue, #002f3a);
+  --meola-lab-cream: var(--color-ecru, #f8ece4);
+  --meola-lab-surface: #efeeeb;
+  --meola-lab-white: var(--color-white, #fff);
+
+  background: var(--meola-lab-white);
+  color: var(--meola-lab-ink);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100svh;
+  min-height: 100svh;
+  max-height: 100svh;
+  padding: 0;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.meola-lab__intro {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: end;
+  gap: clamp(16px, 3vw, 40px);
+  padding: clamp(20px, 3vh, 36px) var(--pad-x, clamp(24px, 5vw, 72px)) 16px;
+  background: var(--meola-lab-surface);
+  border-bottom: 1px solid rgba(0, 47, 58, 0.08);
+  position: relative;
+  z-index: 2;
+  flex: 0 0 auto;
+}
+
+.meola-lab__eyebrow {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: var(--text-eyebrow);
+  font-weight: var(--fw-medium, 500);
+  letter-spacing: var(--tracking-eyebrow, 0.12em);
+  text-transform: uppercase;
+  color: rgba(0, 47, 58, 0.45);
+  align-self: start;
+}
+
+.meola-lab__mark {
+  position: relative;
+  overflow: hidden;
+  height: 56px;
+  width: min(220px, 28vw);
+  justify-self: center;
+  opacity: 0.5;
+}
+
+.meola-lab__mark img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 120%;
+  width: auto;
+  max-width: none;
+  filter: invert(1);
+  opacity: 0.85;
+}
+
+.meola-lab__headline {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: clamp(1.15rem, 2vw, 1.65rem);
+  font-weight: var(--fw-light, 300);
+  line-height: 1.2;
+  letter-spacing: var(--tracking-tight, -0.02em);
+  text-align: right;
+  max-width: 16ch;
+  color: var(--meola-lab-ink);
+}
+
+/* Full-bleed process rail — edge to edge within section */
+.meola-lab__rail {
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background: var(--meola-lab-ink);
+}
+
+.meola-lab__panel {
+  position: relative;
+  display: flex;
+  flex: 0 0 var(--meola-lab-spine);
+  min-width: var(--meola-lab-spine);
+  max-width: 100%;
+  overflow: hidden;
+  cursor: pointer;
+  border: 0;
+  border-right: 1px solid rgba(248, 236, 228, 0.12);
+  background: var(--meola-lab-ink);
+  color: var(--meola-lab-cream);
+  transition:
+    flex-grow var(--meola-lab-dur) var(--meola-lab-ease),
+    flex-basis var(--meola-lab-dur) var(--meola-lab-ease),
+    min-width var(--meola-lab-dur) var(--meola-lab-ease),
+    background 0.35s ease;
+  outline: none;
+}
+
+.meola-lab__panel:last-child {
+  border-right: 0;
+}
+
+.meola-lab__panel.is-active {
+  flex: 1 1 auto;
+  min-width: min(58vw, 920px);
+  cursor: default;
+}
+
+.meola-lab__panel:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--color-joyous-yellow, #fdf28c);
+}
+
+/* Collapsed spine — number + vertical title */
+.meola-lab__spine {
+  position: relative;
+  z-index: 3;
+  flex: 0 0 var(--meola-lab-spine);
+  width: var(--meola-lab-spine);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28px 0 32px;
+  background: transparent;
+  pointer-events: none;
+}
+
+.meola-lab__num {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: var(--fw-medium, 500);
+  letter-spacing: 0.16em;
+  color: rgba(248, 236, 228, 0.55);
+  writing-mode: horizontal-tb;
+}
+
+.meola-lab__spine-title {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: clamp(15px, 1.35vw, 18px);
+  font-weight: var(--fw-light, 300);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  white-space: nowrap;
+  color: rgba(248, 236, 228, 0.88);
+  transition: opacity 0.35s ease, color 0.35s ease;
+}
+
+.meola-lab__panel.is-active .meola-lab__spine-title {
+  opacity: 0;
+}
+
+.meola-lab__panel:not(.is-active):hover .meola-lab__spine-title {
+  color: var(--color-joyous-yellow, #fdf28c);
+}
+
+/* Full-bleed media inside expanded panel */
+.meola-lab__bleed {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.45s var(--meola-lab-ease);
+}
+
+.meola-lab__panel.is-active .meola-lab__bleed {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.meola-lab__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  object-position: center;
+  transform: scale(1.12);
+  transition: transform var(--meola-lab-dur) var(--meola-lab-ease);
+}
+
+.meola-lab__panel.is-active .meola-lab__img {
+  transform: scale(1);
+}
+
+.meola-lab__veil {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(0, 47, 58, 0.72) 0%,
+      rgba(0, 47, 58, 0.35) 42%,
+      rgba(0, 47, 58, 0.15) 100%
+    ),
+    linear-gradient(
+      0deg,
+      rgba(0, 47, 58, 0.55) 0%,
+      transparent 42%
+    );
+  pointer-events: none;
+}
+
+.meola-lab__copy {
+  position: absolute;
+  left: calc(var(--meola-lab-spine) + clamp(20px, 3vw, 48px));
+  right: clamp(20px, 4vw, 64px);
+  bottom: clamp(28px, 5vh, 56px);
+  max-width: 36rem;
+  z-index: 2;
+  color: var(--meola-lab-cream);
+  transform: translateX(28px);
+  opacity: 0;
+  transition:
+    opacity 0.5s var(--meola-lab-ease) 0.12s,
+    transform 0.55s var(--meola-lab-ease) 0.08s;
+}
+
+.meola-lab__panel.is-active .meola-lab__copy {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.meola-lab__copy-num {
+  margin: 0 0 10px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: var(--fw-medium, 500);
+  letter-spacing: 0.16em;
+  color: rgba(248, 236, 228, 0.55);
+}
+
+.meola-lab__copy-title {
+  margin: 0 0 14px;
+  font-family: var(--serif);
+  font-size: clamp(1.75rem, 3.4vw, 3rem);
+  font-weight: var(--fw-light, 300);
+  line-height: 1.05;
+  letter-spacing: var(--tracking-display, -0.03em);
+  color: var(--meola-lab-white);
+}
+
+.meola-lab__copy-desc {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: clamp(0.9rem, 1.2vw, 1.05rem);
+  font-weight: var(--fw-regular, 400);
+  line-height: var(--lh-body, 1.65);
+  color: rgba(248, 236, 228, 0.82);
+  max-width: 34ch;
+}
+
+/* ——— Mobile / coarse pointer: vertical accordion ——— */
+@media (max-width: 900px) {
+  .meola-lab {
+    height: auto;
+    max-height: none;
+    min-height: 100svh;
+  }
+
+  .meola-lab__intro {
+    grid-template-columns: 1fr;
+    justify-items: start;
+    gap: 16px;
+    padding-bottom: 24px;
+  }
+
+  .meola-lab__mark {
+    display: none;
+  }
+
+  .meola-lab__headline {
+    text-align: left;
+    max-width: 18ch;
+  }
+
+  .meola-lab__rail {
+    flex-direction: column;
+    min-height: 0;
+    flex: 1 1 auto;
+  }
+
+  .meola-lab__panel {
+    flex: 0 0 auto;
+    min-width: 0;
+    width: 100%;
+    height: 56px;
+    border-right: 0;
+    border-bottom: 1px solid rgba(248, 236, 228, 0.12);
+    transition:
+      height var(--meola-lab-dur) var(--meola-lab-ease),
+      background 0.35s ease;
+  }
+
+  .meola-lab__panel.is-active {
+    flex: 1 1 auto;
+    min-width: 0;
+    height: auto;
+    min-height: min(42svh, 360px);
+  }
+
+  .meola-lab__spine {
+    flex-direction: row;
+    width: 100%;
+    flex: 0 0 56px;
+    height: 56px;
+    padding: 0 20px;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 16px;
+  }
+
+  .meola-lab__spine-title {
+    writing-mode: horizontal-tb;
+    transform: none;
+    white-space: normal;
+    font-size: 1.15rem;
+  }
+
+  .meola-lab__panel.is-active .meola-lab__spine-title {
+    opacity: 1;
+    color: var(--color-joyous-yellow, #fdf28c);
+  }
+
+  .meola-lab__bleed {
+    top: 56px;
+  }
+
+  .meola-lab__copy {
+    left: 20px;
+    right: 20px;
+    bottom: 24px;
+    transform: translateY(16px);
+  }
+
+  .meola-lab__panel.is-active .meola-lab__copy {
+    transform: translateY(0);
+  }
+
+  .meola-lab__copy-title {
+    font-size: clamp(1.5rem, 6vw, 2rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .meola-lab__panel,
+  .meola-lab__img,
+  .meola-lab__bleed,
+  .meola-lab__copy,
+  .meola-lab__spine-title {
+    transition: none !important;
+  }
+}
