@@ -9,11 +9,9 @@ import {
 /**
  * Same square pyramid as Prism.jsx, with MeshTransmissionMaterial.
  *
- * Raytracer only flips `material.side` for intersection tests — it does not
- * read IOR/transmission from the material.
+ * Tuned toward prism-old FUTURE: thinner optical path + moderate CA so letter
+ * cores stay bright white with saturated edge fringing (not muddy blobs).
  */
-
-const GLASS_IOR = 1.62
 
 const TransmissionPrism = forwardRef(function TransmissionPrism(
   { position = [0, 0, 0], rotation = [0, 0, 0] },
@@ -32,20 +30,21 @@ const TransmissionPrism = forwardRef(function TransmissionPrism(
     >
       <MeshTransmissionMaterial
         backside
-        samples={12}
-        resolution={768}
+        samples={14}
+        resolution={1024}
         transmission={1}
         roughness={0.02}
-        thickness={PRISM_DEPTH}
-        ior={GLASS_IOR}
-        chromaticAberration={0.28}
-        anisotropicBlur={0.4}
-        distortion={0.4}
-        distortionScale={0.3}
+        thickness={PRISM_DEPTH * 0.35}
+        ior={1.4}
+        chromaticAberration={0.32}
+        anisotropicBlur={0.12}
+        distortion={0.35}
+        distortionScale={0.28}
         temporalDistortion={0}
-        color="#e8eef8"
+        color="#f4f7ff"
         attenuationColor="#ffffff"
-        attenuationDistance={4}
+        attenuationDistance={16}
+        envMapIntensity={0.5}
       />
     </mesh>
   )

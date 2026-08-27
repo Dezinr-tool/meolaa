@@ -91,11 +91,13 @@ export function PrismDispersionSection() {
             antialias: true,
             powerPreference: 'high-performance',
             toneMapping: THREE.ACESFilmicToneMapping,
+            toneMappingExposure: 1.45,
             outputColorSpace: THREE.SRGBColorSpace,
           }}
           style={{ width: '100%', height: '100%' }}
           onCreated={({ gl }) => {
             gl.setClearColor(PRISM_SECTION_BG ?? '#000000')
+            gl.toneMappingExposure = 1.45
           }}
         >
           <CanvasSizeSync targetRef={sectionRef} />
