@@ -35,7 +35,7 @@ export function HeroSection() {
             building products and running go to market as one connected system.
           </p>
           <div className="hero__actions">
-            <a className="hero__btn hero__btn--solid" href="#story">
+            <a className="hero__btn hero__btn--solid" href="/story">
               Read Our Story
             </a>
             <button
@@ -202,7 +202,7 @@ export function InvestorsSection() {
           </div>
         </div>
       </div>
-      <a className="btn-ghost" href="#partners">
+      <a className="btn-ghost" href="/partners">
         Partner with us →
       </a>
     </section>
@@ -228,7 +228,7 @@ export function PressSection() {
             Coverage and conversations about the system we&apos;re building.
           </p>
         </div>
-        <a className="btn-ghost-dark" href="#press">
+        <a className="btn-ghost-dark" href="/press">
           View all press →
         </a>
       </div>

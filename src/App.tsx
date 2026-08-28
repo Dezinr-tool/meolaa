@@ -1,61 +1,27 @@
-/**
- * Meolaa React homepage — photo hero on Planet Blue + prototype sections + Lenis/GSAP.
- */
-import { Preloader } from './components/Preloader'
-import { SmoothScroll } from './components/SmoothScroll'
-import { SiteNav } from './components/SiteNav'
-import { SectionErrorBoundary } from './components/SectionErrorBoundary'
-import { HomeAnimations } from './components/home/HomeAnimations'
-import {
-  FoundingSection,
-  HeroSection,
-  InvestorsSection,
-  LabSection,
-  MetricsSection,
-  LoopSection,
-  PortfolioSection,
-  PressSection,
-  VisionSection,
-} from './components/home/HomeSections'
-import { SiteFooter } from './components/home/SiteFooter'
-import './App.css'
-
-/** Temporarily hide the scroll arrow motif (float + scroll momentum). Flip to `true` to restore. */
-const SHOW_SCROLL_ARROW = false
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { HomePage } from './pages/HomePage'
+import { AboutPage } from './pages/AboutPage'
+import { StoryPage } from './pages/StoryPage'
+import { LabPage } from './pages/LabPage'
+import { PressPage } from './pages/PressPage'
+import { CareersPage } from './pages/CareersPage'
+import { PartnersPage } from './pages/PartnersPage'
+import { ContactPage } from './pages/ContactPage'
 
 function App() {
   return (
-    <>
-      {/* Outside SmoothScroll / portal target — must not block app mount */}
-      <Preloader />
-      <SmoothScroll>
-        <div className="app app--home">
-          <SiteNav />
-          {SHOW_SCROLL_ARROW ? (
-            <div id="arrow" className="arrow" aria-hidden="true">
-              <div className="arrow__float">
-                <div className="arrow__shape" />
-              </div>
-            </div>
-          ) : null}
-          <HomeAnimations />
-          <main>
-            <HeroSection />
-            <VisionSection />
-            <LoopSection />
-            <LabSection />
-            <FoundingSection />
-            <PortfolioSection />
-            <MetricsSection />
-            <InvestorsSection />
-            <SectionErrorBoundary name="Press">
-              <PressSection />
-            </SectionErrorBoundary>
-          </main>
-          <SiteFooter />
-        </div>
-      </SmoothScroll>
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/story" element={<StoryPage />} />
+        <Route path="/lab" element={<LabPage />} />
+        <Route path="/press" element={<PressPage />} />
+        <Route path="/careers" element={<CareersPage />} />
+        <Route path="/partners" element={<PartnersPage />} />
+        <Route path="/contact" element={<ContactPage />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 

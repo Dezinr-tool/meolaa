@@ -115,7 +115,7 @@ export function FoundingSection() {
               launches brands faster than traditional FMCG can move.
             </p>
             <div className="founding__actions">
-              <a className="hero__btn founding__cta" href="#story">
+              <a className="hero__btn founding__cta" href="/story">
                 Read Our Story →
               </a>
             </div>

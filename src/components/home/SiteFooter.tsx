@@ -57,17 +57,17 @@ const FOOTER_LOGO_GRADIENT = {
 const JUMP_LINKS = [
   {
     title: 'About Us',
-    href: '#story',
+    href: '/about',
     desc: 'The thesis behind an AI native brand company.',
   },
   {
     title: 'Brand Lab',
-    href: '#lab',
+    href: '/lab',
     desc: 'How the OS finds and builds every brand.',
   },
   {
     title: 'Careers',
-    href: '#careers',
+    href: '/careers',
     desc: 'Build with a small team, real ownership.',
   },
 ] as const
@@ -103,18 +103,18 @@ function FooterBody() {
 
           <div>
             <div className="site-footer__label">COMPANY</div>
-            <a href="#lab">CMI Platform</a>
-            <a href="#lab">Brand Copilot</a>
-            <a href="#brands">Our Brands</a>
-            <a href="#story">Who We Are</a>
-            <a href="#careers">Careers</a>
+            <a href="/lab">CMI Platform</a>
+            <a href="/lab">Brand Copilot</a>
+            <a href="/#brands">Our Brands</a>
+            <a href="/about">Who We Are</a>
+            <a href="/careers">Careers</a>
           </div>
 
           <div>
             <div className="site-footer__label">CONNECT</div>
-            <a href="#contact">Contact</a>
-            <a href="#press">Newsroom</a>
-            <a href="#partners">Investors &amp; Partners</a>
+            <a href="/contact">Contact</a>
+            <a href="/press">Newsroom</a>
+            <a href="/partners">Investors &amp; Partners</a>
           </div>
 
           <div>
@@ -234,7 +234,12 @@ function showCopyRevealed(el: HTMLElement) {
   el.classList.add('is-revealed')
 }
 
-export function SiteFooter() {
+type SiteFooterProps = {
+  /** Static footer for inner pages — no pin / circle reveal. */
+  simple?: boolean
+}
+
+export function SiteFooter({ simple = false }: SiteFooterProps) {
   const rootRef = useRef<HTMLElement>(null)
   const runwayRef = useRef<HTMLDivElement>(null)
   const pinRef = useRef<HTMLDivElement>(null)
@@ -255,6 +260,8 @@ export function SiteFooter() {
   }, [])
 
   useEffect(() => {
+    if (simple) return
+
     const root = rootRef.current
     const runway = runwayRef.current
     const pin = pinRef.current
@@ -448,15 +455,27 @@ export function SiteFooter() {
     }, root)
 
     return () => ctx.revert()
-  }, [reducedMotion])
+  }, [reducedMotion, simple])
 
-  const animated = !reducedMotion
+  const animated = !reducedMotion && !simple
 
   const content = (
     <div ref={contentRef} className="footer-content site-footer">
       <FooterBody />
     </div>
   )
+
+  if (simple) {
+    return (
+      <footer
+        ref={rootRef}
+        className="footer-reveal-section footer-reveal-section--static"
+        aria-label="Footer"
+      >
+        {content}
+      </footer>
+    )
+  }
 
   return (
     <footer

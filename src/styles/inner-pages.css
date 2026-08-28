@@ -1,0 +1,221 @@
+/**
+ * Inner-page overrides — editorial routes use dark nav ink from first paint
+ * and a docked (not hero-scaled) wordmark.
+ */
+.app--inner .site-nav {
+  pointer-events: auto;
+}
+
+.app--inner .site-nav.site-nav--inner,
+.app--inner .site-nav.site-nav--over-dark.site-nav--inner.is-scrolled {
+  background: color-mix(in srgb, var(--color-white, #fff) 92%, transparent);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  backdrop-filter: blur(18px) saturate(140%);
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--color-black, #000) 10%, transparent);
+}
+
+.app--inner .site-nav.site-nav--inner:not(.site-nav--over-dark) .site-nav__logo,
+.app--inner .site-nav.site-nav--inner:not(.site-nav--over-dark) .site-nav__links a,
+.app--inner .site-nav.site-nav--inner.site-nav--over-dark.is-scrolled .site-nav__logo,
+.app--inner .site-nav.site-nav--inner.site-nav--over-dark.is-scrolled .site-nav__links a {
+  color: var(--color-black, #000);
+  opacity: 1 !important;
+  text-shadow: none;
+}
+
+.app--inner .site-nav.site-nav--inner.site-nav--over-dark:not(.is-scrolled) {
+  background: transparent;
+  border-bottom: none;
+  backdrop-filter: none;
+}
+
+.app--inner .site-nav.site-nav--inner.site-nav--over-dark:not(.is-scrolled) .site-nav__logo,
+.app--inner .site-nav.site-nav--inner.site-nav--over-dark:not(.is-scrolled) .site-nav__links a {
+  color: var(--color-white, #fff);
+  text-shadow: 0 1px 12px color-mix(in srgb, #000 28%, transparent);
+}
+
+.app--inner .site-nav.site-nav--inner:not(.site-nav--over-dark) .site-nav__logo-img .meolaa-logo-mark__path,
+.app--inner .site-nav.site-nav--inner.site-nav--over-dark.is-scrolled .site-nav__logo-img .meolaa-logo-mark__path {
+  fill: var(--color-primary, #002f3a);
+}
+
+.app--inner .site-nav.site-nav--inner.site-nav--over-dark:not(.is-scrolled) .site-nav__logo-img .meolaa-logo-mark__path {
+  fill: var(--color-ecru, #f8ece4);
+}
+
+.app--inner .site-nav__logo-img {
+  position: relative;
+  width: 100%;
+  height: auto;
+  transform: none !important;
+  will-change: auto;
+}
+
+.app--inner .footer-reveal-section--static {
+  background: #000;
+}
+
+.app--inner .footer-reveal-section--static .footer-content {
+  position: relative;
+  opacity: 1;
+  clip-path: none;
+}
+
+.app--inner .footer-reveal-section--static .footer-copy-reveal {
+  clip-path: none;
+}
+
+.app--inner .footer-reveal-section--static .site-footer__mark-wrap {
+  clip-path: none;
+}
+
+.app--inner .footer-reveal-section--static .site-footer__mark-wrap.is-revealed,
+.app--inner .footer-reveal-section--static .footer-copy-reveal.is-revealed {
+  clip-path: none;
+}
+
+/* Where to next — inner page footer nav (from prototype) */
+.pg-where-next {
+  padding: 90px clamp(24px, 4vw, 64px);
+  background: #000;
+  color: #fff;
+}
+
+.pg-where-next__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 32px;
+}
+
+.pg-where-next__card {
+  border: 1px solid rgba(245, 237, 232, 0.15);
+  background: rgba(245, 237, 232, 0.05);
+  padding: 24px;
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.2s, transform 0.25s ease;
+}
+
+.pg-where-next__card:hover {
+  background: rgba(245, 237, 232, 0.1);
+  transform: translateY(-2px);
+}
+
+.pg-where-next__card .num {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: rgba(192, 138, 46, 0.8);
+}
+
+.pg-where-next__card h3 {
+  font-family: var(--serif);
+  font-size: 19px;
+  font-weight: 600;
+  margin: 12px 0 8px;
+}
+
+.pg-where-next__card p {
+  font-size: 12.5px;
+  color: rgba(245, 237, 232, 0.55);
+}
+
+/* Pillars — About page (from prototype style.css) */
+.page-editorial .fold.pillars {
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
+  background: #000;
+  color: var(--cream, #f5ede8);
+  overflow: hidden;
+  min-height: 100vh;
+}
+
+.pillars__title {
+  position: absolute;
+  top: 82px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--serif);
+  font-size: clamp(40px, 7vw, 96px);
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.9);
+  filter: blur(9px);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.pillars__track {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 32px;
+  padding: 262px 77px 120px;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.pillars__track::-webkit-scrollbar {
+  display: none;
+}
+
+.pillar-card {
+  width: 418px;
+  min-height: 509px;
+  padding: 46px 31px;
+  background: rgba(255, 255, 255, 0.05);
+  flex-shrink: 0;
+}
+
+.pillar-card img {
+  width: 159px;
+  height: 159px;
+  object-fit: cover;
+}
+
+.pillar-card .label {
+  font-family: var(--mono);
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.4);
+  margin: 40px 0 16px;
+}
+
+.pillar-card h3 {
+  font-family: var(--serif);
+  font-size: 42px;
+  font-weight: 300;
+  line-height: 1.08;
+  margin-bottom: 16px;
+}
+
+.pillar-card p:last-child {
+  font-size: 12.7px;
+  line-height: 1.55;
+  color: rgba(245, 237, 232, 0.75);
+}
+
+@media (max-width: 900px) {
+  .pg-where-next__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pillars__track {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 180px 24px 80px;
+  }
+
+  .pillar-card {
+    width: 100%;
+    min-height: 0;
+  }
+
+  .pillars__title {
+    font-size: clamp(28px, 8vw, 48px);
+    top: 100px;
+  }
+}
