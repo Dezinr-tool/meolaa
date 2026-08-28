@@ -12,6 +12,14 @@ export function initCareersLifeFlow(): () => void {
   const root = document.querySelector<HTMLElement>('[data-life-flow]')
   if (!root) return () => {}
 
+  /* Inner pages: static photo grid (inner-pages.css) — skip pin/scrub. */
+  if (document.querySelector('.app--inner')) {
+    root.classList.add('is-static')
+    return () => {
+      root.classList.remove('is-static')
+    }
+  }
+
   const pinHeight = root.querySelector<HTMLElement>('[data-life-pin-height]')
   const container = root.querySelector<HTMLElement>('[data-life-container]')
   const medias = Array.from(

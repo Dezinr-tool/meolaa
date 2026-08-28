@@ -14,22 +14,41 @@ import { initLabPlatform } from './lab'
 import { initStoryHero, initStoryRail } from './story'
 import { refreshScrollTriggers, waitForScroller } from './shared'
 
+function safeInit(name: string, init: () => () => void): () => void {
+  try {
+    return init()
+  } catch (err) {
+    console.warn(`[inner-pages] ${name} failed:`, err)
+    return () => {}
+  }
+}
+
 /** Boot all inner-page scroll animations present in the DOM. */
 export function initInnerPageAnimations(): () => void {
   const disposers: (() => void)[] = []
 
-  disposers.push(initAboutRoadmap())
-  disposers.push(initMissionVision())
-  disposers.push(initPillars())
-  disposers.push(initStoryRail())
-  disposers.push(initStoryHero())
-  disposers.push(initLabPlatform())
-  disposers.push(initCareersLifeFlow())
+  disposers.push(safeInit('aboutRoadmap', initAboutRoadmap))
+  disposers.push(safeInit('missionVision', initMissionVision))
+  disposers.push(safeInit('pillars', initPillars))
+  disposers.push(safeInit('storyRail', initStoryRail))
+  disposers.push(safeInit('storyHero', initStoryHero))
+  disposers.push(safeInit('labPlatform', initLabPlatform))
+  disposers.push(safeInit('careersLifeFlow', initCareersLifeFlow))
 
-  refreshScrollTriggers()
+  try {
+    refreshScrollTriggers()
+  } catch (err) {
+    console.warn('[inner-pages] ScrollTrigger refresh failed:', err)
+  }
 
   return () => {
-    disposers.forEach((dispose) => dispose())
+    disposers.forEach((dispose) => {
+      try {
+        dispose()
+      } catch (err) {
+        console.warn('[inner-pages] animation cleanup failed:', err)
+      }
+    })
   }
 }
 

@@ -18,18 +18,25 @@ export function useRevealOnScroll(
       return
     }
 
+    const reveal = (el: HTMLElement) => el.classList.add('is-in')
+
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('is-in')
-          }
+          if (entry.isIntersecting) reveal(entry.target as HTMLElement)
         })
       },
-      { root: null, threshold: 0.15, rootMargin: '0px 0px -8% 0px' },
+      { root: null, threshold: 0.08, rootMargin: '0px 0px -4% 0px' },
     )
 
-    items.forEach((el) => io.observe(el))
+    items.forEach((el) => {
+      const rect = el.getBoundingClientRect()
+      if (rect.top < window.innerHeight * 0.92 && rect.bottom > 0) {
+        reveal(el)
+      } else {
+        io.observe(el)
+      }
+    })
     return () => io.disconnect()
   }, [rootRef, selector])
 }

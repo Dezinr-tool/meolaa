@@ -239,6 +239,14 @@ export function initMissionVision(): () => void {
   const root = document.querySelector<HTMLElement>('[data-mv-scroll], .au2-mv')
   if (!root) return () => {}
 
+  /* Inner pages use stacked static panels (inner-pages.css) — skip pin/scrub. */
+  if (document.querySelector('.app--inner')) {
+    root.classList.add('is-static')
+    return () => {
+      root.classList.remove('is-static')
+    }
+  }
+
   const pin = root.querySelector<HTMLElement>('[data-mv-pin]')
   const frame = root.querySelector<HTMLElement>('[data-mv-frame]')
   const thesis = root.querySelector<HTMLElement>('[data-mv-thesis]')
@@ -481,7 +489,9 @@ export function initMissionVision(): () => void {
 
 export function initPillars(): () => void {
   const pillars = document.querySelector<HTMLElement>('[data-section="pillars"]')
-  if (!pillars || prefersReducedMotion()) return () => {}
+  if (!pillars || prefersReducedMotion() || document.querySelector('.app--inner')) {
+    return () => {}
+  }
 
   const pillarsTitle = pillars.querySelector<HTMLElement>('.pillars__title')
   const pillarCards = gsap.utils.toArray<HTMLElement>(

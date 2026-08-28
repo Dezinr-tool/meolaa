@@ -283,14 +283,59 @@
 
 .app--inner .pillars__title {
   color: color-mix(in srgb, var(--color-ecru) 92%, transparent);
-  filter: blur(8px);
+  font-family: var(--font-display);
+  font-size: clamp(28px, 4.5vw, 52px);
+  font-weight: var(--fw-medium);
+  letter-spacing: 0.06em;
+  text-align: center;
+  text-transform: uppercase;
+  margin: 0 0 clamp(40px, 6vh, 64px);
+  filter: none;
+  opacity: 1;
+}
+
+.app--inner .fold.pillars {
+  min-height: auto;
+  padding: clamp(80px, 11vh, 120px) clamp(24px, 4vw, 64px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.app--inner .pillars__track {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(16px, 2.5vw, 28px);
+  width: min(1280px, 100%);
 }
 
 .app--inner .pillar-card {
   background: color-mix(in srgb, var(--color-white) 6%, transparent);
   border: 1px solid color-mix(in srgb, var(--color-ecru) 12%, transparent);
   border-radius: var(--radius-card);
+  padding: clamp(18px, 2vw, 24px);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  opacity: 1;
+  transform: none;
   transition: transform 0.25s ease, background 0.25s ease;
+}
+
+.app--inner .pillar-card h3 {
+  font-family: var(--font-display);
+  font-size: clamp(1.15rem, 2vw, 1.45rem);
+  font-weight: var(--fw-medium);
+  line-height: 1.15;
+  margin: 0;
+  color: var(--color-ecru);
+}
+
+.app--inner .pillar-card p:not(.label) {
+  margin: 0;
+  font-size: var(--text-sm);
+  line-height: 1.55;
+  color: color-mix(in srgb, var(--color-ecru) 72%, transparent);
 }
 
 .app--inner .pillar-card:hover {
@@ -658,19 +703,126 @@
     grid-template-columns: 1fr;
   }
 
-  .pillars__track {
-    flex-direction: column;
-    align-items: stretch;
-    padding: 180px 24px 80px;
+  .app--inner .pillars__track {
+    grid-template-columns: 1fr;
   }
+}
 
-  .pillar-card {
-    width: 100%;
-    min-height: 0;
-  }
+/* ——— Readability: static editorial layout (no scroll-hide) ——— */
 
-  .pillars__title {
-    font-size: clamp(28px, 8vw, 48px);
-    top: 100px;
+.app--inner .press-reveal,
+.app--inner .how-work__fn {
+  opacity: 1;
+  transform: none;
+}
+
+/* Mission / Vision — stacked panels, always readable on inner pages */
+.app--inner .au2-mv {
+  padding: clamp(56px, 8vh, 88px) 0;
+}
+
+.app--inner .au2-mv__pin {
+  min-height: 0;
+  height: auto !important;
+  overflow: visible;
+}
+
+.app--inner .au2-mv__thesis {
+  position: relative;
+  inset: auto;
+  padding: 0 clamp(24px, 4vw, 64px) clamp(48px, 7vh, 72px);
+}
+
+.app--inner .au2-mv__frame {
+  display: none;
+}
+
+.app--inner .au2-mv__strip {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  width: 100%;
+  min-height: 0;
+  height: auto;
+  pointer-events: auto;
+}
+
+.app--inner .au2-mv__panel {
+  position: relative;
+  inset: auto;
+  flex: none;
+  width: 100%;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 0 clamp(24px, 4vw, 64px);
+  gap: 28px;
+  pointer-events: auto;
+}
+
+.app--inner .au2-mv__panel + .au2-mv__panel {
+  margin-top: clamp(56px, 8vh, 88px);
+}
+
+.app--inner .au2-mv__panel-media {
+  display: block;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  aspect-ratio: 4 / 3;
+}
+
+.app--inner .au2-mv__panel-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.app--inner .au2-mv__panel-text {
+  max-width: 520px;
+  margin: 0 !important;
+}
+
+.app--inner .au2-mv__panel-text [data-mv-fade] {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+.app--inner .au2-mv__panel[data-mv-panel="mission"] {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Careers life flow — static grid when scroll animation is off */
+.app--inner .ct-life.is-static .ct-life__pin-height {
+  height: auto !important;
+}
+
+.app--inner .ct-life.is-static .ct-life__container {
+  position: relative !important;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(12px, 2vw, 20px);
+  padding: clamp(24px, 4vw, 48px);
+}
+
+.app--inner .ct-life.is-static .ct-life__media {
+  position: relative !important;
+  inset: auto !important;
+  width: 100% !important;
+  height: auto !important;
+  transform: none !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  border-radius: var(--radius-sharp);
+  object-fit: cover;
+}
+
+.app--inner .ct-life.is-static .ct-life__media--tall {
+  grid-row: span 2;
+}
+
+@media (max-width: 900px) {
+  .app--inner .ct-life.is-static .ct-life__container {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
