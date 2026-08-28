@@ -63,22 +63,19 @@ export function VisionSection() {
   return (
     <section className="fold vision" data-section="vision">
       <div className="vision__stage">
-        <figure className="vision__media" data-vision-media>
-          <img
-            src="/assets/pages/about-vision-team.jpg"
-            alt="Meolaa team collaborating in the studio"
-            width={960}
-            height={600}
-            loading="lazy"
-            decoding="async"
-          />
-        </figure>
+        <div className="vision__video-wrap">
+          <div className="vision__video" data-video-box>
+            <video muted loop playsInline poster="/assets/imgImage234.png">
+              <source
+                src="/videos/Sales-Marketing_s-Video-Jun-30-2026-2.mp4"
+                type="video/mp4"
+              />
+            </video>
+          </div>
+        </div>
         <div className="vision__copy">
           <p className="vision__eyebrow section-head__eyebrow">Meolaa</p>
           <div className="vision__headline-stack">
-            <p className="vision__lede" data-vision-line="lede">
-              Every category has an unmet need.
-            </p>
             <h2 className="vision__headline">
               <span data-vision-line="primary">
                 We find it, build for it, and run it
@@ -91,10 +88,6 @@ export function VisionSection() {
               </span>
             </h2>
           </div>
-        </div>
-        <div className="vision__scroll" aria-hidden="true">
-          <span className="vision__scroll-line" />
-          <span className="vision__scroll-label">Scroll down</span>
         </div>
       </div>
     </section>

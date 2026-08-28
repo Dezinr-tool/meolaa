@@ -1,5 +1,5 @@
 /**
- * Site footer — white pre-stage (matches Press), Planet Blue circle expand
+ * Site footer — white pre-stage (matches Press), black circle expand
  * (GSAP pin + scrub), jump rows → column grid → legal → liquid-fill MEOLAA.
  * Lenis sync via SmoothScroll (ScrollTrigger.update only; no scrollerProxy).
  *
@@ -13,10 +13,9 @@ import {
   MeolaaLogoMark,
 } from '../brand/MeolaaLogoMark'
 import { gsap, ScrollTrigger } from '../../lib/motion'
-import { colors } from '../../lib/brand'
 import './SiteFooter.css'
 
-const PRIMARY = colors.planetBlue
+const PRIMARY = '#000000'
 /** Expand only once footer owns the fold — avoids covering Press. */
 const REVEAL_START = 'top top'
 /** Pin when footer is flush; longer travel so the disc expands more slowly. */
@@ -49,7 +48,7 @@ const CLIP_HIDDEN = 'inset(100% 0 0 0)'
 const CLIP_VISIBLE = 'inset(0% 0 -2px 0)'
 const CONTENT_MASK_END = CONTENT_MASK_AT + CONTENT_MASK_DUR
 
-/** Mostly white → soft fade so MEOLAA stays readable on the Planet Blue footer. */
+/** Mostly white → soft fade so MEOLAA stays readable on the black footer. */
 const FOOTER_LOGO_GRADIENT = {
   id: 'footer-meolaa-fill',
   top: '#ffffff',
@@ -167,16 +166,6 @@ function FooterBody() {
       </div>
 
       <div className="site-footer__mark-wrap">
-        {/* Glow-only full-bleed band; SVG wordmark overlays bottom/horizon. */}
-        <img
-          className="site-footer__aurora"
-          src="/assets/footer-mark-hero.png"
-          alt=""
-          aria-hidden="true"
-          width={1844}
-          height={853}
-          decoding="async"
-        />
         <MeolaaLogoMark
           className="site-footer__wordmark"
           viewBox={MEOLAA_MARK_VIEWBOX_TIGHT}

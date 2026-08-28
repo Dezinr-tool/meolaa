@@ -270,11 +270,12 @@ html {
 }
 
 /*
- * Vision fold 2 — Agilitas-style: centered image, eyebrow, headline stack,
- * scroll cue. Warm ecru ground; no pin/scrub video expand.
+ * Vision fold 2 — video above copy on ecru, then pin/scrub full-bleed expand.
+ * Eyebrow + headline stack below; scroll cue at bottom.
  */
 .vision {
-  --vision-media-w: min(42rem, 78vw);
+  --vision-media-w: min(40rem, 72vw);
+  --vision-media-h: clamp(8rem, 34vh, 21rem);
   background: var(--color-vision-bg, var(--color-ecru, #f8ece4));
   color: var(--color-black, #000);
   overflow: hidden;
@@ -286,7 +287,7 @@ html {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: clamp(1.75rem, 4.5vh, 3rem);
+  gap: clamp(2rem, 5vh, 3.25rem);
   padding: clamp(5rem, 11vh, 7rem) var(--pad-x) clamp(4.5rem, 10vh, 6rem);
   height: 100%;
   min-height: 0;
@@ -294,20 +295,39 @@ html {
   overflow: hidden;
 }
 
-.vision__media {
+.vision__video-wrap {
+  position: relative;
+  inset: auto;
   flex: 0 0 auto;
-  width: var(--vision-media-w);
-  max-height: min(38vh, 22rem);
-  margin: 0;
-  overflow: hidden;
-  aspect-ratio: 16 / 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: var(--vision-media-w);
+  padding: 0;
+  pointer-events: none;
+  z-index: 1;
 }
 
-.vision__media img {
+.vision__video {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  width: 100%;
+  height: var(--vision-media-h);
+  max-height: 40vh;
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--color-planet-blue, #002f3a);
+  will-change: width, height, border-radius;
+  pointer-events: auto;
+}
+
+.vision__video video {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center;
+  object-position: center 40%;
   display: block;
 }
 
@@ -342,17 +362,6 @@ html {
   gap: clamp(0.55rem, 1.4vh, 0.9rem);
 }
 
-.vision__lede {
-  margin: 0;
-  font-family: var(--font-display, var(--serif));
-  font-size: clamp(0.9375rem, 1.6vw, 1.125rem);
-  font-weight: var(--fw-regular, 400);
-  line-height: 1.35;
-  letter-spacing: var(--tracking-body, 0.01em);
-  color: rgba(0, 0, 0, 0.52);
-  text-wrap: balance;
-}
-
 .vision__headline {
   margin: 0;
   display: flex;
@@ -368,7 +377,15 @@ html {
   line-height: 1.06;
   letter-spacing: var(--tracking-display);
   color: var(--color-black, #000);
-  text-wrap: balance;
+  flex-shrink: 0;
+  min-width: min-content;
+}
+
+@media (min-width: 1280px) {
+  .vision__headline span {
+    white-space: nowrap;
+    text-wrap: nowrap;
+  }
 }
 
 .vision__headline-line--faded {
@@ -389,36 +406,10 @@ html {
   white-space: nowrap;
 }
 
-.vision__scroll {
-  position: absolute;
-  left: 50%;
-  bottom: clamp(1.25rem, 3.5vh, 2.25rem);
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.6rem;
-  z-index: 2;
-}
-
-.vision__scroll-line {
-  display: block;
-  width: 1px;
-  height: clamp(2.25rem, 5.5vh, 3.5rem);
-  background: var(--color-planet-blue, #002f3a);
-}
-
-.vision__scroll-label {
-  font-family: var(--font-mono, var(--mono));
-  font-size: var(--text-xs, 0.8125rem);
-  letter-spacing: 0.06em;
-  color: rgba(0, 0, 0, 0.42);
-  text-transform: none;
-}
-
 @media (max-width: 720px) {
   .vision {
     --vision-media-w: min(100%, 88vw);
+    --vision-media-h: clamp(7rem, 30vh, 14rem);
   }
 
   .vision__stage {
@@ -427,8 +418,8 @@ html {
     padding-bottom: clamp(3.75rem, 9vh, 5rem);
   }
 
-  .vision__media {
-    max-height: min(32vh, 14rem);
+  .vision__video {
+    max-height: 32vh;
   }
 
   .vision__headline span {
