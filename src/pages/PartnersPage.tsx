@@ -2,6 +2,8 @@ import { useRef, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { PageLayout } from '../components/layout/PageLayout'
 import { WhereNextSection } from '../components/layout/WhereNextSection'
+import { InnerSectionHero } from '../components/layout/InnerSectionHero'
+import { InnerPageSectionHead } from '../components/layout/InnerPageSectionHead'
 import { useRevealOnScroll } from '../hooks/useRevealOnScroll'
 
 const INVESTOR_LOGOS = [
@@ -115,59 +117,44 @@ export function PartnersPage() {
   return (
     <PageLayout pageClass="page-editorial" navOverDark>
       <div ref={rootRef}>
-        <header className="ct-hero" aria-label="Partners and Investors">
-          <img
-            className="ct-hero__bg"
-            src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=2400&h=1600&q=80"
-            alt=""
-            aria-hidden="true"
-          />
-          <div className="ct-hero__shade" aria-hidden="true" />
-          <div className="ct-hero__inner">
-            <p className="pg-eyebrow pg-eyebrow--light">FOUNDED 2022 · PARTNERS</p>
-            <h1 className="pg-display ct-hero__title">
+        <InnerSectionHero
+          eyebrow="Founded 2022 · Partners"
+          title={
+            <>
               Backing a system,
               <br />
               not a single bet.
-            </h1>
-            <p className="pg-body ct-hero__body">
-              Meolaa is capitalised to build a portfolio, and structured so every
-              partner — investor, manufacturer, retailer — plugs into the same
-              operating layer that runs it.
-            </p>
-            <div className="pt-stats">
-              <div className="pt-stat">
-                <p className="pt-stat__fig">$6M</p>
-                <p className="pt-stat__label">RAISED TO DATE</p>
-              </div>
-              <div className="pt-stat">
-                <p className="pt-stat__fig">4</p>
-                <p className="pt-stat__label">INSTITUTIONAL BACKERS</p>
-              </div>
-              <div className="pt-stat">
-                <p className="pt-stat__fig">3</p>
-                <p className="pt-stat__label">PARTNERSHIP ROUTES</p>
-              </div>
+            </>
+          }
+          body="Meolaa is capitalised to build a portfolio, and structured so every partner — investor, manufacturer, retailer — plugs into the same operating layer that runs it."
+          imageSrc="/assets/pages/partners-hero.jpg"
+          ctas={[
+            { label: 'Meet the investors', href: '#investors', variant: 'solid' },
+            { label: 'Investor updates', href: '#updates' },
+          ]}
+        >
+          <div className="pt-stats">
+            <div className="pt-stat">
+              <p className="pt-stat__fig">$6M</p>
+              <p className="pt-stat__label">RAISED TO DATE</p>
             </div>
-            <div className="ct-hero__ctas">
-              <a className="ct-btn ct-btn--solid" href="#investors">
-                Meet the investors
-              </a>
-              <a className="ct-btn" href="#updates">
-                Investor updates
-              </a>
+            <div className="pt-stat">
+              <p className="pt-stat__fig">4</p>
+              <p className="pt-stat__label">INSTITUTIONAL BACKERS</p>
+            </div>
+            <div className="pt-stat">
+              <p className="pt-stat__fig">3</p>
+              <p className="pt-stat__label">PARTNERSHIP ROUTES</p>
             </div>
           </div>
-          <p className="ct-hero__cue">SCROLL</p>
-        </header>
+        </InnerSectionHero>
 
         <section className="pt-investors" id="investors">
-          <p className="pg-eyebrow pg-eyebrow--dark">INVESTORS</p>
-          <h2 className="ct-section-title">Capital that understands the model.</h2>
-          <p className="ct-section-lede">
-            Institutional funds and operators who have built consumer companies
-            before, and who back the system rather than any one launch.
-          </p>
+          <InnerPageSectionHead
+            eyebrow="Investors"
+            title="Capital that understands the model."
+            sub="Institutional funds and operators who have built consumer companies before, and who back the system rather than any one launch."
+          />
           <div className="pt-logo-grid">
             {INVESTOR_LOGOS.map((logo) => (
               <div key={logo.alt} className="pt-logo">

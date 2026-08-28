@@ -1,7 +1,8 @@
 import { useRef } from 'react'
-import { Link } from 'react-router-dom'
 import { PageLayout } from '../components/layout/PageLayout'
 import { WhereNextSection } from '../components/layout/WhereNextSection'
+import { InnerSectionHero } from '../components/layout/InnerSectionHero'
+import { InnerPageSectionHead } from '../components/layout/InnerPageSectionHead'
 import { useRevealOnScroll } from '../hooks/useRevealOnScroll'
 
 const RELEASES = [
@@ -132,43 +133,27 @@ export function PressPage() {
   return (
     <PageLayout pageClass="page-editorial" navOverDark>
       <div ref={rootRef}>
-        <section className="press-hero ct-hero" aria-label="Press and Media">
-          <img
-            className="ct-hero__bg"
-            src="/assets/pages/story-system-hero.jpg"
-            alt=""
-            aria-hidden="true"
-          />
-          <div className="ct-hero__shade" aria-hidden="true" />
-          <div className="ct-hero__inner press-hero__inner">
-            <nav className="press-hero__crumb" aria-label="Breadcrumb">
-              <Link to="/">Home</Link>
-              <span aria-hidden="true">/</span>
-              <span>Press &amp; Media</span>
-            </nav>
-            <p className="pg-eyebrow pg-eyebrow--light">LATEST RELEASE · JAN 12, 2026</p>
-            <p className="press-hero__label">PRESS &amp; MEDIA</p>
-            <h1 className="pg-display ct-hero__title">
+        <InnerSectionHero
+          eyebrow="Latest Release · Jan 12, 2026"
+          title={
+            <>
               News, coverage
               <br />
               and brand assets.
-            </h1>
-            <p className="pg-body ct-hero__body">
-              A single hub for journalists and stakeholders — funding announcements,
-              brand coverage and downloadable media resources, ordered for fast
-              scanning.
-            </p>
-            <div className="ct-hero__ctas">
-              <a className="ct-btn ct-btn--solid" href="#releases">
-                Browse releases
-              </a>
-              <a className="ct-btn" href="#media-kit">
-                Download media kit
-              </a>
-            </div>
-          </div>
-          <p className="ct-hero__cue">SCROLL</p>
-        </section>
+            </>
+          }
+          body="A single hub for journalists and stakeholders — funding announcements, brand coverage and downloadable media resources, ordered for fast scanning."
+          imageSrc="/assets/pages/press-hero.jpg"
+          breadcrumb={[
+            { label: 'Home', to: '/' },
+            { label: 'Press & Media' },
+          ]}
+          ctas={[
+            { label: 'Browse releases', href: '#releases', variant: 'solid' },
+            { label: 'Download media kit', href: '#media-kit' },
+          ]}
+          className="press-hero"
+        />
 
         <section className="press-featured press-reveal" aria-labelledby="press-featured-title">
           <div className="press-featured__flag">
@@ -202,14 +187,11 @@ export function PressPage() {
         </section>
 
         <section className="press-releases" id="releases">
-          <p className="pg-eyebrow pg-eyebrow--dark">ALL RELEASES</p>
-          <h2 className="pg-h2" style={{ marginTop: 16 }}>
-            Every announcement, chronologically.
-          </h2>
-          <p className="pg-body" style={{ marginTop: 12, maxWidth: '42em' }}>
-            Filter by category. Newest first. Filter state stays in the URL so you
-            can share a view.
-          </p>
+          <InnerPageSectionHead
+            eyebrow="All Releases"
+            title="Every announcement, chronologically."
+            sub="Filter by category. Newest first. Filter state stays in the URL so you can share a view."
+          />
           <div className="press-filters" role="group" aria-label="Filter releases">
             <span className="press-filters__label">Filter</span>
             <button type="button" className="press-chip is-active">

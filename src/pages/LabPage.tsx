@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { PageLayout } from '../components/layout/PageLayout'
 import { WhereNextSection } from '../components/layout/WhereNextSection'
+import { InnerPageSectionHead } from '../components/layout/InnerPageSectionHead'
 
 const OS_STAGES = [
   {
@@ -33,8 +34,7 @@ const CAP_MODULES = [
     eyebrow: 'Capability 01',
     title: 'Reading demand',
     body: 'Consumer signals, whitespace and demand patterns scored into a single opportunity read.',
-    image:
-      'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1400&h=1800&q=80',
+    image: '/assets/lab-reading-demand.png',
   },
   {
     num: '02',
@@ -42,8 +42,7 @@ const CAP_MODULES = [
     eyebrow: 'Capability 02',
     title: 'Product & brand',
     body: 'Formulation, packaging, identity and launch assets assembled by the build system.',
-    image:
-      'https://images.unsplash.com/photo-1571781926291-c477ebfd024b?auto=format&fit=crop&w=1400&h=1800&q=80',
+    image: '/assets/lab-product-brand.png',
   },
   {
     num: '03',
@@ -51,8 +50,7 @@ const CAP_MODULES = [
     eyebrow: 'Capability 03',
     title: 'Go-to-market',
     body: 'Content, channels and campaigns orchestrated from one operating layer.',
-    image:
-      'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1400&h=1800&q=80',
+    image: '/assets/lab-go-to-market.png',
   },
   {
     num: '04',
@@ -60,8 +58,7 @@ const CAP_MODULES = [
     eyebrow: 'Capability 04',
     title: 'Distribution & ops',
     body: 'Inventory, fulfilment and performance loops kept running after launch.',
-    image:
-      'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1400&h=1800&q=80',
+    image: '/assets/lab-distribution-ops.png',
   },
 ] as const
 
@@ -125,10 +122,7 @@ export function LabPage() {
       <header className="lab-hero">
         <div className="lab-hero__field" aria-hidden="true">
           <div className="lab-hero__plate">
-            <img
-              src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=2400&h=1600&q=80"
-              alt=""
-            />
+            <img src="/assets/pages/lab-hero.jpg" alt="" />
           </div>
           <div className="lab-hero__veil" />
           <div className="lab-hero__scan" />
@@ -165,16 +159,22 @@ export function LabPage() {
 
       <section className="lab-intro">
         <div className="lab-intro__inner">
-          <p className="pg-eyebrow pg-eyebrow--dark">THE SYSTEM</p>
-          <h2 className="lab-intro__headline">
-            Most companies treat insight, product and distribution as three
-            handoffs. We treat them as one system.
-          </h2>
-          <p className="lab-intro__frame">
-            Meolaa Lab is the AI and data-science engine that finds whitespace,
-            builds brands and keeps them running — a single loop where every live
-            signal feeds the next decision.
-          </p>
+          <InnerPageSectionHead
+            eyebrow="The System"
+            title={
+              <>
+                Most companies treat insight, product and distribution as three
+                handoffs. We treat them as one system.
+              </>
+            }
+            sub={
+              <>
+                Meolaa Lab is the AI and data-science engine that finds whitespace,
+                builds brands and keeps them running — a single loop where every live
+                signal feeds the next decision.
+              </>
+            }
+          />
           <div className="lab-intro__stats">
             <div>
               <p className="lab-stat__num">120+</p>
@@ -202,14 +202,14 @@ export function LabPage() {
 
       <section className="lab-os">
         <div className="lab-os__inner">
-          <header className="lab-os__head">
-            <p className="pg-eyebrow pg-eyebrow--light">THE THREE-STAGE OS</p>
-            <h2 className="lab-os__title">Signal. Build. Run.</h2>
-            <p className="lab-os__support">
-              Three connected stages — each feeds the next, and live brand
-              performance loops back into the signal layer.
-            </p>
-          </header>
+          <InnerPageSectionHead
+            eyebrow="The Three-Stage OS"
+            title="Signal. Build. Run."
+            sub="Three connected stages — each feeds the next, and live brand performance loops back into the signal layer."
+            tone="on-dark"
+            align="center"
+            className="lab-os__head"
+          />
           <div className="lab-os__tri" aria-hidden="true">
             <svg className="lab-os__svg" viewBox="0 0 200 200">
               <polygon className="lab-os__track" points="100,20 180,160 20,160" />
@@ -248,14 +248,12 @@ export function LabPage() {
       <section className="lab-caps">
         <div className="lab-caps__sticky">
           <div className="lab-caps__copy">
-            <p className="pg-eyebrow pg-eyebrow--light">CAPABILITY MODULES</p>
-            <h2 className="lab-caps__title">
-              Four capabilities. One continuous loop.
-            </h2>
-            <p className="lab-caps__lede">
-              From reading demand to keeping brands running — each stage feeds
-              the next and loops back through live performance data.
-            </p>
+            <InnerPageSectionHead
+              eyebrow="Capability Modules"
+              title="Four capabilities. One continuous loop."
+              sub="From reading demand to keeping brands running — each stage feeds the next and loops back through live performance data."
+              tone="on-dark"
+            />
             <div className="lab-caps__index">
               {CAP_MODULES.map((mod, i) => (
                 <button
@@ -302,16 +300,11 @@ export function LabPage() {
 
       <section className="lab-tech">
         <div className="lab-tech__inner">
-          <header className="lab-tech__head">
-            <p className="pg-eyebrow pg-eyebrow--dark">TECHNOLOGY INDEX</p>
-            <h2 className="lab-tech__title">
-              What&apos;s actually running under the hood.
-            </h2>
-            <p className="lab-tech__lede">
-              Four layers that turn consumer signal into shipping brands — and
-              route performance back into the next read.
-            </p>
-          </header>
+          <InnerPageSectionHead
+            eyebrow="Technology Index"
+            title="What's actually running under the hood."
+            sub="Four layers that turn consumer signal into shipping brands — and route performance back into the next read."
+          />
           <div className="lab-tech__bento">
             {TECH_CARDS.map((card, i) => (
               <article
@@ -328,16 +321,15 @@ export function LabPage() {
 
       <section className="lab-case">
         <div className="lab-case__inner">
-          <p className="pg-eyebrow pg-eyebrow--dark">CASE EXAMPLE — HIRA</p>
-          <h2 className="lab-case__title">One brand, run through every stage.</h2>
-          <p className="lab-case__lede">
-            HIRA is Meolaa&apos;s first brand — built end-to-end on the platform.
-            Here&apos;s the input and output at each stage.
-          </p>
+          <InnerPageSectionHead
+            eyebrow="Case Example — HIRA"
+            title="One brand, run through every stage."
+            sub="HIRA is Meolaa's first brand — built end-to-end on the platform. Here's the input and output at each stage."
+          />
           <div className="lab-case__layout">
             <figure className="lab-case__media">
               <img
-                src="https://images.unsplash.com/photo-1571781926291-c477ebfd024b?auto=format&fit=crop&w=1200&h=900&q=80"
+                src="/assets/portfolio-hira.jpg"
                 alt="HIRA brand"
                 loading="lazy"
               />

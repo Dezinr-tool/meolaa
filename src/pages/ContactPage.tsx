@@ -1,5 +1,6 @@
 import { type FormEvent } from 'react'
 import { PageLayout } from '../components/layout/PageLayout'
+import { InnerPageSectionHead } from '../components/layout/InnerPageSectionHead'
 
 const CHANNELS = [
   {
@@ -30,19 +31,21 @@ function onContactSubmit(e: FormEvent<HTMLFormElement>) {
 
 export function ContactPage() {
   return (
-    <PageLayout pageClass="page-editorial">
+    <PageLayout pageClass="page-editorial" navOverDark>
       <header className="ed-hero ed-hero--light" id="contact">
         <div className="ed-rise ed-rise--bleed" aria-hidden="true">
-          <img src="/assets/imgImage234.png" alt="" />
+          <img src="/assets/pages/contact-hero.jpg" alt="" />
         </div>
         <div className="ed-veil ed-veil--hero" aria-hidden="true" />
         <div className="ed-hero__content">
-          <p className="pg-eyebrow pg-eyebrow--light">Contact</p>
-          <h1 className="pg-display">Get in touch.</h1>
-          <p className="pg-body pg-body--light">
-            Whether you&apos;re exploring a partnership, covering our story or
-            looking to join the team — we&apos;d like to hear from you.
-          </p>
+          <div className="section-head section-head--start">
+            <p className="section-head__eyebrow">Contact</p>
+            <h1 className="section-head__title pg-display">Get in touch.</h1>
+            <p className="section-head__sub pg-body--light">
+              Whether you&apos;re exploring a partnership, covering our story or
+              looking to join the team — we&apos;d like to hear from you.
+            </p>
+          </div>
           <nav className="ed-hero__anchors" aria-label="Contact channels">
             {CHANNELS.map((ch) => (
               <a key={ch.email} href={`mailto:${ch.email}`}>
@@ -54,11 +57,11 @@ export function ContactPage() {
       </header>
 
       <section className="pt-form-sec">
-        <p className="pg-eyebrow pg-eyebrow--dark">Write to us</p>
-        <h2 className="ct-section-title">Send a message</h2>
-        <p className="ct-section-lede">
-          Fill out the form and we&apos;ll route your note to the right team.
-        </p>
+        <InnerPageSectionHead
+          eyebrow="Write to us"
+          title="Send a message"
+          sub="Fill out the form and we'll route your note to the right team."
+        />
         <form className="pt-form" onSubmit={onContactSubmit} noValidate>
           <div className="pt-field">
             <label htmlFor="contact-name">Name</label>
@@ -94,7 +97,7 @@ export function ContactPage() {
             <label htmlFor="contact-message">Message</label>
             <textarea id="contact-message" name="message" rows={5} required />
           </div>
-          <button type="submit" className="ct-btn ct-btn--dark pt-form__submit">
+          <button type="submit" className="btn btn--solid-dark pt-form__submit">
             Send message
           </button>
           <p className="pt-form__note">
@@ -107,10 +110,10 @@ export function ContactPage() {
         className="press-contact"
         style={{ borderTop: '1px solid rgba(0,0,0,0.08)' }}
       >
-        <p className="pg-eyebrow pg-eyebrow--dark">Direct lines</p>
-        <h2 className="pg-h2" style={{ marginTop: 16 }}>
-          Or email us directly
-        </h2>
+        <InnerPageSectionHead
+          eyebrow="Direct lines"
+          title="Or email us directly"
+        />
         <div
           className="press-contact__grid"
           style={{ gridTemplateColumns: '1fr', gap: 32 }}

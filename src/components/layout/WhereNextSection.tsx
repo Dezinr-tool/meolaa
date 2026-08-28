@@ -14,7 +14,7 @@ type WhereNextSectionProps = {
 export function WhereNextSection({ links }: WhereNextSectionProps) {
   return (
     <section className="pg-where-next">
-      <p className="pg-eyebrow pg-eyebrow--light">WHERE TO NEXT</p>
+      <p className="section-head__eyebrow">Where to Next</p>
       <div className="pg-where-next__grid">
         {links.map((link) => (
           <Link key={link.to} className="pg-where-next__card" to={link.to}>

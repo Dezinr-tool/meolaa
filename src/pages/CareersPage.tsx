@@ -1,6 +1,8 @@
 import { useRef, type FormEvent } from 'react'
 import { PageLayout } from '../components/layout/PageLayout'
 import { WhereNextSection } from '../components/layout/WhereNextSection'
+import { InnerSectionHero } from '../components/layout/InnerSectionHero'
+import { InnerPageSectionHead } from '../components/layout/InnerPageSectionHead'
 import { useRevealOnScroll } from '../hooks/useRevealOnScroll'
 
 const ROLES = [
@@ -128,32 +130,32 @@ const BENEFITS = [
 
 const LIFE_IMAGES = [
   {
-    src: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&h=1100&q=80',
+    src: '/assets/culture/culture-01.jpg',
     alt: 'Team member in a focused studio portrait',
     tall: true,
   },
   {
-    src: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1000&h=700&q=80',
+    src: '/assets/culture/culture-02.jpg',
     alt: 'Team collaborating around a shared workspace',
     tall: false,
   },
   {
-    src: 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&w=900&h=600&q=80',
-    alt: 'Abstract crystalline structure suggesting signal and intelligence',
+    src: '/assets/culture/culture-03.jpg',
+    alt: 'Product development in progress',
     tall: false,
   },
   {
-    src: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=800&h=1100&q=80',
+    src: '/assets/culture/culture-04.jpg',
     alt: 'Portrait of a Meolaa operator',
     tall: true,
   },
   {
-    src: 'https://images.unsplash.com/photo-1542744171-b4e234bfc71c?auto=format&fit=crop&w=1000&h=700&q=80',
+    src: '/assets/culture/culture-05.jpg',
     alt: 'Operators at work in the studio',
     tall: false,
   },
   {
-    src: '/assets/team/team-01.jpg',
+    src: '/assets/culture/culture-06.jpg',
     alt: 'Team at work',
     tall: true,
   },
@@ -196,44 +198,25 @@ export function CareersPage() {
   return (
     <PageLayout pageClass="page-editorial" navOverDark>
       <div ref={rootRef}>
-        <header className="ct-hero" aria-label="Careers">
-          <img
-            className="ct-hero__bg"
-            src="/assets/pages/about-hero.jpg"
-            alt=""
-            aria-hidden="true"
-          />
-          <div className="ct-hero__shade" aria-hidden="true" />
-          <div className="ct-hero__inner">
-            <p className="pg-eyebrow pg-eyebrow--light">CAREERS</p>
-            <h1 className="pg-display ct-hero__title">Small team. Whole brands.</h1>
-            <p className="pg-body ct-hero__body">
-              Meolaa is built so one person can own something end to end — read
-              the signal, build the brand, run the launch. If that&apos;s the job
-              you&apos;ve been waiting for, it exists here.
-            </p>
-            <div className="ct-hero__ctas">
-              <a className="ct-btn ct-btn--solid" href="#roles">
-                View open roles
-              </a>
-              <a className="ct-btn" href="#team">
-                Meet the team
-              </a>
-            </div>
-          </div>
-          <p className="ct-hero__cue">SCROLL</p>
-        </header>
+        <InnerSectionHero
+          eyebrow="Careers"
+          title="Small team. Whole brands."
+          body="Meolaa is built so one person can own something end to end — read the signal, build the brand, run the launch. If that's the job you've been waiting for, it exists here."
+          imageSrc="/assets/pages/careers-hero.jpg"
+          ctas={[
+            { label: 'View open roles', href: '#roles', variant: 'solid' },
+            { label: 'Meet the team', href: '#team' },
+          ]}
+        />
 
         <section className="how-work">
           <div className="how-work__layout">
-            <div className="how-work__intro">
-              <p className="pg-eyebrow pg-eyebrow--dark">HOW WE WORK</p>
-              <h2 className="how-work__title">Three functions, one data layer.</h2>
-              <p className="how-work__lede">
-                Everyone joins one of three groups. All three read from the same
-                system, which is why a team this size can run a portfolio.
-              </p>
-            </div>
+            <InnerPageSectionHead
+              eyebrow="How We Work"
+              title="Three functions, one data layer."
+              sub="Everyone joins one of three groups. All three read from the same system, which is why a team this size can run a portfolio."
+              className="how-work__intro"
+            />
             <div className="how-work__rail">
               {FUNCTIONS.map((fn) => (
                 <article key={fn.num} className="how-work__fn is-in">
@@ -249,12 +232,11 @@ export function CareersPage() {
         </section>
 
         <section className="ct-roles" id="roles">
-          <p className="pg-eyebrow pg-eyebrow--dark">OPEN ROLES</p>
-          <h2 className="ct-section-title">Six roles open right now.</h2>
-          <p className="ct-section-lede">
-            Every role reports into a founder and owns a measurable surface from
-            week one.
-          </p>
+          <InnerPageSectionHead
+            eyebrow="Open Roles"
+            title="Six roles open right now."
+            sub="Every role reports into a founder and owns a measurable surface from week one."
+          />
           <div className="ct-filters" role="group" aria-label="Filter roles">
             <div className="ct-filter-group">
               <span className="ct-filter-group__label">Function</span>
@@ -327,9 +309,9 @@ export function CareersPage() {
           </div>
         </section>
 
-        <section className="ct-life is-static" aria-labelledby="ct-life-title">
-          <div className="ct-life__pin-height">
-            <div className="ct-life__container">
+        <section className="ct-life" data-life-flow aria-labelledby="ct-life-title">
+          <div className="ct-life__pin-height" data-life-pin-height>
+            <div className="ct-life__container" data-life-container>
               <div className="ct-life__head">
                 <p className="pg-eyebrow pg-eyebrow--light">LIFE AT MEOLAA</p>
                 <h2 id="ct-life-title" className="pg-display ct-section-title ct-section-title--light">

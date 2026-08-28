@@ -42,16 +42,19 @@ const PILLARS = [
     label: 'Signal',
     title: 'We read the market before it moves.',
     desc: 'Consumer behaviour, demand and whitespace, sorted into a single opportunity score.',
+    img: '/assets/pages/about-pillar-signal.jpg',
   },
   {
     label: 'Build',
     title: 'AI does the heavy lifting.',
     desc: 'Product, brand and go-to-market assembled by a small team, not a large one.',
+    img: '/assets/pages/about-pillar-build.jpg',
   },
   {
     label: 'Run',
     title: 'The system keeps it running.',
     desc: 'Distribution, content and operations kept alive by the same engine that built it.',
+    img: '/assets/pages/about-pillar-run.jpg',
   },
 ] as const
 
@@ -107,43 +110,43 @@ export function AboutPage() {
       <section className="au-fold1" aria-label="About Us">
         <div className="au-fold1__pin">
           <header className="au-fold1__head">
-            <p className="pg-eyebrow pg-eyebrow--dark">ABOUT US</p>
-            <h1 className="pg-display au-fold1__title">
-              A technology company{' '}
-              <span className="au-fold1__accent">building consumer brands</span>.
-            </h1>
+            <div className="section-head section-head--on-light">
+              <p className="section-head__eyebrow">About Us</p>
+              <h1 className="section-head__title au-fold1__title">
+                A technology company{' '}
+                <span className="au-fold1__accent">building consumer brands</span>.
+              </h1>
+            </div>
             <div className="au-fold1__ctas">
-              <a className="ct-btn ct-btn--dark" href="#mission">
+              <a className="btn btn--solid-dark" href="#mission">
                 Our thesis ↓
               </a>
-              <a className="ct-btn ct-btn--dark" href="#leadership">
+              <a className="btn btn--ghost-dark" href="#leadership">
                 Meet the team ↓
               </a>
             </div>
           </header>
-          <div className="au-fold1__video-box">
-            <video
+          <figure className="au-fold1__video-box">
+            <img
               className="au-fold1__video"
-              autoPlay
-              muted
-              loop
-              playsInline
-              poster="/assets/pages/about-hero.jpg"
-            >
-              <source
-                src="https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
-                type="video/mp4"
-              />
-            </video>
-          </div>
+              src="/assets/pages/about-hero.jpg"
+              alt="Meolaa team at work"
+              loading="eager"
+            />
+          </figure>
         </div>
       </section>
 
-      <section className="au2-mv is-static" id="mission" aria-label="Mission and Vision">
-        <div className="au2-mv__pin">
-          <div className="au2-mv__thesis" aria-label="The Model">
+      <section
+        className="au2-mv"
+        id="mission"
+        data-mv-scroll
+        aria-label="Mission and Vision"
+      >
+        <div className="au2-mv__pin" data-mv-pin>
+          <div className="au2-mv__thesis" data-mv-thesis aria-label="The Model">
             <div className="au-fold2__inner">
-              <p className="pg-eyebrow pg-eyebrow--dark">THE MODEL</p>
+              <p className="section-head__eyebrow">The Model</p>
               <p className="au-fold2__lede">
                 <span>AI-native, digitally-native,</span>{' '}
                 <span>and built to move at the speed of demand.</span>
@@ -155,33 +158,59 @@ export function AboutPage() {
               </p>
             </div>
           </div>
-          <div className="au2-mv__strip">
-            <article className="au2-mv__panel is-in" data-mv-panel="mission">
+          <div className="au2-mv__frame" data-mv-frame aria-hidden="true">
+            <img
+              className="au2-mv__img is-active"
+              data-mv-img="mission"
+              src="/assets/pages/about-mission.jpg"
+              alt=""
+            />
+            <img
+              className="au2-mv__img"
+              data-mv-img="vision"
+              src="/assets/pages/about-hero.jpg"
+              alt=""
+            />
+          </div>
+          <div className="au2-mv__strip" data-mv-strip>
+            <article className="au2-mv__panel" data-mv-panel="mission">
               <div className="au2-mv__panel-media" aria-hidden="true">
                 <img src="/assets/pages/about-mission.jpg" alt="" />
               </div>
               <div className="au2-mv__panel-text">
-                <p className="pg-eyebrow pg-eyebrow--dark">Mission</p>
-                <h2 className="pg-display">Our Mission</h2>
-                <p className="pg-body">Compress the distance from insight to shelf.</p>
-                <p className="pg-body au2-mv__support">
+                <p className="pg-eyebrow pg-eyebrow--dark" data-mv-fade>
+                  Mission
+                </p>
+                <h2 className="pg-display" data-mv-fade>
+                  Our Mission
+                </h2>
+                <p className="pg-body" data-mv-fade>
+                  Compress the distance from insight to shelf.
+                </p>
+                <p className="pg-body au2-mv__support" data-mv-fade>
                   Meolaa is an AI-native house of consumer brands, built to read
                   demand and launch faster than any traditional FMCG company can
                   move.
                 </p>
-                <Link className="au2-mv__link" to="/story">
+                <Link className="au2-mv__link" data-mv-fade to="/story">
                   Our story →
                 </Link>
               </div>
             </article>
-            <article className="au2-mv__panel is-in" data-mv-panel="vision">
+            <article className="au2-mv__panel" data-mv-panel="vision">
               <div className="au2-mv__panel-media" aria-hidden="true">
                 <img src="/assets/pages/about-hero.jpg" alt="" />
               </div>
               <div className="au2-mv__panel-text">
-                <p className="pg-eyebrow pg-eyebrow--dark">Vision</p>
-                <h2 className="pg-display">Our Vision</h2>
-                <p className="pg-body">A category for every validated signal.</p>
+                <p className="pg-eyebrow pg-eyebrow--dark" data-mv-fade>
+                  Vision
+                </p>
+                <h2 className="pg-display" data-mv-fade>
+                  Our Vision
+                </h2>
+                <p className="pg-body" data-mv-fade>
+                  A category for every validated signal.
+                </p>
               </div>
             </article>
           </div>
@@ -189,11 +218,12 @@ export function AboutPage() {
       </section>
 
       <section
-        className="au-roadmap is-static"
+        className="au-roadmap"
         id="about-story"
+        data-au-roadmap
         aria-label="Our Story"
       >
-        <div className="au-roadmap__pin">
+        <div className="au-roadmap__pin" data-au-roadmap-pin>
           <div className="au-roadmap__card">
             <header className="au-roadmap__header">
               <div className="au-roadmap__intro">
@@ -211,11 +241,12 @@ export function AboutPage() {
             </header>
             <div className="au-roadmap__stage">
               <div className="au-roadmap__line" aria-hidden="true" />
-              <div className="au-roadmap__track" role="list">
+              <div className="au-roadmap__track" data-au-roadmap-track role="list">
                 {ROADMAP_STEPS.map((step, i) => (
                   <article
                     key={step.capsule}
                     className={`au-roadmap__step${i === 0 ? ' is-active' : ''}`}
+                    data-au-roadmap-step
                     role="listitem"
                     aria-current={i === 0 ? 'step' : undefined}
                   >
@@ -237,12 +268,12 @@ export function AboutPage() {
         </div>
       </section>
 
-      <section className="fold pillars" aria-label="How we build brands">
+      <section className="fold pillars" data-section="pillars" aria-label="How we build brands">
         <h2 className="pillars__title">HOW WE BUILD BRANDS</h2>
         <div className="pillars__track">
           {PILLARS.map((pillar) => (
             <article key={pillar.label} className="pillar-card">
-              <img src="/assets/imgRectangle34624962.png" alt="" />
+              <img src={pillar.img} alt="" loading="lazy" />
               <p className="label">{pillar.label}</p>
               <h3>{pillar.title}</h3>
               <p>{pillar.desc}</p>
