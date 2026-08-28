@@ -277,8 +277,8 @@ img { display: block; max-width: 100%; }
 }
 
 .vision__char {
-  display: inline-block;
-  will-change: opacity, transform;
+  display: inline;
+  will-change: opacity;
 }
 
 .vision__char.is-space {

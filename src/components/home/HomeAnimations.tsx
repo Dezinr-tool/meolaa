@@ -221,7 +221,7 @@ function mixArrowColor(t: number) {
   return `rgba(${r | 0}, ${g | 0}, ${b | 0}, ${a.toFixed(2)})`
 }
 
-/** Per-char spans for vision headline stagger (opacity + y — no blur). */
+/** Per-char spans for vision headline scroll highlight (opacity only — no y/blur). */
 function splitVisionLines(lines: Element[]) {
   lines.forEach((line) => {
     const text = (line.textContent || '').trim()
@@ -743,7 +743,7 @@ export function HomeAnimations() {
         const chars = gsap.utils.toArray<HTMLElement>('.vision__char')
         const reduceMotionVision = reduceMotion
 
-        gsap.set(chars, { opacity: 0.14, y: 10 })
+        gsap.set(chars, { opacity: 0.14 })
         visionVideo?.play().catch(() => {})
 
         if (visionVideoWrap && !reduceMotionVision) {
@@ -759,7 +759,7 @@ export function HomeAnimations() {
         }
 
         if (reduceMotionVision) {
-          gsap.set(chars, { opacity: 1, y: 0 })
+          gsap.set(chars, { opacity: 1 })
         } else {
           let layoutLocked = false
           let fromTop = 0
@@ -780,7 +780,7 @@ export function HomeAnimations() {
             if (visionCopy) {
               gsap.set(visionCopy, { clearProps: 'opacity,transform' })
             }
-            gsap.set(chars, { opacity: 0.14, y: 10 })
+            gsap.set(chars, { opacity: 0.14 })
           }
 
           /** Freeze video-above-copy geometry once the pin is active / in view.
@@ -866,13 +866,12 @@ export function HomeAnimations() {
             },
           })
 
-          /* Char settle — opacity + y only (no blur). */
+          /* Char highlight — opacity sweep left-to-right (no y/blur). */
           vtl.fromTo(
             chars,
-            { opacity: 0.14, y: 10 },
+            { opacity: 0.14 },
             {
               opacity: 1,
-              y: 0,
               duration: 0.08,
               stagger: 0.006,
               ease: 'power1.out',
