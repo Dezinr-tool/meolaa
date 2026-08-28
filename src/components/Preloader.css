@@ -35,7 +35,7 @@ html {
   /* Slight overlap kills the 1px mid-seam on fractional heights */
   height: calc(50% + 1px);
   /* Secondary pale-yellow stage / curtain */
-  background: var(--color-secondary, #fef8c0);
+  background: var(--color-secondary, #fdf28c);
   transform: translate3d(0, 0, 0);
   backface-visibility: hidden;
 }

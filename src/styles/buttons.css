@@ -34,7 +34,7 @@
 
 /* Primary CTA — secondary pale yellow on Planet Blue / dark */
 .btn--solid {
-  background: var(--color-secondary, #fef8c0);
+  background: var(--color-secondary, #fdf28c);
   color: var(--color-planet-blue);
 }
 

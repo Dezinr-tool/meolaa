@@ -125,8 +125,8 @@
 
 .meola-lab__panel.is-active {
   flex-grow: 4.1;
-  /* Secondary yellow — Planet Blue ink for contrast on active strip */
-  background: var(--color-secondary, #fef8c0);
+  /* Ecru active strip — Planet Blue ink for contrast */
+  background: var(--color-ecru, #f8ece4);
   color: var(--color-primary, #002f3a);
   --meola-lab-ink: var(--color-primary, #002f3a);
   --meola-lab-muted: color-mix(in srgb, var(--color-primary, #002f3a) 55%, transparent);

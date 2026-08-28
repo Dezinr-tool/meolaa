@@ -20,14 +20,13 @@
   /* ——— Colour — Primary ——— */
   --color-planet-blue: #002f3a;
   --color-joyous-yellow: #fdf28c;
-  /* Warm peach — on-dark ink / footer only (not semantic secondary) */
+  /* Ecru — warm neutral; on-dark ink and section grounds */
   --color-ecru: #f8ece4;
   --color-white: #ffffff;
 
-  /* Semantic primary / secondary (Planet Blue + pale creamy yellow) */
+  /* Semantic primary / secondary (Planet Blue + Joyous Yellow — guidelines p.14) */
   --color-primary: var(--color-planet-blue);
-  /* Sampled from brand secondary swatch PNG */
-  --color-secondary: #fef8c0;
+  --color-secondary: var(--color-joyous-yellow);
 
   /* ——— Colour — accents (do not overpower primary) ——— */
   --color-lilac: #a8a3e3;
@@ -39,10 +38,11 @@
   --color-black: #000000;
   --color-ink: var(--color-planet-blue);
 
-  /* Semantic aliases — light brand ground follows secondary */
-  --color-cream: var(--color-secondary);
-  --color-lab-bg: var(--color-secondary);
-  --color-surface: var(--color-secondary);
+  /* Semantic aliases — warm section grounds (Ecru primary neutral) */
+  --color-cream: var(--color-ecru);
+  --color-lab-bg: var(--color-ecru);
+  --color-surface: var(--color-ecru);
+  --color-vision-bg: var(--color-ecru);
   --color-sage: var(--color-sustainable-green);
 
   /* Default dark shell (brand primary dark, not pure black) */

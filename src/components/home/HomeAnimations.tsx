@@ -221,34 +221,6 @@ function mixArrowColor(t: number) {
   return `rgba(${r | 0}, ${g | 0}, ${b | 0}, ${a.toFixed(2)})`
 }
 
-function splitVisionLines(lines: Element[]) {
-  lines.forEach((line) => {
-    const text = (line.textContent || '').trim()
-    line.textContent = ''
-    line.setAttribute('aria-label', text)
-
-    text.split(/(\s+)/).forEach((token) => {
-      if (/^\s+$/.test(token)) {
-        const space = document.createElement('span')
-        space.className = 'vision__char is-space'
-        space.textContent = '\u00a0'
-        line.appendChild(space)
-        return
-      }
-
-      const word = document.createElement('span')
-      word.className = 'vision__word'
-      ;[...token].forEach((char) => {
-        const span = document.createElement('span')
-        span.className = 'vision__char'
-        span.textContent = char
-        word.appendChild(span)
-      })
-      line.appendChild(word)
-    })
-  })
-}
-
 /**
  * Manual SplitText(type: "words") — Club plugin not installed (same approach
  * as the preloader avoiding SplitText). Skips nodes already split.
@@ -297,7 +269,7 @@ const WORD_STAGGER_SELECTOR = [
 
 /**
  * SplitText-equivalent word stagger on scroll enter (once).
- * Vision char-blur lines are intentionally excluded from WORD_STAGGER_SELECTOR.
+ * Vision copy uses its own reveal timeline.
  */
 function revealWordsOnEnter(
   root: ParentNode = document,
@@ -309,7 +281,7 @@ function revealWordsOnEnter(
   )
 
   paragraphs.forEach((paragraph) => {
-    /* Never compose with vision's existing char-blur split. */
+    /* Never compose with vision's dedicated reveal. */
     if (
       paragraph.hasAttribute('data-vision-line') ||
       paragraph.closest('.vision__copy')
@@ -678,11 +650,11 @@ export function HomeAnimations() {
           onLeaveBack: resetHeroArrow,
         })
 
-        /* Match vision pin travel so arrow holds while video expands. */
+        /* Hold arrow on vision copy while the fold is in view. */
         ScrollTrigger.create({
           trigger: vision,
           start: 'top top',
-          end: '+=140%',
+          end: 'bottom top',
           scrub: true,
           onUpdate: () => {
             gsap.set(arrowFloat, { y: 0 })
@@ -694,7 +666,7 @@ export function HomeAnimations() {
 
         ScrollTrigger.create({
           trigger: vision,
-          start: '+=140% top',
+          start: 'bottom top',
           endTrigger: lab,
           end: 'top center',
           scrub: true,
@@ -724,204 +696,70 @@ export function HomeAnimations() {
         })
       }
 
-      /* ——— Vision: video above copy in-fold → pin + scrub full-bleed expand ——— */
-      const lines = gsap.utils.toArray<Element>('[data-vision-line]')
-      const videoBox = document.querySelector('[data-video-box]') as HTMLElement | null
-      const visionCopy = document.querySelector('.vision__copy') as HTMLElement | null
-      const visionVideo = videoBox?.querySelector('video')
-      const visionStage = document.querySelector('.vision__stage') as HTMLElement | null
-      const visionVideoWrap = document.querySelector(
-        '.vision__video-wrap',
+      /* ——— Vision: centered image + copy reveal ——— */
+      const visionMedia = document.querySelector(
+        '[data-vision-media]',
       ) as HTMLElement | null
+      const visionEyebrow = document.querySelector('.vision__eyebrow')
+      const visionLines = gsap.utils.toArray<Element>('[data-vision-line]')
+      const visionScroll = document.querySelector('.vision__scroll')
 
-      /* Tweak knobs — pin travel + scrub feel (also mirrored on arrow ST) */
-      const VISION_PIN_END = '+=140%'
-      /* Direct scrub into Loop — laggy scrub felt springy on fold handoff. */
-      const VISION_SCRUB = true
-
-      if (vision && videoBox && lines.length) {
-        splitVisionLines(lines)
-        const chars = gsap.utils.toArray<HTMLElement>('.vision__char')
-        const reduceMotionVision = reduceMotion
-
-        gsap.set(chars, { opacity: 0.14, filter: 'blur(5px)' })
-        visionVideo?.play().catch(() => {})
-
-        if (visionVideoWrap && !reduceMotionVision) {
-          /* Once in — stay. Reverse on leaveBack fought the pin layout lock
-           * and left the media wrap mid-blur when scrolling Vision ↔ Hero. */
-          revealOnEnter(visionVideoWrap, vision, {
-            start: 'top 92%',
-            y: 36,
-            blur: 4,
-            duration: 1,
-            scale: 1,
-            toggleActions: 'play none none none',
-          })
-        }
-
-        if (reduceMotionVision) {
-          gsap.set(chars, { opacity: 1, filter: 'blur(0px)' })
-        } else {
-          let layoutLocked = false
-          let fromTop = 0
-          let fromLeft = 0
-          let fromW = 0
-          let fromH = 0
-
-          const clearLayoutLock = () => {
-            layoutLocked = false
-            gsap.set([visionCopy, visionVideoWrap, videoBox].filter(Boolean), {
-              clearProps:
-                'position,top,left,width,height,maxWidth,maxHeight,inset,display,padding,margin,zIndex,borderRadius,x,y,opacity,transform,filter',
-            })
-          }
-
-          /** Reset scrub-owned visuals so leaveBack never leaves stuck blur/fade. */
-          const resetVisionScrubVisuals = () => {
-            if (visionCopy) {
-              gsap.set(visionCopy, { clearProps: 'opacity,transform' })
-            }
-            gsap.set(chars, { opacity: 0.14, filter: 'blur(5px)' })
-          }
-
-          /** Freeze video-above-copy geometry once the pin is active / in view.
-           *  Only measure in-fold (progress ~0). Measuring at full-bleed
-           *  (enterBack from Loop) would poison the expand from-state. */
-          const lockInFoldLayout = () => {
-            if (
-              layoutLocked ||
-              !visionStage ||
-              !visionCopy ||
-              !visionVideoWrap ||
-              !videoBox
-            ) {
-              return
-            }
-            layoutLocked = true
-
-            const stageRect = visionStage.getBoundingClientRect()
-            const boxRect = videoBox.getBoundingClientRect()
-            const copyRect = visionCopy.getBoundingClientRect()
-
-            fromTop = boxRect.top - stageRect.top
-            fromLeft = boxRect.left - stageRect.left
-            fromW = boxRect.width
-            fromH = boxRect.height
-
-            gsap.set(visionCopy, {
-              position: 'absolute',
-              left: copyRect.left - stageRect.left,
-              top: copyRect.top - stageRect.top,
-              width: copyRect.width,
-              margin: 0,
-              zIndex: 2,
-            })
-            gsap.set(visionVideoWrap, {
-              position: 'absolute',
-              inset: 0,
-              maxWidth: 'none',
-              width: '100%',
-              height: '100%',
-              display: 'block',
-              padding: 0,
-              zIndex: 1,
-            })
-            gsap.set(videoBox, {
-              position: 'absolute',
-              top: fromTop,
-              left: fromLeft,
-              width: fromW,
-              height: fromH,
-              maxHeight: 'none',
-              borderRadius: 4,
-              x: 0,
-              y: 0,
-            })
-          }
-
-          const vtl = gsap.timeline({
-            scrollTrigger: {
-              trigger: vision,
-              start: 'top top',
-              end: VISION_PIN_END,
-              pin: true,
-              scrub: VISION_SCRUB,
-              /* Flush release into Loop — anticipatePin + Lenis felt springy. */
-              anticipatePin: 0,
-              invalidateOnRefresh: true,
-              onEnter: lockInFoldLayout,
-              /* From Loop: keep existing lock + from*. Only re-lock if unlocked
-               * and still at the in-fold start — never measure full-bleed. */
-              onEnterBack: (self) => {
-                if (!layoutLocked && self.progress < 0.05) lockInFoldLayout()
-              },
-              /* Pin release upward → restore flex layout or spacer/absolute
-               * desync jumps the white fold and leaves copy mid-blur. */
-              onLeaveBack: () => {
-                clearLayoutLock()
-                resetVisionScrubVisuals()
-              },
-              onRefresh: (self) => {
-                if (self.progress === 0) {
-                  clearLayoutLock()
-                  resetVisionScrubVisuals()
-                  if (self.isActive) lockInFoldLayout()
-                }
-              },
-            },
-          })
-
-          /* Brief type settle while both video + copy still read in-fold. */
-          vtl.fromTo(
-            chars,
-            { opacity: 0.14, filter: 'blur(5px)' },
+      if (vision && visionMedia && visionLines.length) {
+        if (reduceMotion) {
+          gsap.set(
+            [visionMedia, visionEyebrow, ...visionLines, visionScroll].filter(
+              Boolean,
+            ),
             {
               opacity: 1,
-              filter: 'blur(0px)',
-              duration: 0.08,
-              stagger: 0.006,
-              ease: 'power1.out',
+              y: 0,
             },
-            0,
           )
+        } else {
+          gsap.set(visionMedia, { opacity: 0, y: 28 })
+          if (visionEyebrow) gsap.set(visionEyebrow, { opacity: 0, y: 14 })
+          gsap.set(visionLines, { opacity: 0, y: 18 })
+          if (visionScroll) gsap.set(visionScroll, { opacity: 0, y: 12 })
 
-          /* Copy yields as the frame starts expanding. */
-          if (visionCopy) {
-            vtl.fromTo(
-              visionCopy,
-              { opacity: 1, y: 0 },
-              { opacity: 0, y: -28, duration: 0.18, ease: 'power1.in' },
-              '+=0.06',
+          const revealTl = gsap.timeline({
+            scrollTrigger: {
+              trigger: vision,
+              start: 'top 88%',
+              once: true,
+            },
+          })
+
+          revealTl.to(visionMedia, {
+            opacity: 1,
+            y: 0,
+            duration: 0.95,
+            ease: REVEAL_EASE,
+          })
+          if (visionEyebrow) {
+            revealTl.to(
+              visionEyebrow,
+              { opacity: 1, y: 0, duration: 0.65, ease: REVEAL_EASE },
+              '-=0.65',
             )
-          } else {
-            vtl.to({}, { duration: 0.06 })
           }
-
-          /* Short hold on in-fold media, then expand to full bleed. */
-          vtl.to({}, { duration: 0.08 })
-          vtl.fromTo(
-            videoBox,
+          revealTl.to(
+            visionLines,
             {
-              top: () => fromTop,
-              left: () => fromLeft,
-              width: () => fromW,
-              height: () => fromH,
-              borderRadius: 4,
+              opacity: 1,
+              y: 0,
+              stagger: 0.1,
+              duration: 0.75,
+              ease: REVEAL_EASE,
             },
-            {
-              top: 0,
-              left: 0,
-              width: () => visionVideoWrap?.offsetWidth || window.innerWidth,
-              height: () => visionVideoWrap?.offsetHeight || window.innerHeight,
-              borderRadius: 0,
-              duration: 0.85,
-              ease: 'power2.inOut',
-              immediateRender: false,
-              onStart: lockInFoldLayout,
-            },
-            '+=0.02',
+            '-=0.45',
           )
+          if (visionScroll) {
+            revealTl.to(
+              visionScroll,
+              { opacity: 1, y: 0, duration: 0.6, ease: REVEAL_EASE },
+              '-=0.35',
+            )
+          }
         }
       }
 

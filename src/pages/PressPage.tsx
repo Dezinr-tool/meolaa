@@ -181,7 +181,11 @@ export function PressPage() {
               </a>
             </div>
             <figure className="press-featured__media">
-              <img src="/assets/founder-meolaa.png" alt="Meolaa founder" loading="lazy" />
+              <img
+                src="/assets/founder-meolaa.png"
+                alt="Ishita Sawant, Founder and CEO of Meolaa"
+                loading="lazy"
+              />
             </figure>
           </div>
         </section>
@@ -262,7 +266,7 @@ export function PressPage() {
           <div className="press-contact__grid">
             <div className="press-contact__card">
               <div className="press-contact__portrait">
-                <img src="/assets/founder-meolaa.png" alt="" />
+                <img src="/assets/founder-meolaa.png" alt="Meolaa communications team" />
               </div>
               <div>
                 <p className="press-contact__name">Communications team</p>

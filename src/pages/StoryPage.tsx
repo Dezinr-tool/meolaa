@@ -54,7 +54,7 @@ const BRAND_CARDS = [
     meta: 'Beauty & Personal Care · Live',
     name: 'HIRA',
     desc: "Meolaa's first brand — built end-to-end on the platform, live and shipping.",
-    image: '/assets/portfolio-beauty-01.jpg',
+    image: '/assets/portfolio-hira.jpg',
     status: 'live' as const,
   },
   {
@@ -102,7 +102,7 @@ export function StoryPage() {
           <figure className="story-hero__panel" aria-hidden="true">
             <img
               src="/assets/pages/story-hero-portrait.jpg"
-              alt=""
+              alt="Ishita Sawant, Founder and CEO of Meolaa"
               loading="eager"
             />
           </figure>
@@ -154,7 +154,17 @@ export function StoryPage() {
                 <figure
                   className={`story-chapter__media${ch.id === 'chapter-brand' ? ' story-chapter__media--compact' : ''}`}
                 >
-                  <img src={ch.image} alt="" loading="lazy" />
+                  <img
+                    src={ch.image}
+                    alt={
+                      ch.id === 'chapter-insight'
+                        ? 'Meolaa team in a strategy meeting'
+                        : ch.id === 'chapter-build'
+                          ? 'HIRA packaging and product development'
+                          : 'HIRA production line — first brand live'
+                    }
+                    loading="lazy"
+                  />
                 </figure>
                 {'narrative' in ch && ch.narrative ? (
                   <p className="pg-body story-chapter__narrative">{ch.narrative}</p>
@@ -177,7 +187,11 @@ export function StoryPage() {
                         className={`story-brand-card${brand.status === 'soon' ? ' story-brand-card--soon' : ''}`}
                       >
                         <div className="story-brand-card__media">
-                          <img src={brand.image} alt="" loading="lazy" />
+                          <img
+                            src={brand.image}
+                            alt={`${brand.name} — ${brand.meta}`}
+                            loading="lazy"
+                          />
                         </div>
                         <div className="story-brand-card__body">
                           <p className="story-brand-card__meta">{brand.meta}</p>
@@ -214,7 +228,7 @@ export function StoryPage() {
           <img
             className="story-system-hero__img"
             src="/assets/pages/story-system-hero.jpg"
-            alt=""
+            alt="Meolaa team designing HIRA brand packaging on laptops"
           />
           <div className="story-system-hero__scrim" />
         </div>

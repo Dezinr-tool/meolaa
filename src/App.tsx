@@ -1,4 +1,6 @@
+import { HelmetProvider } from 'react-helmet-async'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { PageMeta } from './components/PageMeta'
 import { HomePage } from './pages/HomePage'
 import { AboutPage } from './pages/AboutPage'
 import { StoryPage } from './pages/StoryPage'
@@ -8,9 +10,10 @@ import { CareersPage } from './pages/CareersPage'
 import { PartnersPage } from './pages/PartnersPage'
 import { ContactPage } from './pages/ContactPage'
 
-function App() {
+function AppRoutes() {
   return (
-    <BrowserRouter>
+    <>
+      <PageMeta />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/about" element={<AboutPage />} />
@@ -21,7 +24,17 @@ function App() {
         <Route path="/partners" element={<PartnersPage />} />
         <Route path="/contact" element={<ContactPage />} />
       </Routes>
-    </BrowserRouter>
+    </>
+  )
+}
+
+function App() {
+  return (
+    <HelmetProvider>
+      <BrowserRouter>
+        <AppRoutes />
+      </BrowserRouter>
+    </HelmetProvider>
   )
 }
 

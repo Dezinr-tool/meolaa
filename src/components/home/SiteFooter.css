@@ -1,7 +1,7 @@
 /**
  * Footer — stage + content in one place.
  * Pre-reveal: white (same as Press) so no empty ecru fold before the circle.
- * Circle host: black fill; expands only while pinned (see SiteFooter.tsx).
+ * Circle host: Planet Blue fill; expands only while pinned (see SiteFooter.tsx).
  * Content lives inside `.footer-circle-reveal` (no floating disc over text).
  */
 
@@ -26,7 +26,7 @@
 }
 
 .footer-reveal-section--static {
-  background: #000;
+  background: var(--color-primary, #002f3a);
 }
 
 .footer-runway {
@@ -80,7 +80,7 @@
   will-change: clip-path;
   backface-visibility: hidden;
   transform: translateZ(0);
-  background: #000;
+  background: var(--color-primary, #002f3a);
   overflow: visible;
 }
 
@@ -146,7 +146,7 @@
    * only, so .site-footer__mark-wrap / aurora can sit edge-to-edge on the stage.
    */
   padding: 40px 0 0;
-  background: #000;
+  background: var(--color-primary, #002f3a);
   box-sizing: border-box;
   overflow: visible;
 }
@@ -344,7 +344,7 @@
 
 /*
  * Mark band — full width of .site-footer / .footer-circle-reveal (no gutters).
- * Tall band so object-fit:cover crops soft side fades and fills edge-to-edge.
+ * Height follows the hero asset (1844×853) so aurora + horizon aren’t cropped.
  */
 .site-footer__mark-wrap {
   position: relative;
@@ -358,30 +358,24 @@
   max-width: none;
   margin-left: 0;
   margin-right: 0;
-  /* Fixed band height — cover fills width; horizon stays on the floor. */
-  height: clamp(280px, 46vw, 560px);
-  min-height: 240px;
-  overflow: hidden;
+  height: auto;
+  /* Reserve space before the PNG decode — matches footer-mark-hero.png. */
+  aspect-ratio: 1844 / 853;
+  min-height: 0;
+  overflow: visible;
 }
 
-/* Glow-only aurora — absolute to mark-wrap (stage width), cover + slight overscale. */
+/* Glow-only aurora — full-bleed width, natural height (no cover crop). */
 .site-footer__aurora {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
+  position: relative;
   z-index: 0;
   display: block;
   width: 100%;
-  height: 100%;
+  height: auto;
   max-width: none;
   margin: 0;
-  object-fit: cover;
+  object-fit: contain;
   object-position: center bottom;
-  /* Overscale crops soft letterbox fades so colored glow hits both edges. */
-  transform: scale(1.12);
-  transform-origin: center bottom;
   pointer-events: none;
   user-select: none;
 }
@@ -465,18 +459,15 @@
   .site-footer__mark-wrap {
     width: 100%;
     max-width: none;
-    height: clamp(220px, 62vw, 380px);
-    min-height: 200px;
+    height: auto;
+    aspect-ratio: 1844 / 853;
+    min-height: 0;
   }
 
   .site-footer__aurora {
-    left: 0;
-    right: 0;
     width: 100%;
-    height: 100%;
+    height: auto;
     max-width: none;
-    transform: scale(1.14);
-    transform-origin: center bottom;
   }
 
   .site-footer__wordmark {

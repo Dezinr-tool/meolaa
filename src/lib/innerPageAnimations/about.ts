@@ -1,5 +1,13 @@
 import type { ScrollTrigger as ST } from 'gsap/ScrollTrigger'
 import {
+  ROADMAP_END_TIP_HIDE,
+  ROADMAP_STEPS,
+  roadmapBulletsVisible,
+  roadmapDrawProgress,
+  roadmapRingVisible,
+  samplePathTipLocal,
+} from '../aboutRoadmapPath'
+import {
   editorialPinType,
   gsap,
   prefersReducedMotion,
@@ -9,21 +17,28 @@ import {
 } from './shared'
 
 const SCRUB = 0.55
-const PIN_VH = 2.4
+const PIN_VH_DESKTOP = 2.2
+const PIN_VH_MOBILE = 1.6
+const STEP_ARRIVE_BIAS = 0.015
 
 export function initAboutRoadmap(): () => void {
   const root = document.querySelector<HTMLElement>('[data-au-roadmap]')
   if (!root) return () => {}
 
   const pin = root.querySelector<HTMLElement>('[data-au-roadmap-pin]')
+  const drawn = root.querySelector<SVGPathElement>('[data-au-roadmap-drawn]')
+  const tipEl = root.querySelector<SVGCircleElement>('[data-au-roadmap-tip]')
   const track = root.querySelector<HTMLElement>('[data-au-roadmap-track]')
   const steps = Array.from(
     root.querySelectorAll<HTMLElement>('[data-au-roadmap-step]'),
   )
-  if (!pin || !track || !steps.length) return () => {}
+  if (!pin || !drawn || !steps.length) return () => {}
 
-  let tween: gsap.core.Tween | null = null
-  let lastIndex = -1
+  const stepThresholds = steps.map(
+    (el) => Number(el.dataset.s) || 0,
+  )
+
+  let scrollTrigger: ST | null = null
   let mode: 'static' | 'scrub' | null = null
   const cleanups: (() => void)[] = []
 
@@ -31,100 +46,137 @@ export function initAboutRoadmap(): () => void {
     return window.matchMedia('(max-width: 720px)').matches
   }
 
-  function setActive(index: number) {
-    const i = Math.max(0, Math.min(steps.length - 1, index))
-    if (i === lastIndex) return
-    lastIndex = i
-    steps.forEach((el, n) => {
-      const on = n === i
-      el.classList.toggle('is-active', on)
-      el.setAttribute('aria-current', on ? 'step' : 'false')
+  function pinVh() {
+    return isNarrow() ? PIN_VH_MOBILE : PIN_VH_DESKTOP
+  }
+
+  function activeIndex(progress: number) {
+    if (progress <= 0.001) return -1
+    let idx = -1
+    for (let i = 0; i < stepThresholds.length; i += 1) {
+      if (progress >= stepThresholds[i] - STEP_ARRIVE_BIAS) idx = i
+    }
+    return idx
+  }
+
+  function applyStepFocus(stage: number, progress: number) {
+    root!.dataset.auRoadmapStage = String(stage)
+    steps.forEach((step, i) => {
+      const reached = roadmapRingVisible(i, stage, progress)
+      step.classList.toggle('is-reached', reached)
+      step.classList.toggle('is-copy-visible', roadmapBulletsVisible(i, stage))
+      step.setAttribute('aria-current', i === stage ? 'step' : 'false')
     })
   }
 
-  function progressToIndex(p: number) {
-    const n = steps.length
-    if (n <= 1) return 0
-    return Math.round(p * (n - 1))
-  }
+  function syncTipGraphics(progress: number, pathLen: number) {
+    const tipDist = progress * pathLen
+    gsap.set(drawn!, { strokeDashoffset: pathLen - tipDist })
 
-  function scrubDistance() {
-    const byVh = window.innerHeight * PIN_VH
-    const lagBuffer = window.innerHeight * (SCRUB + 0.25)
-    return Math.round(Math.max(byVh, window.innerHeight * 1.6) + lagBuffer)
-  }
-
-  function applySectionTravelHeight() {
-    const dist = scrubDistance()
-    root!.style.setProperty('--au-rm-pin-travel', `${dist}px`)
-    root!.style.minHeight = `calc(100vh + ${dist}px)`
-    return dist
-  }
-
-  function killTween() {
-    if (tween) {
-      tween.scrollTrigger?.kill()
-      tween.kill()
-      tween = null
+    const tip = samplePathTipLocal(drawn!, progress)
+    if (tipEl && tip) {
+      tipEl.setAttribute('cx', String(tip.x))
+      tipEl.setAttribute('cy', String(tip.y))
+      tipEl.style.opacity =
+        progress <= 0.001 || progress >= ROADMAP_END_TIP_HIDE ? '0' : '1'
     }
-    if (!root) return
-    root.style.removeProperty('--au-rm-pin-travel')
-    root.style.removeProperty('min-height')
-    root.classList.remove('is-pinning')
+  }
+
+  function sync(progress: number, immediate = false) {
+    const pathLen = drawn!.getTotalLength()
+    syncTipGraphics(progress, pathLen)
+    const stage = activeIndex(progress)
+    applyStepFocus(stage, progress)
+    root!.classList.add('is-roadmap-ready')
+
+    if (immediate && isNarrow() && stage >= 0) {
+      scrollActiveIntoView(stage)
+    }
   }
 
   function scrollActiveIntoView(index: number) {
-    if (!isNarrow()) return
+    if (!isNarrow() || !track) return
     const el = steps[index]
     if (!el) return
-    const left = el.offsetLeft - (track!.clientWidth - el.offsetWidth) / 2
-    track!.scrollTo({ left: Math.max(0, left), behavior: 'smooth' })
+    const viewport = root!.querySelector<HTMLElement>('[data-au-roadmap-viewport]')
+    if (!viewport) return
+    const left = el.offsetLeft - (viewport.clientWidth - el.offsetWidth) / 2
+    viewport.scrollTo({ left: Math.max(0, left), behavior: 'smooth' })
+  }
+
+  function killScrollTrigger() {
+    scrollTrigger?.kill()
+    scrollTrigger = null
+    root!.classList.remove('is-pinning')
   }
 
   function buildScrub() {
-    killTween()
+    killScrollTrigger()
     root!.classList.remove('is-static')
-    root!.classList.add('is-ready')
-    applySectionTravelHeight()
 
-    const state = { value: 0 }
-    tween = gsap.to(state, {
-      value: 1,
-      ease: 'none',
-      scrollTrigger: {
-        trigger: root,
-        start: 'top top',
-        end: () => `+=${applySectionTravelHeight()}`,
-        scrub: SCRUB,
-        pin,
-        pinSpacing: true,
-        pinType: 'transform',
-        anticipatePin: 0,
-        invalidateOnRefresh: true,
-        fastScrollEnd: true,
-        onEnter: () => root!.classList.add('is-pinning'),
-        onEnterBack: () => root!.classList.add('is-pinning'),
-        onLeave: () => root!.classList.remove('is-pinning'),
-        onLeaveBack: () => root!.classList.remove('is-pinning'),
-        onRefresh: () => {
-          applySectionTravelHeight()
-          setActive(progressToIndex(state.value))
-        },
+    const pathLen = drawn!.getTotalLength()
+    gsap.set(drawn, {
+      strokeDasharray: pathLen,
+      strokeDashoffset: pathLen,
+    })
+
+    scrollTrigger = ScrollTrigger.create({
+      trigger: root,
+      start: 'top top',
+      end: () => `+=${window.innerHeight * pinVh()}`,
+      pin,
+      pinSpacing: true,
+      pinType: editorialPinType(),
+      scrub: SCRUB,
+      anticipatePin: 0,
+      invalidateOnRefresh: true,
+      fastScrollEnd: true,
+      onEnter: () => root!.classList.add('is-pinning'),
+      onEnterBack: () => root!.classList.add('is-pinning'),
+      onLeave: () => root!.classList.remove('is-pinning'),
+      onLeaveBack: () => root!.classList.remove('is-pinning'),
+      onUpdate: (self) => {
+        const progress = roadmapDrawProgress(self.progress)
+        sync(progress)
+        if (isNarrow()) scrollActiveIntoView(activeIndex(progress))
       },
-      onUpdate: () => {
-        const idx = progressToIndex(state.value)
-        setActive(idx)
-        if (isNarrow()) scrollActiveIntoView(idx)
+      onRefresh: (self) => {
+        const pathLenRefresh = drawn!.getTotalLength()
+        gsap.set(drawn, {
+          strokeDasharray: pathLenRefresh,
+        })
+        sync(roadmapDrawProgress(self.progress), true)
       },
     })
 
-    setActive(0)
+    sync(0, true)
   }
 
   function buildStatic() {
-    killTween()
-    root!.classList.add('is-ready', 'is-static')
-    setActive(0)
+    killScrollTrigger()
+    root!.classList.add('is-static')
+
+    const pathLen = drawn!.getTotalLength()
+    gsap.set(drawn, {
+      strokeDasharray: pathLen,
+      strokeDashoffset: 0,
+    })
+
+    if (tipEl) tipEl.style.opacity = '0'
+
+    steps.forEach((step, i) => {
+      step.classList.toggle('is-reached', true)
+      step.classList.toggle(
+        'is-copy-visible',
+        i === ROADMAP_STEPS.length - 1,
+      )
+      step.setAttribute(
+        'aria-current',
+        i === ROADMAP_STEPS.length - 1 ? 'step' : 'false',
+      )
+    })
+
+    root!.classList.add('is-roadmap-ready')
   }
 
   function applyMode(force = false) {
@@ -138,14 +190,13 @@ export function initAboutRoadmap(): () => void {
 
   steps.forEach((el, i) => {
     const onClick = () => {
-      if (mode !== 'scrub' || !tween?.scrollTrigger) {
-        setActive(i)
+      if (mode !== 'scrub' || !scrollTrigger) {
+        applyStepFocus(i, stepThresholds[i] ?? 0)
         scrollActiveIntoView(i)
         return
       }
-      const st = tween.scrollTrigger as ST
       const p = steps.length <= 1 ? 0 : i / (steps.length - 1)
-      scrollToY(st.start + (st.end - st.start) * p)
+      scrollToY(scrollTrigger.start + (scrollTrigger.end - scrollTrigger.start) * p)
     }
     el.addEventListener('click', onClick)
     cleanups.push(() => el.removeEventListener('click', onClick))
@@ -159,10 +210,7 @@ export function initAboutRoadmap(): () => void {
     resizeTimer = setTimeout(() => {
       const next = prefersReducedMotion() ? 'static' : 'scrub'
       if (next !== mode) applyMode(true)
-      else if (mode === 'scrub') {
-        applySectionTravelHeight()
-        ScrollTrigger.refresh()
-      }
+      else if (mode === 'scrub') ScrollTrigger.refresh()
     }, 160)
   }
   window.addEventListener('resize', onResize)
@@ -175,8 +223,9 @@ export function initAboutRoadmap(): () => void {
 
   return () => {
     cleanups.forEach((fn) => fn())
-    killTween()
-    root.classList.remove('is-ready', 'is-static', 'is-pinning')
+    killScrollTrigger()
+    root.classList.remove('is-roadmap-ready', 'is-static', 'is-pinning')
+    gsap.set(drawn, { clearProps: 'strokeDasharray,strokeDashoffset' })
   }
 }
 

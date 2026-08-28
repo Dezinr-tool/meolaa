@@ -34,7 +34,7 @@ export function ContactPage() {
     <PageLayout pageClass="page-editorial" navOverDark>
       <header className="ed-hero ed-hero--light" id="contact">
         <div className="ed-rise ed-rise--bleed" aria-hidden="true">
-          <img src="/assets/pages/contact-hero.jpg" alt="" />
+          <img src="/assets/pages/contact-hero.jpg" alt="Meolaa team at work in the Bengaluru office" />
         </div>
         <div className="ed-veil ed-veil--hero" aria-hidden="true" />
         <div className="ed-hero__content">

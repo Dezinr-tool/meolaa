@@ -1,41 +1,7 @@
 import { Link } from 'react-router-dom'
+import { AboutRoadmapSection } from '../components/about/AboutRoadmapSection'
 import { PageLayout } from '../components/layout/PageLayout'
 import { WhereNextSection } from '../components/layout/WhereNextSection'
-
-const ROADMAP_STEPS = [
-  {
-    capsule: '2022 · Founded',
-    bullets: [
-      'Meolaa incorporated',
-      'Pre-seed from Ranjan Pai',
-      'House of brands thesis begins',
-    ],
-  },
-  {
-    capsule: '2022 · Seed',
-    bullets: [
-      '$6M seed raised',
-      'Colossa Ventures, General Catalyst, Turbostart',
-      'Capital to scale the model',
-    ],
-  },
-  {
-    capsule: '2024 · HIRA',
-    bullets: [
-      'HIRA launches',
-      'First brand built end-to-end on the platform',
-      'Proof from insight to shelf',
-    ],
-  },
-  {
-    capsule: '2026 · Platform',
-    bullets: [
-      'Platform v2 ships',
-      'CMI and Brand Co-pilot unified',
-      'One operating system for the house',
-    ],
-  },
-] as const
 
 const PILLARS = [
   {
@@ -92,7 +58,11 @@ const VALUES = [
 ] as const
 
 const LEADERS = [
-  { name: 'Ishita Sawant', role: 'Founder & CEO', img: '/assets/team/team-01.jpg' },
+  {
+    name: 'Ishita Sawant',
+    role: 'Founder & CEO',
+    img: '/assets/pages/story-hero-portrait.jpg',
+  },
   { name: 'Head of Intelligence', role: 'Intelligence', img: '/assets/team/team-02.jpg' },
   { name: 'Head of Brand', role: 'Brand build', img: '/assets/team/team-03.jpg' },
   { name: 'Head of Growth', role: 'Growth & ops', img: '/assets/team/team-04.jpg' },
@@ -168,14 +138,17 @@ export function AboutPage() {
             <img
               className="au2-mv__img"
               data-mv-img="vision"
-              src="/assets/pages/about-hero.jpg"
+              src="/assets/pages/about-vision-team.jpg"
               alt=""
             />
           </div>
           <div className="au2-mv__strip" data-mv-strip>
             <article className="au2-mv__panel" data-mv-panel="mission">
               <div className="au2-mv__panel-media" aria-hidden="true">
-                <img src="/assets/pages/about-mission.jpg" alt="" />
+                <img
+                  src="/assets/pages/about-mission.jpg"
+                  alt="Meolaa team collaborating in the office"
+                />
               </div>
               <div className="au2-mv__panel-text">
                 <p className="pg-eyebrow pg-eyebrow--dark" data-mv-fade>
@@ -199,7 +172,10 @@ export function AboutPage() {
             </article>
             <article className="au2-mv__panel" data-mv-panel="vision">
               <div className="au2-mv__panel-media" aria-hidden="true">
-                <img src="/assets/pages/about-hero.jpg" alt="" />
+                <img
+                  src="/assets/pages/about-vision-team.jpg"
+                  alt="Meolaa leadership team in a strategy meeting"
+                />
               </div>
               <div className="au2-mv__panel-text">
                 <p className="pg-eyebrow pg-eyebrow--dark" data-mv-fade>
@@ -217,63 +193,18 @@ export function AboutPage() {
         </div>
       </section>
 
-      <section
-        className="au-roadmap"
-        id="about-story"
-        data-au-roadmap
-        aria-label="Our Story"
-      >
-        <div className="au-roadmap__pin" data-au-roadmap-pin>
-          <div className="au-roadmap__card">
-            <header className="au-roadmap__header">
-              <div className="au-roadmap__intro">
-                <p className="au-roadmap__caption">Milestones</p>
-                <h2 className="au-roadmap__title">Our Story</h2>
-                <p className="au-roadmap__subtitle">
-                  From incorporation to one operating system.
-                </p>
-              </div>
-              <p className="au-roadmap__desc">
-                Meolaa is an AI-native house of consumer brands — built to read
-                demand and launch faster than any traditional FMCG company can
-                move. These are the moments that shaped the model.
-              </p>
-            </header>
-            <div className="au-roadmap__stage">
-              <div className="au-roadmap__line" aria-hidden="true" />
-              <div className="au-roadmap__track" data-au-roadmap-track role="list">
-                {ROADMAP_STEPS.map((step, i) => (
-                  <article
-                    key={step.capsule}
-                    className={`au-roadmap__step${i === 0 ? ' is-active' : ''}`}
-                    data-au-roadmap-step
-                    role="listitem"
-                    aria-current={i === 0 ? 'step' : undefined}
-                  >
-                    <span className="au-roadmap__capsule">{step.capsule}</span>
-                    <span className="au-roadmap__marker" aria-hidden="true">
-                      <span className="au-roadmap__ring" />
-                      <span className="au-roadmap__diamond" />
-                    </span>
-                    <ul className="au-roadmap__bullets">
-                      {step.bullets.map((bullet) => (
-                        <li key={bullet}>{bullet}</li>
-                      ))}
-                    </ul>
-                  </article>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <AboutRoadmapSection />
 
       <section className="fold pillars" data-section="pillars" aria-label="How we build brands">
         <h2 className="pillars__title">HOW WE BUILD BRANDS</h2>
         <div className="pillars__track">
           {PILLARS.map((pillar) => (
             <article key={pillar.label} className="pillar-card">
-              <img src={pillar.img} alt="" loading="lazy" />
+              <img
+                src={pillar.img}
+                alt={`${pillar.label} — how Meolaa builds brands`}
+                loading="lazy"
+              />
               <p className="label">{pillar.label}</p>
               <h3>{pillar.title}</h3>
               <p>{pillar.desc}</p>

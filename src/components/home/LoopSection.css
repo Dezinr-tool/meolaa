@@ -3,8 +3,7 @@
  * Fixed full-bleed viewport, scroll-drawn path, near-static large camera.
  * Geometry: src/lib/loopPath.ts
  *
- * Colors: section bg = --loop-bg (white); track = Joyous Yellow (secondary
- * family — stronger than --color-secondary #fef8c0 so the path reads on white);
+ * Colors: section bg = --loop-bg (white); track = Joyous Yellow;
  * tip + milestone rings = primary (Planet Blue) for contrast on the yellow path;
  * copy stays --color-primary.
  */

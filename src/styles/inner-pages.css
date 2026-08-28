@@ -267,21 +267,11 @@
 }
 
 .app--inner .au-roadmap {
-  background: var(--color-secondary);
+  --au-rm-bg: var(--color-secondary);
 }
 
 .app--inner .au-roadmap__card {
-  background: var(--color-white);
   border: 1px solid color-mix(in srgb, var(--color-planet-blue) 8%, transparent);
-}
-
-.app--inner .au-roadmap__capsule {
-  background: var(--color-planet-blue);
-  color: var(--color-ecru);
-}
-
-.app--inner .au-roadmap__diamond {
-  background: var(--section-head-accent);
 }
 
 /* ——— Pillars — planet blue band like homepage investors ——— */

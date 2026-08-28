@@ -131,38 +131,42 @@ const BENEFITS = [
 const LIFE_IMAGES = [
   {
     src: '/assets/culture/culture-01.jpg',
-    alt: 'Team member in a focused studio portrait',
+    alt: 'Meolaa team member editing brand content',
     tall: true,
   },
   {
     src: '/assets/culture/culture-02.jpg',
-    alt: 'Team collaborating around a shared workspace',
+    alt: 'Team collaborating at shared desks in the Meolaa office',
     tall: false,
   },
   {
     src: '/assets/culture/culture-03.jpg',
-    alt: 'Product development in progress',
+    alt: 'Team members in conversation at the office café',
     tall: false,
   },
   {
     src: '/assets/culture/culture-04.jpg',
-    alt: 'Portrait of a Meolaa operator',
+    alt: 'Behind-the-scenes brand photoshoot in the studio',
     tall: true,
   },
   {
     src: '/assets/culture/culture-05.jpg',
-    alt: 'Operators at work in the studio',
+    alt: 'Creative team directing a product shoot',
     tall: false,
   },
   {
     src: '/assets/culture/culture-06.jpg',
-    alt: 'Team at work',
+    alt: 'Meolaa team at work in the Bengaluru office',
     tall: true,
   },
 ] as const
 
 const LEADERS = [
-  { name: 'Ishita Sawant', role: 'Founder & CEO', img: '/assets/team/team-01.jpg' },
+  {
+    name: 'Ishita Sawant',
+    role: 'Founder & CEO',
+    img: '/assets/pages/story-hero-portrait.jpg',
+  },
   { name: 'Head of Intelligence', role: 'Intelligence', img: '/assets/team/team-02.jpg' },
   { name: 'Head of Brand', role: 'Brand build', img: '/assets/team/team-03.jpg' },
   { name: 'Head of Growth', role: 'Growth & ops', img: '/assets/team/team-04.jpg' },

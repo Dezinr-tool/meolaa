@@ -4,8 +4,8 @@
   --serif: var(--font-display);
   --sans: var(--font-sans);
   --mono: var(--font-mono);
-  --cream: #f5ede8;
-  --lab-bg: #f5f1ea;
+  --cream: var(--color-ecru, #f8ece4);
+  --lab-bg: var(--color-ecru, #f8ece4);
 
   /* Type scale — sitewide hierarchy */
   --text-display: clamp(2.5rem, 5.5vw, 4.5rem);       /* 40–72 · H1 / hero */
@@ -154,7 +154,7 @@ img { display: block; max-width: 100%; }
 .hero__lede {
   font-size: var(--text-body);
   line-height: 1.55;
-  color: rgba(245, 237, 232, 0.75);
+  color: color-mix(in srgb, var(--color-ecru, #f8ece4) 75%, transparent);
   margin-bottom: 15px;
 }
 
@@ -193,7 +193,7 @@ img { display: block; max-width: 100%; }
 .hero__btn--ghost {
   background: transparent;
   color: #fff;
-  border-color: rgba(245, 237, 232, 0.4);
+  border-color: color-mix(in srgb, var(--color-ecru, #f8ece4) 40%, transparent);
 }
 
 @media (max-width: 900px) {
@@ -212,117 +212,15 @@ img { display: block; max-width: 100%; }
   }
 }
 
-/* VISION — video above thesis in-fold; GSAP expands media to full-bleed */
+/* VISION — centered image + eyebrow + headline (homepage-overrides owns detail) */
 .vision {
-  background: #fff;
+  background: var(--color-vision-bg, var(--color-ecru, #f8ece4));
   height: 100vh;
   height: 100svh;
   min-height: 100svh;
   max-height: 100svh;
   overflow: hidden;
   box-sizing: border-box;
-}
-
-.vision__stage {
-  position: relative;
-  z-index: 11;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: clamp(1.25rem, 3.5vh, 2.25rem);
-  padding: clamp(4.5rem, 10vh, 6.5rem) 5vw clamp(1.5rem, 4vh, 2.75rem);
-  height: 100%;
-  min-height: 0;
-  box-sizing: border-box;
-  overflow: hidden;
-}
-
-.vision__video-wrap {
-  position: relative;
-  flex: 0 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  max-width: min(40rem, 72vw);
-  z-index: 1;
-  pointer-events: none;
-}
-
-.vision__video {
-  width: 100%;
-  height: clamp(8rem, 34vh, 21rem);
-  max-height: 40vh;
-  background: #000;
-  overflow: hidden;
-  opacity: 1;
-  visibility: visible;
-  border-radius: 4px;
-  will-change: width, height, border-radius;
-  pointer-events: auto;
-}
-
-.vision__video video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 40%;
-  display: block;
-}
-
-.vision__copy {
-  text-align: center;
-  max-width: min(1012px, 92vw);
-  z-index: 2;
-  position: relative;
-  flex: 0 0 auto;
-  margin: 0 auto;
-}
-
-.vision__copy p {
-  font-family: var(--serif);
-  font-size: clamp(24px, 3.2vw, 46px);
-  font-weight: 600;
-  line-height: 1.28;
-  margin-bottom: 0.28em;
-  white-space: nowrap;
-  overflow-wrap: normal;
-  word-break: keep-all;
-}
-
-.vision__copy p:last-child {
-  margin-bottom: 0;
-}
-
-.vision__word {
-  display: inline-block;
-  white-space: nowrap;
-}
-
-.vision__char {
-  display: inline-block;
-  will-change: opacity, filter;
-}
-
-.vision__char.is-space {
-  white-space: nowrap;
-}
-
-@media (max-width: 720px) {
-  .vision__video-wrap {
-    max-width: min(100%, 88vw);
-  }
-
-  .vision__video {
-    height: clamp(7rem, 30vh, 14rem);
-    max-height: 32vh;
-  }
-
-  .vision__copy p {
-    font-size: clamp(20px, 4.8vw, 26px);
-    white-space: normal;
-  }
 }
 
 /* LAB — homepage accordion lives in components/home/LabSection.css (.meola-lab) */
@@ -332,7 +230,7 @@ img { display: block; max-width: 100%; }
 /* PORTFOLIO — one-fold: title + shapes + overlapping card deck (~100svh) */
 .portfolio {
   --portfolio-ink: var(--color-planet-blue, #002f3a);
-  --portfolio-cream: var(--color-secondary, #fef8c0);
+  --portfolio-cream: var(--color-ecru, #f8ece4);
   position: relative;
   background: var(--portfolio-ink);
   color: var(--portfolio-cream);
@@ -957,7 +855,7 @@ img { display: block; max-width: 100%; }
   /* Final layout: equal full-height band. Stair look is clip-only in GSAP. */
   height: 100%;
   background: var(--color-primary, #002f3a);
-  color: var(--color-secondary, #fef8c0);
+  color: var(--color-joyous-yellow, #fdf28c);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -980,7 +878,7 @@ img { display: block; max-width: 100%; }
   font-size: clamp(2rem, 4vw, 3.25rem);
   font-weight: 300;
   line-height: 1.1;
-  color: var(--color-secondary, #fef8c0);
+  color: var(--color-joyous-yellow, #fdf28c);
 }
 
 .metric span {
@@ -988,8 +886,8 @@ img { display: block; max-width: 100%; }
   max-width: 16ch;
   font-size: clamp(0.75rem, 1vw, 0.875rem);
   line-height: 1.35;
-  /* Secondary at 72% on primary — light-on-dark for AA on the panels. */
-  color: color-mix(in srgb, var(--color-secondary, #fef8c0) 72%, transparent);
+  /* Ecru at 72% on primary — WCAG-friendly body on Planet Blue band. */
+  color: color-mix(in srgb, var(--color-ecru, #f8ece4) 72%, transparent);
 }
 
 @media (prefers-reduced-motion: reduce) {

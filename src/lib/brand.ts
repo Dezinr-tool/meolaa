@@ -26,8 +26,8 @@ export const fonts = {
 export const colors = {
   planetBlue: '#002f3a',
   joyousYellow: '#fdf28c',
-  /** Semantic secondary — pale creamy yellow (swatch-sampled) */
-  secondary: '#fef8c0',
+  /** Semantic secondary — Joyous Yellow (primary duo with Planet Blue) */
+  secondary: '#fdf28c',
   ecru: '#f8ece4',
   white: '#ffffff',
   lilac: '#a8a3e3',

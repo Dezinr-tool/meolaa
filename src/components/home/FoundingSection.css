@@ -5,7 +5,8 @@
  */
 
 .founding {
-  --founding-cream: var(--color-secondary, #fef8c0);
+  --founding-warm: var(--color-ecru, #f8ece4);
+  --founding-cta: var(--color-joyous-yellow, #fdf28c);
   --founding-ink: var(--color-planet-blue, #002f3a);
   --founding-white: var(--color-white, #fff);
   --founding-pad-x: clamp(24px, 2.8vw, 40px);
@@ -226,13 +227,13 @@
   font-size: var(--text-body, clamp(0.95rem, 1.15vw, 1.1rem));
   line-height: 1.55;
   letter-spacing: -0.01em;
-  color: color-mix(in srgb, var(--founding-cream) 88%, transparent);
+  color: color-mix(in srgb, var(--founding-warm) 88%, transparent);
   text-wrap: pretty;
   text-shadow: 0 1px 14px color-mix(in srgb, #000 30%, transparent);
 }
 
 .founding__accent {
-  color: var(--founding-cream);
+  color: var(--founding-warm);
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 0.18em;
@@ -261,7 +262,7 @@
 
 .founding__cta {
   margin-top: 0;
-  background: var(--founding-cream);
+  background: var(--founding-cta);
   color: var(--founding-ink);
   border-color: transparent;
   pointer-events: auto;

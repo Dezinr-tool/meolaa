@@ -122,7 +122,7 @@ export function LabPage() {
       <header className="lab-hero">
         <div className="lab-hero__field" aria-hidden="true">
           <div className="lab-hero__plate">
-            <img src="/assets/pages/lab-hero.jpg" alt="" />
+            <img src="/assets/pages/lab-hero.jpg" alt="HIRA product packaging development" />
           </div>
           <div className="lab-hero__veil" />
           <div className="lab-hero__scan" />
@@ -290,7 +290,7 @@ export function LabPage() {
                 key={mod.num}
                 className={`lab-caps__img${i === activeCap ? ' is-active' : ''}`}
                 src={mod.image}
-                alt=""
+                alt={`${mod.title} — Meolaa Lab capability`}
                 loading="lazy"
               />
             ))}
