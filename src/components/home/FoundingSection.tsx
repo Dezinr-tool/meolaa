@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { Link } from 'react-router-dom'
 import {
   MeolaaLogoMark,
   MEOLAA_MARK_VIEWBOX_TIGHT,
@@ -115,9 +116,9 @@ export function FoundingSection() {
               launches brands faster than traditional FMCG can move.
             </p>
             <div className="founding__actions">
-              <a className="hero__btn founding__cta" href="/story">
+              <Link className="hero__btn founding__cta" to="/story">
                 Read Our Story →
-              </a>
+              </Link>
             </div>
           </div>
         </div>

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { ParallaxHeading } from './ParallaxHeading'
 import { VideoModal } from './VideoModal'
 
@@ -35,9 +36,9 @@ export function HeroSection() {
             building products and running go to market as one connected system.
           </p>
           <div className="hero__actions">
-            <a className="hero__btn hero__btn--solid" href="/story">
+            <Link className="hero__btn hero__btn--solid" to="/story">
               Read Our Story
-            </a>
+            </Link>
             <button
               className="hero__btn hero__btn--ghost"
               type="button"
@@ -220,9 +221,9 @@ export function InvestorsSection() {
           </div>
         </div>
       </div>
-      <a className="btn-ghost" href="/partners">
+      <Link className="btn-ghost" to="/partners">
         Partner with us →
-      </a>
+      </Link>
     </section>
   )
 }
@@ -246,9 +247,9 @@ export function PressSection() {
             Coverage and conversations about the system we&apos;re building.
           </p>
         </div>
-        <a className="btn-ghost-dark" href="/press">
+        <Link className="btn-ghost-dark" to="/press">
           View all press →
-        </a>
+        </Link>
       </div>
       <div className="press-feed__grid">
         <article className="press-card">

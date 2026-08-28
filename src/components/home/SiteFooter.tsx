@@ -7,6 +7,7 @@
  * scrubbed clip-path wipe; mark plays once and stays visible.
  */
 import { useEffect, useRef, useState, type FormEvent } from 'react'
+import { Link } from 'react-router-dom'
 import {
   MEOLAA_MARK_VIEWBOX_TIGHT,
   MeolaaLogoMark,
@@ -58,17 +59,17 @@ const FOOTER_LOGO_GRADIENT = {
 const JUMP_LINKS = [
   {
     title: 'About Us',
-    href: '/about',
+    to: '/about',
     desc: 'The thesis behind an AI native brand company.',
   },
   {
     title: 'Brand Lab',
-    href: '/lab',
+    to: '/lab',
     desc: 'How the OS finds and builds every brand.',
   },
   {
     title: 'Careers',
-    href: '/careers',
+    to: '/careers',
     desc: 'Build with a small team, real ownership.',
   },
 ] as const
@@ -88,12 +89,12 @@ function FooterBody() {
           aria-label="Where next"
         >
           {JUMP_LINKS.map((link) => (
-            <a key={link.href} className="site-footer__jump" href={link.href}>
+            <Link key={link.to} className="site-footer__jump" to={link.to}>
               <span className="site-footer__jump-title">{link.title}</span>
               <span className="site-footer__jump-desc">
                 {link.desc} <span aria-hidden="true">→</span>
               </span>
-            </a>
+            </Link>
           ))}
         </nav>
 
@@ -104,18 +105,18 @@ function FooterBody() {
 
           <div>
             <div className="site-footer__label">COMPANY</div>
-            <a href="/lab">CMI Platform</a>
-            <a href="/lab">Brand Copilot</a>
+            <Link to="/lab">CMI Platform</Link>
+            <Link to="/lab">Brand Copilot</Link>
             <a href="/#brands">Our Brands</a>
-            <a href="/about">Who We Are</a>
-            <a href="/careers">Careers</a>
+            <Link to="/about">Who We Are</Link>
+            <Link to="/careers">Careers</Link>
           </div>
 
           <div>
             <div className="site-footer__label">CONNECT</div>
-            <a href="/contact">Contact</a>
-            <a href="/press">Newsroom</a>
-            <a href="/partners">Investors &amp; Partners</a>
+            <Link to="/contact">Contact</Link>
+            <Link to="/press">Newsroom</Link>
+            <Link to="/partners">Investors &amp; Partners</Link>
           </div>
 
           <div>
