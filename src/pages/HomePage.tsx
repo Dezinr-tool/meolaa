@@ -2,7 +2,6 @@
  * Meolaa React homepage — photo hero on Planet Blue + prototype sections + Lenis/GSAP.
  */
 import { Preloader } from '../components/Preloader'
-import { SmoothScroll } from '../components/SmoothScroll'
 import { SiteNav } from '../components/SiteNav'
 import { SectionErrorBoundary } from '../components/SectionErrorBoundary'
 import { HomeAnimations } from '../components/home/HomeAnimations'
@@ -26,34 +25,33 @@ const SHOW_SCROLL_ARROW = false
 export function HomePage() {
   return (
     <>
+      {/* Portal to body; Lenis lives in App SmoothScroll — lock/unlock via getLenisInstance */}
       <Preloader />
-      <SmoothScroll>
-        <div className="app app--home">
-          <SiteNav variant="home" />
-          {SHOW_SCROLL_ARROW ? (
-            <div id="arrow" className="arrow" aria-hidden="true">
-              <div className="arrow__float">
-                <div className="arrow__shape" />
-              </div>
+      <div className="app app--home">
+        <SiteNav variant="home" />
+        {SHOW_SCROLL_ARROW ? (
+          <div id="arrow" className="arrow" aria-hidden="true">
+            <div className="arrow__float">
+              <div className="arrow__shape" />
             </div>
-          ) : null}
-          <HomeAnimations />
-          <main>
-            <HeroSection />
-            <VisionSection />
-            <LoopSection />
-            <LabSection />
-            <FoundingSection />
-            <PortfolioSection />
-            <MetricsSection />
-            <InvestorsSection />
-            <SectionErrorBoundary name="Press">
-              <PressSection />
-            </SectionErrorBoundary>
-          </main>
-          <SiteFooter />
-        </div>
-      </SmoothScroll>
+          </div>
+        ) : null}
+        <HomeAnimations />
+        <main>
+          <HeroSection />
+          <VisionSection />
+          <LoopSection />
+          <LabSection />
+          <FoundingSection />
+          <PortfolioSection />
+          <MetricsSection />
+          <InvestorsSection />
+          <SectionErrorBoundary name="Press">
+            <PressSection />
+          </SectionErrorBoundary>
+        </main>
+        <SiteFooter />
+      </div>
     </>
   )
 }

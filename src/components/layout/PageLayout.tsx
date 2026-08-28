@@ -1,7 +1,6 @@
 import type { ReactNode } from 'react'
 import { SiteNav } from '../SiteNav'
 import { SiteFooter } from '../home/SiteFooter'
-import { SmoothScroll } from '../SmoothScroll'
 import { InnerNavScroll } from './InnerNavScroll'
 import { InnerPageAnimations } from './InnerPageAnimations'
 import '../../styles/inner-pages.css'
@@ -20,14 +19,12 @@ export function PageLayout({
   navOverDark = false,
 }: PageLayoutProps) {
   return (
-    <SmoothScroll>
-      <div className={`app app--inner ${pageClass}`}>
-        <InnerNavScroll />
-        <SiteNav variant="inner" navOverDark={navOverDark} />
-        <main>{children}</main>
-        <SiteFooter simple />
-        <InnerPageAnimations />
-      </div>
-    </SmoothScroll>
+    <div className={`app app--inner ${pageClass}`}>
+      <InnerNavScroll />
+      <SiteNav variant="inner" navOverDark={navOverDark} />
+      <main>{children}</main>
+      <SiteFooter simple />
+      <InnerPageAnimations />
+    </div>
   )
 }

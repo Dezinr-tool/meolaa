@@ -1,5 +1,6 @@
 /**
  * Lenis smooth scroll + GSAP ScrollTrigger sync (matches prototype).
+ * Mount once at App root (App.tsx) so React Router page swaps don't destroy Lenis.
  *
  * Lerp-only (no duration/easing): when both are set, Lenis prefers a timed ease
  * that restarts on every wheel tick and fights pinned sections (Lab / Founding /

@@ -1,6 +1,8 @@
 import { HelmetProvider } from 'react-helmet-async'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { PageMeta } from './components/PageMeta'
+import { RouteScrollManager } from './components/RouteScrollManager'
+import { SmoothScroll } from './components/SmoothScroll'
 import { HomePage } from './pages/HomePage'
 import { AboutPage } from './pages/AboutPage'
 import { StoryPage } from './pages/StoryPage'
@@ -12,7 +14,8 @@ import { ContactPage } from './pages/ContactPage'
 
 function AppRoutes() {
   return (
-    <>
+    <SmoothScroll>
+      <RouteScrollManager />
       <PageMeta />
       <Routes>
         <Route path="/" element={<HomePage />} />
@@ -24,7 +27,7 @@ function AppRoutes() {
         <Route path="/partners" element={<PartnersPage />} />
         <Route path="/contact" element={<ContactPage />} />
       </Routes>
-    </>
+    </SmoothScroll>
   )
 }
 
