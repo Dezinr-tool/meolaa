@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1 --port 5173 --strictPort",
-    "build": "npx playwright install chromium && tsc -b && vite build && node scripts/prerender.mjs",
+    "build": "tsc -b && vite build && node scripts/prerender.mjs",
+    "build:full-prerender": "PLAYWRIGHT_PRERENDER=1 npm run build",
     "lint": "oxlint",
     "preview": "vite preview --host 127.0.0.1 --port 5173 --strictPort"
   },

@@ -221,6 +221,35 @@ function mixArrowColor(t: number) {
   return `rgba(${r | 0}, ${g | 0}, ${b | 0}, ${a.toFixed(2)})`
 }
 
+/** Per-char spans for vision headline stagger (opacity + y — no blur). */
+function splitVisionLines(lines: Element[]) {
+  lines.forEach((line) => {
+    const text = (line.textContent || '').trim()
+    line.textContent = ''
+    line.setAttribute('aria-label', text)
+
+    text.split(/(\s+)/).forEach((token) => {
+      if (/^\s+$/.test(token)) {
+        const space = document.createElement('span')
+        space.className = 'vision__char is-space'
+        space.textContent = '\u00a0'
+        line.appendChild(space)
+        return
+      }
+
+      const word = document.createElement('span')
+      word.className = 'vision__word'
+      ;[...token].forEach((char) => {
+        const span = document.createElement('span')
+        span.className = 'vision__char'
+        span.textContent = char
+        word.appendChild(span)
+      })
+      line.appendChild(word)
+    })
+  })
+}
+
 /**
  * Manual SplitText(type: "words") — Club plugin not installed (same approach
  * as the preloader avoiding SplitText). Skips nodes already split.
@@ -705,9 +734,12 @@ export function HomeAnimations() {
       const visionScroll = document.querySelector('.vision__scroll')
 
       if (vision && visionMedia && visionLines.length) {
+        splitVisionLines(visionLines)
+        const visionChars = gsap.utils.toArray<HTMLElement>('.vision__char')
+
         if (reduceMotion) {
           gsap.set(
-            [visionMedia, visionEyebrow, ...visionLines, visionScroll].filter(
+            [visionMedia, visionEyebrow, ...visionChars, visionScroll].filter(
               Boolean,
             ),
             {
@@ -718,7 +750,7 @@ export function HomeAnimations() {
         } else {
           gsap.set(visionMedia, { opacity: 0, y: 28 })
           if (visionEyebrow) gsap.set(visionEyebrow, { opacity: 0, y: 14 })
-          gsap.set(visionLines, { opacity: 0, y: 18 })
+          gsap.set(visionChars, { opacity: 0.14, y: 10 })
           if (visionScroll) gsap.set(visionScroll, { opacity: 0, y: 12 })
 
           const revealTl = gsap.timeline({
@@ -742,17 +774,25 @@ export function HomeAnimations() {
               '-=0.65',
             )
           }
-          revealTl.to(
-            visionLines,
-            {
-              opacity: 1,
-              y: 0,
-              stagger: 0.1,
-              duration: 0.75,
-              ease: REVEAL_EASE,
-            },
-            '-=0.45',
-          )
+
+          /* Line-by-line char stagger — opacity + y only (no blur). */
+          visionLines.forEach((line, lineIndex) => {
+            const lineChars = line.querySelectorAll<HTMLElement>('.vision__char')
+            if (!lineChars.length) return
+
+            revealTl.to(
+              lineChars,
+              {
+                opacity: 1,
+                y: 0,
+                stagger: 0.006,
+                duration: 0.08,
+                ease: 'power1.out',
+              },
+              lineIndex === 0 ? '-=0.45' : '-=0.02',
+            )
+          })
+
           if (visionScroll) {
             revealTl.to(
               visionScroll,

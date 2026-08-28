@@ -1,18 +1,17 @@
 /**
- * Post-build static prerender — writes real HTML files per route so Vercel
- * serves independent pages on direct URL access and reload.
+ * Static multi-page output — clones the Vite-built index.html per route with
+ * route-specific document metadata. Vercel serves real files on reload; React
+ * hydrates client-side for animations and navigation.
+ *
+ * Optional full DOM prerender (local only): PLAYWRIGHT_PRERENDER=1
  */
-import { spawn } from 'node:child_process'
-import { mkdir, writeFile } from 'node:fs/promises'
+import { readFile, writeFile, mkdir } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { chromium } from 'playwright'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const root = join(__dirname, '..')
 const dist = join(root, 'dist')
-const port = 4173
-const baseUrl = `http://127.0.0.1:${port}`
 
 const ROUTES = [
   '/',
@@ -75,18 +74,8 @@ function escapeHtml(value) {
     .replaceAll('<', '&lt;')
 }
 
-/** One canonical title + description per prerendered page (Helmet can leave duplicates). */
-function finalizeHead(html, route) {
+function injectPageMeta(html, route) {
   const meta = PAGE_META[route] ?? PAGE_META['/']
-  let out = html
-    .replace(/<title[^>]*>[\s\S]*?<\/title>/gi, '')
-    .replace(/<meta name="description"[^>]*>/gi, '')
-    .replace(/<meta property="og:title"[^>]*>/gi, '')
-    .replace(/<meta property="og:description"[^>]*>/gi, '')
-    .replace(/<meta name="twitter:title"[^>]*>/gi, '')
-    .replace(/<meta property="og:type"[^>]*>/gi, '')
-    .replace(/<meta name="twitter:card"[^>]*>/gi, '')
-
   const headTags = [
     `<title>${escapeHtml(meta.title)}</title>`,
     `<meta name="description" content="${escapeHtml(meta.description)}" />`,
@@ -98,41 +87,10 @@ function finalizeHead(html, route) {
     `<meta name="twitter:description" content="${escapeHtml(meta.description)}" />`,
   ].join('\n    ')
 
-  return out.replace(
+  return html.replace(
     /<meta charset="UTF-8"\s*\/?>/i,
     `$&\n    ${headTags}`,
   )
-}
-
-function waitForServer(url, timeoutMs = 30_000) {
-  const started = Date.now()
-  return new Promise((resolve, reject) => {
-    const tick = async () => {
-      try {
-        const res = await fetch(url)
-        if (res.ok || res.status === 404) {
-          resolve()
-          return
-        }
-      } catch {
-        /* not ready */
-      }
-      if (Date.now() - started > timeoutMs) {
-        reject(new Error(`Preview server did not start within ${timeoutMs}ms`))
-        return
-      }
-      setTimeout(tick, 250)
-    }
-    tick()
-  })
-}
-
-function startPreview() {
-  return spawn('npx', ['vite', 'preview', '--host', '127.0.0.1', '--port', String(port), '--strictPort'], {
-    cwd: root,
-    stdio: ['ignore', 'pipe', 'pipe'],
-    env: { ...process.env, NODE_ENV: 'production' },
-  })
 }
 
 async function outputPathForRoute(route) {
@@ -140,44 +98,65 @@ async function outputPathForRoute(route) {
   return join(dist, route.slice(1), 'index.html')
 }
 
-async function prerenderRoute(page, route) {
-  await page.goto(`${baseUrl}${route}`, { waitUntil: 'networkidle', timeout: 60_000 })
+async function generateStaticPages() {
+  const template = await readFile(join(dist, 'index.html'), 'utf8')
 
-  // Homepage preloader can take several seconds on first paint.
-  if (route === '/') {
-    await page.waitForSelector('.app--home main', { timeout: 15_000 }).catch(() => {})
-    await page.waitForFunction(
-      () => !document.documentElement.classList.contains('is-preloading'),
-      { timeout: 12_000 },
-    ).catch(() => {})
-  } else {
-    await page.waitForSelector('.app--inner main', { timeout: 15_000 })
+  for (const route of ROUTES) {
+    const html = injectPageMeta(template, route)
+    const out = await outputPathForRoute(route)
+    await mkdir(dirname(out), { recursive: true })
+    await writeFile(out, html, 'utf8')
+    console.log(`  ✓ ${route} → ${out.replace(dist, 'dist')}`)
   }
-
-  // Allow Helmet + late layout paints to settle.
-  await page.waitForTimeout(400)
-
-  const html = finalizeHead(await page.content(), route)
-  const out = await outputPathForRoute(route)
-  await mkdir(dirname(out), { recursive: true })
-  await writeFile(out, html, 'utf8')
-  console.log(`  ✓ ${route} → ${out.replace(dist, 'dist')}`)
 }
 
-async function main() {
-  console.log('Prerendering routes with Playwright…')
-  const preview = startPreview()
+async function generateWithPlaywright() {
+  const { spawn } = await import('node:child_process')
+  const { chromium } = await import('playwright')
+
+  const port = 4173
+  const baseUrl = `http://127.0.0.1:${port}`
+
+  function waitForServer(url, timeoutMs = 30_000) {
+    const started = Date.now()
+    return new Promise((resolve, reject) => {
+      const tick = async () => {
+        try {
+          const res = await fetch(url)
+          if (res.ok || res.status === 404) {
+            resolve()
+            return
+          }
+        } catch {
+          /* not ready */
+        }
+        if (Date.now() - started > timeoutMs) {
+          reject(new Error(`Preview server did not start within ${timeoutMs}ms`))
+          return
+        }
+        setTimeout(tick, 250)
+      }
+      tick()
+    })
+  }
+
+  const preview = spawn(
+    'npx',
+    ['vite', 'preview', '--host', '127.0.0.1', '--port', String(port), '--strictPort'],
+    {
+      cwd: root,
+      stdio: ['ignore', 'pipe', 'pipe'],
+      env: { ...process.env, NODE_ENV: 'production' },
+    },
+  )
 
   preview.stdout?.on('data', (chunk) => process.stdout.write(chunk))
   preview.stderr?.on('data', (chunk) => process.stderr.write(chunk))
 
   try {
     await waitForServer(baseUrl)
-
     const browser = await chromium.launch({ headless: true })
     const context = await browser.newContext()
-
-    // Skip homepage preloader during prerender — keeps HTML focused on content.
     await context.addInitScript(() => {
       try {
         sessionStorage.setItem('meolaa-preloader-v7', '1')
@@ -185,18 +164,51 @@ async function main() {
         /* ignore */
       }
     })
-
     const page = await context.newPage()
 
     for (const route of ROUTES) {
-      await prerenderRoute(page, route)
+      await page.goto(`${baseUrl}${route}`, { waitUntil: 'networkidle', timeout: 60_000 })
+      if (route === '/') {
+        await page.waitForSelector('.app--home main', { timeout: 15_000 }).catch(() => {})
+      } else {
+        await page.waitForSelector('.app--inner main', { timeout: 15_000 })
+      }
+      await page.waitForTimeout(400)
+
+      let html = await page.content()
+      html = html
+        .replace(/<title[^>]*>[\s\S]*?<\/title>/gi, '')
+        .replace(/<meta name="description"[^>]*>/gi, '')
+        .replace(/<meta property="og:title"[^>]*>/gi, '')
+        .replace(/<meta property="og:description"[^>]*>/gi, '')
+        .replace(/<meta property="og:type"[^>]*>/gi, '')
+        .replace(/<meta name="twitter:card"[^>]*>/gi, '')
+        .replace(/<meta name="twitter:title"[^>]*>/gi, '')
+        .replace(/<meta name="twitter:description"[^>]*>/gi, '')
+      html = injectPageMeta(html, route)
+
+      const out = await outputPathForRoute(route)
+      await mkdir(dirname(out), { recursive: true })
+      await writeFile(out, html, 'utf8')
+      console.log(`  ✓ ${route} → ${out.replace(dist, 'dist')} (playwright)`)
     }
 
     await browser.close()
-    console.log(`Done — ${ROUTES.length} pages prerendered.`)
   } finally {
     preview.kill('SIGTERM')
   }
+}
+
+async function main() {
+  console.log('Generating static pages…')
+
+  if (process.env.PLAYWRIGHT_PRERENDER === '1') {
+    await generateWithPlaywright()
+  } else {
+    await generateStaticPages()
+  }
+
+  console.log(`Done — ${ROUTES.length} pages written.`)
 }
 
 main().catch((err) => {

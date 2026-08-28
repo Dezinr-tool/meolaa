@@ -375,6 +375,20 @@ html {
   color: rgba(0, 0, 0, 0.32);
 }
 
+.vision__word {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.vision__char {
+  display: inline-block;
+  will-change: opacity, transform;
+}
+
+.vision__char.is-space {
+  white-space: nowrap;
+}
+
 .vision__scroll {
   position: absolute;
   left: 50%;
