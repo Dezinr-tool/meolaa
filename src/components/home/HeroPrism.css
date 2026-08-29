@@ -1,0 +1,86 @@
+/* Glass prism — centred above the hero wordmark (dock geometry in HomeAnimations). */
+
+.hero-prism {
+  --prism-size: clamp(52px, 5.8vw, 76px);
+  --prism-gap: clamp(14px, 2.2vh, 26px);
+  /* Logo aspect from .site-nav__logo (1065.3 / 213.8). */
+  --hero-logo-w: clamp(320px, 46vw, 860px);
+  --hero-logo-h: calc(var(--hero-logo-w) / 4.98);
+  --hero-centre-y: calc((100vh - clamp(60px, 12vh, 140px)) / 2);
+
+  position: absolute;
+  left: 50%;
+  top: calc(
+    var(--hero-centre-y) - (var(--hero-logo-h) / 2) - var(--prism-gap) -
+      var(--prism-size) * 0.866
+  );
+  z-index: 3;
+  width: var(--prism-size);
+  height: calc(var(--prism-size) * 0.866);
+  transform: translateX(-50%);
+  pointer-events: none;
+  opacity: 1;
+  will-change: opacity, transform;
+}
+
+.hero-prism__float {
+  width: 100%;
+  height: 100%;
+  animation: hero-prism-float 5.5s ease-in-out infinite;
+}
+
+.hero-prism__svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.28));
+}
+
+.hero-prism__rainbow {
+  animation: hero-prism-shimmer 7s ease-in-out infinite;
+}
+
+.hero-prism__outline {
+  vector-effect: non-scaling-stroke;
+}
+
+@keyframes hero-prism-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes hero-prism-shimmer {
+  0%,
+  100% {
+    opacity: 0.82;
+    transform: translateY(0);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translateY(-1px);
+  }
+}
+
+@media (max-width: 900px) {
+  .hero-prism {
+    --prism-size: clamp(40px, 11vw, 56px);
+    --prism-gap: clamp(10px, 1.6vh, 18px);
+    --hero-logo-w: clamp(200px, 44vw, 300px);
+    --hero-centre-y: calc(clamp(108px, 15vh, 148px) + (var(--hero-logo-h) / 2));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-prism__float,
+  .hero-prism__rainbow {
+    animation: none;
+  }
+}

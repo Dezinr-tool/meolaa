@@ -222,11 +222,6 @@ html {
   }
 }
 
-/* Prism stage retired; photo hero uses .hero__stage / .hero__bg again. */
-.hero-prism {
-  display: none !important;
-}
-
 /* The big centre wordmark is now the nav logo scaled up — see
    .site-nav__logo above and the dock ScrollTrigger in HomeAnimations.
    These legacy hooks are gone from the markup; kept out of the file

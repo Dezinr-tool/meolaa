@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { HeroPrism } from './HeroPrism'
 import { ParallaxHeading } from './ParallaxHeading'
 import { VideoModal } from './VideoModal'
 
@@ -21,6 +22,7 @@ export function HeroSection() {
         />
         <div className="hero__shade" />
       </div>
+      <HeroPrism />
       {/* The big centre wordmark lives in SiteNav, not here — it's one element
           that starts scaled up over this fold and docks into the nav on scroll
           (see the dock ScrollTrigger in HomeAnimations). A separate hero copy

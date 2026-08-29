@@ -504,6 +504,24 @@ export function HomeAnimations() {
             },
           )
           syncLogoDocked(0)
+
+          const heroPrism = document.querySelector(
+            '[data-hero-prism]',
+          ) as HTMLElement | null
+          if (heroPrism) {
+            gsap.to(heroPrism, {
+              opacity: 0,
+              y: -12,
+              ease: 'none',
+              scrollTrigger: {
+                trigger: hero,
+                start: 'top top',
+                end: () => `+=${window.innerHeight * DOCK_VH * 0.4}`,
+                scrub: true,
+                invalidateOnRefresh: true,
+              },
+            })
+          }
         }
       }
 
