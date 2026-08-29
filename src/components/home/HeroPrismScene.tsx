@@ -1,13 +1,8 @@
 import { useMemo, useRef } from 'react'
-import { Canvas, useFrame } from '@react-three/fiber'
+import { useFrame } from '@react-three/fiber'
 import { Environment, MeshTransmissionMaterial } from '@react-three/drei'
 import type { Group } from 'three'
 import { ExtrudeGeometry, Shape } from 'three'
-import './HeroPrism.css'
-
-const REDUCED_MOTION =
-  typeof window !== 'undefined' &&
-  window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
 function createEquilateralPrismGeometry(side = 1, depth = 0.55) {
   const height = (side * Math.sqrt(3)) / 2
@@ -29,9 +24,12 @@ function createEquilateralPrismGeometry(side = 1, depth = 0.55) {
 function PrismMesh() {
   const groupRef = useRef<Group>(null)
   const geometry = useMemo(() => createEquilateralPrismGeometry(), [])
+  const reducedMotion =
+    typeof window !== 'undefined' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
   useFrame((_, delta) => {
-    if (REDUCED_MOTION || !groupRef.current) return
+    if (reducedMotion || !groupRef.current) return
     groupRef.current.rotation.y += delta * 0.28
     groupRef.current.rotation.x = Math.sin(performance.now() * 0.00035) * 0.08
   })
@@ -64,7 +62,8 @@ function PrismMesh() {
   )
 }
 
-function PrismScene() {
+/** Lazy-loaded R3F scene — must render inside an eager `<Canvas>` parent. */
+export default function HeroPrismScene() {
   return (
     <>
       <ambientLight intensity={0.22} />
@@ -78,25 +77,5 @@ function PrismScene() {
 
       <PrismMesh />
     </>
-  )
-}
-
-export default function HeroPrism3D() {
-  const isMobile = window.matchMedia('(max-width: 900px)').matches
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  const dpr = reducedMotion ? 1 : isMobile ? 1 : Math.min(window.devicePixelRatio, 2)
-
-  return (
-    <Canvas
-      className="hero-prism__canvas"
-      gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }}
-      dpr={dpr}
-      camera={{ position: [0, 0.05, 2.35], fov: 32, near: 0.1, far: 20 }}
-      onCreated={({ gl }) => {
-        gl.setClearColor(0x000000, 0)
-      }}
-    >
-      <PrismScene />
-    </Canvas>
   )
 }
