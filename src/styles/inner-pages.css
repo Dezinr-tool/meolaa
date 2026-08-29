@@ -44,7 +44,7 @@
 .app--inner .site-nav.site-nav--inner.site-nav--over-dark:not(.is-scrolled) .site-nav__logo,
 .app--inner .site-nav.site-nav--inner.site-nav--over-dark:not(.is-scrolled) .site-nav__links a {
   color: var(--color-white, #fff);
-  text-shadow: 0 1px 12px color-mix(in srgb, #000 28%, transparent);
+  text-shadow: 0 1px 14px color-mix(in srgb, #000 38%, transparent);
 }
 
 .app--inner .site-nav.site-nav--inner:not(.site-nav--over-dark) .site-nav__logo-img .meolaa-logo-mark__path,

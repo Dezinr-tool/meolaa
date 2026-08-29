@@ -1255,7 +1255,7 @@ section.investors,
 }
 
 .site-nav__links a:not(.is-active) {
-  opacity: 0.75;
+  opacity: 0.85;
 }
 
 .site-nav--dark .site-nav__links a {

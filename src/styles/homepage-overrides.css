@@ -265,7 +265,7 @@ html {
   letter-spacing: 0.01em;
   color: var(--color-white, #fff);
   opacity: 1 !important;
-  text-shadow: 0 1px 12px color-mix(in srgb, #000 28%, transparent);
+  text-shadow: 0 1px 14px color-mix(in srgb, #000 38%, transparent);
 }
 
 .site-nav.is-scrolled .site-nav__links a {
