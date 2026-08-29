@@ -1,6 +1,6 @@
 /**
- * THE LOOP — Figma storyboard (0:4 → 0:13 → 0:28) + off-screen left entry.
- * Fixed full-bleed viewport, scroll-drawn path, near-static large camera.
+ * THE LOOP — closed continuous circuit (Signal → Build → Run).
+ * Fixed full-bleed viewport, scroll-drawn closed path, centred camera orbit.
  * Geometry: src/lib/loopPath.ts
  *
  * Colors: section bg = --loop-bg (white); track = Joyous Yellow;

@@ -1,13 +1,8 @@
 /**
- * THE LOOP — Build → Run → Signal.
+ * THE LOOP — Signal → Build → Run (continuous closed circuit).
  *
- * Fixed full-bleed viewport; scroll draws path + drives camera inside
- * `.loop__camera`. Pin/scrub lives in HomeAnimations (Lenis + ST.update).
- *
- * Animation beats:
- * Pin 0 = tip/stroke parked off-screen left (draw 0) at large camera scale
- * Scroll draws path into view from the left; Build / Run / Signal activate
- * copy (opacity/class only). Camera stays near-constant large with gentle drift.
+ * Fixed full-bleed viewport; scroll draws one full lap around the closed path
+ * and drives the camera inside `.loop__camera`. Pin/scrub in initLoop.
  */
 import { useLayoutEffect, useRef, useState } from 'react'
 import {
@@ -15,7 +10,6 @@ import {
   LOOP_STEPS,
   LOOP_TIP_RADIUS,
   PATH_STROKE_WIDTH,
-  PATH_TRANSFORM,
   VIEW_H,
   VIEW_W,
   artboardToContainerFraction,
@@ -63,12 +57,13 @@ export function LoopSection() {
     <section className="fold loop" data-section="loop">
       <div className="loop__inner">
         <header className="loop__header section-head section-head--on-light">
-          <p className="loop__eyebrow section-head__eyebrow">The Loop</p>
+          <p className="loop__eyebrow section-head__eyebrow">How we build brands</p>
           <ParallaxHeading className="loop__title section-head__title">
-            How we build brands
+            The Loop
           </ParallaxHeading>
           <p className="section-head__sub">
-            Three stages, one continuous system, each one feeding the next.
+            Signal feeds Build. Build feeds Run. Run feeds Signal — one continuous
+            system.
           </p>
         </header>
 
@@ -83,26 +78,23 @@ export function LoopSection() {
               overflow="visible"
               preserveAspectRatio="xMidYMid slice"
             >
-              <g transform={PATH_TRANSFORM}>
-                {/* One continuous solid stroke — dash grows to tip (no tip-fade gap) */}
-                <path
-                  ref={pathRef}
-                  id="loop-path"
-                  className="loop__drawn"
-                  data-loop-drawn
-                  d={LOOP_PATH}
-                  strokeWidth={PATH_STROKE_WIDTH}
-                />
+              {/* Closed circuit — dash grows with the leading tip around the loop */}
+              <path
+                ref={pathRef}
+                id="loop-path"
+                className="loop__drawn"
+                data-loop-drawn
+                d={LOOP_PATH}
+                strokeWidth={PATH_STROKE_WIDTH}
+              />
 
-                {/* Solid circular tip flush on the leading end */}
-                <circle
-                  className="loop__tip"
-                  data-loop-tip
-                  r={LOOP_TIP_RADIUS}
-                  cx="0"
-                  cy="0"
-                />
-              </g>
+              <circle
+                className="loop__tip"
+                data-loop-tip
+                r={LOOP_TIP_RADIUS}
+                cx="0"
+                cy="0"
+              />
             </svg>
 
             {LOOP_STEPS.map((stage, i) => {
