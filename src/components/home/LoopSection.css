@@ -3,20 +3,20 @@
  * Fixed full-bleed viewport, scroll-drawn open path, near-static large camera.
  * Geometry: src/lib/loopPath.ts
  *
- * Colors: section bg = --loop-bg (white); track = Joyous Yellow;
+ * Colors (Figma 173-391): section bg = Planet Blue; track = Joyous Yellow;
  * tip + milestone rings = primary (Planet Blue) for contrast on the yellow path;
- * copy stays --color-primary.
+ * copy = ecru on dark ground.
  */
 
 .loop {
-  /* Section ground only — do not reuse for pointer/tip (those are primary). */
-  --loop-bg: var(--color-white, #fff);
-  /* Path stroke — secondary family; joyous yellow beats pale secondary on white. */
+  /* Figma 173-391 — Planet Blue diagram ground. */
+  --loop-bg: var(--color-primary, #002f3a);
+  /* Path stroke — Joyous Yellow on Planet Blue. */
   --loop-track: var(--color-joyous-yellow, #fdf28c);
   /* Leading tip disc + milestone outer rings — primary on yellow track. */
   --loop-tip: var(--color-primary, #002f3a);
-  --loop-fg: var(--color-primary, #002f3a);
-  --loop-fg-muted: color-mix(in srgb, var(--color-primary, #002f3a) 72%, transparent);
+  --loop-fg: var(--color-ecru, #f8ece4);
+  --loop-fg-muted: color-mix(in srgb, var(--color-ecru, #f8ece4) 72%, transparent);
   --loop-dot: 34px;
   --loop-dot-inner: 18px;
   --loop-line: 28px;

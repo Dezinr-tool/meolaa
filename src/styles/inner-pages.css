@@ -272,7 +272,7 @@
 
 /* Loop fold — same scroll-pinned path draw as homepage (after About hero). */
 .app--inner .fold.loop {
-  background: var(--color-white);
+  background: var(--color-primary, #002f3a);
 }
 
 .app--inner .au-fold2__lede [data-reveal-chunk]:nth-child(2),

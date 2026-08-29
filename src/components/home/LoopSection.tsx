@@ -57,7 +57,7 @@ export function LoopSection() {
   return (
     <section className="fold loop" data-section="loop">
       <div className="loop__inner">
-        <header className="loop__header section-head section-head--on-light">
+        <header className="loop__header section-head">
           <p className="loop__eyebrow section-head__eyebrow">How we build brands</p>
           <ParallaxHeading className="loop__title section-head__title">
             The Loop

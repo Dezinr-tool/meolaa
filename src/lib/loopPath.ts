@@ -1,5 +1,5 @@
 /**
- * The Loop — path geometry from Figma file TjbrE1pU5td7gvviiUKRIc · Section 2 (0:3).
+ * The Loop — path geometry from Figma file wyTuBCCcA5sE0gPtyBc7aX · node 173-391.
  *
  * Path `d` source: Vector 1 on frame 0:28 (node 0:30) ≡ public/loop/vector-full.svg
  * Start tip local point: end of Vector 1 on frame 0:4 (node 0:6) ≡ vector-build.svg

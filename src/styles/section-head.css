@@ -222,12 +222,12 @@
   color: var(--sh-title);
 }
 
-/* Loop: Joyous Yellow ground — same on-light system (green / black / muted). */
+/* Loop: Planet Blue ground — on-dark system (green eyebrow / white / muted). */
 .loop__header.section-head {
   padding-inline: clamp(20px, 4vw, 64px);
   --sh-accent: var(--section-head-accent);
-  --sh-title: var(--section-head-on-light-ink);
-  --sh-sub: var(--section-head-on-light-muted);
+  --sh-title: var(--section-head-on-dark-ink);
+  --sh-sub: var(--section-head-on-dark-muted);
 }
 
 /* Portfolio: white ground — shared tokens only. */
