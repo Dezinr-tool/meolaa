@@ -1,5 +1,6 @@
 export {
   initAboutRoadmap,
+  initAboutVision,
   initMissionVision,
   initPillars,
 } from './about'
@@ -8,7 +9,7 @@ export { initLabPlatform } from './lab'
 export { initCareersLifeFlow } from './careers'
 export { waitForScroller, refreshScrollTriggers } from './shared'
 
-import { initAboutRoadmap, initMissionVision, initPillars } from './about'
+import { initAboutRoadmap, initAboutVision, initMissionVision, initPillars } from './about'
 import { initCareersLifeFlow } from './careers'
 import { initLabPlatform } from './lab'
 import { initStoryHero, initStoryRail } from './story'
@@ -28,6 +29,7 @@ export function initInnerPageAnimations(): () => void {
   const disposers: (() => void)[] = []
 
   disposers.push(safeInit('aboutRoadmap', initAboutRoadmap))
+  disposers.push(safeInit('aboutVision', initAboutVision))
   disposers.push(safeInit('missionVision', initMissionVision))
   disposers.push(safeInit('pillars', initPillars))
   disposers.push(safeInit('storyRail', initStoryRail))

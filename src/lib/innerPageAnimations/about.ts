@@ -1,4 +1,5 @@
 import type { ScrollTrigger as ST } from 'gsap/ScrollTrigger'
+import { initVision } from '../visionAnimations'
 import {
   ROADMAP_END_TIP_HIDE,
   ROADMAP_STEPS,
@@ -20,6 +21,14 @@ const SCRUB = 0.55
 const PIN_VH_DESKTOP = 2.2
 const PIN_VH_MOBILE = 1.6
 const STEP_ARRIVE_BIAS = 0.015
+
+/** Homepage Vision fold (video + scroll highlight) on About — after hero. */
+export function initAboutVision(): () => void {
+  if (!document.querySelector('.page-editorial [data-section="vision"]')) {
+    return () => {}
+  }
+  return initVision({ innerPage: true })
+}
 
 export function initAboutRoadmap(): () => void {
   const root = document.querySelector<HTMLElement>('[data-au-roadmap]')

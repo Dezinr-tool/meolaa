@@ -270,6 +270,11 @@
   object-fit: cover;
 }
 
+/* Vision fold — same ecru + pin/expand as homepage (after About hero). */
+.app--inner .fold.vision {
+  background: var(--color-vision-bg, var(--color-ecru, #f8ece4));
+}
+
 .app--inner .au-fold2__lede [data-reveal-chunk]:nth-child(2),
 .app--inner .au2-mv__thesis .au-fold2__lede span:nth-child(2) {
   color: var(--section-head-accent);
