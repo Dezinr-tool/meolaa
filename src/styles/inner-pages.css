@@ -15,7 +15,7 @@
   pointer-events: auto;
 }
 
-.app--inner .site-nav.site-nav--inner.site-nav--glass,
+.app--inner .site-nav.site-nav--inner.site-nav--glass.is-scrolled,
 .app--inner .site-nav.site-nav--over-dark.site-nav--inner.site-nav--glass.is-scrolled {
   background: var(--nav-glass-light-bg);
   -webkit-backdrop-filter: blur(var(--nav-glass-blur)) saturate(var(--nav-glass-saturate));
@@ -31,14 +31,6 @@
   color: var(--color-black, #000);
   opacity: 1 !important;
   text-shadow: none;
-}
-
-.app--inner .site-nav.site-nav--inner.site-nav--over-dark.site-nav--glass:not(.is-scrolled) {
-  background: var(--nav-glass-dark-bg);
-  -webkit-backdrop-filter: blur(var(--nav-glass-blur)) saturate(var(--nav-glass-saturate));
-  backdrop-filter: blur(var(--nav-glass-blur)) saturate(var(--nav-glass-saturate));
-  border-bottom: 1px solid var(--nav-glass-dark-border);
-  box-shadow: none;
 }
 
 .app--inner .site-nav.site-nav--inner.site-nav--over-dark:not(.is-scrolled) .site-nav__logo,
@@ -57,8 +49,7 @@
 }
 
 @media (prefers-reduced-transparency: reduce) {
-  .app--inner .site-nav.site-nav--inner.site-nav--glass,
-  .app--inner .site-nav.site-nav--inner.site-nav--over-dark.site-nav--glass:not(.is-scrolled) {
+  .app--inner .site-nav.site-nav--inner.site-nav--glass.is-scrolled {
     background: var(--color-white, #fff);
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
@@ -66,6 +57,9 @@
 
   .app--inner .site-nav.site-nav--inner.site-nav--over-dark.site-nav--glass:not(.is-scrolled) {
     background: color-mix(in srgb, var(--color-planet-blue, #002f3a) 92%, transparent);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    border-bottom-color: transparent;
   }
 }
 

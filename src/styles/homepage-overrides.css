@@ -8,18 +8,12 @@ html {
 }
 
 /*
- * Glass header — dark tint over Planet Blue hero, frosted white on scroll.
+ * Glass header — fully transparent over Planet Blue hero at top;
+ * frosted white glass once .is-scrolled (scroll or dock-end).
  *
  * Readability first: scrolled state uses semi-transparent white glass +
  * black / Planet Blue ink so links stay sharp over ecru and white folds.
  */
-.app--home .site-nav--home.site-nav--glass:not(.is-scrolled) {
-  background: var(--nav-glass-dark-bg);
-  -webkit-backdrop-filter: blur(var(--nav-glass-blur)) saturate(var(--nav-glass-saturate));
-  backdrop-filter: blur(var(--nav-glass-blur)) saturate(var(--nav-glass-saturate));
-  border-bottom: 1px solid var(--nav-glass-dark-border);
-}
-
 .site-nav--glass.is-scrolled {
   background: var(--nav-glass-light-bg);
   -webkit-backdrop-filter: blur(var(--nav-glass-blur)) saturate(var(--nav-glass-saturate));
@@ -44,12 +38,13 @@ html {
   fill: var(--color-ecru, #f8ece4);
 }
 
-/* Solid bar when blur is disallowed or unwanted. */
+/* Solid bar when blur is disallowed — keep legibility over hero without glass. */
 @media (prefers-reduced-transparency: reduce) {
   .app--home .site-nav--home.site-nav--glass:not(.is-scrolled) {
-    background: color-mix(in srgb, var(--color-planet-blue, #002f3a) 88%, transparent);
+    background: color-mix(in srgb, var(--color-planet-blue, #002f3a) 92%, transparent);
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
+    border-bottom-color: transparent;
   }
 
   .site-nav--glass.is-scrolled {

@@ -133,7 +133,9 @@
   --content-max: 1180px;
   --nav-height: 92px;
 
-  /* Nav glassmorphism */
+  /* Nav — transparent at top, glass on scroll */
+  --nav-transparent-bg: transparent;
+  --nav-transparent-border: transparent;
   --nav-glass-blur: 16px;
   --nav-glass-saturate: 180%;
   --nav-glass-light-bg: rgba(255, 255, 255, 0.50);

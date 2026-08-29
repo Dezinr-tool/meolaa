@@ -1201,6 +1201,15 @@ section.investors,
   }
 }
 
+/* Default (scrollY = 0): fully transparent — no glass tint */
+.site-nav--glass:not(.is-scrolled) {
+  background: var(--nav-transparent-bg);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border-bottom: 1px solid var(--nav-transparent-border);
+  box-shadow: none;
+}
+
 .site-nav--glass.is-scrolled {
   background: var(--nav-glass-light-bg);
   -webkit-backdrop-filter: blur(var(--nav-glass-blur)) saturate(var(--nav-glass-saturate));
