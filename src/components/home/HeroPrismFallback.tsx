@@ -80,7 +80,7 @@ export function HeroPrismFallback() {
         className="hero-prism__outline"
         points="40,3 3,67 77,67"
         stroke="rgba(255,255,255,0.92)"
-        strokeWidth="1.1"
+        strokeWidth="1.4"
         strokeLinejoin="round"
       />
     </svg>

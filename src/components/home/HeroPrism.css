@@ -1,8 +1,8 @@
 /* Glass prism — centred above the hero wordmark (dock geometry in HomeAnimations). */
 
 .hero-prism {
-  --prism-size: clamp(92px, 10.5vw, 116px);
-  --prism-gap: clamp(14px, 2.2vh, 26px);
+  --prism-size: clamp(148px, 17vw, 200px);
+  --prism-gap: clamp(20px, 3vh, 36px);
   /* Logo aspect from .site-nav__logo (1065.3 / 213.8). */
   --hero-logo-w: clamp(320px, 46vw, 860px);
   --hero-logo-h: calc(var(--hero-logo-w) / 4.98);
@@ -69,8 +69,8 @@
 
 @media (max-width: 900px) {
   .hero-prism {
-    --prism-size: clamp(72px, 18vw, 96px);
-    --prism-gap: clamp(10px, 1.6vh, 18px);
+    --prism-size: clamp(108px, 26vw, 140px);
+    --prism-gap: clamp(14px, 2.2vh, 24px);
     --hero-logo-w: clamp(200px, 44vw, 300px);
     --hero-centre-y: calc(clamp(108px, 15vh, 148px) + (var(--hero-logo-h) / 2));
   }

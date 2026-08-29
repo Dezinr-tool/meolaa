@@ -4,7 +4,7 @@ import { Environment, MeshTransmissionMaterial } from '@react-three/drei'
 import type { Group } from 'three'
 import { ExtrudeGeometry, Shape } from 'three'
 
-function createEquilateralPrismGeometry(side = 1, depth = 0.55) {
+function createEquilateralPrismGeometry(side = 1.32, depth = 0.72) {
   const height = (side * Math.sqrt(3)) / 2
   const shape = new Shape()
   shape.moveTo(0, height / 2)

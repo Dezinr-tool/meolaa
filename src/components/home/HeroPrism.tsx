@@ -24,7 +24,7 @@ function HeroPrismCanvas() {
       className="hero-prism__canvas"
       gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }}
       dpr={dpr}
-      camera={{ position: [0, 0.05, 2.35], fov: 32, near: 0.1, far: 20 }}
+      camera={{ position: [0, 0.05, 2.05], fov: 32, near: 0.1, far: 20 }}
       onCreated={({ gl }) => {
         gl.setClearColor(0x000000, 0)
       }}
