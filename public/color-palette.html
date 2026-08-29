@@ -1,0 +1,484 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Meolaa — Color Palette Reference</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --page-bg: #f8ece4;
+        --page-ink: #002f3a;
+        --page-muted: rgba(0, 47, 58, 0.62);
+        --card-bg: #ffffff;
+        --card-border: rgba(0, 47, 58, 0.1);
+        --accent: #41857a;
+        --radius: 12px;
+        --font: "Geist", system-ui, sans-serif;
+        --mono: "Geist Mono", ui-monospace, monospace;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: var(--font);
+        background: var(--page-bg);
+        color: var(--page-ink);
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .page {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: clamp(32px, 5vw, 64px) clamp(24px, 4vw, 48px) 80px;
+      }
+
+      .header {
+        margin-bottom: clamp(40px, 6vw, 64px);
+        padding-bottom: 32px;
+        border-bottom: 1px solid var(--card-border);
+      }
+
+      .eyebrow {
+        margin: 0 0 12px;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--accent);
+      }
+
+      h1 {
+        margin: 0 0 12px;
+        font-size: clamp(2rem, 4vw, 2.75rem);
+        font-weight: 600;
+        letter-spacing: -0.03em;
+        line-height: 1.05;
+      }
+
+      .lede {
+        margin: 0;
+        max-width: 62ch;
+        font-size: clamp(1rem, 1.4vw, 1.125rem);
+        color: var(--page-muted);
+      }
+
+      .meta {
+        margin-top: 20px;
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--page-muted);
+      }
+
+      .section {
+        margin-bottom: clamp(40px, 5vw, 56px);
+      }
+
+      .section-title {
+        margin: 0 0 8px;
+        font-size: clamp(1.25rem, 2vw, 1.5rem);
+        font-weight: 600;
+        letter-spacing: -0.02em;
+      }
+
+      .section-desc {
+        margin: 0 0 24px;
+        font-size: 14px;
+        color: var(--page-muted);
+        max-width: 70ch;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+      }
+
+      @media (max-width: 960px) {
+        .grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      @media (max-width: 560px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .swatch {
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: var(--radius);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .swatch__color {
+        height: 120px;
+        position: relative;
+      }
+
+      .swatch__color--alpha {
+        background-image:
+          linear-gradient(45deg, #e8e0da 25%, transparent 25%),
+          linear-gradient(-45deg, #e8e0da 25%, transparent 25%),
+          linear-gradient(45deg, transparent 75%, #e8e0da 75%),
+          linear-gradient(-45deg, transparent 75%, #e8e0da 75%);
+        background-size: 16px 16px;
+        background-position:
+          0 0,
+          0 8px,
+          8px -8px,
+          -8px 0;
+      }
+
+      .swatch__fill {
+        position: absolute;
+        inset: 0;
+      }
+
+      .swatch__body {
+        padding: 16px 18px 18px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .swatch__name {
+        margin: 0;
+        font-size: 15px;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+      }
+
+      .swatch__hex {
+        margin: 0;
+        font-family: var(--mono);
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--page-ink);
+      }
+
+      .swatch__token {
+        margin: 0;
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--accent);
+        word-break: break-all;
+      }
+
+      .swatch__usage {
+        margin: 8px 0 0;
+        padding-top: 10px;
+        border-top: 1px solid rgba(0, 47, 58, 0.08);
+        font-size: 12px;
+        color: var(--page-muted);
+        line-height: 1.55;
+      }
+
+      .swatch__usage strong {
+        display: block;
+        margin-bottom: 4px;
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--page-ink);
+        opacity: 0.55;
+      }
+
+      .footer-note {
+        margin-top: 48px;
+        padding: 20px 24px;
+        background: rgba(255, 255, 255, 0.55);
+        border: 1px solid var(--card-border);
+        border-radius: var(--radius);
+        font-size: 13px;
+        color: var(--page-muted);
+      }
+
+      .footer-note code {
+        font-family: var(--mono);
+        font-size: 12px;
+        background: rgba(0, 47, 58, 0.06);
+        padding: 2px 6px;
+        border-radius: 4px;
+      }
+
+      @media print {
+        body {
+          background: #fff;
+        }
+        .page {
+          max-width: none;
+          padding: 24px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <header class="header">
+        <p class="eyebrow">Brand reference · Dev only</p>
+        <h1>Meolaa Color Palette</h1>
+        <p class="lede">
+          All official brand colors and semantic tokens currently wired on the website.
+          Screenshot this page for client planning — the “Suggested usage” column in
+          <code>docs/COLOR-PALETTE.md</code> is left blank for workshop notes.
+        </p>
+        <p class="meta">Source: docs/BRAND.md · src/styles/tokens.css · Aug 2026</p>
+      </header>
+
+      <!-- PRIMARY -->
+      <section class="section" id="primary">
+        <h2 class="section-title">Primary</h2>
+        <p class="section-desc">
+          Core brand trio — use in greatest proportion per brand guidelines (Planet Blue, Joyous Yellow, Ecru, White).
+        </p>
+        <div class="grid">
+          <article class="swatch">
+            <div class="swatch__color"><div class="swatch__fill" style="background:#002f3a"></div></div>
+            <div class="swatch__body">
+              <h3 class="swatch__name">Planet Blue</h3>
+              <p class="swatch__hex">#002F3A</p>
+              <p class="swatch__token">--color-planet-blue · --color-primary · --color-ink · --color-bg</p>
+              <p class="swatch__usage"><strong>Current usage</strong>Default dark shell; Hero overlay; Loop section background; Inner-page hero bands; Inverse CTAs (Planet Blue on Ecru); Nav dark glass; Logo fill on light nav; Video modal; About roadmap milestones; Founding section ink; Portfolio ink</p>
+            </div>
+          </article>
+          <article class="swatch">
+            <div class="swatch__color"><div class="swatch__fill" style="background:#fdf28c"></div></div>
+            <div class="swatch__body">
+              <h3 class="swatch__name">Joyous Yellow</h3>
+              <p class="swatch__hex">#FDF28C</p>
+              <p class="swatch__token">--color-joyous-yellow · --color-secondary</p>
+              <p class="swatch__usage"><strong>Current usage</strong>Primary CTA buttons (yellow fill, blue text); Loop path track/stroke; Founding section CTA; About roadmap path; Button focus ring; Portfolio decorative shape; Press/Founders accent highlights</p>
+            </div>
+          </article>
+          <article class="swatch">
+            <div class="swatch__color"><div class="swatch__fill" style="background:#f8ece4"></div></div>
+            <div class="swatch__body">
+              <h3 class="swatch__name">Ecru</h3>
+              <p class="swatch__hex">#F8ECE4</p>
+              <p class="swatch__token">--color-ecru · --color-cream · --color-surface · --color-vision-bg · --color-lab-bg · --color-fg</p>
+              <p class="swatch__usage"><strong>Current usage</strong>Vision section ground; Warm section backgrounds; Default text on dark (--color-fg); Footer copy &amp; links; Ghost button text; Hero body on dark; Nav dark-glass border tint; Logo ecru fill on dark nav</p>
+            </div>
+          </article>
+          <article class="swatch">
+            <div class="swatch__color"><div class="swatch__fill" style="background:#ffffff;border-bottom:1px solid rgba(0,47,58,0.08)"></div></div>
+            <div class="swatch__body">
+              <h3 class="swatch__name">White</h3>
+              <p class="swatch__hex">#FFFFFF</p>
+              <p class="swatch__token">--color-white</p>
+              <p class="swatch__usage"><strong>Current usage</strong>Inner pages page background; Press section; Footer pre-reveal stage; Nav light glass (50% white); Card surfaces; Section titles on dark (--section-head-on-dark-ink); Green CTA text</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- SECONDARY / ACCENTS -->
+      <section class="section" id="accents">
+        <h2 class="section-title">Secondary &amp; Accents</h2>
+        <p class="section-desc">
+          Accent palette — use sparingly; do not overpower the primary trio (brand guidelines p.14–15).
+        </p>
+        <div class="grid">
+          <article class="swatch">
+            <div class="swatch__color"><div class="swatch__fill" style="background:#41857a"></div></div>
+            <div class="swatch__body">
+              <h3 class="swatch__name">Sustainable Green</h3>
+              <p class="swatch__hex">#41857A</p>
+              <p class="swatch__token">--color-sustainable-green · --color-sage · --section-head-accent</p>
+              <p class="swatch__usage"><strong>Current usage</strong>ALL section eyebrows (every homepage + inner section head); Accent solid button (.btn--solid-green); Portfolio green accent; Founding section eyebrow override</p>
+            </div>
+          </article>
+          <article class="swatch">
+            <div class="swatch__color"><div class="swatch__fill" style="background:#a8a3e3"></div></div>
+            <div class="swatch__body">
+              <h3 class="swatch__name">Lilac</h3>
+              <p class="swatch__hex">#A8A3E3</p>
+              <p class="swatch__token">--color-lilac</p>
+              <p class="swatch__usage"><strong>Current usage</strong>Portfolio decorative shape (.portfolio__shape--lilac); Brand Lab card swatches — accent only, not sitewide</p>
+            </div>
+          </article>
+          <article class="swatch">
+            <div class="swatch__color"><div class="swatch__fill" style="background:#5656ad"></div></div>
+            <div class="swatch__body">
+              <h3 class="swatch__name">Deep Lilac (Generous Lilac)</h3>
+              <p class="swatch__hex">#5656AD</p>
+              <p class="swatch__token">--color-lilac-deep</p>
+              <p class="swatch__usage"><strong>Current usage</strong>Defined in tokens; not yet applied on live pages — available for future accent use</p>
+            </div>
+          </article>
+          <article class="swatch">
+            <div class="swatch__color"><div class="swatch__fill" style="background:#f0d5cc"></div></div>
+            <div class="swatch__body">
+              <h3 class="swatch__name">Deep Ecru</h3>
+              <p class="swatch__hex">#F0D5CC</p>
+              <p class="swatch__token">--color-ecru-deep</p>
+              <p class="swatch__usage"><strong>Current usage</strong>Portfolio decorative shape (.portfolio__shape--ecru-deep); Brand Lab swatch — accent only</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- NEUTRALS -->
+      <section class="section" id="neutrals">
+        <h2 class="section-title">Neutrals</h2>
+        <p class="section-desc">Structural neutrals for text, footer, and high-contrast surfaces.</p>
+        <div class="grid">
+          <article class="swatch">
+            <div class="swatch__color"><div class="swatch__fill" style="background:#000000"></div></div>
+            <div class="swatch__body">
+              <h3 class="swatch__name">Black</h3>
+              <p class="swatch__hex">#000000</p>
+              <p class="swatch__token">--color-black · --section-head-on-light-ink</p>
+              <p class="swatch__usage"><strong>Current usage</strong>Footer circle reveal fill &amp; mark band; Body/headline text on light grounds (Vision, Press); Nav links on light glass; Inner page default text</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- SEMANTIC -->
+      <section class="section" id="semantic">
+        <h2 class="section-title">Semantic — Text, Backgrounds &amp; Borders</h2>
+        <p class="section-desc">
+          Derived tokens for typography hierarchy, borders, and navigation glass effects. Checkerboard = transparency.
+        </p>
+        <div class="grid">
+          <article class="swatch">
+            <div class="swatch__color swatch__color--alpha">
+              <div class="swatch__fill" style="background:rgba(248,236,228,0.78)"></div>
+            </div>
+            <div class="swatch__body">
+              <h3 class="swatch__name">Foreground Muted</h3>
+              <p class="swatch__hex">rgba(248, 236, 228, 0.78)</p>
+              <p class="swatch__token">--color-fg-muted</p>
+              <p class="swatch__usage"><strong>Current usage</strong>Hero subcopy on dark; Secondary body text on Planet Blue grounds</p>
+            </div>
+          </article>
+          <article class="swatch">
+            <div class="swatch__color swatch__color--alpha">
+              <div class="swatch__fill" style="background:rgba(248,236,228,0.55)"></div>
+            </div>
+            <div class="swatch__body">
+              <h3 class="swatch__name">Foreground Soft</h3>
+              <p class="swatch__hex">rgba(248, 236, 228, 0.55)</p>
+              <p class="swatch__token">--color-fg-soft</p>
+              <p class="swatch__usage"><strong>Current usage</strong>Tertiary / de-emphasized text on dark backgrounds</p>
+            </div>
+          </article>
+          <article class="swatch">
+            <div class="swatch__color swatch__color--alpha">
+              <div class="swatch__fill" style="background:rgba(248,236,228,0.4)"></div>
+            </div>
+            <div class="swatch__body">
+              <h3 class="swatch__name">Border Ghost</h3>
+              <p class="swatch__hex">rgba(248, 236, 228, 0.40)</p>
+              <p class="swatch__token">--color-border-ghost</p>
+              <p class="swatch__usage"><strong>Current usage</strong>Ghost button borders on dark; Outline CTAs on Planet Blue</p>
+            </div>
+          </article>
+          <article class="swatch">
+            <div class="swatch__color swatch__color--alpha">
+              <div class="swatch__fill" style="background:rgba(0,47,58,0.28)"></div>
+            </div>
+            <div class="swatch__body">
+              <h3 class="swatch__name">Border Dark</h3>
+              <p class="swatch__hex">rgba(0, 47, 58, 0.28)</p>
+              <p class="swatch__token">--color-border-dark</p>
+              <p class="swatch__usage"><strong>Current usage</strong>Ghost button borders on light grounds (.btn--ghost-dark)</p>
+            </div>
+          </article>
+          <article class="swatch">
+            <div class="swatch__color swatch__color--alpha">
+              <div class="swatch__fill" style="background:rgba(255,255,255,0.5)"></div>
+            </div>
+            <div class="swatch__body">
+              <h3 class="swatch__name">Nav Glass — Light BG</h3>
+              <p class="swatch__hex">rgba(255, 255, 255, 0.50)</p>
+              <p class="swatch__token">--nav-glass-light-bg</p>
+              <p class="swatch__usage"><strong>Current usage</strong>Sticky nav background on scroll (homepage + inner pages, light variant)</p>
+            </div>
+          </article>
+          <article class="swatch">
+            <div class="swatch__color swatch__color--alpha">
+              <div class="swatch__fill" style="background:rgba(0,0,0,0.1)"></div>
+            </div>
+            <div class="swatch__body">
+              <h3 class="swatch__name">Nav Glass — Light Border</h3>
+              <p class="swatch__hex">rgba(0, 0, 0, 0.10)</p>
+              <p class="swatch__token">--nav-glass-light-border</p>
+              <p class="swatch__usage"><strong>Current usage</strong>Nav bottom border on light glass (scroll state)</p>
+            </div>
+          </article>
+          <article class="swatch">
+            <div class="swatch__color swatch__color--alpha">
+              <div class="swatch__fill" style="background:rgba(0,47,58,0.25)"></div>
+            </div>
+            <div class="swatch__body">
+              <h3 class="swatch__name">Nav Glass — Dark BG</h3>
+              <p class="swatch__hex">rgba(0, 47, 58, 0.25)</p>
+              <p class="swatch__token">--nav-glass-dark-bg</p>
+              <p class="swatch__usage"><strong>Current usage</strong>Nav over dark hero (before scroll / navOverDark)</p>
+            </div>
+          </article>
+          <article class="swatch">
+            <div class="swatch__color swatch__color--alpha">
+              <div class="swatch__fill" style="background:rgba(248,236,228,0.16)"></div>
+            </div>
+            <div class="swatch__body">
+              <h3 class="swatch__name">Nav Glass — Dark Border</h3>
+              <p class="swatch__hex">rgba(248, 236, 228, 0.16)</p>
+              <p class="swatch__token">--nav-glass-dark-border</p>
+              <p class="swatch__usage"><strong>Current usage</strong>Nav bottom border over dark hero</p>
+            </div>
+          </article>
+          <article class="swatch">
+            <div class="swatch__color swatch__color--alpha">
+              <div class="swatch__fill" style="background:color-mix(in srgb, #000000 58%, transparent)"></div>
+            </div>
+            <div class="swatch__body">
+              <h3 class="swatch__name">Section Sub — On Light</h3>
+              <p class="swatch__hex">color-mix(black 58%)</p>
+              <p class="swatch__token">--section-head-on-light-muted</p>
+              <p class="swatch__usage"><strong>Current usage</strong>Section subheadings on white / ecru / yellow grounds</p>
+            </div>
+          </article>
+          <article class="swatch">
+            <div class="swatch__color swatch__color--alpha">
+              <div class="swatch__fill" style="background:color-mix(in srgb, #ffffff 70%, transparent)"></div>
+            </div>
+            <div class="swatch__body">
+              <h3 class="swatch__name">Section Sub — On Dark</h3>
+              <p class="swatch__hex">color-mix(white 70%)</p>
+              <p class="swatch__token">--section-head-on-dark-muted</p>
+              <p class="swatch__usage"><strong>Current usage</strong>Section subheadings on Planet Blue / dark photo grounds (Loop, etc.)</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <aside class="footer-note">
+        <strong>Note for client workshop:</strong> Hero prism animation uses decorative rainbow gradients
+        (not brand tokens). One legacy fallback <code>#fef8c0</code> appears in inner-page CSS as a
+        secondary alias — official token is <code>#fdf28c</code> (Joyous Yellow). Deep Lilac is tokenized
+        but not yet deployed on live pages.
+      </aside>
+    </div>
+  </body>
+</html>
