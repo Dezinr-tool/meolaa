@@ -1,8 +1,8 @@
 /**
- * THE LOOP — Signal → Build → Run (continuous closed circuit).
+ * THE LOOP — Build → Run → Signal (Figma open stroke, 0:4 → 0:13 → 0:28).
  *
- * Fixed full-bleed viewport; scroll draws one full lap around the closed path
- * and drives the camera inside `.loop__camera`. Pin/scrub in initLoop.
+ * Fixed full-bleed viewport; scroll draws the Figma Vector 1 path from off-screen
+ * left and drives the camera inside `.loop__camera`. Pin/scrub in initLoop.
  */
 import { useLayoutEffect, useRef, useState } from 'react'
 import {
@@ -10,6 +10,7 @@ import {
   LOOP_STEPS,
   LOOP_TIP_RADIUS,
   PATH_STROKE_WIDTH,
+  PATH_TRANSFORM,
   VIEW_H,
   VIEW_W,
   artboardToContainerFraction,
@@ -78,23 +79,25 @@ export function LoopSection() {
               overflow="visible"
               preserveAspectRatio="xMidYMid slice"
             >
-              {/* Closed circuit — dash grows with the leading tip around the loop */}
-              <path
-                ref={pathRef}
-                id="loop-path"
-                className="loop__drawn"
-                data-loop-drawn
-                d={LOOP_PATH}
-                strokeWidth={PATH_STROKE_WIDTH}
-              />
+              <g transform={PATH_TRANSFORM}>
+                {/* Figma Vector 1 — dash grows with the leading tip */}
+                <path
+                  ref={pathRef}
+                  id="loop-path"
+                  className="loop__drawn"
+                  data-loop-drawn
+                  d={LOOP_PATH}
+                  strokeWidth={PATH_STROKE_WIDTH}
+                />
 
-              <circle
-                className="loop__tip"
-                data-loop-tip
-                r={LOOP_TIP_RADIUS}
-                cx="0"
-                cy="0"
-              />
+                <circle
+                  className="loop__tip"
+                  data-loop-tip
+                  r={LOOP_TIP_RADIUS}
+                  cx="0"
+                  cy="0"
+                />
+              </g>
             </svg>
 
             {LOOP_STEPS.map((stage, i) => {

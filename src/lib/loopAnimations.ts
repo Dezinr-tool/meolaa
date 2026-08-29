@@ -1,15 +1,19 @@
 import {
   LOOP_CAM_SCALE_VALUES,
   LOOP_END_TIP_HIDE,
+  LOOP_ENTRY_VIEW_X,
   LOOP_PATH_LOWEST_ARTBOARD,
   LOOP_START_FOCUS,
   LOOP_STEPS,
+  PATH_ENTRY,
   artboardToContainerFraction,
   loopCamEase,
   loopCamKeys,
   loopClampFocusY,
   loopCopyVisible,
   loopDrawProgress,
+  loopEntryFocusY,
+  loopFlushLeftFocus,
   loopFocusYCeil,
   loopFocusYFloor,
   loopRingVisible,
@@ -27,15 +31,18 @@ import {
 } from './innerPageAnimations/shared'
 import type { ScrollTrigger as ST } from 'gsap/ScrollTrigger'
 
-/** Pin travel — one full circuit around the closed loop. */
-const LOOP_PIN_VH_DESKTOP = 3.2
-const LOOP_PIN_VH_MOBILE = 3.6
+/** Pin travel — enough scroll for draw + three camera beats. */
+const LOOP_PIN_VH_DESKTOP = 3
+const LOOP_PIN_VH_MOBILE = 3.4
+/** 1:1 scrub — numeric lag + Lenis read as spring/overshoot on pin enter. */
 const LOOP_SCRUB = true
+/** Per-frame camera damp toward target (1 = snap). Higher = less trail bounce. */
 const LOOP_CAM_DAMP = 0.48
 const REVEAL_EASE = 'power2.out'
-const STEP_ARRIVE_BIAS = 0.015
+const STEP_ARRIVE_BIAS = 0.02
 
 type InitLoopOptions = {
+  /** Use transform pins for editorial inner pages (overflow-x: clip). */
   innerPage?: boolean
 }
 
@@ -66,7 +73,8 @@ function revealLoopHeader(
 }
 
 /**
- * The Loop — pin + closed-path draw + camera orbit (Signal → Build → Run).
+ * The Loop — pin + path draw + camera drift (Build → Run → Signal).
+ * Shared by homepage and About.
  */
 export function initLoop(options: InitLoopOptions = {}): () => void {
   const { innerPage = false } = options
@@ -106,7 +114,8 @@ export function initLoop(options: InitLoopOptions = {}): () => void {
       '[data-loop-tip]',
     ) as SVGCircleElement | null
     const pathLen = drawn.getTotalLength()
-    resolveLoopDrawStart(drawn)
+    const drawStart = resolveLoopDrawStart(drawn)
+    const entryProgress = loopDrawProgress(0)
 
     gsap.set(drawn, {
       strokeDasharray: pathLen,
@@ -119,7 +128,7 @@ export function initLoop(options: InitLoopOptions = {}): () => void {
     }
 
     const CAM_SCALES = LOOP_CAM_SCALE_VALUES
-    const CAM_KEYS = loopCamKeys()
+    const CAM_KEYS = loopCamKeys(drawStart)
 
     const stepPoints = () =>
       steps.map((el, i) => {
@@ -129,7 +138,7 @@ export function initLoop(options: InitLoopOptions = {}): () => void {
           return { x: fx, y: fy }
         }
         const fallback = LOOP_STEPS[i]
-        if (!svg || !fallback) return { x: LOOP_START_FOCUS.x, y: LOOP_START_FOCUS.y }
+        if (!svg || !fallback) return { x: PATH_ENTRY.x, y: PATH_ENTRY.y }
         return artboardToContainerFraction(svg, fallback.x, fallback.y)
       })
 
@@ -155,7 +164,7 @@ export function initLoop(options: InitLoopOptions = {}): () => void {
     }
 
     const lowestScreenY = () => {
-      if (!svg) return LOOP_START_FOCUS.y
+      if (!svg) return 0.91
       return artboardToContainerFraction(
         svg,
         LOOP_PATH_LOWEST_ARTBOARD.x,
@@ -177,21 +186,33 @@ export function initLoop(options: InitLoopOptions = {}): () => void {
       return { floor, ceil, startPt }
     }
 
-    const loopCentroid = () => {
-      const pts = stepPoints()
-      if (!pts.length) return LOOP_START_FOCUS
-      const x = pts.reduce((sum, p) => sum + p.x, 0) / pts.length
-      const y = pts.reduce((sum, p) => sum + p.y, 0) / pts.length
-      return { x, y }
+    const entryFocus = () => {
+      const scale = CAM_SCALES[0]
+      const { floor, ceil, startPt } = focusYBounds(scale)
+      const focusY = loopEntryFocusY(
+        startPt.y,
+        scale,
+        viewport.offsetHeight,
+        camera.offsetHeight,
+        undefined,
+        Math.max(floor, LOOP_START_FOCUS.y),
+        ceil,
+      )
+      return loopFlushLeftFocus(
+        startPt.x,
+        scale,
+        focusY,
+        viewport.offsetWidth,
+        camera.offsetWidth,
+        LOOP_ENTRY_VIEW_X,
+      )
     }
 
     const focusTargets = () => {
+      const entry = entryFocus()
       const pts = stepPoints()
-      const signal = pts[0] ?? loopCentroid()
-      const build = pts[1] ?? signal
-      const run = pts[2] ?? build
-      const center = loopCentroid()
-
+      const run = pts[1] ?? entry
+      const signal = pts[2] ?? run
       const soft = (
         a: { x: number; y: number },
         b: { x: number; y: number },
@@ -200,7 +221,6 @@ export function initLoop(options: InitLoopOptions = {}): () => void {
         x: a.x + (b.x - a.x) * t,
         y: a.y + (b.y - a.y) * t,
       })
-
       const clampY = (focus: { x: number; y: number }, scale: number) => {
         const { floor, ceil } = focusYBounds(scale)
         return {
@@ -212,12 +232,12 @@ export function initLoop(options: InitLoopOptions = {}): () => void {
           ),
         }
       }
-
       return [
-        clampY(soft(center, signal, 0.35), CAM_SCALES[0]),
-        clampY(soft(center, build, 0.4), CAM_SCALES[1]),
-        clampY(soft(center, run, 0.4), CAM_SCALES[2]),
-        clampY(center, CAM_SCALES[3]),
+        clampY(entry, CAM_SCALES[0]),
+        clampY(entry, CAM_SCALES[1]),
+        clampY(soft(entry, run, 0.35), CAM_SCALES[2]),
+        clampY(soft(entry, signal, 0.45), CAM_SCALES[3]),
+        clampY(soft(entry, signal, 0.5), CAM_SCALES[4]),
       ]
     }
 
@@ -339,21 +359,24 @@ export function initLoop(options: InitLoopOptions = {}): () => void {
       },
     })
 
-    sync(0, true)
+    sync(entryProgress, true)
     refreshScrollTriggers()
   } else if (reduceMotionLoop) {
     loopSection.classList.add('is-static')
     if (drawn) {
-      const len = drawn.getTotalLength()
+      const pathLen = drawn.getTotalLength()
       gsap.set(drawn, {
-        strokeDasharray: len,
+        strokeDasharray: pathLen,
         strokeDashoffset: 0,
       })
     }
     const tipEl = loopSection.querySelector(
       '[data-loop-tip]',
     ) as SVGCircleElement | null
-    if (tipEl) {
+    if (tipEl && drawn) {
+      const end = drawn.getPointAtLength(drawn.getTotalLength())
+      tipEl.setAttribute('cx', String(end.x))
+      tipEl.setAttribute('cy', String(end.y))
       tipEl.style.opacity = '0'
     }
     steps.forEach((step) => {
