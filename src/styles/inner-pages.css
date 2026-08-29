@@ -270,9 +270,9 @@
   object-fit: cover;
 }
 
-/* Vision fold — same ecru + pin/expand as homepage (after About hero). */
-.app--inner .fold.vision {
-  background: var(--color-vision-bg, var(--color-ecru, #f8ece4));
+/* Loop fold — same scroll-pinned path draw as homepage (after About hero). */
+.app--inner .fold.loop {
+  background: var(--color-white);
 }
 
 .app--inner .au-fold2__lede [data-reveal-chunk]:nth-child(2),
