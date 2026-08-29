@@ -28,9 +28,9 @@ export function SiteNav({ variant = 'home', navOverDark = false }: SiteNavProps)
 
   const navClass = [
     'site-nav',
-    isInner ? 'site-nav--inner' : '',
-    navOverDark && !isInner ? 'site-nav--over-dark' : '',
-    isInner && navOverDark ? 'site-nav--over-dark' : '',
+    'site-nav--glass',
+    isInner ? 'site-nav--inner' : 'site-nav--home',
+    navOverDark ? 'site-nav--over-dark' : '',
   ]
     .filter(Boolean)
     .join(' ')

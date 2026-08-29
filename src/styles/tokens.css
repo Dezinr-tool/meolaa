@@ -132,6 +132,14 @@
   --pad-x-sm: clamp(24px, 4vw, 64px);
   --content-max: 1180px;
   --nav-height: 92px;
+
+  /* Nav glassmorphism */
+  --nav-glass-blur: 16px;
+  --nav-glass-saturate: 180%;
+  --nav-glass-light-bg: rgba(255, 255, 255, 0.72);
+  --nav-glass-light-border: rgba(0, 0, 0, 0.08);
+  --nav-glass-dark-bg: rgba(0, 47, 58, 0.38);
+  --nav-glass-dark-border: rgba(248, 236, 228, 0.14);
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;

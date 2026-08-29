@@ -15,13 +15,13 @@
   pointer-events: auto;
 }
 
-.app--inner .site-nav.site-nav--inner,
-.app--inner .site-nav.site-nav--over-dark.site-nav--inner.is-scrolled {
-  background: color-mix(in srgb, var(--color-white, #fff) 92%, transparent);
-  -webkit-backdrop-filter: blur(18px) saturate(140%);
-  backdrop-filter: blur(18px) saturate(140%);
-  border-bottom: 1px solid
-    color-mix(in srgb, var(--color-black, #000) 10%, transparent);
+.app--inner .site-nav.site-nav--inner.site-nav--glass,
+.app--inner .site-nav.site-nav--over-dark.site-nav--inner.site-nav--glass.is-scrolled {
+  background: var(--nav-glass-light-bg);
+  -webkit-backdrop-filter: blur(var(--nav-glass-blur)) saturate(var(--nav-glass-saturate));
+  backdrop-filter: blur(var(--nav-glass-blur)) saturate(var(--nav-glass-saturate));
+  border-bottom: 1px solid var(--nav-glass-light-border);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04);
 }
 
 .app--inner .site-nav.site-nav--inner:not(.site-nav--over-dark) .site-nav__logo,
@@ -33,10 +33,12 @@
   text-shadow: none;
 }
 
-.app--inner .site-nav.site-nav--inner.site-nav--over-dark:not(.is-scrolled) {
-  background: transparent;
-  border-bottom: none;
-  backdrop-filter: none;
+.app--inner .site-nav.site-nav--inner.site-nav--over-dark.site-nav--glass:not(.is-scrolled) {
+  background: var(--nav-glass-dark-bg);
+  -webkit-backdrop-filter: blur(var(--nav-glass-blur)) saturate(var(--nav-glass-saturate));
+  backdrop-filter: blur(var(--nav-glass-blur)) saturate(var(--nav-glass-saturate));
+  border-bottom: 1px solid var(--nav-glass-dark-border);
+  box-shadow: none;
 }
 
 .app--inner .site-nav.site-nav--inner.site-nav--over-dark:not(.is-scrolled) .site-nav__logo,
@@ -50,8 +52,21 @@
   fill: var(--color-primary, #002f3a);
 }
 
-.app--inner .site-nav.site-nav--inner.site-nav--over-dark:not(.is-scrolled) .site-nav__logo-img .meolaa-logo-mark__path {
+.app--inner .site-nav.site-nav--inner.site-nav--over-dark.site-nav--glass:not(.is-scrolled) .site-nav__logo-img .meolaa-logo-mark__path {
   fill: var(--color-ecru, #f8ece4);
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .app--inner .site-nav.site-nav--inner.site-nav--glass,
+  .app--inner .site-nav.site-nav--inner.site-nav--over-dark.site-nav--glass:not(.is-scrolled) {
+    background: var(--color-white, #fff);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .app--inner .site-nav.site-nav--inner.site-nav--over-dark.site-nav--glass:not(.is-scrolled) {
+    background: color-mix(in srgb, var(--color-planet-blue, #002f3a) 92%, transparent);
+  }
 }
 
 .app--inner .site-nav__logo-img {

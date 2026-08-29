@@ -8,20 +8,24 @@ html {
 }
 
 /*
- * Frosted glass header on scroll.
+ * Glass header — dark tint over Planet Blue hero, frosted white on scroll.
  *
- * Readability first: mid-tone teal glass + light ink was too low-contrast
- * over Loop/Lab/white folds. Use a near-opaque white veil + black ink so
- * links and the wordmark stay sharp on every ground. Hero (not scrolled)
- * keeps transparent + white type.
+ * Readability first: scrolled state uses semi-transparent white glass +
+ * black / Planet Blue ink so links stay sharp over ecru and white folds.
  */
-.site-nav.is-scrolled {
-  background: color-mix(in srgb, var(--color-white, #fff) 92%, transparent);
-  -webkit-backdrop-filter: blur(18px) saturate(140%);
-  backdrop-filter: blur(18px) saturate(140%);
-  border-bottom: 1px solid
-    color-mix(in srgb, var(--color-black, #000) 10%, transparent);
-  box-shadow: 0 1px 0 color-mix(in srgb, var(--color-black, #000) 4%, transparent);
+.app--home .site-nav--home.site-nav--glass:not(.is-scrolled) {
+  background: var(--nav-glass-dark-bg);
+  -webkit-backdrop-filter: blur(var(--nav-glass-blur)) saturate(var(--nav-glass-saturate));
+  backdrop-filter: blur(var(--nav-glass-blur)) saturate(var(--nav-glass-saturate));
+  border-bottom: 1px solid var(--nav-glass-dark-border);
+}
+
+.site-nav--glass.is-scrolled {
+  background: var(--nav-glass-light-bg);
+  -webkit-backdrop-filter: blur(var(--nav-glass-blur)) saturate(var(--nav-glass-saturate));
+  backdrop-filter: blur(var(--nav-glass-blur)) saturate(var(--nav-glass-saturate));
+  border-bottom: 1px solid var(--nav-glass-light-border);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04);
 }
 
 .site-nav.is-scrolled .site-nav__logo,
@@ -42,7 +46,13 @@ html {
 
 /* Solid bar when blur is disallowed or unwanted. */
 @media (prefers-reduced-transparency: reduce) {
-  .site-nav.is-scrolled {
+  .app--home .site-nav--home.site-nav--glass:not(.is-scrolled) {
+    background: color-mix(in srgb, var(--color-planet-blue, #002f3a) 88%, transparent);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .site-nav--glass.is-scrolled {
     background: var(--color-white, #fff);
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
