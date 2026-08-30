@@ -891,7 +891,7 @@ img { display: block; max-width: 100%; }
   }
 }
 
-/* METRICS — one section: white section-head + Deep Ecru stats band.
+/* METRICS — one section: Deep Ecru head + stats band (single fold).
    Stair steps are a temporary GSAP clip-path reveal only; final state is one
    equal-height band. Padding/rhythm owned by section-head.css (.metrics). */
 .metrics {
@@ -899,7 +899,7 @@ img { display: block; max-width: 100%; }
   height: auto;
   min-height: 0;
   max-height: none;
-  background: var(--color-white, #fff);
+  background: var(--color-ecru-deep, #f0d5cc);
   overflow: hidden;
   box-sizing: border-box;
 }
@@ -944,8 +944,8 @@ img { display: block; max-width: 100%; }
   max-width: 16ch;
   font-size: clamp(0.75rem, 1vw, 0.875rem);
   line-height: 1.35;
-  /* Planet blue at 72% on Deep Ecru — readable captions on light band. */
-  color: color-mix(in srgb, var(--color-planet-blue, #002f3a) 72%, transparent);
+  /* Muted ink on Deep Ecru — matches on-light section sub copy. */
+  color: var(--section-head-on-light-muted, color-mix(in srgb, var(--color-black, #000) 58%, transparent));
 }
 
 @media (prefers-reduced-motion: reduce) {
