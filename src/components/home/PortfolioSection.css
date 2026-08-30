@@ -262,7 +262,7 @@
 .brand-tile__soon,
 .brand-tile__live {
   margin: 0 0 4px;
-  font-family: var(--mono);
+  font-family: var(--font-mono);
   font-size: 9px;
   font-weight: var(--fw-semibold, 600);
   letter-spacing: 0.16em;
@@ -280,7 +280,7 @@
 .brand-tile__desc,
 .brand-tile__cat {
   margin: 0;
-  font-family: var(--sans);
+  font-family: var(--font-sans);
   font-size: clamp(0.75rem, 0.95vw, 0.875rem);
   line-height: 1.4;
   color: rgb(255 255 255 / 78%);
@@ -297,7 +297,7 @@
   align-items: center;
   margin-top: 10px;
   width: fit-content;
-  font-family: var(--sans);
+  font-family: var(--font-sans);
   font-size: clamp(0.8125rem, 1vw, 0.9375rem);
   font-weight: var(--fw-medium, 500);
   color: var(--pf-ecru);
@@ -314,7 +314,7 @@
 .brand-tile__soon-cta {
   display: inline-block;
   margin-top: 8px;
-  font-family: var(--sans);
+  font-family: var(--font-sans);
   font-size: 12px;
   font-weight: var(--fw-medium, 500);
   color: var(--pf-soft);

@@ -81,7 +81,7 @@
 
 .section-head__eyebrow {
   margin: 0;
-  font-family: var(--mono);
+  font-family: var(--font-mono);
   font-size: var(--section-head-eyebrow-size);
   font-weight: var(--section-head-eyebrow-weight);
   letter-spacing: var(--section-head-eyebrow-tracking);
@@ -98,13 +98,13 @@
   line-height: var(--section-head-title-lh);
   letter-spacing: var(--section-head-title-tracking);
   color: var(--sh-title);
-  text-transform: none;
+  text-transform: uppercase;
   text-wrap: balance;
 }
 
 .section-head__sub {
   margin: 0;
-  font-family: var(--sans);
+  font-family: var(--font-sans);
   font-size: var(--section-head-sub-size);
   font-weight: var(--section-head-sub-weight);
   line-height: var(--section-head-sub-lh);
@@ -177,7 +177,7 @@
 
 .investors__title-line {
   display: block;
-  white-space: nowrap;
+  white-space: normal;
   color: inherit;
   opacity: 1;
 }
@@ -218,7 +218,7 @@
   font-weight: var(--section-head-title-weight);
   line-height: var(--section-head-title-lh);
   letter-spacing: var(--section-head-title-tracking);
-  text-transform: none;
+  text-transform: uppercase;
   color: var(--sh-title);
 }
 
@@ -241,7 +241,7 @@
 
 .meola-lab__eyebrow {
   margin: 0;
-  font-family: var(--mono);
+  font-family: var(--font-mono);
   font-size: var(--section-head-eyebrow-size);
   font-weight: var(--section-head-eyebrow-weight);
   letter-spacing: var(--section-head-eyebrow-tracking);
@@ -258,14 +258,14 @@
   line-height: var(--section-head-title-lh);
   letter-spacing: var(--section-head-title-tracking);
   color: var(--section-head-on-light-ink);
-  text-transform: none;
+  text-transform: uppercase;
   text-align: left;
   text-wrap: balance;
 }
 
 .meola-lab__sub {
   margin: 0;
-  font-family: var(--sans);
+  font-family: var(--font-sans);
   font-size: var(--section-head-sub-size);
   font-weight: var(--section-head-sub-weight);
   line-height: var(--section-head-sub-lh);

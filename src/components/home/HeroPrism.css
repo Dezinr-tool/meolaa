@@ -1,63 +1,75 @@
-/* Glass prism — centred above the hero wordmark (dock geometry in HomeAnimations). */
+/* Full-bleed WebGL stage — fills the entire hero fold so beams aren't clipped. */
 
 .hero-prism {
-  --prism-size: clamp(148px, 17vw, 200px);
-  --prism-gap: clamp(20px, 3vh, 36px);
-  /* Logo aspect from .site-nav__logo (1065.3 / 213.8). */
-  --hero-logo-w: clamp(320px, 46vw, 860px);
-  --hero-logo-h: calc(var(--hero-logo-w) / 4.98);
-  --hero-centre-y: calc((100vh - clamp(60px, 12vh, 140px)) / 2);
-
   position: absolute;
-  left: 50%;
-  top: calc(
-    var(--hero-centre-y) - (var(--hero-logo-h) / 2) - var(--prism-gap) -
-      var(--prism-size)
-  );
+  inset: 0;
   z-index: 3;
-  width: var(--prism-size);
-  height: var(--prism-size);
-  transform: translateX(-50%);
+  width: 100%;
+  height: 100%;
   pointer-events: none;
   opacity: 1;
-  will-change: opacity, transform;
+  overflow: visible;
 }
 
 .hero-prism__float {
+  position: relative;
   width: 100%;
   height: 100%;
-  animation: hero-prism-float 5.5s ease-in-out infinite;
 }
 
-.hero-prism__svg,
 .hero-prism__canvas {
   display: block;
-  width: 100%;
-  height: 100%;
+  width: 100% !important;
+  height: 100% !important;
   overflow: visible;
-  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.28));
+}
+
+.hero-prism__canvas--glass,
+.hero-prism__canvas--beams {
+  position: absolute !important;
+  inset: 0;
+}
+
+.hero-prism__canvas--beams {
+  z-index: 1;
+  pointer-events: none;
+}
+
+.hero-prism__img {
+  /* Fallback stays centred; WebGL fills the fold. */
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(520px, 72vw);
+  height: min(360px, 48vw);
+  transform: translate(-50%, -50%);
+  object-fit: contain;
   animation: hero-prism-shimmer 7s ease-in-out infinite;
+  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.28));
+}
+
+.hero-prism__webgl {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  /* Beams are always-on — don't steal clicks from headline / CTAs. */
+  pointer-events: none;
+}
+
+.hero-prism__webgl.is-ready {
+  opacity: 1;
 }
 
 .hero-prism__canvas {
   touch-action: none;
-}
-
-@keyframes hero-prism-float {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(-5px);
-  }
+  background: transparent;
 }
 
 @keyframes hero-prism-shimmer {
   0%,
   100% {
-    opacity: 0.92;
+    opacity: 0.94;
     filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.28));
   }
 
@@ -68,23 +80,15 @@
 }
 
 @media (max-width: 900px) {
-  .hero-prism {
-    --prism-size: clamp(108px, 26vw, 140px);
-    --prism-gap: clamp(14px, 2.2vh, 24px);
-    --hero-logo-w: clamp(200px, 44vw, 300px);
-    --hero-centre-y: calc(clamp(108px, 15vh, 148px) + (var(--hero-logo-h) / 2));
-  }
-
-  .hero-prism__canvas,
-  .hero-prism__svg {
+  .hero-prism__img {
+    width: min(300px, 78vw);
+    height: min(220px, 42vw);
     filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.24));
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-prism__float,
-  .hero-prism__svg,
-  .hero-prism__canvas {
+  .hero-prism__img {
     animation: none;
   }
 }

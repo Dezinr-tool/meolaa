@@ -5,6 +5,9 @@
 @import './styles/proto-pages.css';
 @import './styles/homepage-overrides.css';
 @import './styles/section-head.css';
+@import './styles/inner-pages.css';
+/* Last — cross-page responsive overrides win over page CSS. */
+@import './styles/mobile.css';
 
 *,
 *::before,
@@ -20,16 +23,44 @@ html {
   filter: none !important;
 }
 
+/*
+  Type families only at the root — size / weight / tracking stay on
+  component + section-head tokens so hero / nav layout is not overridden.
+    --font-display → titles
+    --font-sans    → body / UI
+    --font-mono    → eyebrows / labels
+*/
 body {
   margin: 0;
   min-width: 320px;
   min-height: 100svh;
-  font-family: var(--font-sans), var(--sans), system-ui, sans-serif;
+  font-family: var(--font-sans);
   background: #000;
 }
 
 #root {
   min-height: 100svh;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-display);
+}
+
+p {
+  font-family: var(--font-sans);
+}
+
+small,
+code,
+kbd,
+samp,
+pre {
+  font-family: var(--font-mono);
 }
 
 img {
@@ -40,9 +71,7 @@ a {
   color: inherit;
 }
 
-/* Form controls don't inherit font-family from their ancestors, so without
-   this they silently fall back to the UA default (Arial) instead of Geist.
-   Family only — sizes stay whatever each component sets. */
+/* Form controls don't inherit font-family from ancestors by default. */
 button,
 input,
 select,

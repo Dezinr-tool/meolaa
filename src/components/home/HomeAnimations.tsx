@@ -20,10 +20,6 @@ const NAV_TOP_Y = 8
  *  Also gates the nav's scroll-down auto-hide (see syncNav): letting the bar
  *  tuck away mid-dock would yank the mark off screen half-way through. */
 const DOCK_VH = 0.6
-/** Dock scrub progress at which glass + dark mark apply. Tied to the morph
- *  itself (not raw scrollY) so Lenis/pin drift can't darken the logo mid-hero. */
-const LOGO_DARK_AT = 0.98
-
 /** Lab's departure fade, in seconds. Self-playing rather than scrubbed — tune
  *  the feel here, not by widening a scroll range. */
 const LAB_FADE_OUT = 0.6
@@ -67,11 +63,6 @@ function formatMetricValue(n: number, decimals: number): string {
 
 function formatMetricDisplay(parsed: ParsedMetric, n: number): string {
   return `${parsed.prefix}${formatMetricValue(n, parsed.decimals)}${parsed.suffix}`
-}
-
-/** CSS clamp() in JS — the dock maths needs these as numbers. */
-function clampPx(min: number, preferred: number, max: number) {
-  return Math.min(Math.max(min, preferred), max)
 }
 
 type RevealOpts = {
@@ -177,7 +168,9 @@ function revealTitleLikeHero(
     scrollTrigger: {
       trigger,
       start,
-      toggleActions: 'play none none reverse',
+      /* Play once — reverse left titles stuck at opacity 0 and looked “broken”. */
+      toggleActions: 'play none none none',
+      once: true,
     },
   })
 }
@@ -405,124 +398,28 @@ export function HomeAnimations() {
         })
       }
 
-      /* ——— Hero wordmark docks into the nav ———
-       * One element, not two: the nav logo starts scaled up and translated
-       * into the middle of the hero fold, then scrubs back to its identity
-       * transform (= its real nav slot) over DOCK_VH of scroll. Because the
-       * end state is identity there's no landing maths to drift — it lands
-       * exactly where the flex layout already puts it.
-       *
-       * Transforming the SVG (not its anchor) keeps the anchor's layout box
-       * nav-sized throughout, which both holds the nav layout still and gives
-       * us a transform-independent rect to measure the docked geometry from.
-       */
-      const navLogo = document.querySelector('[data-nav-logo]') as HTMLElement | null
-      const navMark = document.querySelector(
-        '[data-nav-logo-mark]',
-      ) as SVGSVGElement | null
-
-      if (navLogo && navMark) {
-        /* Both ends of the dock, in the mark's own top-left origin space.
-         *
-         * The mark is laid out at its full raster width (see
-         * .site-nav__logo-img) and only ever scaled DOWN — at the hero end to
-         * heroWidth, at the docked end to the anchor's footprint. Reading the
-         * raster width and aspect back off computed style keeps CSS the single
-         * source of truth for both.
-         *
-         * transform-origin is 0 0, so a translate lands the mark's top-left
-         * exactly where we ask; the anchor is untransformed, so its rect stays
-         * a stable reference for both the origin and the docked size. */
-        const dockGeometry = () => {
-          const vw = window.innerWidth
-          const vh = window.innerHeight
-          const narrow = vw <= 900
-          const cs = window.getComputedStyle(navMark)
-          const rasterW = parseFloat(cs.width)
-          const aspect = rasterW / parseFloat(cs.height)
-          const anchor = navLogo.getBoundingClientRect()
-
-          /* Mirrors the old .hero__brandmark placement: centred in the fold on
-           * desktop, but pinned to the blank strip under the nav below 900px,
-           * where the headline+lede stack fills the fold and a centred mark
-           * would land on top of the headline. */
-          const heroW = narrow
-            ? clampPx(200, vw * 0.44, 300)
-            : clampPx(320, vw * 0.46, 860)
-          const heroH = heroW / aspect
-          const heroCx = vw / 2
-          const heroCy = narrow
-            ? clampPx(108, vh * 0.15, 148) + heroH / 2
-            : (vh - clampPx(60, vh * 0.12, 140)) / 2
-
-          return {
-            heroX: heroCx - heroW / 2 - anchor.left,
-            heroY: heroCy - heroH / 2 - anchor.top,
-            heroScale: heroW / rasterW,
-            dockScale: anchor.width / rasterW,
-          }
-        }
-
-        if (reduceMotion) {
-          gsap.set(navMark, { x: 0, y: 0, scale: dockGeometry().dockScale })
-        } else {
-          dockOwnsScrolled = true
-          const syncLogoDocked = (progress: number) => {
-            siteNav?.classList.toggle('is-scrolled', progress >= LOGO_DARK_AT)
-          }
-          gsap.fromTo(
-            navMark,
-            {
-              x: () => dockGeometry().heroX,
-              y: () => dockGeometry().heroY,
-              scale: () => dockGeometry().heroScale,
-            },
-            {
-              x: 0,
-              y: 0,
-              scale: () => dockGeometry().dockScale,
-              ease: 'none',
-              scrollTrigger: {
-                trigger: hero,
-                start: 'top top',
-                end: () => `+=${window.innerHeight * DOCK_VH}`,
-                scrub: true,
-                /* Hold the fold still for the whole dock, then release into
-                 * normal scrolling — the mark finishes travelling before the
-                 * page moves at all, rather than racing it. pinSpacing adds
-                 * the DOCK_VH of scroll this consumes, so nothing below is
-                 * swallowed. */
-                pin: true,
-                /* Flush with Lenis — anticipatePin overshoots on Vision reverse. */
-                anticipatePin: 0,
-                invalidateOnRefresh: true,
-                /* Dark mark + glass only when the morph has essentially landed
-                 * in the nav slot — keeps ecru readable over the hero fold. */
-                onUpdate: (self) => syncLogoDocked(self.progress),
-                onRefresh: (self) => syncLogoDocked(self.progress),
-              },
-            },
-          )
-          syncLogoDocked(0)
-
-          const heroPrism = document.querySelector(
-            '[data-hero-prism]',
-          ) as HTMLElement | null
-          if (heroPrism) {
-            gsap.to(heroPrism, {
-              opacity: 0,
-              y: -12,
-              ease: 'none',
-              scrollTrigger: {
-                trigger: hero,
-                start: 'top top',
-                end: () => `+=${window.innerHeight * DOCK_VH * 0.4}`,
-                scrub: true,
-                invalidateOnRefresh: true,
-              },
-            })
-          }
-        }
+      /* ——— Hero prism fades as the fold leaves ———
+       * The wordmark used to morph from the middle of this fold into the nav,
+       * and all of the raster/scale machinery here existed to serve that. The
+       * mark is now plain nav furniture sized in CSS (.site-nav__logo-img), so
+       * none of it is needed — and a one-shot JS scale would have gone stale
+       * anyway, since the mark's CSS width changes at the 900px breakpoint. */
+      const heroPrism = document.querySelector(
+        '[data-hero-prism]',
+      ) as HTMLElement | null
+      if (heroPrism && !reduceMotion) {
+        gsap.to(heroPrism, {
+          opacity: 0,
+          y: -12,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: hero,
+            start: 'top top',
+            end: () => `+=${window.innerHeight * DOCK_VH * 0.4}`,
+            scrub: true,
+            invalidateOnRefresh: true,
+          },
+        })
       }
 
       const ARROW_WHITE = '#ffffff'

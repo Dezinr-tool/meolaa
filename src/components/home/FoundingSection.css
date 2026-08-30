@@ -167,7 +167,7 @@
 
 .founding__eyebrow {
   margin: 0;
-  font-family: var(--mono);
+  font-family: var(--font-mono);
   font-size: var(--section-head-eyebrow-size);
   font-weight: var(--section-head-eyebrow-weight);
   letter-spacing: var(--section-head-eyebrow-tracking);
@@ -178,12 +178,13 @@
 
 .founding__title {
   margin: 0;
-  font-family: var(--font-display, var(--sans));
+  font-family: var(--font-display);
   font-size: var(--section-head-title-size);
   font-weight: var(--section-head-title-weight, 500);
   line-height: var(--section-head-title-lh, 1.02);
   letter-spacing: var(--section-head-title-tracking, -0.03em);
   color: var(--section-head-on-dark-ink, var(--founding-white, #fff));
+  text-transform: uppercase;
   text-wrap: balance;
   max-width: none;
   text-shadow: 0 1px 18px color-mix(in srgb, #000 35%, transparent);
@@ -191,7 +192,7 @@
 
 .founding__sub {
   margin: 0;
-  font-family: var(--sans);
+  font-family: var(--font-sans);
   font-size: var(--section-head-sub-size);
   font-weight: var(--section-head-sub-weight);
   line-height: var(--section-head-sub-lh);
@@ -223,7 +224,7 @@
 
 .founding__lede {
   margin: 0;
-  font-family: var(--font-sans, var(--sans));
+  font-family: var(--font-sans);
   font-size: var(--text-body, clamp(0.95rem, 1.15vw, 1.1rem));
   line-height: 1.55;
   letter-spacing: -0.01em;

@@ -4,22 +4,14 @@ import { HeroPrism } from './HeroPrism'
 import { ParallaxHeading } from './ParallaxHeading'
 import { VideoModal } from './VideoModal'
 
-/** Full-bleed hero photo on Planet Blue — headline + CTAs over a soft brand veil. */
+/** Brand gradient hero stage — Planet Blue / black / soft Lilac behind the prism. */
 export function HeroSection() {
   const [isFilmOpen, setFilmOpen] = useState(false)
 
   return (
     <section className="fold hero hero--blank" data-section="hero">
       <div className="hero__stage" aria-hidden="true">
-        <img
-          className="hero__bg"
-          src="/assets/hero-bg.jpg"
-          alt=""
-          width={1024}
-          height={576}
-          decoding="async"
-          fetchPriority="high"
-        />
+        <div className="hero__bg" />
         <div className="hero__shade" />
       </div>
       <HeroPrism />

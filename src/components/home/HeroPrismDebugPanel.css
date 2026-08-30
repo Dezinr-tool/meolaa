@@ -1,0 +1,117 @@
+.prism-debug {
+  position: fixed;
+  top: 72px;
+  right: 16px;
+  z-index: 9999;
+  width: min(320px, calc(100vw - 24px));
+  max-height: calc(100vh - 96px);
+  overflow: auto;
+  padding: 12px 12px 14px;
+  border-radius: 10px;
+  background: rgba(8, 10, 14, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #f2f4f8;
+  font-family: var(--font-sans, system-ui, sans-serif);
+  font-size: 12px;
+  line-height: 1.35;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+  pointer-events: auto;
+  backdrop-filter: blur(10px);
+}
+
+.prism-debug__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.prism-debug__title {
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+}
+
+.prism-debug__hint {
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 11px;
+}
+
+.prism-debug__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.prism-debug__btn {
+  appearance: none;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.prism-debug__btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.prism-debug__btn--primary {
+  background: #fdf28c;
+  color: #002f3a;
+  border-color: transparent;
+  font-weight: 600;
+}
+
+.prism-debug__btn--primary:hover {
+  filter: brightness(1.05);
+}
+
+.prism-debug__section {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.prism-debug__section-title {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 8px;
+}
+
+.prism-debug__row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 6px 8px;
+  align-items: center;
+  margin-bottom: 7px;
+}
+
+.prism-debug__label {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.prism-debug__value {
+  font-variant-numeric: tabular-nums;
+  color: rgba(255, 255, 255, 0.55);
+  min-width: 42px;
+  text-align: right;
+}
+
+.prism-debug__row input[type='range'] {
+  grid-column: 1 / -1;
+  width: 100%;
+  accent-color: #fdf28c;
+}
+
+.prism-debug__toast {
+  margin-top: 8px;
+  color: #7dff9a;
+  font-size: 11px;
+}

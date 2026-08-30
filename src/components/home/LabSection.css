@@ -178,7 +178,7 @@
 
 .meola-lab__num {
   margin: 0 0 10px;
-  font-family: var(--mono);
+  font-family: var(--font-mono);
   font-size: var(--text-eyebrow, 11px);
   font-weight: var(--fw-semibold, 600);
   letter-spacing: 0.18em;
@@ -229,7 +229,7 @@
   position: relative;
   z-index: 2;
   margin: 0;
-  font-family: var(--sans);
+  font-family: var(--font-sans);
   font-size: var(--text-sm, 0.875rem);
   font-weight: var(--fw-regular, 400);
   line-height: 1.55;
@@ -273,7 +273,7 @@
 }
 
 .meola-lab__small-num {
-  font-family: var(--mono);
+  font-family: var(--font-mono);
   font-size: 0.7em;
   font-weight: var(--fw-semibold, 600);
   letter-spacing: 0.14em;

@@ -110,7 +110,7 @@ html {
 }
 
 .preloader__progress-pct {
-  font-family: var(--font-mono, "Source Sans 3", ui-monospace, monospace);
+  font-family: var(--font-mono);
   font-size: 0.6875rem;
   font-weight: 400;
   letter-spacing: 0.14em;

@@ -1,0 +1,320 @@
+/**
+ * Cross-page mobile / tablet responsive layer.
+ * Breakpoints align with the rest of the site: 900 (phone+tablet), 768, 640.
+ */
+
+/* ——— Prevent horizontal page scroll ——— */
+html,
+body {
+  overflow-x: clip;
+  max-width: 100%;
+}
+
+img,
+video,
+canvas,
+svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Loop / roadmap decorative SVGs may intentionally exceed width — contain them. */
+.loop__camera svg,
+.au-roadmap svg,
+[data-section='loop'] svg {
+  max-width: none;
+}
+
+/* ——— Mobile nav (hamburger + drawer) ——— */
+.site-nav__toggle,
+.site-nav__drawer,
+.site-nav__backdrop {
+  display: none;
+}
+
+html.is-nav-menu-open,
+html.is-nav-menu-open body {
+  overflow: hidden;
+}
+
+@media (max-width: 900px) {
+  .site-nav {
+    padding-inline: 16px;
+    min-height: 64px;
+    height: auto;
+  }
+
+  /* Desktop link row hides — drawer takes over. (--left is gone: the nav is
+     one right-hand row now, logo left.) */
+  .site-nav__links--right {
+    display: none !important;
+  }
+
+  .site-nav__logo {
+    /* Scaled up with the desktop mark (was 72px). Set the dial, not `width`,
+       so the aspect-ratio height stays derived. */
+    --nav-logo-w: 96px;
+    margin-inline: 0;
+    z-index: 3;
+  }
+
+  .site-nav__toggle {
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    margin-left: auto;
+    z-index: 4;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    /* Readable on both light and dark heroes */
+    background: color-mix(in srgb, #000 35%, transparent);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    cursor: pointer;
+    /* Parent .site-nav is pointer-events: none */
+    pointer-events: auto;
+    color: #f8ece4;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .site-nav.is-scrolled .site-nav__toggle {
+    background: color-mix(in srgb, #fff 82%, transparent);
+    color: var(--color-planet-blue, #002f3a);
+  }
+
+  .site-nav.is-menu-open .site-nav__toggle {
+    background: color-mix(in srgb, #fff 18%, transparent);
+    color: #f8ece4;
+  }
+
+  .site-nav__toggle-bar {
+    display: block;
+    width: 20px;
+    height: 2px;
+    border-radius: 1px;
+    background: currentColor;
+    transition:
+      transform 0.25s ease,
+      opacity 0.2s ease;
+  }
+
+  .site-nav.is-menu-open .site-nav__toggle-bar:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+
+  .site-nav.is-menu-open .site-nav__toggle-bar:nth-child(2) {
+    opacity: 0;
+  }
+
+  .site-nav.is-menu-open .site-nav__toggle-bar:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+
+  .site-nav__drawer {
+    display: flex;
+    position: fixed;
+    inset: 0 0 0 auto;
+    z-index: 60;
+    width: min(320px, 86vw);
+    height: 100svh;
+    padding: 96px 28px 40px;
+    flex-direction: column;
+    background: var(--color-planet-blue, #002f3a);
+    color: var(--color-ecru, #f8ece4);
+    transform: translateX(105%);
+    transition: transform 0.32s cubic-bezier(0.33, 1, 0.68, 1);
+    pointer-events: none;
+    visibility: hidden;
+    box-shadow: -16px 0 40px rgba(0, 0, 0, 0.28);
+  }
+
+  .site-nav__drawer.is-open {
+    transform: translateX(0);
+    pointer-events: auto;
+    visibility: visible;
+  }
+
+  .site-nav__drawer-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .site-nav__drawer-nav a {
+    display: block;
+    padding: 14px 4px;
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: var(--fw-medium);
+    letter-spacing: -0.01em;
+    color: var(--color-ecru, #f8ece4);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(248, 236, 228, 0.12);
+    opacity: 1 !important;
+    text-shadow: none;
+  }
+
+  .site-nav__drawer-nav a.is-active {
+    color: var(--color-joyous-yellow, #fdf28c);
+  }
+
+  .site-nav__backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 55;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    background: rgba(0, 0, 0, 0.45);
+    cursor: pointer;
+    pointer-events: auto;
+  }
+}
+
+/* ——— Homepage hero ——— */
+@media (max-width: 900px) {
+  .hero--blank .hero__bottom {
+    gap: 20px;
+    padding-inline: 20px;
+    padding-bottom: max(24px, env(safe-area-inset-bottom));
+  }
+
+  .hero--blank .hero__headline {
+    max-width: 100%;
+    font-size: clamp(1.85rem, 8.5vw, 2.75rem);
+  }
+
+  .hero--blank .hero__headline span {
+    white-space: normal;
+  }
+
+  .hero--blank .hero__panel {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .hero--blank .hero__actions {
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  .hero--blank .hero__actions .btn {
+    flex: 1 1 auto;
+    min-width: min(100%, 160px);
+    justify-content: center;
+  }
+
+  .hero-prism {
+    --prism-w: clamp(140px, 36vw, 190px);
+    --prism-h: clamp(118px, 30vw, 160px);
+  }
+}
+
+/* ——— Section heads ——— */
+@media (max-width: 900px) {
+  .section-head {
+    max-width: 100%;
+    padding-inline: 4px;
+  }
+
+  .section-head .section-head__title,
+  .press-feed__head .section-head__title,
+  .meola-lab__headline,
+  .founding__title {
+    text-wrap: balance;
+    overflow-wrap: anywhere;
+    hyphens: auto;
+  }
+
+  .investors__title-line {
+    white-space: normal;
+  }
+}
+
+/* ——— Inner pages ——— */
+@media (max-width: 900px) {
+  .inner-hero__inner,
+  .app--inner .pg-pad,
+  .app--inner .page-editorial {
+    padding-inline: clamp(16px, 4vw, 24px);
+  }
+
+  .inner-hero__title,
+  .app--inner .pg-display,
+  .au-fold1__title,
+  .ct-hero__title {
+    font-size: clamp(1.75rem, 8vw, 2.75rem);
+    max-width: 100%;
+  }
+
+  .app--inner .ct-hero__ctas,
+  .inner-hero__ctas,
+  .au-fold1__ctas {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .app--inner .ct-life.is-static .ct-life__container {
+    grid-template-columns: 1fr;
+  }
+
+  .lab-caps__sticky {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+
+  .lab-caps__copy {
+    padding: clamp(72px, 10vh, 96px) clamp(16px, 4vw, 24px) 40px;
+  }
+
+  .lab-caps__media,
+  .lab-caps__img,
+  .lab-caps__stage img,
+  .lab-hero__plate img {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+
+  .press-featured,
+  .press-row,
+  .pt-type,
+  .pt-step,
+  .lead-grid,
+  .how-work__fn {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .app--inner .ct-life.is-static .ct-life__media--tall {
+    grid-row: auto;
+  }
+
+  .site-footer__grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 28px 20px;
+  }
+
+  .site-footer__jumps {
+    gap: 0;
+  }
+}
+
+/* ——— Tablet mid band ——— */
+@media (min-width: 901px) and (max-width: 1100px) {
+  .site-nav__links {
+    gap: clamp(10px, 1.4vw, 20px);
+  }
+
+  .site-nav__links a {
+    font-size: 0.9375rem;
+  }
+}

@@ -55,26 +55,52 @@ html {
 }
 
 /*
- * Centre logo, 3+3 links either side.
+ * Logo left, one row of links + CTA right.
  *
- * proto-style.css's `.site-nav` is a plain space-between flex row built for
- * two children (logo left, links right); it never had a middle slot. Giving
- * both link groups `flex: 1 1 0` makes them claim equal width regardless of
- * their own content, which is what actually centres the logo between them —
- * text-align or margin tricks on the logo itself can't do that once the two
- * groups aren't the same width.
+ * The link group must NOT stretch (`flex: 1 1 0` was there to centre the old
+ * 3 + logo + 3 layout by giving both groups equal width). With a single group
+ * it shrinks to its content and `.site-nav`'s space-between does the rest —
+ * logo hard left, links hard right.
  */
 .site-nav__links {
-  flex: 1 1 0;
+  flex: 0 1 auto;
   flex-wrap: nowrap;
-}
-
-.site-nav__links--left {
-  justify-content: flex-start;
+  align-items: center;
+  gap: clamp(14px, 1.6vw, 28px);
+  /* Belt and braces: holds the row right even if a third child lands in the
+     bar (the toggle is display:none on desktop). */
+  margin-left: auto;
 }
 
 .site-nav__links--right {
   justify-content: flex-end;
+}
+
+/* Contact — the one actioned item in the row, so it reads as a button. */
+.site-nav__cta {
+  display: inline-flex;
+  align-items: center;
+  padding: 9px 18px;
+  border: 1px solid currentColor;
+  border-radius: 2px;
+  line-height: 1;
+  white-space: nowrap;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+/* Filled state has to name both colours explicitly. `background: currentColor`
+   alone would paint the pill the same colour as its own label — invisible text.
+   The nav's ink flips with .is-scrolled, so each ground gets its own pair. */
+.site-nav:not(.is-scrolled) .site-nav__cta:hover,
+.site-nav:not(.is-scrolled) .site-nav__cta.is-active {
+  background: var(--color-ecru, #f8ece4);
+  color: var(--color-planet-blue, #002f3a);
+}
+
+.site-nav.is-scrolled .site-nav__cta:hover,
+.site-nav.is-scrolled .site-nav__cta.is-active {
+  background: var(--color-primary, #002f3a);
+  color: var(--color-white, #fff);
 }
 
 /* Visible at every scroll position — at the top of the page this same mark is
@@ -85,43 +111,32 @@ html {
    without pushing the link groups around, and this rect stays a stable
    reference for the dock maths. Sized to what the mark measured before it was
    given a tight viewBox, so the docked logo itself is unchanged. */
+/* The wordmark's footprint in the bar. `--nav-logo-w` is the size dial —
+   aspect-ratio derives the height from the tight viewBox, so the two can't
+   drift. Bar is --nav-height (68px), so keep width under ~140px here. */
 .site-nav__logo {
+  --nav-logo-w: 120px;
+
   flex: 0 0 auto;
-  position: relative;
   display: block;
-  width: 85px;
+  width: var(--nav-logo-w);
   aspect-ratio: 1065.3 / 213.8; /* tight viewBox — keeps the height honest */
   font-size: 0; /* no stray inline whitespace around the mark */
   letter-spacing: 0;
-  /* Clickable even while scaled up over the hero (.site-nav is
-     pointer-events: none, so this has to opt back in). */
+  /* .site-nav is pointer-events: none, so this has to opt back in. */
   pointer-events: auto;
 }
 
-/* Laid out at the hero's MAXIMUM width, then scaled DOWN to wherever it needs
-   to be — hero (~1.0) or docked (~0.1).
-   This direction is the whole point: `will-change` promotes this to its own
-   compositing layer, and a promoted layer is rasterised once at its LAYOUT size
-   and then texture-scaled. Laid out nav-sized and scaled up 3.5×, the hero mark
-   rendered as a stretched 85px bitmap — visibly pixelated despite being vector.
-   Laid out large and scaled down, every size is a clean downsample.
-   Width must stay >= the largest heroWidth in HomeAnimations' dock maths. */
+/* Simply fills its anchor. This used to be laid out at an 860px raster and
+   scaled down by JS, because the mark also had to scale UP over the hero and a
+   promoted layer rasterises once at its layout size (scaling that up pixelates,
+   vector or not). With the hero morph gone the mark is only ever nav-sized, so
+   it renders at its natural size and is crisp with no transform, no compositing
+   layer, and nothing to recompute on resize. */
 .site-nav__logo-img {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 860px;
-  height: auto;
-  transform-origin: 0 0;
-  will-change: transform;
-}
-
-@media (max-width: 900px) {
-  /* Hero maxes out at 300px here, so a 320px raster is plenty — no reason to
-     hold an 860px texture on the memory-tightest devices. */
-  .site-nav__logo-img {
-    width: 320px;
-  }
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .site-nav__logo-img .meolaa-logo-mark__path {
@@ -130,10 +145,10 @@ html {
   transition: fill 0.35s ease;
 }
 
-/* Hero fold — Planet Blue base while photo loads; copy + CTAs at bottom */
+/* Hero fold — solid black stage. */
 .hero--blank {
   position: relative;
-  background: var(--color-planet-blue, #002f3a);
+  background: var(--color-black, #000000);
 }
 
 .hero--blank .hero__stage {
@@ -141,31 +156,23 @@ html {
   inset: 0;
   z-index: 0;
   pointer-events: none;
+  overflow: hidden;
+  background: var(--color-black, #000000);
 }
 
 .hero--blank .hero__bg {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  /* Bias right/lower so the hand + orb stay in frame when cover crops. */
-  object-position: 68% 55%;
+  position: absolute;
+  inset: 0;
+  background: var(--color-black, #000000);
+  background-image: none;
 }
 
-/* Soft Planet Blue veil — light mid-fold so the yellow glow reads; stronger
-   at the bottom where headline / lede / CTAs sit. Avoids a flat black wash. */
 .hero--blank .hero__shade {
   position: absolute;
   inset: 0;
   z-index: 1;
   pointer-events: none;
-  background: linear-gradient(
-    180deg,
-    rgba(0, 47, 58, 0.28) 0%,
-    rgba(0, 47, 58, 0.12) 36%,
-    rgba(0, 47, 58, 0.42) 70%,
-    rgba(0, 47, 58, 0.82) 100%
-  );
+  background: transparent;
 }
 
 /* Keep prototype .hero__bottom absolute bottom bar — headline bottom-left,
@@ -346,7 +353,7 @@ html {
 
 .vision__eyebrow {
   margin: 0;
-  font-family: var(--mono);
+  font-family: var(--font-mono);
   font-size: var(--section-head-eyebrow-size);
   font-weight: var(--section-head-eyebrow-weight);
   letter-spacing: var(--section-head-eyebrow-tracking);
@@ -368,14 +375,16 @@ html {
   flex-direction: column;
   align-items: center;
   gap: 0.06em;
+  text-transform: uppercase;
 }
 
 .vision__headline span {
-  font-family: var(--font-display, var(--serif));
+  font-family: var(--font-display);
   font-size: clamp(1.625rem, 3.6vw, 3.125rem);
   font-weight: var(--fw-semibold, 600);
   line-height: 1.06;
-  letter-spacing: var(--tracking-display);
+  letter-spacing: var(--section-head-title-tracking, -0.01em);
+  text-transform: uppercase;
   color: var(--color-black, #000);
   flex-shrink: 0;
   min-width: min-content;

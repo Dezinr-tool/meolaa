@@ -89,7 +89,7 @@
 
 .app--inner .pg-eyebrow,
 .app--inner .pg-eyebrow--dark {
-  font-family: var(--mono);
+  font-family: var(--font-mono);
   font-size: var(--section-head-eyebrow-size);
   font-weight: var(--section-head-eyebrow-weight);
   letter-spacing: var(--section-head-eyebrow-tracking);
@@ -107,6 +107,7 @@
   font-size: var(--text-display);
   line-height: var(--lh-tight);
   letter-spacing: var(--section-head-title-tracking);
+  text-transform: uppercase;
 }
 
 .app--inner .pg-h2,
@@ -116,11 +117,12 @@
   font-size: var(--section-head-title-size);
   line-height: var(--section-head-title-lh);
   letter-spacing: var(--section-head-title-tracking);
+  text-transform: uppercase;
 }
 
 .app--inner .pg-body,
 .app--inner .ct-section-lede {
-  font-family: var(--sans);
+  font-family: var(--font-sans);
   font-size: var(--section-head-sub-size);
   line-height: var(--section-head-sub-lh);
   color: var(--section-head-on-light-muted);
@@ -201,7 +203,7 @@
 
 .inner-hero__crumb {
   margin-bottom: var(--space-5);
-  font-family: var(--mono);
+  font-family: var(--font-mono);
   font-size: var(--text-xs);
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -227,6 +229,7 @@
 .inner-hero__title {
   font-size: var(--text-display);
   font-weight: var(--fw-light);
+  text-transform: uppercase;
 }
 
 .inner-hero__ctas {
@@ -238,7 +241,7 @@
 }
 
 .inner-hero__cue {
-  font-family: var(--mono);
+  font-family: var(--font-mono);
   letter-spacing: 0.18em;
   color: color-mix(in srgb, var(--color-ecru) 55%, transparent);
 }
@@ -693,7 +696,7 @@
 }
 
 .pg-where-next__card .num {
-  font-family: var(--mono);
+  font-family: var(--font-mono);
   font-size: var(--text-eyebrow);
   color: var(--section-head-accent);
 }

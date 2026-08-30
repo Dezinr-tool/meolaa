@@ -46,7 +46,6 @@ export const PRELOADER_TIMING = {
 
 /** Above-fold / brand-critical assets worth tracking when present. */
 const CRITICAL_IMAGE_HINTS = [
-  '/assets/hero-bg.jpg',
   '/assets/imgImage234.png',
   '/assets/pages/story-hero-portrait.jpg',
 ]
