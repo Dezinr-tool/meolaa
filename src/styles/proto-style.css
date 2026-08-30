@@ -1742,6 +1742,11 @@ section.investors,
   );
   min-width: 0;
   box-sizing: border-box;
+  overflow: hidden;
+}
+
+.press-card__content {
+  min-width: 0;
 }
 
 /* Edge inset on first/last only — matches header pad, not the track. */

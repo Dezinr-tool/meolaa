@@ -123,8 +123,10 @@ html {
   flex: 0 0 auto;
   display: block;
   width: var(--nav-logo-w);
-  aspect-ratio: 1065.3 / 213.8; /* tight viewBox — keeps the height honest */
-  font-size: 0; /* no stray inline whitespace around the mark */
+  aspect-ratio: 1065.3 / 213.8;
+  /* tight viewBox — keeps the height honest */
+  font-size: 0;
+  /* no stray inline whitespace around the mark */
   letter-spacing: 0;
   /* .site-nav is pointer-events: none, so this has to opt back in. */
   pointer-events: auto;
@@ -168,26 +170,18 @@ html {
   inset: 0;
   background-color: var(--color-planet-blue, #002f3a);
   background-image:
-    radial-gradient(
-      ellipse 62% 48% at 88% 6%,
+    radial-gradient(ellipse 62% 48% at 88% 6%,
       color-mix(in srgb, var(--color-joyous-yellow, #fdf28c) 11%, transparent) 0%,
-      transparent 54%
-    ),
-    radial-gradient(
-      ellipse 78% 68% at 8% 92%,
+      transparent 54%),
+    radial-gradient(ellipse 78% 68% at 8% 92%,
       color-mix(in srgb, var(--color-sustainable-green, #41857a) 32%, transparent) 0%,
-      transparent 58%
-    ),
-    linear-gradient(
-      168deg,
+      transparent 58%),
+    linear-gradient(168deg,
       var(--color-planet-blue, #002f3a) 0%,
-      color-mix(
-        in srgb,
+      color-mix(in srgb,
         var(--color-planet-blue, #002f3a) 76%,
-        var(--color-sustainable-green, #41857a) 24%
-      ) 46%,
-      var(--color-planet-blue, #002f3a) 100%
-    );
+        var(--color-sustainable-green, #41857a) 24%) 46%,
+      var(--color-planet-blue, #002f3a) 100%);
 }
 
 .hero--blank .hero__shade {
@@ -195,7 +189,10 @@ html {
   inset: 0;
   z-index: 1;
   pointer-events: none;
-  background: transparent;
+  background: linear-gradient(180deg,
+      rgba(0, 0, 0, 0.5) 0%,
+      rgba(0, 0, 0, 0.65) 48%,
+      rgba(0, 0, 0, 0.75) 100%);
 }
 
 /* Keep prototype .hero__bottom absolute bottom bar — headline bottom-left,
@@ -227,7 +224,8 @@ html {
 
 .hero--blank .hero__headline span {
   display: block;
-  white-space: nowrap; /* each span = one line on desktop */
+  white-space: nowrap;
+  /* each span = one line on desktop */
 }
 
 /* Trimmed from 424/36vw to buy the bigger headline room on the same row. */
@@ -422,7 +420,7 @@ html {
   z-index: 2;
 }
 
-.vision__eyebrow + .vision__headline-stack {
+.vision__eyebrow+.vision__headline-stack {
   margin-top: var(--section-head-eyebrow-title-gap, 24px);
 }
 
@@ -454,7 +452,7 @@ html {
 }
 
 /* Only the two title lines — never .vision__word / .vision__char (GSAP split). */
-.vision__headline > [data-vision-line] {
+.vision__headline>[data-vision-line] {
   display: block;
   font-family: var(--font-display);
   font-size: var(--section-head-title-size, 3.5rem);
@@ -469,7 +467,7 @@ html {
   text-wrap: nowrap;
 }
 
-.vision__headline > [data-vision-line="secondary"],
+.vision__headline>[data-vision-line="secondary"],
 .vision__headline-line--faded {
   color: rgba(0, 0, 0, 0.32);
 }
@@ -504,7 +502,7 @@ html {
     max-height: 32vh;
   }
 
-  .vision__headline > [data-vision-line] {
+  .vision__headline>[data-vision-line] {
     font-size: clamp(1.375rem, 5vw, 1.875rem);
     line-height: 1.14;
     white-space: normal;
@@ -659,6 +657,49 @@ section.investors,
   box-sizing: border-box;
 }
 
+.press-feed__head-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.press-feed__nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.press-feed__arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  margin: 0;
+  padding: 0;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  border-radius: 0;
+  background: #fff;
+  color: #111;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+}
+
+.press-feed__arrow:hover:not(:disabled) {
+  background: #111;
+  border-color: #111;
+  color: #fff;
+}
+
+.press-feed__arrow:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
 /* Press head type/gaps: section-head.css (--section-head-*). */
 
 .press-feed__slider {
@@ -670,6 +711,12 @@ section.investors,
   min-height: 0;
   width: 100%;
   overflow: hidden;
+  touch-action: pan-y;
+  cursor: grab;
+}
+
+.press-feed__slider:active {
+  cursor: grabbing;
 }
 
 .press-feed__grid {
@@ -681,19 +728,15 @@ section.investors,
 }
 
 .press-card {
-  flex: 0 0
-    calc(
-      (
-          100cqi - 2 * var(--press-pad-x) -
-            (var(--press-visible) - 1) * var(--press-gap)
-        ) / var(--press-visible)
-    );
-  width: calc(
-    (
-        100cqi - 2 * var(--press-pad-x) -
-          (var(--press-visible) - 1) * var(--press-gap)
-      ) / var(--press-visible)
-  );
+  flex: 0 0 calc((100cqi - 2 * var(--press-pad-x) - (var(--press-visible) - 1) * var(--press-gap)) / var(--press-visible));
+  width: calc((100cqi - 2 * var(--press-pad-x) - (var(--press-visible) - 1) * var(--press-gap)) / var(--press-visible));
+  overflow: hidden;
+  user-select: none;
+}
+
+.press-card__content {
+  min-width: 0;
+  pointer-events: none;
 }
 
 .press-card:first-child {
@@ -721,32 +764,17 @@ section.investors,
   overflow: hidden;
 }
 
-/* prefers-reduced-motion: native horizontal scroll, no pin */
-.press-feed--static .press-feed__slider {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-.press-feed--static .press-feed__grid {
-  will-change: auto;
-  transform: none !important;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .press-feed__slider {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .press-feed__grid {
-    will-change: auto;
-    transform: none !important;
+@media (max-width: 720px) {
+  .press-feed__head-actions {
+    width: 100%;
+    justify-content: space-between;
   }
 }
 
 
 
 @media (max-width: 900px) {
+
   .fold.loop,
   .portfolio--fold,
   .press-feed {
@@ -773,6 +801,7 @@ section.investors,
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   .portfolio-title h2,
   .portfolio__intro h2 {
     filter: none !important;

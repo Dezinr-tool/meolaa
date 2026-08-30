@@ -217,7 +217,6 @@ const WORD_STAGGER_SELECTOR = [
   '.meola-lab__desc',
   '.founding__sub',
   '.founding__lede',
-  '.press-card__excerpt',
   '.brand-tile__desc',
 ].join(', ')
 
@@ -238,7 +237,8 @@ function revealWordsOnEnter(
     /* Never compose with vision's dedicated reveal. */
     if (
       paragraph.hasAttribute('data-vision-line') ||
-      paragraph.closest('.vision__copy')
+      paragraph.closest('.vision__copy') ||
+      paragraph.closest('[data-section="press"]')
     ) {
       return
     }
@@ -696,14 +696,8 @@ export function HomeAnimations() {
         }
       }
 
-      /* ——— Press: header reveal + pin/scrub horizontal card track ——— */
+      /* ——— Press: one-time entrance + drag carousel (no pin) ——— */
       if (press) {
-        const pressHead = gsap.utils.toArray<Element>(
-          press.querySelectorAll(
-            '.press-feed__head .section-head__eyebrow, .press-feed__head .section-head__title, .btn-ghost-dark',
-          ),
-        )
-        revealTitleLikeHero(pressHead, press, { start: 'top 86%' })
         initPress()
       }
 

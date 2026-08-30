@@ -256,56 +256,6 @@ const PRESS_ITEMS = [
       'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=960&h=720&q=80',
     alt: 'Retail store aisle',
   },
-  {
-    outlet: 'THE INFORMATION',
-    date: 'Aug 2, 2025',
-    headline: 'Why category whitespace is the new moat in consumer',
-    excerpt:
-      'Meolaa maps demand before product — a bet that research velocity beats brand nostalgia.',
-    image:
-      'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=960&h=720&q=80',
-    alt: 'Team collaborating around a laptop',
-  },
-  {
-    outlet: 'VOGUE BUSINESS',
-    date: 'Jun 21, 2025',
-    headline: 'From signal to shelf: the new brand factory model',
-    excerpt:
-      'How an AI-native house ships fewer SKUs with sharper intent — and what legacy houses are watching.',
-    image:
-      'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=960&h=720&q=80',
-    alt: 'Fashion retail interior',
-  },
-  {
-    outlet: 'REST OF WORLD',
-    date: 'May 9, 2025',
-    headline: 'Building consumer brands for India, from the operating layer up',
-    excerpt:
-      'A systems-first approach to local taste, logistics, and the next wave of digital-native retail.',
-    image:
-      'https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=960&h=720&q=80',
-    alt: 'Busy market street',
-  },
-  {
-    outlet: 'FAST COMPANY',
-    date: 'Mar 14, 2025',
-    headline: "The Build → Run → Signal loop behind Meolaa's first brand",
-    excerpt:
-      'Three stages, one stack: how the company turns market noise into a live product line.',
-    image:
-      'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=960&h=720&q=80',
-    alt: 'Collaborative workspace',
-  },
-  {
-    outlet: 'BUSINESS INSIDER',
-    date: 'Jan 28, 2025',
-    headline: 'Investors bet on systems, not single-brand stories',
-    excerpt:
-      "Why Meolaa's seed round underwrote an operating layer instead of one hero SKU.",
-    image:
-      'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=960&h=720&q=80',
-    alt: 'Analytics dashboard on a desk',
-  },
 ] as const
 
 export function PressSection() {
@@ -324,9 +274,29 @@ export function PressSection() {
             Coverage and conversations about the system we&apos;re building.
           </p>
         </div>
-        <Link className="btn-ghost-dark" to="/press">
-          View all →
-        </Link>
+        <div className="press-feed__head-actions">
+          <div className="press-feed__nav" role="group" aria-label="Press cards">
+            <button
+              type="button"
+              className="press-feed__arrow"
+              data-press-prev
+              aria-label="Previous press cards"
+            >
+              <span aria-hidden="true">←</span>
+            </button>
+            <button
+              type="button"
+              className="press-feed__arrow"
+              data-press-next
+              aria-label="Next press cards"
+            >
+              <span aria-hidden="true">→</span>
+            </button>
+          </div>
+          <Link className="btn-ghost-dark" to="/press">
+            View all →
+          </Link>
+        </div>
       </div>
       <div className="press-feed__slider" data-press-slider>
         <div className="press-feed__grid" data-press-track>
@@ -335,20 +305,22 @@ export function PressSection() {
               key={`${item.outlet}-${item.date}`}
               className="press-card"
             >
-              <div className="press-card__media">
-                <img
-                  src={item.image}
-                  alt={item.alt}
-                  width={480}
-                  height={360}
-                  loading="lazy"
-                />
+              <div className="press-card__content">
+                <div className="press-card__media">
+                  <img
+                    src={item.image}
+                    alt={item.alt}
+                    width={480}
+                    height={360}
+                    loading="lazy"
+                  />
+                </div>
+                <p className="press-card__meta">
+                  {item.outlet} · {item.date}
+                </p>
+                <h3>{item.headline}</h3>
+                <p className="press-card__excerpt">{item.excerpt}</p>
               </div>
-              <p className="press-card__meta">
-                {item.outlet} · {item.date}
-              </p>
-              <h3>{item.headline}</h3>
-              <p className="press-card__excerpt">{item.excerpt}</p>
             </article>
           ))}
         </div>
