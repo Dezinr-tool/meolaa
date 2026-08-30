@@ -932,9 +932,12 @@ img { display: block; max-width: 100%; }
 
 .metric strong {
   font-family: var(--font-display);
-  font-size: clamp(2rem, 4vw, 3.25rem);
-  font-weight: 300;
-  line-height: 1.1;
+  /* Same size as every section title — these numbers are the display type of
+     this fold, so they sit on the shared scale rather than their own clamp. */
+  font-size: var(--section-head-title-size, 3.5rem);
+  font-weight: var(--section-head-title-weight, 600);
+  line-height: var(--section-head-title-lh, 1.05);
+  letter-spacing: var(--section-head-title-tracking, -0.03em);
   color: var(--color-planet-blue, #002f3a);
 }
 

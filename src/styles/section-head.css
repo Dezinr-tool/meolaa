@@ -237,8 +237,9 @@
   flex: 0 0 auto;
   /* Ecru ground so Deep Ecru bars read as ascending stairs (prototype match). */
   background: var(--color-ecru, #f8ece4);
-  height: clamp(260px, 42svh, 375px);
-  min-height: clamp(260px, 42svh, 375px);
+  /* Taller stair band so the steps read as a chart, not a strip. */
+  height: clamp(340px, 54svh, 500px);
+  min-height: clamp(340px, 54svh, 500px);
   /* Bars stay full-bleed despite the section's shared side padding. */
   margin-inline: calc(var(--metrics-pad-x) * -1);
   margin-block: 0;
