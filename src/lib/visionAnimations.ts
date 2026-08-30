@@ -97,10 +97,14 @@ async function armVisionMedia(
   video: HTMLVideoElement | null | undefined,
   reduceMotion: boolean,
 ): Promise<() => void> {
-  const poster =
+  /* Either a real <img> in the DOM, or a bare { src } stand-in built from the
+     video's poster attribute. Typed as the union rather than casting the
+     stand-in to HTMLImageElement: that cast made the `instanceof` check below
+     narrow its false branch to `never`, so `poster?.src` failed to compile. */
+  const poster: HTMLImageElement | { src: string } | null =
     wrap.querySelector<HTMLImageElement>('.vision__poster') ||
     (video?.getAttribute('poster')
-      ? ({ src: video.getAttribute('poster')! } as HTMLImageElement)
+      ? { src: video.getAttribute('poster')! }
       : null)
 
   const posterSrc =
