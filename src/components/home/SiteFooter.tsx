@@ -332,6 +332,34 @@ export function SiteFooter({ simple = false }: SiteFooterProps) {
 
         let fillPlayed = false
 
+        /** Pin leaves inline height on `.footer-pin` — collapse + remeasure. */
+        const settleFooterStage = () => {
+          root.classList.add('is-settled')
+          gsap.set([pin, circle], {
+            clearProps: 'height,minHeight,maxHeight',
+          })
+
+          const pinSpacer = pin.parentElement
+          if (pinSpacer?.classList.contains('pin-spacer')) {
+            /* GSAP pinSpacing keeps padding-bottom on the spacer after unpin. */
+            gsap.set(pinSpacer, { paddingBottom: 0, height: pin.offsetHeight })
+          }
+
+          requestAnimationFrame(() => {
+            ScrollTrigger.refresh()
+            requestAnimationFrame(() => ScrollTrigger.refresh())
+          })
+        }
+
+        const unsettleFooterStage = () => {
+          root.classList.remove('is-settled')
+          const pinSpacer = pin.parentElement
+          if (pinSpacer?.classList.contains('pin-spacer')) {
+            gsap.set(pinSpacer, { clearProps: 'height,paddingBottom' })
+          }
+          requestAnimationFrame(() => ScrollTrigger.refresh())
+        }
+
         /* Pin + reveal share flush-top → +=280% so the disc never grows
            while Press still owns the viewport. */
         ScrollTrigger.create({
@@ -345,7 +373,9 @@ export function SiteFooter({ simple = false }: SiteFooterProps) {
           invalidateOnRefresh: true,
           onEnter: () => circle.classList.add('is-visible'),
           onEnterBack: () => circle.classList.add('is-visible'),
+          onLeave: settleFooterStage,
           onLeaveBack: () => {
+            unsettleFooterStage()
             fillPlayed = false
             if (markWrap) resetLogoFill(markWrap)
             if (copyReveal) resetCopyReveal(copyReveal)
@@ -371,8 +401,10 @@ export function SiteFooter({ simple = false }: SiteFooterProps) {
                 fillPlayed = true
                 showLogoFilled(markWrap)
               }
+              settleFooterStage()
             },
             onLeaveBack: () => {
+              unsettleFooterStage()
               circle.classList.remove('is-visible')
               fillPlayed = false
               if (markWrap) resetLogoFill(markWrap)
@@ -428,6 +460,7 @@ export function SiteFooter({ simple = false }: SiteFooterProps) {
 
         return () => {
           window.removeEventListener('resize', onResize)
+          unsettleFooterStage()
           ScrollTrigger.getById('footer-circle-stage')?.kill()
           ScrollTrigger.getById('footer-circle-reveal')?.kill()
           tl.kill()
