@@ -81,14 +81,53 @@ const WHERE_NEXT = [
   { num: '07', to: '/careers', title: 'Careers', desc: 'Help write the next chapter. →' },
 ] as const
 
+/** Hotspot near the pixel finger tip (32×32 asset). */
+const CURSOR_HOT_X = 5
+const CURSOR_HOT_Y = 2
+
 export function StoryPage() {
   const heroRef = useRef<HTMLElement>(null)
 
-  /* Pixel hand cursor for the whole /story route (cleared on leave). */
+  /*
+   * Pixel hand cursor for the whole /story route.
+   * CSS `cursor: url()` is applied in computed styles but often fails silently
+   * in Chromium/macOS — so we also drive a fixed <img> follower and hide the
+   * system cursor. Cleared on leave / touch devices.
+   */
   useEffect(() => {
     document.body.classList.add('story-page-active')
+
+    const coarse = window.matchMedia('(pointer: coarse)').matches
+    if (coarse) {
+      return () => {
+        document.body.classList.remove('story-page-active')
+      }
+    }
+
+    const cursorEl = document.createElement('img')
+    cursorEl.src = '/story/cursor-hand.png'
+    cursorEl.alt = ''
+    cursorEl.className = 'story-pixel-cursor'
+    cursorEl.setAttribute('aria-hidden', 'true')
+    cursorEl.draggable = false
+    document.body.appendChild(cursorEl)
+
+    const onMove = (e: PointerEvent) => {
+      cursorEl.style.transform = `translate3d(${e.clientX - CURSOR_HOT_X}px, ${e.clientY - CURSOR_HOT_Y}px, 0)`
+      cursorEl.classList.add('is-on')
+    }
+    const onLeave = () => {
+      cursorEl.classList.remove('is-on')
+    }
+
+    window.addEventListener('pointermove', onMove, { passive: true })
+    document.documentElement.addEventListener('mouseleave', onLeave)
+
     return () => {
       document.body.classList.remove('story-page-active')
+      window.removeEventListener('pointermove', onMove)
+      document.documentElement.removeEventListener('mouseleave', onLeave)
+      cursorEl.remove()
     }
   }, [])
 

@@ -717,27 +717,50 @@
 
 /* ——— OUR STORY ——— */
 
-/* Pixel hand cursor — scoped to /story only (body class + .story-page root).
-   Hotspot near the finger tip (image points upper-left). */
+/* Pixel hand cursor — scoped to /story only.
+   System cursor is hidden; a fixed .story-pixel-cursor <img> follows the pointer
+   (CSS cursor:url is flaky on Chromium/macOS even when computed style shows it). */
 body.story-page-active,
-.story-page {
-  cursor: url('/story/cursor-hand.png') 8 4, auto;
+body.story-page-active *,
+.story-page,
+.story-page * {
+  cursor: none !important;
 }
 
-body.story-page-active a,
-body.story-page-active button,
-body.story-page-active [role='button'],
-body.story-page-active summary,
-body.story-page-active label[for],
-.story-page a,
-.story-page button,
-.story-page [role='button'],
-.story-page summary,
-.story-page label[for],
-.story-page .story-rail__item,
-.story-page .story-brand-card__cta,
-.story-page .story-cta-band__link {
-  cursor: url('/story/cursor-hand.png') 8 4, pointer;
+.story-pixel-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 32px;
+  height: 32px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  pointer-events: none;
+  z-index: 2147483646;
+  opacity: 0;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  will-change: transform;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.story-pixel-cursor.is-on {
+  opacity: 1;
+}
+
+@media (pointer: coarse) {
+  body.story-page-active,
+  body.story-page-active *,
+  .story-page,
+  .story-page * {
+    cursor: auto !important;
+  }
+
+  .story-pixel-cursor {
+    display: none !important;
+  }
 }
 
 .story-hero {
