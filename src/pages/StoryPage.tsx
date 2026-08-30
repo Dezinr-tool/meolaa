@@ -81,8 +81,8 @@ const WHERE_NEXT = [
   { num: '07', to: '/careers', title: 'Careers', desc: 'Help write the next chapter. →' },
 ] as const
 
-/** Hotspot near the pixel finger tip (32×32 asset). */
-const CURSOR_HOT_X = 5
+/** Hotspot near the pixel finger tip (40×40 display of trimmed hand art). */
+const CURSOR_HOT_X = 6
 const CURSOR_HOT_Y = 2
 
 export function StoryPage() {
