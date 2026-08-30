@@ -891,7 +891,7 @@ img { display: block; max-width: 100%; }
   }
 }
 
-/* METRICS — one section: white section-head + primary (Planet Blue) stats band.
+/* METRICS — one section: white section-head + Deep Ecru stats band.
    Stair steps are a temporary GSAP clip-path reveal only; final state is one
    equal-height band. Padding/rhythm owned by section-head.css (.metrics). */
 .metrics {
@@ -912,9 +912,8 @@ img { display: block; max-width: 100%; }
   width: 25%;
   /* Final layout: equal full-height band. Stair look is clip-only in GSAP. */
   height: 100%;
-  background: var(--color-primary, #002f3a);
-  /* Deep Ecru accent on Planet Blue stats band (replaces Joyous Yellow). */
-  color: var(--color-ecru-deep, #f0d5cc);
+  background: var(--color-ecru-deep, #f0d5cc);
+  color: var(--color-planet-blue, #002f3a);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -937,7 +936,7 @@ img { display: block; max-width: 100%; }
   font-size: clamp(2rem, 4vw, 3.25rem);
   font-weight: 300;
   line-height: 1.1;
-  color: var(--color-ecru-deep, #f0d5cc);
+  color: var(--color-planet-blue, #002f3a);
 }
 
 .metric span {
@@ -945,8 +944,8 @@ img { display: block; max-width: 100%; }
   max-width: 16ch;
   font-size: clamp(0.75rem, 1vw, 0.875rem);
   line-height: 1.35;
-  /* Ecru at 72% on primary — WCAG-friendly body on Planet Blue band. */
-  color: color-mix(in srgb, var(--color-ecru, #f8ece4) 72%, transparent);
+  /* Planet blue at 72% on Deep Ecru — readable captions on light band. */
+  color: color-mix(in srgb, var(--color-planet-blue, #002f3a) 72%, transparent);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -956,14 +955,14 @@ img { display: block; max-width: 100%; }
   }
 }
 
-/* INVESTORS — primary (Planet Blue) ground; follows metrics as its own section.
+/* INVESTORS — Deep Ecru ground; follows metrics as its own section.
    !important beats any secondary/cream ground from sitewide yellow sweeps. */
 .investors,
 section.investors,
 [data-section='investors'] {
-  background: var(--color-primary, #002f3a) !important;
-  background-color: var(--color-primary, #002f3a) !important;
-  color: var(--color-ecru, #f8ece4);
+  background: var(--color-ecru-deep, #f0d5cc) !important;
+  background-color: var(--color-ecru-deep, #f0d5cc) !important;
+  color: var(--color-planet-blue, #002f3a);
   text-align: center;
   padding: clamp(40px, 6vh, 64px) clamp(24px, 4vw, 64px) clamp(48px, 7vh, 72px);
   display: flex;
@@ -1053,9 +1052,9 @@ section.investors,
   max-height: 36px;
   object-fit: contain;
   object-position: center;
-  /* Light marks on primary (Planet Blue) ground */
-  filter: grayscale(1) brightness(0) invert(1) !important;
-  opacity: 0.7;
+  /* Dark marks on Deep Ecru ground */
+  filter: grayscale(1) brightness(0) !important;
+  opacity: 0.72;
   user-select: none;
   pointer-events: none;
 }
@@ -1112,12 +1111,12 @@ section.investors,
   font-weight: 500;
 }
 
-/* Investors CTA on primary — light ghost (ecru ink + soft border) */
+/* Investors CTA on Deep Ecru — dark ghost (planet-blue ink + soft border) */
 .investors .btn-ghost,
 [data-section='investors'] .btn-ghost {
   background: transparent;
-  color: var(--color-ecru, #f8ece4) !important;
-  border-color: color-mix(in srgb, var(--color-ecru, #f8ece4) 40%, transparent) !important;
+  color: var(--color-planet-blue, #002f3a) !important;
+  border-color: color-mix(in srgb, var(--color-planet-blue, #002f3a) 35%, transparent) !important;
 }
 
 /* FOOTER styles live in SiteFooter.css (circle-reveal stage + content). */

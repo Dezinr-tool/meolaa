@@ -198,11 +198,11 @@
   color: var(--sh-sub);
 }
 
-/* Investors: primary (Planet Blue) ground → white type + green eyebrow. */
+/* Investors: Deep Ecru ground → on-light type + green eyebrow. */
 .investors .section-head {
   --sh-accent: var(--section-head-accent);
-  --sh-title: var(--section-head-on-dark-ink);
-  --sh-sub: var(--section-head-on-dark-muted);
+  --sh-title: var(--section-head-on-light-ink);
+  --sh-sub: var(--section-head-on-light-muted);
   max-width: min(52rem, 94vw);
 }
 
@@ -217,7 +217,7 @@
 .investors__title {
   max-width: min(52rem, 92vw);
   text-wrap: wrap;
-  color: var(--section-head-on-dark-ink, #fff) !important;
+  color: var(--section-head-on-light-ink, #000) !important;
   opacity: 1 !important;
 }
 
@@ -236,8 +236,8 @@
   position: relative;
   flex: 0 0 auto;
   /* Section footer band — same unit as .metrics__head, not a second fold. */
-  height: clamp(168px, 24svh, 220px);
-  min-height: clamp(168px, 24svh, 220px);
+  height: clamp(200px, 32svh, 280px);
+  min-height: clamp(200px, 32svh, 280px);
   /* Bars stay full-bleed despite the section's shared side padding. */
   margin-inline: calc(var(--metrics-pad-x) * -1);
   margin-block: 0;

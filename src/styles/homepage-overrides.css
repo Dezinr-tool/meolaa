@@ -548,7 +548,7 @@ html {
 }
 
 /*
- * Investors / Partners — force Planet Blue primary ground.
+ * Investors / Partners — Deep Ecru ground (was Planet Blue).
  * Last in cascade vs proto-style; !important blocks legacy cream sweeps.
  */
 .investors,
@@ -559,9 +559,9 @@ section.investors,
   max-height: none;
   box-sizing: border-box;
   justify-content: flex-start;
-  background: var(--color-primary, #002f3a) !important;
-  background-color: var(--color-primary, #002f3a) !important;
-  color: var(--color-ecru, #f8ece4) !important;
+  background: var(--color-ecru-deep, #f0d5cc) !important;
+  background-color: var(--color-ecru-deep, #f0d5cc) !important;
+  color: var(--color-planet-blue, #002f3a) !important;
   /* Kill any full-bleed top edge; short centered rule via ::before. */
   border-top: none;
   position: relative;
@@ -580,15 +580,15 @@ section.investors::before,
   transform: translateX(-50%);
   width: clamp(120px, 28vw, 200px);
   height: 1px;
-  background: color-mix(in srgb, var(--color-ecru, #f8ece4) 28%, transparent);
+  background: color-mix(in srgb, var(--color-planet-blue, #002f3a) 18%, transparent);
   pointer-events: none;
 }
 
 .investors .section-head,
 [data-section='investors'] .section-head {
   --sh-accent: var(--section-head-accent) !important;
-  --sh-title: var(--section-head-on-dark-ink) !important;
-  --sh-sub: var(--section-head-on-dark-muted) !important;
+  --sh-title: var(--section-head-on-light-ink) !important;
+  --sh-sub: var(--section-head-on-light-muted) !important;
 }
 
 .investors .section-head__eyebrow,
@@ -616,14 +616,15 @@ section.investors::before,
 .investors .btn-ghost,
 [data-section='investors'] .btn-ghost {
   background: transparent !important;
-  color: var(--color-ecru, #f8ece4) !important;
-  border-color: color-mix(in srgb, var(--color-ecru, #f8ece4) 40%, transparent) !important;
+  color: var(--color-planet-blue, #002f3a) !important;
+  border-color: color-mix(in srgb, var(--color-planet-blue, #002f3a) 35%, transparent) !important;
 }
 
 .investors .investor-logos__item img,
 [data-section='investors'] .investor-logos__item img {
-  filter: grayscale(1) brightness(0) invert(1) !important;
-  opacity: 0.7;
+  /* Dark marks on Deep Ecru — drop the white invert used on Planet Blue. */
+  filter: grayscale(1) brightness(0) !important;
+  opacity: 0.72;
 }
 
 .investor-logos {

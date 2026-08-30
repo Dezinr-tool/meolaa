@@ -157,6 +157,74 @@ export function MetricsSection() {
   )
 }
 
+const INVESTOR_LOGOS = [
+  {
+    src: '/assets/partners/colossa-ventures.svg',
+    alt: 'Colossa Ventures',
+  },
+  {
+    src: '/assets/partners/general-catalyst.svg',
+    alt: 'General Catalyst',
+  },
+  {
+    src: '/assets/partners/turbostart.svg',
+    alt: 'Turbostart',
+  },
+  {
+    src: '/assets/partners/ranjan-pai-family-office.svg',
+    alt: 'Ranjan Pai Family Office',
+  },
+] as const
+
+/** One marquee unit: logos repeated so the set stays wider than typical viewports. */
+const INVESTOR_MARQUEE_UNIT = [...INVESTOR_LOGOS, ...INVESTOR_LOGOS] as const
+
+function InvestorLogoSet({ ariaHidden = false }: { ariaHidden?: boolean }) {
+  return (
+    <ul className="investor-logos__set" aria-hidden={ariaHidden || undefined}>
+      {INVESTOR_MARQUEE_UNIT.map((logo, i) => (
+        <li
+          key={`${ariaHidden ? 'b' : 'a'}-${i}-${logo.src}`}
+          className="investor-logos__item"
+        >
+          <img
+            src={logo.src}
+            alt={ariaHidden || i >= INVESTOR_LOGOS.length ? '' : logo.alt}
+            width={160}
+            height={36}
+            draggable={false}
+          />
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+/** Logo ticker only — Investors header and Partner CTA stay removed. */
+export function InvestorsSection() {
+  return (
+    <section
+      className="investors"
+      data-section="investors"
+      id="partners"
+      aria-label="Investor partners"
+    >
+      <div
+        className="investor-logos"
+        role="region"
+        aria-label="Investor partners"
+      >
+        <div className="investor-logos__viewport">
+          <div className="investor-logos__track">
+            <InvestorLogoSet />
+            <InvestorLogoSet ariaHidden />
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 export function PressSection() {
   return (
     <section className="press-feed" data-section="press" id="press">

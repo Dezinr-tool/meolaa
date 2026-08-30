@@ -10,8 +10,9 @@
   --loop-node: var(--color-primary);
   --loop-fg: #ffffff;
   --loop-fg-muted: rgba(255, 255, 255, 0.6);
-  --loop-dot: clamp(40px, 4.43vw, 63px);
-  --loop-dot-inner: clamp(12px, 1.34vw, 19px);
+  /* Smaller orbit nodes (was 40/4.43vw/63 · 12/1.34vw/19) */
+  --loop-dot: clamp(22px, 2.45vw, 35px);
+  --loop-dot-inner: clamp(6px, 0.72vw, 10px);
   --loop-copy-w: clamp(168px, 15.8vw, 225px);
 
   position: relative;

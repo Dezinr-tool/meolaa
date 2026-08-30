@@ -366,6 +366,7 @@ export function HomeAnimations() {
       const lab = document.querySelector('[data-section="lab"]')
       const founding = document.querySelector('[data-section="founding"]')
       const portfolio = document.querySelector('[data-section="brands"]')
+      const investors = document.querySelector('[data-section="investors"]')
       const press = document.querySelector('[data-section="press"]')
       const reduceMotion = prefersReducedMotion()
 
@@ -622,7 +623,7 @@ export function HomeAnimations() {
 
         /* Interim stair peaks — last step < 100 so every bar still has settle
          * travel (avoids a completed stair silhouette that then snaps equal). */
-        const STAIR_VISIBLE_PCT = [36, 54, 72, 88] as const
+        const STAIR_VISIBLE_PCT = [48, 66, 84, 96] as const
         const stairTops = metricBlocks.map((_, i) => {
           const visible =
             STAIR_VISIBLE_PCT[i] ??
@@ -740,6 +741,21 @@ export function HomeAnimations() {
           ),
         )
         revealTitleLikeHero(metricsHead, metricsSection, { start: 'top 82%' })
+      }
+
+      /* ——— Investors ticker (header + Partner CTA stay removed) ——— */
+      if (investors) {
+        /* Reveal the marquee as one unit — per-item transforms fight CSS translateX */
+        const investorLogos = investors.querySelector('.investor-logos')
+        if (investorLogos) {
+          revealOnEnter(investorLogos, investors, {
+            start: 'top 78%',
+            y: 20,
+            blur: 0,
+            duration: 0.7,
+            delay: 0.08,
+          })
+        }
       }
 
       /* ——— Press ——— */
