@@ -159,22 +159,43 @@
 
 /* ——— Section shells that reuse the header ——— */
 
-/* Metrics: white header + intentional full-bleed primary band (not half-page void).
+/* Metrics — ONE section (not two folds): shared section-head on white +
+   full-bleed primary stats band as the same unit’s footer.
    Four absolute columns keep .metric:nth-child(n) for the stair reveal. */
 .metrics {
   --metrics-pad-x: clamp(24px, 4vw, 64px);
+  /* Same vertical rhythm as portfolio / press heads — not a second fold. */
+  --metrics-pad-y: clamp(56px, 8vh, 80px);
 
   display: flex;
   flex-direction: column;
-  gap: clamp(28px, 4vh, 48px);
-  /* Extra top pad so the header breathes from the section above. */
-  padding: clamp(72px, 11vh, 120px) var(--metrics-pad-x) 0;
+  /* Head sits on the band; avoid a white void that reads as its own fold. */
+  gap: clamp(20px, 3vh, 32px);
+  padding: var(--metrics-pad-y) var(--metrics-pad-x) 0;
+  height: auto;
+  min-height: 0;
+  max-height: none;
+  box-sizing: border-box;
 }
 
-.metrics .section-head {
+.metrics .section-head,
+.metrics__head.section-head {
   --sh-accent: var(--section-head-accent);
   --sh-title: var(--section-head-on-light-ink);
   --sh-sub: var(--section-head-on-light-muted);
+  flex: 0 0 auto;
+}
+
+.metrics__head .section-head__eyebrow {
+  color: var(--sh-accent);
+}
+
+.metrics__head .section-head__title {
+  color: var(--sh-title);
+}
+
+.metrics__head .section-head__sub {
+  color: var(--sh-sub);
 }
 
 /* Investors: primary (Planet Blue) ground → white type + green eyebrow. */
@@ -214,11 +235,12 @@
 .metrics__chart {
   position: relative;
   flex: 0 0 auto;
-  /* Settled equal-height band — tall enough for count-up, not a teal void. */
+  /* Section footer band — same unit as .metrics__head, not a second fold. */
   height: clamp(168px, 24svh, 220px);
   min-height: clamp(168px, 24svh, 220px);
-  /* Bars stay full-bleed despite the section's padding. */
+  /* Bars stay full-bleed despite the section's shared side padding. */
   margin-inline: calc(var(--metrics-pad-x) * -1);
+  margin-block: 0;
 }
 
 @media (max-width: 900px) {

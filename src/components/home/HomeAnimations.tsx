@@ -366,7 +366,6 @@ export function HomeAnimations() {
       const lab = document.querySelector('[data-section="lab"]')
       const founding = document.querySelector('[data-section="founding"]')
       const portfolio = document.querySelector('[data-section="brands"]')
-      const investors = document.querySelector('[data-section="investors"]')
       const press = document.querySelector('[data-section="press"]')
       const reduceMotion = prefersReducedMotion()
 
@@ -741,36 +740,6 @@ export function HomeAnimations() {
           ),
         )
         revealTitleLikeHero(metricsHead, metricsSection, { start: 'top 82%' })
-      }
-
-      /* ——— Investors ——— */
-      if (investors) {
-        const investorHead = gsap.utils.toArray<Element>(
-          investors.querySelectorAll(
-            '.section-head__eyebrow, .section-head__title',
-          ),
-        )
-        revealTitleLikeHero(investorHead, investors, { start: 'top 85%' })
-
-        const investorCta = investors.querySelector('.btn-ghost')
-        if (investorCta) {
-          revealTitleLikeHero(investorCta, investors, {
-            start: 'top 85%',
-            delay: 0.15,
-          })
-        }
-
-        /* Reveal the marquee as one unit — per-item transforms fight CSS translateX */
-        const investorLogos = investors.querySelector('.investor-logos')
-        if (investorLogos) {
-          revealOnEnter(investorLogos, investors, {
-            start: 'top 78%',
-            y: 20,
-            blur: 0,
-            duration: 0.7,
-            delay: 0.08,
-          })
-        }
       }
 
       /* ——— Press ——— */

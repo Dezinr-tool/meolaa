@@ -8,7 +8,6 @@ import { SectionErrorBoundary } from '../components/SectionErrorBoundary'
 import { HomeAnimations } from '../components/home/HomeAnimations'
 import {
   FoundingSection,
-  InvestorsSection,
   LabSection,
   MetricsSection,
   LoopSection,
@@ -34,7 +33,6 @@ export function HomePage() {
           <FoundingSection />
           <PortfolioSection />
           <MetricsSection />
-          <InvestorsSection />
           <SectionErrorBoundary name="Press">
             <PressSection />
           </SectionErrorBoundary>
