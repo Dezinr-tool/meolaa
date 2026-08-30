@@ -184,9 +184,9 @@
   );
 }
 
-/* 04 Distribution & ops — Ecru Deep (warm; distinct from 01–03 + green). */
+/* 04 Distribution & ops — lilac (lighter than 01 lilac-deep for step contrast). */
 .meola-lab__panel[data-lab-index='3'] {
-  --meola-lab-strip: var(--color-ecru-deep, #f0d5cc);
+  --meola-lab-strip: var(--color-lilac, #a8a3e3);
   --meola-lab-strip-ink: var(--color-planet-blue, #002f3a);
   --meola-lab-strip-muted: color-mix(
     in srgb,
