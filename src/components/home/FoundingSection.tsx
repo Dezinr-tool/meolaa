@@ -12,9 +12,6 @@ const FOUNDING_HOLD_VH = 1.3
 /** Faded (unfilled) char opacity — same language as Vision headline scrub. */
 const FOUNDING_CHAR_DIM = 0.14
 
-/** When pin scrub passes this, yellow marks + stickers begin (reveal → highlight). */
-const STICKER_ARM_PROGRESS = 0.7
-
 /** Hotspot near the pixel finger tip (72×72 display of trimmed hand art). */
 const CURSOR_HOT_X = 11
 const CURSOR_HOT_Y = 4
@@ -218,10 +215,11 @@ export function FoundingSection() {
     }
   }, [])
 
-  /* Vision-style per-char opacity fill scrubbed across the pin, then yellow
-   * marks + corner stickers (ASKING→WORLDWIDE, …). Pin lives here (not
-   * HomeAnimations) so document-order pin creation stays aligned with Lab /
-   * Portfolio. Cursor follower is a separate effect — leave it alone. */
+  /* Vision-style per-char opacity fill scrubbed across the pin. Mark words
+   * are Joyous Yellow in CSS for the whole fill; corner stickers pop when
+   * each mark word finishes filling. Pin lives here (not HomeAnimations) so
+   * document-order pin creation stays aligned with Lab / Portfolio. Cursor
+   * follower is a separate effect — leave it alone. */
   useEffect(() => {
     const section = sectionRef.current
     if (!section) return
@@ -248,42 +246,47 @@ export function FoundingSection() {
       rotate: number
     }>
 
+    const CHAR_FILL_DUR = 0.08
+    const CHAR_STAGGER = 0.006
+    const fillTweenVars = {
+      opacity: 1,
+      duration: CHAR_FILL_DUR,
+      stagger: CHAR_STAGGER,
+      ease: 'power1.out',
+    } as const
+
+    /** Timeline progress when char `i` reaches full opacity. */
+    const charFillEnd = (i: number) => i * CHAR_STAGGER + CHAR_FILL_DUR
+
+    /** Per mark: scrub progress at which that word’s last char finishes. */
+    const stickerGates = pairs.map(({ word, sticker, rotate }) => {
+      const markChars = gsap.utils.toArray<HTMLElement>(
+        word.querySelectorAll('.founding__char'),
+      )
+      const last = markChars[markChars.length - 1]
+      const lastIndex = last ? chars.indexOf(last) : -1
+      return { word, sticker, rotate, lastIndex }
+    })
+
     const reduceMotion = window.matchMedia(
       '(prefers-reduced-motion: reduce)',
     ).matches
 
-    const resetStickers = () => {
-      pairs.forEach(({ word, sticker, rotate }) => {
-        word.classList.remove('is-lit')
-        gsap.killTweensOf(sticker)
-        gsap.set(sticker, {
-          autoAlpha: 0,
-          scale: 0.55,
-          rotate,
-          transformOrigin: '50% 50%',
-        })
+    const hideSticker = (sticker: HTMLElement, rotate: number) => {
+      gsap.killTweensOf(sticker)
+      gsap.set(sticker, {
+        autoAlpha: 0,
+        scale: 0.55,
+        rotate,
+        transformOrigin: '50% 50%',
       })
     }
 
-    const playStickers = () => {
-      const tl = gsap.timeline()
-      pairs.forEach(({ word, sticker }) => {
-        tl.call(() => {
-          word.classList.add('is-lit')
-        })
-        tl.to(
-          sticker,
-          {
-            autoAlpha: 1,
-            scale: 1,
-            duration: 0.55,
-            ease: 'back.out(1.7)',
-          },
-          '<0.04',
-        )
-        tl.to({}, { duration: 0.32 })
+    const resetStickers = () => {
+      stickerGates.forEach(({ word, sticker, rotate }) => {
+        word.classList.remove('is-lit')
+        hideSticker(sticker, rotate)
       })
-      return tl
     }
 
     if (reduceMotion) {
@@ -303,34 +306,58 @@ export function FoundingSection() {
     gsap.set(chars, { opacity: FOUNDING_CHAR_DIM })
     resetStickers()
 
-    let stickerTl: gsap.core.Timeline | null = null
-    let stickersArmed = false
+    const armed = new Set<HTMLElement>()
 
-    const armStickers = () => {
-      if (stickersArmed || !pairs.length) return
-      stickersArmed = true
-      stickerTl?.kill()
-      stickerTl = playStickers()
+    const syncStickers = (progress: number, holdDuration: number) => {
+      const fillSpan =
+        chars.length > 0
+          ? charFillEnd(chars.length - 1)
+          : CHAR_FILL_DUR
+      const total = fillSpan + holdDuration
+      if (total <= 0) return
+
+      stickerGates.forEach(({ word, sticker, rotate, lastIndex }) => {
+        if (lastIndex < 0) return
+        const threshold = charFillEnd(lastIndex) / total
+        if (progress >= threshold) {
+          if (armed.has(word)) return
+          armed.add(word)
+          word.classList.add('is-lit')
+          gsap.killTweensOf(sticker)
+          gsap.fromTo(
+            sticker,
+            {
+              autoAlpha: 0,
+              scale: 0.55,
+              rotate,
+              transformOrigin: '50% 50%',
+            },
+            {
+              autoAlpha: 1,
+              scale: 1,
+              duration: 0.55,
+              ease: 'back.out(1.7)',
+            },
+          )
+        } else if (progress < threshold * 0.92) {
+          if (!armed.has(word)) return
+          armed.delete(word)
+          word.classList.remove('is-lit')
+          hideSticker(sticker, rotate)
+        }
+      })
     }
 
-    const disarmStickers = () => {
-      stickersArmed = false
-      stickerTl?.kill()
-      stickerTl = null
+    const disarmAll = () => {
+      armed.clear()
       resetStickers()
     }
 
-    const fillTweenVars = {
-      opacity: 1,
-      duration: 0.08,
-      stagger: 0.006,
-      ease: 'power1.out',
-    } as const
-
     const mm = gsap.matchMedia()
 
-    /* Desktop: pin + scrub fill (Vision interaction), then arm stickers. */
+    /* Desktop: pin + scrub fill; stickers arm as each mark word finishes. */
     mm.add('(min-width: 901px)', () => {
+      const holdDuration = 0.38
       const vtl = gsap.timeline({
         scrollTrigger: {
           trigger: section,
@@ -343,17 +370,18 @@ export function FoundingSection() {
           anticipatePin: 0,
           invalidateOnRefresh: true,
           onUpdate: (self) => {
-            if (self.progress >= STICKER_ARM_PROGRESS) armStickers()
-            else if (self.progress < STICKER_ARM_PROGRESS * 0.55) disarmStickers()
+            syncStickers(self.progress, holdDuration)
           },
           onLeaveBack: () => {
             gsap.set(chars, { opacity: FOUNDING_CHAR_DIM })
-            disarmStickers()
+            disarmAll()
           },
           onRefresh: (self) => {
             if (self.progress === 0) {
               gsap.set(chars, { opacity: FOUNDING_CHAR_DIM })
-              disarmStickers()
+              disarmAll()
+            } else {
+              syncStickers(self.progress, holdDuration)
             }
           },
         },
@@ -365,8 +393,8 @@ export function FoundingSection() {
         { ...fillTweenVars },
         0,
       )
-      /* Hold fully filled so stickers can land before the pin releases. */
-      vtl.to({}, { duration: 0.38 })
+      /* Hold fully filled so late stickers can land before the pin releases. */
+      vtl.to({}, { duration: holdDuration })
 
       return () => {
         vtl.scrollTrigger?.kill()
@@ -376,6 +404,7 @@ export function FoundingSection() {
 
     /* Mobile: no pin — scrub fill as the fold crosses the viewport. */
     mm.add('(max-width: 900px)', () => {
+      const holdDuration = 0.16
       const vtl = gsap.timeline({
         scrollTrigger: {
           trigger: section,
@@ -383,12 +412,11 @@ export function FoundingSection() {
           end: 'top 22%',
           scrub: true,
           onUpdate: (self) => {
-            if (self.progress >= STICKER_ARM_PROGRESS) armStickers()
-            else if (self.progress < STICKER_ARM_PROGRESS * 0.55) disarmStickers()
+            syncStickers(self.progress, holdDuration)
           },
           onLeaveBack: () => {
             gsap.set(chars, { opacity: FOUNDING_CHAR_DIM })
-            disarmStickers()
+            disarmAll()
           },
         },
       })
@@ -399,7 +427,7 @@ export function FoundingSection() {
         { ...fillTweenVars },
         0,
       )
-      vtl.to({}, { duration: 0.16 })
+      vtl.to({}, { duration: holdDuration })
 
       return () => {
         vtl.scrollTrigger?.kill()
@@ -409,11 +437,11 @@ export function FoundingSection() {
 
     return () => {
       mm.revert()
-      stickerTl?.kill()
       gsap.killTweensOf(chars)
       gsap.set(chars, { clearProps: 'opacity' })
       pairs.forEach(({ word, sticker, rotate }) => {
         word.classList.remove('is-lit')
+        gsap.killTweensOf(sticker)
         gsap.set(sticker, { clearProps: 'transform,opacity,visibility' })
         gsap.set(sticker, { rotate, transformOrigin: '50% 50%' })
       })

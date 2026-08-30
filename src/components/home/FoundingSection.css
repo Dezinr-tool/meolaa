@@ -651,30 +651,24 @@
 }
 
 .founding__mark-word .founding__char {
-  /* Inherit yellow once `.is-lit` lands on the mark wrapper. */
+  /* Joyous Yellow while opacity scrubs 0.14→1 — not delayed to sticker arm. */
   color: inherit;
 }
 
-/* Key words start unlit; `.is-lit` lands one-by-one with the sticker pop-ins. */
+/* Key words are yellow + underline for the whole fill; stickers still pop
+   when each word finishes. `.is-lit` is reserved for hover/deal affordance. */
 .founding__mark-word {
   cursor: pointer;
-  color: var(--founding-white);
+  color: var(--color-joyous-yellow, #fdf28c);
   text-decoration: underline;
   text-decoration-thickness: 0.045em;
   text-underline-offset: 0.14em;
-  text-decoration-color: transparent;
-  transition:
-    color 0.35s ease,
-    text-decoration-color 0.35s ease;
-}
-
-.founding__mark-word.is-lit {
-  color: var(--color-joyous-yellow, #fdf28c);
   text-decoration-color: currentColor;
+  transition: color 0.35s ease;
 }
 
-/* Hovering a lit word you're dealing from — brighten to confirm the hit. */
-.founding__mark-word.is-lit:hover {
+/* Hovering a word you're dealing from — brighten to confirm the hit. */
+.founding__mark-word:hover {
   color: var(--color-white, #fff);
 }
 
