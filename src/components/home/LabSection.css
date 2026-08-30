@@ -1,11 +1,18 @@
 /* Brand Lab — two-way accordion panels (Tutorial 109 pattern).
-   Tokens: white fold/intro chrome + Joyous Yellow panels + Planet Blue ink. */
+   Tokens: white fold/intro chrome + per-step strip colors + contrast ink. */
 
 .meola-lab {
   --meola-lab-ease: cubic-bezier(0.33, 1, 0.68, 1);
   --meola-lab-dur: 0.7s;
   --meola-lab-surface: var(--color-white, #fff);
-  --meola-lab-panel: var(--color-joyous-yellow, #fdf28c);
+  /* Default strip (overridden per panel via data-lab-index). */
+  --meola-lab-strip: var(--color-lilac-deep, #5656ad);
+  --meola-lab-strip-ink: var(--color-white, #fff);
+  --meola-lab-strip-muted: color-mix(
+    in srgb,
+    var(--color-white, #fff) 72%,
+    transparent
+  );
   --meola-lab-ink: var(--color-planet-blue, #002f3a);
   --meola-lab-muted: color-mix(in srgb, var(--color-planet-blue, #002f3a) 55%, transparent);
   --meola-lab-body: color-mix(in srgb, var(--color-planet-blue, #002f3a) 72%, transparent);
@@ -45,20 +52,29 @@
   border-right: 1px solid var(--meola-lab-rule);
 }
 
+.meola-lab__intro > .meola-lab__eyebrow {
+  flex-shrink: 0;
+}
+
+/* Middle flex zone — mark grows and sits vertically centered between eyebrow + copy. */
 .meola-lab__mark {
   position: relative;
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 0;
+  width: min(100%, 14rem);
+  margin: 0;
   overflow: hidden;
-  width: min(100%, 7.5rem);
-  height: 220px;
-  /* Equal step from eyebrow above and toward the title stack below. */
-  margin: var(--section-head-eyebrow-title-gap, 24px) 0;
 }
 
 .meola-lab__mark svg {
   display: block;
   width: auto;
-  height: 100%;
+  height: clamp(16rem, 42vh, 28rem);
   max-width: 100%;
+  max-height: 100%;
   opacity: 0.5;
   fill: var(--color-planet-blue, #002f3a);
 }
@@ -86,8 +102,14 @@
   max-width: min(var(--section-head-sub-max, 42ch), 100%);
 }
 
+/* Headline + sub stay at the bottom; mark flex zone above absorbs vertical space. */
 .meola-lab__intro > .parallax-heading {
-  margin-top: auto;
+  margin-top: 0;
+  flex-shrink: 0;
+}
+
+.meola-lab__intro > .meola-lab__sub {
+  flex-shrink: 0;
 }
 
 /* ——— Accordion container (gap: 0, edge-to-edge) ——— */
@@ -118,21 +140,64 @@
   padding: 0;
   border: 0;
   border-right: 1px solid var(--meola-lab-rule);
-  background: var(--meola-lab-panel);
-  color: var(--meola-lab-ink);
+  background: var(--meola-lab-strip);
+  color: var(--meola-lab-strip-ink);
+  /* Content/strip ink follows each step’s strip tokens (expanded + collapsed). */
+  --meola-lab-ink: var(--meola-lab-strip-ink);
+  --meola-lab-muted: var(--meola-lab-strip-muted);
+  --meola-lab-body: var(--meola-lab-strip-muted);
   cursor: default;
   overflow: hidden;
   outline: none;
 }
 
+/* 01 Reading demand — lilac-deep. */
+.meola-lab__panel[data-lab-index='0'] {
+  --meola-lab-strip: var(--color-lilac-deep, #5656ad);
+  --meola-lab-strip-ink: var(--color-white, #fff);
+  --meola-lab-strip-muted: color-mix(
+    in srgb,
+    var(--color-white, #fff) 72%,
+    transparent
+  );
+}
+
+/* 02 Product & brand — Joyous Yellow. */
+.meola-lab__panel[data-lab-index='1'] {
+  --meola-lab-strip: var(--color-joyous-yellow, #fdf28c);
+  --meola-lab-strip-ink: var(--color-planet-blue, #002f3a);
+  --meola-lab-strip-muted: color-mix(
+    in srgb,
+    var(--color-planet-blue, #002f3a) 55%,
+    transparent
+  );
+}
+
+/* 03 Go to market — Planet Blue. */
+.meola-lab__panel[data-lab-index='2'] {
+  --meola-lab-strip: var(--color-planet-blue, #002f3a);
+  --meola-lab-strip-ink: var(--color-white, #fff);
+  --meola-lab-strip-muted: color-mix(
+    in srgb,
+    var(--color-white, #fff) 72%,
+    transparent
+  );
+}
+
+/* 04 Distribution & ops — Sustainable Green. */
+.meola-lab__panel[data-lab-index='3'] {
+  --meola-lab-strip: var(--color-sustainable-green, #41857a);
+  --meola-lab-strip-ink: var(--color-white, #fff);
+  --meola-lab-strip-muted: color-mix(
+    in srgb,
+    var(--color-white, #fff) 72%,
+    transparent
+  );
+}
+
+/* Expand only — no white flash, tint swap, scale, shadow, or glow. */
 .meola-lab__panel.is-active {
   flex-grow: 4.1;
-  /* Slightly deeper yellow active strip — Planet Blue ink for contrast */
-  background: color-mix(in srgb, var(--color-joyous-yellow, #fdf28c) 88%, var(--color-planet-blue, #002f3a));
-  color: var(--color-planet-blue, #002f3a);
-  --meola-lab-ink: var(--color-planet-blue, #002f3a);
-  --meola-lab-muted: color-mix(in srgb, var(--color-planet-blue, #002f3a) 55%, transparent);
-  --meola-lab-body: color-mix(in srgb, var(--color-planet-blue, #002f3a) 72%, transparent);
 }
 
 /* Click remains for a11y jump-to-step; scroll is primary activation. */
@@ -151,12 +216,7 @@
 }
 
 .meola-lab__panel:focus-visible {
-  box-shadow: inset 0 0 0 2px var(--color-planet-blue, #002f3a);
-}
-
-/* Hover tint de-emphasized — scroll drives activation, not pointer. */
-.meola-lab__panel:not(.is-active):focus-visible {
-  background: color-mix(in srgb, var(--color-planet-blue, #002f3a) 6%, var(--meola-lab-panel));
+  box-shadow: inset 0 0 0 2px var(--meola-lab-strip-ink);
 }
 
 /* ——— Open content (slides horizontally via GSAP) ——— */
@@ -234,11 +294,11 @@
   z-index: 2;
   margin: 0;
   font-family: var(--font-sans);
-  /* Site subtext — match .section-head__sub (16px / regular / muted). */
+  /* Site subtext — 16px / regular; color follows strip contrast. */
   font-size: var(--section-head-sub-size, 1rem);
   font-weight: var(--section-head-sub-weight, var(--fw-regular, 400));
   line-height: var(--section-head-sub-lh, 1.55);
-  color: var(--section-head-on-light-muted, var(--meola-lab-body));
+  color: var(--meola-lab-body);
   max-width: min(var(--section-head-sub-max, 42ch), 36ch);
   text-wrap: balance;
   box-sizing: border-box;
@@ -313,13 +373,15 @@
   }
 
   .meola-lab__mark {
-    width: min(100%, 5rem);
-    height: 120px;
-    margin: 20px 0;
+    flex: 0 0 auto;
+    width: min(100%, 10rem);
+    min-height: 10rem;
+    margin: 28px 0;
+    justify-content: flex-start;
   }
 
   .meola-lab__mark svg {
-    height: 100%;
+    height: clamp(10rem, 36vw, 14rem);
   }
 
   .meola-lab__headline {
