@@ -8,7 +8,10 @@
  */
 import { useEffect, type ReactNode } from 'react'
 import { Lenis, ScrollTrigger, gsap } from '../lib/motion'
-import { setLenisInstance } from '../lib/lenisInstance'
+import {
+  refreshScrollAndLenis,
+  setLenisInstance,
+} from '../lib/lenisInstance'
 
 type SmoothScrollProps = {
   children: ReactNode
@@ -27,7 +30,7 @@ export function SmoothScroll({ children }: SmoothScrollProps) {
   useEffect(() => {
     /* Native scroll when the user prefers reduced motion — no Lenis inertia. */
     if (window.matchMedia(REDUCED_MQ).matches) {
-      requestAnimationFrame(() => ScrollTrigger.refresh())
+      requestAnimationFrame(() => refreshScrollAndLenis())
       return
     }
 
@@ -47,18 +50,31 @@ export function SmoothScroll({ children }: SmoothScrollProps) {
     // scrollerProxy double-registers under React StrictMode and breaks all triggers.
     lenis.on('scroll', ScrollTrigger.update)
 
+    /* Pin-spacers change document height without resizing html's border box,
+       so ResizeObserver never updates Lenis — remeasure on every ST refresh. */
+    const onScrollTriggerRefresh = () => {
+      lenis.resize()
+    }
+    ScrollTrigger.addEventListener('refresh', onScrollTriggerRefresh)
+
     const ticker = (time: number) => {
       lenis.raf(time * 1000)
     }
     gsap.ticker.add(ticker)
     gsap.ticker.lagSmoothing(0)
 
-    const onResize = () => ScrollTrigger.refresh()
+    const onResize = () => refreshScrollAndLenis()
     window.addEventListener('resize', onResize)
-    requestAnimationFrame(() => ScrollTrigger.refresh())
+    window.addEventListener('load', onResize, { once: true })
+    requestAnimationFrame(onResize)
+    /* Pin-spacers (Lab / Founding / Footer) mount after Lenis init. */
+    window.setTimeout(onResize, 400)
+    window.setTimeout(onResize, 1200)
 
     return () => {
+      ScrollTrigger.removeEventListener('refresh', onScrollTriggerRefresh)
       window.removeEventListener('resize', onResize)
+      window.removeEventListener('load', onResize)
       gsap.ticker.remove(ticker)
       setLenisInstance(null)
       lenis.destroy()

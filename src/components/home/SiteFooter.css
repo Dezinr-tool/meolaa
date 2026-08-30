@@ -98,16 +98,15 @@
 }
 
 /*
- * After the logo fill completes, collapse the stage so no black band
- * remains below the wordmark (100svh is only needed during the scrub).
+ * After pin ends — collapse stage so no black band below the wordmark.
+ * Only when `.is-settled` — :has(.is-revealed) mid-scrub collapsed the
+ * 100svh stage and broke pin spacing / Lenis scroll range.
  */
-.footer-pin:has(.site-footer__mark-wrap.is-revealed),
 .footer-reveal-section--animated.is-settled .footer-pin {
   min-height: 0;
   height: auto;
 }
 
-.footer-circle-reveal:has(.site-footer__mark-wrap.is-revealed),
 .footer-reveal-section--animated.is-settled .footer-circle-reveal {
   min-height: 0;
   height: auto;

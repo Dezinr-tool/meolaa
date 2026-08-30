@@ -3,7 +3,7 @@
  */
 import { useEffect } from 'react'
 import { gsap, ScrollTrigger } from '../../lib/motion'
-import { getLenisInstance } from '../../lib/lenisInstance'
+import { getLenisInstance, refreshScrollAndLenis } from '../../lib/lenisInstance'
 import { initLoop } from '../../lib/loopAnimations'
 import { initVision } from '../../lib/visionAnimations'
 import { initPress } from '../../lib/pressAnimations'
@@ -705,8 +705,7 @@ export function HomeAnimations() {
       revealWordsOnEnter(document, { start: 'top 88%' })
 
       const refreshAll = () => {
-        ScrollTrigger.sort()
-        ScrollTrigger.refresh()
+        refreshScrollAndLenis()
       }
       requestAnimationFrame(refreshAll)
       /* Fonts + late images shift pin distances — refresh once more after settle. */

@@ -13,6 +13,7 @@ import {
   MeolaaLogoMark,
 } from '../brand/MeolaaLogoMark'
 import { gsap, ScrollTrigger } from '../../lib/motion'
+import { refreshScrollAndLenis } from '../../lib/lenisInstance'
 import './SiteFooter.css'
 
 const PRIMARY = '#000000'
@@ -331,38 +332,49 @@ export function SiteFooter({ simple = false }: SiteFooterProps) {
         }
 
         let fillPlayed = false
+        let settled = false
 
         /** Pin leaves inline height on `.footer-pin` — collapse + remeasure. */
         const settleFooterStage = () => {
+          const revealST = ScrollTrigger.getById('footer-circle-reveal')
+          if (settled) return
+          /* ST refresh can spuriously fire onLeave — never collapse mid-scrub. */
+          if (revealST && revealST.progress < 0.995) return
+
+          settled = true
           if (copyReveal) showCopyRevealed(copyReveal)
           if (markWrap && !markWrap.classList.contains('is-revealed')) {
             fillPlayed = true
             showLogoFilled(markWrap)
           }
 
+          circle.classList.add('is-visible')
+          gsap.set(circle, { clipPath: CIRCLE_END, backgroundColor: PRIMARY })
+
           root.classList.add('is-settled')
           gsap.set([pin, circle], {
             clearProps: 'height,minHeight,maxHeight',
           })
 
-          /* Wait for :has(.is-revealed) collapse before measuring pin height. */
+          /* Wait for is-settled collapse before measuring pin height. */
           requestAnimationFrame(() => {
             const pinSpacer = pin.parentElement
             if (pinSpacer?.classList.contains('pin-spacer')) {
               gsap.set(pinSpacer, { paddingBottom: 0, height: pin.offsetHeight })
             }
-            ScrollTrigger.refresh()
-            requestAnimationFrame(() => ScrollTrigger.refresh())
+            refreshScrollAndLenis()
+            requestAnimationFrame(refreshScrollAndLenis)
           })
         }
 
         const unsettleFooterStage = () => {
+          settled = false
           root.classList.remove('is-settled')
           const pinSpacer = pin.parentElement
           if (pinSpacer?.classList.contains('pin-spacer')) {
             gsap.set(pinSpacer, { clearProps: 'height,paddingBottom' })
           }
-          requestAnimationFrame(() => ScrollTrigger.refresh())
+          requestAnimationFrame(refreshScrollAndLenis)
         }
 
         /* Pin + reveal share flush-top → +=280% so the disc never grows
@@ -374,10 +386,11 @@ export function SiteFooter({ simple = false }: SiteFooterProps) {
           end: PIN_END,
           pin,
           pinSpacing: true,
-          anticipatePin: 1,
+          anticipatePin: 0,
           invalidateOnRefresh: true,
           onEnter: () => circle.classList.add('is-visible'),
           onEnterBack: () => circle.classList.add('is-visible'),
+          onLeave: settleFooterStage,
           onLeaveBack: () => {
             unsettleFooterStage()
             fillPlayed = false
@@ -398,7 +411,14 @@ export function SiteFooter({ simple = false }: SiteFooterProps) {
             invalidateOnRefresh: true,
             onEnter: () => circle.classList.add('is-visible'),
             onEnterBack: () => circle.classList.add('is-visible'),
-            onLeave: settleFooterStage,
+            onLeave: () => {
+              if (copyReveal) showCopyRevealed(copyReveal)
+              if (markWrap && !markWrap.classList.contains('is-revealed')) {
+                fillPlayed = true
+                showLogoFilled(markWrap)
+              }
+              settleFooterStage()
+            },
             onLeaveBack: () => {
               unsettleFooterStage()
               circle.classList.remove('is-visible')
@@ -450,9 +470,12 @@ export function SiteFooter({ simple = false }: SiteFooterProps) {
           )
         }
 
-        const onResize = () => ScrollTrigger.refresh()
+        const onResize = () => refreshScrollAndLenis()
         window.addEventListener('resize', onResize)
-        requestAnimationFrame(() => ScrollTrigger.refresh())
+        requestAnimationFrame(refreshScrollAndLenis)
+        window.setTimeout(refreshScrollAndLenis, 300)
+        window.setTimeout(refreshScrollAndLenis, 900)
+        window.setTimeout(refreshScrollAndLenis, 2000)
 
         return () => {
           window.removeEventListener('resize', onResize)
