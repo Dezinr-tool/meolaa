@@ -105,7 +105,7 @@
   /* Gutters live here — mark band below stays stage-edge full-bleed. */
   padding-left: var(--footer-gutter);
   padding-right: var(--footer-gutter);
-  /* Tight gap so horizon band sits just under the legal row. */
+  /* Tight gap so mark band sits just under the legal row. */
   padding-bottom: clamp(2px, 0.4vw, 8px);
   box-sizing: border-box;
 }
@@ -144,7 +144,7 @@
   color: color-mix(in srgb, var(--color-ecru, #f8ece4) 55%, transparent);
   /*
    * No horizontal padding on this shell — gutters are on .footer-copy-reveal
-   * only, so .site-footer__mark-wrap / aurora can sit edge-to-edge on the stage.
+   * only, so .site-footer__mark-wrap can sit edge-to-edge on the stage.
    */
   padding: 40px 0 0;
   background: #000000;
@@ -341,7 +341,7 @@
 }
 
 /*
- * Mark band — full-bleed horizon background with MEOLAA wordmark at bottom.
+ * Mark band — MEOLAA wordmark on black footer base.
  */
 .site-footer__mark-wrap {
   position: relative;
@@ -357,20 +357,16 @@
   max-width: none;
   margin-left: 0;
   margin-right: 0;
-  height: clamp(220px, 28vh, 360px);
-  min-height: clamp(220px, 28vh, 360px);
+  height: clamp(100px, 14vh, 160px);
+  min-height: clamp(100px, 14vh, 160px);
   overflow: hidden;
   background-color: #000000;
-  background-image: url('/assets/footer-horizon.jpg');
-  background-size: cover;
-  background-position: center bottom;
-  background-repeat: no-repeat;
   border-radius: 0;
   box-sizing: border-box;
 }
 
 /*
- * MEOLAA over the glow horizon — anchored to the bottom edge.
+ * MEOLAA wordmark — anchored to the bottom edge.
  */
 .site-footer__wordmark {
   position: absolute;
@@ -450,8 +446,8 @@
   .site-footer__mark-wrap {
     width: 100%;
     max-width: none;
-    height: clamp(180px, 24vh, 280px);
-    min-height: clamp(180px, 24vh, 280px);
+    height: clamp(72px, 12vh, 120px);
+    min-height: clamp(72px, 12vh, 120px);
     padding: 0;
   }
 
