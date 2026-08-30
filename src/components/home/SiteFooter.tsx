@@ -166,14 +166,6 @@ function FooterBody() {
       </div>
 
       <div className="site-footer__mark-wrap">
-        <img
-          className="site-footer__mark-art"
-          src="/assets/footer-horizon.jpg"
-          alt=""
-          width={1024}
-          height={625}
-          decoding="async"
-        />
         <MeolaaLogoMark
           className="site-footer__wordmark"
           viewBox={MEOLAA_MARK_VIEWBOX_TIGHT}
