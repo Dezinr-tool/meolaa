@@ -306,9 +306,8 @@ export function PortfolioSection() {
               type="button"
               role="tab"
               aria-selected={id !== 'all' && catFocus === id}
-              className={`portfolio__cat${
-                id !== 'all' && catFocus === id ? ' is-active' : ''
-              }`}
+              className={`portfolio__cat${id !== 'all' && catFocus === id ? ' is-active' : ''
+                }`}
               onClick={() => focusCategory(id)}
             >
               {label}
@@ -549,7 +548,7 @@ export function PressSection() {
           Coverage and conversations about the system we&apos;re building.
         </p>
         <a className="btn-ghost-dark" href="#press">
-          View all press →
+          View all →
         </a>
       </div>
       <div className="press-feed__grid">

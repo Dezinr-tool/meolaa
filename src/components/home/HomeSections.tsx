@@ -225,6 +225,89 @@ export function InvestorsSection() {
   )
 }
 
+const PRESS_ITEMS = [
+  {
+    outlet: 'TECHCRUNCH',
+    date: 'Jan 12, 2026',
+    headline: 'Meolaa raises $6M to build an AI native house of brands',
+    excerpt:
+      'How a small team is using AI to read demand and launch consumer brands faster than traditional FMCG players.',
+    image:
+      'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=960&h=720&q=80',
+    alt: 'Leadership team in a strategy session',
+  },
+  {
+    outlet: 'FORBES',
+    date: 'Nov 3, 2025',
+    headline: 'Inside the operating system replacing the brand incubator',
+    excerpt:
+      "Meolaa's founder on why one system, not one brand, is the real product.",
+    image:
+      'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=960&h=720&q=80',
+    alt: 'Bright modern office',
+  },
+  {
+    outlet: 'MODERN RETAIL',
+    date: 'Sep 18, 2025',
+    headline: "HIRA's launch playbook, built and run by AI",
+    excerpt:
+      'A look at how Meolaa took its first brand from signal to shelf in under four months.',
+    image:
+      'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=960&h=720&q=80',
+    alt: 'Retail store aisle',
+  },
+  {
+    outlet: 'THE INFORMATION',
+    date: 'Aug 2, 2025',
+    headline: 'Why category whitespace is the new moat in consumer',
+    excerpt:
+      'Meolaa maps demand before product — a bet that research velocity beats brand nostalgia.',
+    image:
+      'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=960&h=720&q=80',
+    alt: 'Team collaborating around a laptop',
+  },
+  {
+    outlet: 'VOGUE BUSINESS',
+    date: 'Jun 21, 2025',
+    headline: 'From signal to shelf: the new brand factory model',
+    excerpt:
+      'How an AI-native house ships fewer SKUs with sharper intent — and what legacy houses are watching.',
+    image:
+      'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=960&h=720&q=80',
+    alt: 'Fashion retail interior',
+  },
+  {
+    outlet: 'REST OF WORLD',
+    date: 'May 9, 2025',
+    headline: 'Building consumer brands for India, from the operating layer up',
+    excerpt:
+      'A systems-first approach to local taste, logistics, and the next wave of digital-native retail.',
+    image:
+      'https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=960&h=720&q=80',
+    alt: 'Busy market street',
+  },
+  {
+    outlet: 'FAST COMPANY',
+    date: 'Mar 14, 2025',
+    headline: "The Build → Run → Signal loop behind Meolaa's first brand",
+    excerpt:
+      'Three stages, one stack: how the company turns market noise into a live product line.',
+    image:
+      'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=960&h=720&q=80',
+    alt: 'Collaborative workspace',
+  },
+  {
+    outlet: 'BUSINESS INSIDER',
+    date: 'Jan 28, 2025',
+    headline: 'Investors bet on systems, not single-brand stories',
+    excerpt:
+      "Why Meolaa's seed round underwrote an operating layer instead of one hero SKU.",
+    image:
+      'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=960&h=720&q=80',
+    alt: 'Analytics dashboard on a desk',
+  },
+] as const
+
 export function PressSection() {
   return (
     <section className="press-feed" data-section="press" id="press">
@@ -242,61 +325,33 @@ export function PressSection() {
           </p>
         </div>
         <Link className="btn-ghost-dark" to="/press">
-          View all press →
+          View all →
         </Link>
       </div>
-      <div className="press-feed__grid">
-        <article className="press-card">
-          <div className="press-card__media">
-            <img
-              src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=960&h=720&q=80"
-              alt="Leadership team in a strategy session"
-              width={480}
-              height={360}
-              loading="lazy"
-            />
-          </div>
-          <p className="press-card__meta">TECHCRUNCH · Jan 12, 2026</p>
-          <h3>Meolaa raises $6M to build an AI native house of brands</h3>
-          <p className="press-card__excerpt">
-            How a small team is using AI to read demand and launch consumer
-            brands faster than traditional FMCG players.
-          </p>
-        </article>
-        <article className="press-card">
-          <div className="press-card__media">
-            <img
-              src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=960&h=720&q=80"
-              alt="Bright modern office"
-              width={480}
-              height={360}
-              loading="lazy"
-            />
-          </div>
-          <p className="press-card__meta">FORBES · Nov 3, 2025</p>
-          <h3>Inside the operating system replacing the brand incubator</h3>
-          <p className="press-card__excerpt">
-            Meolaa&apos;s founder on why one system, not one brand, is the real
-            product.
-          </p>
-        </article>
-        <article className="press-card">
-          <div className="press-card__media">
-            <img
-              src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=960&h=720&q=80"
-              alt="Retail store aisle"
-              width={480}
-              height={360}
-              loading="lazy"
-            />
-          </div>
-          <p className="press-card__meta">MODERN RETAIL · Sep 18, 2025</p>
-          <h3>HIRA&apos;s launch playbook, built and run by AI</h3>
-          <p className="press-card__excerpt">
-            A look at how Meolaa took its first brand from signal to shelf in
-            under four months.
-          </p>
-        </article>
+      <div className="press-feed__slider" data-press-slider>
+        <div className="press-feed__grid" data-press-track>
+          {PRESS_ITEMS.map((item) => (
+            <article
+              key={`${item.outlet}-${item.date}`}
+              className="press-card"
+            >
+              <div className="press-card__media">
+                <img
+                  src={item.image}
+                  alt={item.alt}
+                  width={480}
+                  height={360}
+                  loading="lazy"
+                />
+              </div>
+              <p className="press-card__meta">
+                {item.outlet} · {item.date}
+              </p>
+              <h3>{item.headline}</h3>
+              <p className="press-card__excerpt">{item.excerpt}</p>
+            </article>
+          ))}
+        </div>
       </div>
     </section>
   )

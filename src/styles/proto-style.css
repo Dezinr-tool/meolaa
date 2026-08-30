@@ -1679,14 +1679,19 @@ section.investors,
 
 /* PRESS FEED */
 .press-feed {
+  --press-pad-x: clamp(24px, 4vw, 64px);
   background: #fff;
-  /* Tighter bottom so Press → footer pin starts with less white empty fold. */
-  padding: 100px clamp(24px, 4vw, 64px) 56px;
+  /* Horizontal inset lives on the header + first/last cards so the track can
+     translate flush end-to-end. Vertical pad only here. */
+  padding: 100px 0 56px;
 }
 
 .press-feed__head {
   /* Layout only — eyebrow/title/sub type from section-head.css tokens. */
   margin-bottom: 56px;
+  padding-inline: var(--press-pad-x);
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .btn-ghost-dark {
@@ -1701,9 +1706,48 @@ section.investors,
 }
 
 .press-feed__grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
+  flex-wrap: nowrap;
   gap: 40px;
+  width: max-content;
+  will-change: transform;
+}
+
+.press-feed__slider {
+  --press-gap: 40px;
+  --press-visible: 3;
+  container-type: inline-size;
+  container-name: press;
+  width: 100%;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.press-card {
+  flex: 0 0
+    calc(
+      (
+          100cqi - 2 * var(--press-pad-x) -
+            (var(--press-visible) - 1) * var(--press-gap)
+        ) / var(--press-visible)
+    );
+  width: calc(
+    (
+        100cqi - 2 * var(--press-pad-x) -
+          (var(--press-visible) - 1) * var(--press-gap)
+      ) / var(--press-visible)
+  );
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+/* Edge inset on first/last only — matches header pad, not the track. */
+.press-card:first-child {
+  margin-inline-start: var(--press-pad-x);
+}
+
+.press-card:last-child {
+  margin-inline-end: var(--press-pad-x);
 }
 
 .press-card__media {
@@ -1745,8 +1789,13 @@ section.investors,
 }
 
 @media (max-width: 900px) {
+  .press-feed__slider {
+    --press-visible: 1;
+    --press-gap: 24px;
+  }
+
   .press-feed__grid {
-    grid-template-columns: 1fr;
+    gap: 24px;
   }
 }
 

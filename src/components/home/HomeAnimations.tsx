@@ -6,6 +6,7 @@ import { gsap, ScrollTrigger } from '../../lib/motion'
 import { getLenisInstance } from '../../lib/lenisInstance'
 import { initLoop } from '../../lib/loopAnimations'
 import { initVision } from '../../lib/visionAnimations'
+import { initPress } from '../../lib/pressAnimations'
 import type Lenis from 'lenis'
 
 const NAV_GLASS_Y = 40
@@ -695,7 +696,7 @@ export function HomeAnimations() {
         }
       }
 
-      /* ——— Press ——— */
+      /* ——— Press: header reveal + pin/scrub horizontal card track ——— */
       if (press) {
         const pressHead = gsap.utils.toArray<Element>(
           press.querySelectorAll(
@@ -703,17 +704,7 @@ export function HomeAnimations() {
           ),
         )
         revealTitleLikeHero(pressHead, press, { start: 'top 86%' })
-
-        const pressCards = gsap.utils.toArray<Element>(
-          press.querySelectorAll('.press-card'),
-        )
-        revealOnEnter(pressCards, press, {
-          start: 'top 80%',
-          y: 32,
-          blur: 4,
-          stagger: 0.1,
-          duration: 0.8,
-        })
+        initPress()
       }
 
       /* ——— Word stagger: all homepage subtexts / paragraphs (hero lede pattern) ——— */

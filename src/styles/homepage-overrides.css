@@ -634,6 +634,7 @@ section.investors,
 }
 
 .press-feed {
+  --press-pad-x: clamp(24px, 4vw, 64px);
   position: relative;
   z-index: 2;
   height: 100vh;
@@ -644,21 +645,63 @@ section.investors,
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: clamp(56px, 8vh, 80px) clamp(24px, 4vw, 64px);
+  /* Vertical pad only — horizontal inset on header + first/last cards. */
+  padding: clamp(56px, 8vh, 80px) 0;
   overflow: hidden;
 }
 
 .press-feed__head {
   margin-bottom: clamp(20px, 3vh, 36px);
   flex: 0 0 auto;
+  width: 100%;
+  max-width: 100%;
+  padding-inline: var(--press-pad-x);
+  box-sizing: border-box;
 }
 
 /* Press head type/gaps: section-head.css (--section-head-*). */
 
-.press-feed__grid {
+.press-feed__slider {
+  --press-gap: clamp(16px, 2vw, 28px);
+  --press-visible: 3;
+  container-type: inline-size;
+  container-name: press;
   flex: 0 1 auto;
   min-height: 0;
-  gap: clamp(16px, 2vw, 28px);
+  width: 100%;
+  overflow: hidden;
+}
+
+.press-feed__grid {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: var(--press-gap);
+  width: max-content;
+  will-change: transform;
+}
+
+.press-card {
+  flex: 0 0
+    calc(
+      (
+          100cqi - 2 * var(--press-pad-x) -
+            (var(--press-visible) - 1) * var(--press-gap)
+        ) / var(--press-visible)
+    );
+  width: calc(
+    (
+        100cqi - 2 * var(--press-pad-x) -
+          (var(--press-visible) - 1) * var(--press-gap)
+      ) / var(--press-visible)
+  );
+}
+
+.press-card:first-child {
+  margin-inline-start: var(--press-pad-x);
+}
+
+.press-card:last-child {
+  margin-inline-end: var(--press-pad-x);
 }
 
 .press-card__media {
@@ -678,6 +721,29 @@ section.investors,
   overflow: hidden;
 }
 
+/* prefers-reduced-motion: native horizontal scroll, no pin */
+.press-feed--static .press-feed__slider {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.press-feed--static .press-feed__grid {
+  will-change: auto;
+  transform: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .press-feed__slider {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .press-feed__grid {
+    will-change: auto;
+    transform: none !important;
+  }
+}
+
 
 
 @media (max-width: 900px) {
@@ -687,6 +753,10 @@ section.investors,
     height: auto;
     max-height: none;
     min-height: 100svh;
+  }
+
+  .press-feed__slider {
+    --press-visible: 1;
   }
 
   .metrics {
@@ -700,17 +770,7 @@ section.investors,
     max-height: none;
     min-height: 0;
   }
-
-  .press-feed__grid {
-    grid-template-columns: 1fr;
-    overflow: auto;
-  }
-
-  .press-card:nth-child(n + 3) {
-    display: none;
-  }
 }
-
 
 @media (prefers-reduced-motion: reduce) {
   .portfolio-title h2,

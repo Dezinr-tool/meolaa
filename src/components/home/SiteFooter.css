@@ -49,8 +49,9 @@
   /* Stage fills one fold for the circle; grows with content so jumps aren’t clipped. */
   min-height: 100svh;
   height: auto;
-  /* Contain the disc to the footer stage — no bleed into Press. */
-  overflow: hidden;
+  /* Hide vertical bleed into Press; allow the aurora’s native width to show. */
+  overflow-x: visible;
+  overflow-y: hidden;
   background: transparent;
   display: flex;
   flex-direction: column;
@@ -104,8 +105,8 @@
   /* Gutters live here — mark band below stays stage-edge full-bleed. */
   padding-left: var(--footer-gutter);
   padding-right: var(--footer-gutter);
-  /* Keep legal clear of the full-bleed glow band. */
-  padding-bottom: clamp(20px, 2.5vw, 36px);
+  /* Tight gap so aurora sits just under the legal row. */
+  padding-bottom: clamp(4px, 0.8vw, 12px);
   box-sizing: border-box;
 }
 
@@ -173,8 +174,7 @@
   flex-direction: column;
   gap: 0;
   margin: 0 0 clamp(24px, 3vw, 36px);
-  border-top: 1px solid
-    color-mix(in srgb, var(--color-ecru, #f8ece4) 14%, transparent);
+  border-top: 1px solid color-mix(in srgb, var(--color-ecru, #f8ece4) 14%, transparent);
 }
 
 .site-footer__jump {
@@ -183,8 +183,7 @@
   align-items: center;
   gap: clamp(24px, 4vw, 64px);
   padding: clamp(10px, 1.2vw, 16px) 0;
-  border-bottom: 1px solid
-    color-mix(in srgb, var(--color-ecru, #f8ece4) 14%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-ecru, #f8ece4) 14%, transparent);
   color: inherit;
   text-decoration: none;
   transition: opacity 0.25s ease;
@@ -254,7 +253,7 @@
   color: color-mix(in srgb, var(--color-ecru, #f8ece4) 72%, transparent);
 }
 
-.site-footer__grid > div,
+.site-footer__grid>div,
 .site-footer__newsletter {
   opacity: 1;
 }
@@ -275,8 +274,7 @@
 .site-footer__newsletter input {
   width: 100%;
   background: transparent;
-  border: 1px solid
-    color-mix(in srgb, var(--color-ecru, #f8ece4) 24%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-ecru, #f8ece4) 24%, transparent);
   color: var(--color-ecru, #f8ece4);
   padding: 10px 12px;
   font-family: var(--font-sans);
@@ -306,8 +304,7 @@
 }
 
 .site-footer__bottom {
-  border-top: 1px solid
-    color-mix(in srgb, var(--color-ecru, #f8ece4) 16%, transparent);
+  border-top: 1px solid color-mix(in srgb, var(--color-ecru, #f8ece4) 16%, transparent);
   padding-top: 14px;
   display: flex;
   justify-content: space-between;
@@ -343,18 +340,20 @@
 }
 
 /*
- * Mark band — full width of .site-footer / .footer-circle-reveal (no gutters).
- * Height follows the art (no fixed clamp / cover crop).
+ * Mark band — sits directly under the legal row (no margin-top: auto gap).
+ * Image at footer-horizon.jpg intrinsic size (1024×625), centered.
  */
 .site-footer__mark-wrap {
   position: relative;
   z-index: 0;
-  margin-top: auto;
+  /* Pull aurora + wordmark up under the copyright line. */
+  margin-top: clamp(-28px, -3vh, -8px);
   flex: 0 0 auto;
   isolation: isolate;
   line-height: 0;
-  /* Equal inset so the aurora isn’t flush-clipped against the stage edge. */
-  padding: clamp(12px, 1.6vw, 28px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   max-width: none;
   margin-left: 0;
@@ -367,27 +366,27 @@
   box-sizing: border-box;
 }
 
-/* Full aurora — natural aspect, never cover-cropped. */
+/* Intrinsic size of /assets/footer-horizon.jpg — no stretch/crop. */
 .site-footer__mark-art {
   display: block;
-  width: 100%;
-  height: auto;
-  max-width: 100%;
-  object-fit: contain;
-  object-position: center bottom;
+  width: 1024px;
+  height: 625px;
+  max-width: none;
+  max-height: none;
+  flex-shrink: 0;
   border-radius: 0;
   pointer-events: none;
   user-select: none;
 }
 
 /*
- * MEOLAA flush to the bottom of the mark band (over the glow horizon).
+ * MEOLAA over the glow horizon — mid-lower band so it reads with the aurora.
  */
 .site-footer__wordmark {
   position: absolute;
   left: 50%;
   top: auto;
-  bottom: clamp(12px, 1.6vw, 28px);
+  bottom: clamp(28px, 4vw, 56px);
   transform: translateX(-50%);
   z-index: 1;
   display: block;
@@ -442,6 +441,7 @@
 /* ——— Mobile ——— */
 
 @media (max-width: 900px) {
+
   .footer-runway,
   .footer-pin {
     min-height: 0;
@@ -503,6 +503,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   .footer-reveal-section--animated .footer-copy-reveal,
   .footer-reveal-section--animated .footer-copy-reveal.is-revealed,
   .footer-copy-reveal {
