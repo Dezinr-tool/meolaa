@@ -187,19 +187,19 @@ html {
   pointer-events: auto;
 }
 
-/* Hero H1: medium weight — paired with section titles at the same ground. */
+/* Hero H1: semibold — same ground as every section title. */
 .hero--blank .hero__headline {
   color: var(--color-ecru, #f8ece4);
   font-family: var(--font-display);
   /* Up from --text-display-sm (36–64). The vw step is capped by what fits
      beside the panel on the same row — see .hero--blank .hero__panel. */
-  font-size: clamp(2.375rem, 5.4vw, 4.5rem);
-  /* Was light 300 (too thin vs bold section titles). Medium matches sections. */
-  font-weight: var(--fw-medium);
+  font-size: var(--section-head-title-size, 4.5rem);
+  font-weight: var(--section-head-title-weight, var(--fw-semibold));
   line-height: var(--lh-display);
   letter-spacing: var(--tracking-display);
-  max-width: min(820px, 58vw);
+  max-width: min(1100px, 72vw);
   font-variation-settings: normal;
+  text-transform: uppercase;
 }
 
 .hero--blank .hero__headline span {
@@ -347,8 +347,12 @@ html {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--section-head-gap);
+  gap: 0;
   z-index: 2;
+}
+
+.vision__eyebrow + .vision__headline-stack {
+  margin-top: var(--section-head-eyebrow-title-gap, 24px);
 }
 
 .vision__eyebrow {
@@ -380,8 +384,8 @@ html {
 
 .vision__headline span {
   font-family: var(--font-display);
-  font-size: clamp(1.625rem, 3.6vw, 3.125rem);
-  font-weight: var(--fw-semibold, 600);
+  font-size: var(--section-head-title-size, 4.5rem);
+  font-weight: var(--section-head-title-weight, var(--fw-semibold));
   line-height: 1.06;
   letter-spacing: var(--section-head-title-tracking, -0.01em);
   text-transform: uppercase;
@@ -392,8 +396,8 @@ html {
 
 @media (min-width: 1280px) {
   .vision__headline span {
-    white-space: nowrap;
-    text-wrap: nowrap;
+    white-space: normal;
+    text-wrap: balance;
   }
 }
 

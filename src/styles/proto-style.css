@@ -5,11 +5,11 @@
   --sans: var(--font-sans);
   --mono: var(--font-mono);
   --cream: var(--color-ecru, #f8ece4);
-  --lab-bg: var(--color-ecru, #f8ece4);
+  --lab-bg: var(--color-joyous-yellow, #fdf28c);
 
   /* Type scale — sitewide hierarchy */
-  --text-display: clamp(2.5rem, 5.5vw, 4.5rem);       /* 40–72 · H1 / hero */
-  --text-display-sm: clamp(2.25rem, 5vw, 4rem);       /* 36–64 · compact H1 */
+  --text-display: 4.5rem;                              /* 72 · all titles */
+  --text-display-sm: 4.5rem;                           /* 72 · all titles */
   --text-h2: clamp(1.75rem, 3.6vw, 2.75rem);          /* 28–44 · section */
   --text-h2-lg: clamp(2rem, 4.2vw, 3.5rem);           /* 32–56 · large section */
   --text-h3: clamp(1.25rem, 2.2vw, 1.75rem);          /* 20–28 · card / stage */
@@ -17,7 +17,7 @@
   --text-body-lg: 1rem;                               /* 16 · lede */
   --text-sm: 0.875rem;                                /* 14 */
   --text-xs: 0.8125rem;                               /* 13 */
-  --text-eyebrow: 0.6875rem;                          /* 11 */
+  --text-eyebrow: 0.75rem;                             /* 12 */
   --lh-display: 1.05;
   --lh-tight: 1.08;
   --lh-body: 1.65;
@@ -54,15 +54,15 @@ img { display: block; max-width: 100%; }
   min-height: 100vh;
 }
 
-/* Arrow motif — fold 1 → 4 (Figma node 32:695, fixed 288×199) */
+/* Arrow motif — above hero prism → Vision (mask from brand arrow PNG). */
 .arrow {
   position: fixed;
   left: 50%;
-  top: 44%;
-  z-index: 1;
-  width: 220px;
-  height: 152px;
-  opacity: 0.85;
+  top: 28%;
+  z-index: 5;
+  width: min(200px, 28vw);
+  height: min(132px, 18vw);
+  opacity: 0.95;
   pointer-events: none;
   will-change: transform;
   transform-origin: center center;
@@ -73,17 +73,18 @@ img { display: block; max-width: 100%; }
 }
 
 .arrow__float {
-  width: 220px;
-  height: 152px;
+  width: 100%;
+  height: 100%;
   will-change: transform;
 }
 
 .arrow__shape {
-  width: 220px;
-  height: 152px;
-  background-color: #fff;
-  -webkit-mask-image: url("data:image/svg+xml,%3Csvg width='276' height='181' viewBox='0 0 276 181' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 180.223V113.723L102.478 15.5598C124.648 -5.67724 159.784 -5.10426 181.251 16.8444L276 113.723V180.223L162 66.2228V168.723H116V66.2228L0 180.223Z' fill='white'/%3E%3C/svg%3E");
-  mask-image: url("data:image/svg+xml,%3Csvg width='276' height='181' viewBox='0 0 276 181' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 180.223V113.723L102.478 15.5598C124.648 -5.67724 159.784 -5.10426 181.251 16.8444L276 113.723V180.223L162 66.2228V168.723H116V66.2228L0 180.223Z' fill='white'/%3E%3C/svg%3E");
+  width: 100%;
+  height: 100%;
+  /* Tintable fill; silhouette from the uploaded arrow asset. */
+  background-color: var(--color-joyous-yellow, #fdf28c);
+  -webkit-mask-image: url('/assets/hero-scroll-arrow.png');
+  mask-image: url('/assets/hero-scroll-arrow.png');
   -webkit-mask-size: contain;
   mask-size: contain;
   -webkit-mask-repeat: no-repeat;
@@ -130,11 +131,12 @@ img { display: block; max-width: 100%; }
 .hero__headline {
   font-family: var(--font-display);
   font-size: var(--text-display);
-  font-weight: 300;
+  font-weight: var(--section-head-title-weight, 600);
   line-height: var(--lh-tight);
   color: #fff;
   max-width: min(700px, 52vw);
   font-variation-settings: "SOFT" 0, "WONK" 1;
+  text-transform: uppercase;
 }
 
 .hero__headline span {

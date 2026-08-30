@@ -38,6 +38,12 @@ html.is-nav-menu-open body {
 }
 
 @media (max-width: 900px) {
+  :root {
+    --section-head-title-size: clamp(1.85rem, 8vw, 2.75rem);
+    --text-display: clamp(1.85rem, 8.5vw, 2.75rem);
+    --text-display-sm: clamp(1.85rem, 8.5vw, 2.75rem);
+  }
+
   .site-nav {
     padding-inline: 16px;
     min-height: 64px;
@@ -180,14 +186,13 @@ html.is-nav-menu-open body {
 /* ——— Homepage hero ——— */
 @media (max-width: 900px) {
   .hero--blank .hero__bottom {
-    gap: 20px;
+    gap: var(--section-head-title-sub-gap, 12px);
     padding-inline: 20px;
     padding-bottom: max(24px, env(safe-area-inset-bottom));
   }
 
   .hero--blank .hero__headline {
     max-width: 100%;
-    font-size: clamp(1.85rem, 8.5vw, 2.75rem);
   }
 
   .hero--blank .hero__headline span {

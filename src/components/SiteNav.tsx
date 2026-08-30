@@ -15,8 +15,6 @@ const ALL_LINKS = [
   { to: '/careers', label: 'Careers' },
 ] as const
 
-const CTA = { to: '/contact', label: 'Contact' } as const
-
 type SiteNavProps = {
   variant?: 'home' | 'inner'
   /** Light nav type over a dark hero until scroll */
@@ -80,12 +78,6 @@ export function SiteNav({ variant = 'home', navOverDark = false }: SiteNavProps)
             {l.label}
           </Link>
         ))}
-        <Link
-          className={`site-nav__cta${pathname === CTA.to ? ' is-active' : ''}`}
-          to={CTA.to}
-        >
-          {CTA.label}
-        </Link>
       </nav>
 
       <button
@@ -118,14 +110,6 @@ export function SiteNav({ variant = 'home', navOverDark = false }: SiteNavProps)
               {l.label}
             </Link>
           ))}
-          <Link
-            to={CTA.to}
-            className={linkClass(CTA.to)}
-            tabIndex={menuOpen ? 0 : -1}
-            onClick={() => setMenuOpen(false)}
-          >
-            {CTA.label}
-          </Link>
         </nav>
       </div>
 

@@ -2,7 +2,7 @@
  * Shared section header — eyebrow → title → subline.
  *
  * Design system (do not restyle per section):
- *   1. Equal gap eyebrow ↔ title ↔ sub via --section-head-gap (flex gap only)
+ *   1. Eyebrow ↔ title = 24px; title ↔ sub = 12px
  *   2. Eyebrow = brand Sustainable Green (--section-head-accent) on every ground
  *   3. On light → black title + muted black sub
  *   4. On dark  → white title + muted white sub
@@ -29,7 +29,8 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: var(--sh-gap);
+  /* Gaps set on siblings so eyebrow→title (24) ≠ title→sub (12). */
+  gap: 0;
   max-width: min(64rem, 94vw);
   margin-inline: auto;
 }
@@ -64,7 +65,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: var(--sh-gap);
+  gap: 0;
 }
 
 .section-head--split > :not(.section-head__stack) {
@@ -90,8 +91,12 @@
   color: var(--sh-accent);
 }
 
-.section-head .section-head__title {
+.section-head .section-head__title,
+.section-head .parallax-heading {
   margin: 0;
+}
+
+.section-head .section-head__title {
   font-family: var(--font-display);
   font-size: var(--section-head-title-size);
   font-weight: var(--section-head-title-weight);
@@ -102,8 +107,18 @@
   text-wrap: balance;
 }
 
+/* Eyebrow → title = 24px */
+.section-head__eyebrow + .section-head__title,
+.section-head__eyebrow + .parallax-heading,
+.section-head__stack .section-head__eyebrow + .section-head__title,
+.section-head__stack .section-head__eyebrow + .parallax-heading {
+  margin-top: var(--section-head-eyebrow-title-gap, 24px);
+}
+
 .section-head__sub {
   margin: 0;
+  /* Title → sub = 12px (always, not only adjacent — ParallaxHeading wraps title) */
+  margin-top: var(--section-head-title-sub-gap, 12px);
   font-family: var(--font-sans);
   font-size: var(--section-head-sub-size);
   font-weight: var(--section-head-sub-weight);
@@ -111,6 +126,16 @@
   color: var(--sh-sub);
   max-width: var(--section-head-sub-max);
   text-wrap: balance;
+}
+
+/* Title → sub = 12px — keep adjacent rules so later sheets cannot widen it */
+.section-head__title + .section-head__sub,
+.parallax-heading + .section-head__sub,
+.section-head__stack .section-head__title + .section-head__sub,
+.section-head__stack .parallax-heading + .section-head__sub,
+.section-head > .section-head__sub,
+.section-head__stack > .section-head__sub {
+  margin-top: var(--section-head-title-sub-gap, 12px);
 }
 
 /* Extra children after the trio (ghost CTA, filter row) stay centred. */
@@ -265,6 +290,7 @@
 
 .meola-lab__sub {
   margin: 0;
+  margin-top: var(--section-head-title-sub-gap, 12px);
   font-family: var(--font-sans);
   font-size: var(--section-head-sub-size);
   font-weight: var(--section-head-sub-weight);

@@ -48,7 +48,7 @@
 
 .pg-display {
   font-family: var(--font-display);
-  font-weight: 300;
+  font-weight: var(--section-head-title-weight, 600);
   font-size: var(--text-display);
   line-height: var(--lh-tight);
   letter-spacing: -0.02em;
@@ -56,7 +56,7 @@
 
 .pg-h2 {
   font-family: var(--font-display);
-  font-weight: 300;
+  font-weight: var(--section-head-title-weight, 600);
   font-size: var(--text-h2);
   line-height: var(--lh-display);
   letter-spacing: -0.02em;
@@ -3254,7 +3254,7 @@
   gap: 10px;
   margin: 0;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--text-eyebrow, 12px);
   font-weight: 500;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -3275,7 +3275,7 @@
   line-height: 1.08;
   letter-spacing: -0.02em;
   text-transform: uppercase;
-  margin: 18px 0 0;
+  margin: var(--section-head-eyebrow-title-gap, 24px) 0 0;
   color: #111;
 }
 .lead-grid__cell--person {

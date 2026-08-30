@@ -43,7 +43,7 @@
 
   /* Semantic aliases — warm section grounds (Ecru primary neutral) */
   --color-cream: var(--color-ecru);
-  --color-lab-bg: var(--color-ecru);
+  --color-lab-bg: var(--color-joyous-yellow);
   --color-surface: var(--color-ecru);
   --color-vision-bg: var(--color-ecru);
   --color-sage: var(--color-sustainable-green);
@@ -57,8 +57,8 @@
   --color-border-dark: rgba(0, 47, 58, 0.28);
 
   /* ——— Type scale ——— */
-  --text-display: clamp(2.5rem, 5.5vw, 4.5rem); /* 40–72 · H1 / hero */
-  --text-display-sm: clamp(2.25rem, 5vw, 4rem); /* 36–64 · compact H1 */
+  --text-display: 4.5rem; /* 72 — all titles */
+  --text-display-sm: 4.5rem; /* 72 — same as titles */
   --text-h2: clamp(1.75rem, 3.6vw, 2.75rem); /* 28–44 · section */
   --text-h2-lg: clamp(2rem, 4.2vw, 3.5rem); /* 32–56 · large section */
   --text-h3: clamp(1.25rem, 2.2vw, 1.75rem); /* 20–28 · card / stage */
@@ -66,7 +66,7 @@
   --text-body-lg: 1rem; /* 16 · lede */
   --text-sm: 0.875rem; /* 14 */
   --text-xs: 0.8125rem; /* 13 */
-  --text-eyebrow: 0.6875rem; /* 11 */
+  --text-eyebrow: 0.75rem; /* 12 — desktop eyebrows site-wide */
 
   --lh-display: 1.05;
   --lh-tight: 1.08;
@@ -88,23 +88,25 @@
 
   /* ——— Section head (eyebrow → title → sub) ———
      One system, every homepage section:
-       • Equal vertical gap eyebrow ↔ title ↔ sub (--section-head-gap)
+       • Eyebrow ↔ title = 24px; title ↔ sub = 12px
        • Eyebrow = brand Sustainable Green (never terracotta / yellow)
        • On light grounds → black title + muted black sub
        • On dark grounds  → white title + muted white sub
      Alignment (center / start / split) is layout-only. */
-  --section-head-gap: 1.5rem; /* 24px — equal step between all three levels */
+  --section-head-gap: 24px; /* legacy alias → eyebrow ↔ title */
+  --section-head-eyebrow-title-gap: 24px;
+  --section-head-title-sub-gap: 12px;
   --section-head-eyebrow-size: var(--text-eyebrow);
   --section-head-eyebrow-weight: var(--fw-semibold);
   --section-head-eyebrow-tracking: var(--tracking-eyebrow);
   /* Brand Lab headline scale — one size for every homepage section title. */
-  --section-head-title-size: clamp(1.85rem, 3.4vw, 3.15rem);
-  /* Medium ground with hero H1 — was bold 700 (too heavy vs light hero). */
-  --section-head-title-weight: var(--fw-medium);
+  --section-head-title-size: 4.5rem; /* 72 — every section / display title */
+  /* Semibold — every section / display title. */
+  --section-head-title-weight: var(--fw-semibold);
   /* Slightly open tracking for ALL-CAPS section titles. */
   --section-head-title-tracking: -0.01em;
   --section-head-title-lh: 1.02;
-  --section-head-sub-size: clamp(1rem, 1.35vw, 1.25rem);
+  --section-head-sub-size: 1rem; /* 16 — section subtext, desktop + mobile */
   --section-head-sub-weight: var(--fw-regular);
   --section-head-sub-lh: 1.55;
   /* Narrower than title → inverted-pyramid stack. */

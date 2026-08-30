@@ -175,12 +175,45 @@ function revealTitleLikeHero(
   })
 }
 
+/** Joyous Yellow → muted Planet Blue as the arrow leaves the black hero. */
 function mixArrowColor(t: number) {
-  const r = gsap.utils.interpolate(255, 10, t)
-  const g = gsap.utils.interpolate(255, 48, t)
-  const b = gsap.utils.interpolate(255, 56, t)
-  const a = gsap.utils.interpolate(1, 0.22, t)
+  const r = gsap.utils.interpolate(253, 10, t)
+  const g = gsap.utils.interpolate(242, 48, t)
+  const b = gsap.utils.interpolate(140, 56, t)
+  const a = gsap.utils.interpolate(1, 0.35, t)
   return `rgba(${r | 0}, ${g | 0}, ${b | 0}, ${a.toFixed(2)})`
+}
+
+type ArrowPt = { x: number; y: number }
+
+/** Cubic bezier point on an S-track. */
+function cubicPoint(p0: ArrowPt, p1: ArrowPt, p2: ArrowPt, p3: ArrowPt, t: number): ArrowPt {
+  const u = 1 - t
+  const tt = t * t
+  const uu = u * u
+  const uuu = uu * u
+  const ttt = tt * t
+  return {
+    x: uuu * p0.x + 3 * uu * t * p1.x + 3 * u * tt * p2.x + ttt * p3.x,
+    y: uuu * p0.y + 3 * uu * t * p1.y + 3 * u * tt * p2.y + ttt * p3.y,
+  }
+}
+
+/** Tangent lean (degrees) — tip follows the track, no continuous spin. */
+function cubicLean(p0: ArrowPt, p1: ArrowPt, p2: ArrowPt, p3: ArrowPt, t: number): number {
+  const u = 1 - t
+  // dB/dt of cubic bezier
+  const dx =
+    3 * u * u * (p1.x - p0.x) +
+    6 * u * t * (p2.x - p1.x) +
+    3 * t * t * (p3.x - p2.x)
+  const dy =
+    3 * u * u * (p1.y - p0.y) +
+    6 * u * t * (p2.y - p1.y) +
+    3 * t * t * (p3.y - p2.y)
+  // Arrow art points up (0°). Travel is mostly downward → +180, then lean with dx.
+  const deg = (Math.atan2(dx, dy) * 180) / Math.PI
+  return gsap.utils.clamp(-55, 55, deg)
 }
 
 /**
@@ -422,8 +455,8 @@ export function HomeAnimations() {
         })
       }
 
-      const ARROW_WHITE = '#ffffff'
-      const ARROW_GREEN = 'rgba(10, 48, 56, 0.22)'
+      const ARROW_YELLOW = '#fdf28c'
+      const ARROW_GREEN = 'rgba(10, 48, 56, 0.35)'
 
       function labSlotCenter() {
         if (!labArrowSlot) return { x: 120, y: window.innerHeight * 0.55 }
@@ -434,10 +467,11 @@ export function HomeAnimations() {
         }
       }
 
+      /** Centered above the hero prism (prism sits mid-fold). */
       function heroArrowPoint() {
         return {
           x: window.innerWidth * 0.5,
-          y: window.innerHeight * 0.44,
+          y: window.innerHeight * 0.28,
         }
       }
 
@@ -468,28 +502,8 @@ export function HomeAnimations() {
         }
       }
 
-      /* ——— Arrow motif ——— */
+      /* ——— Arrow motif: linear scrub along an S-track (lean with path, no spin) ——— */
       if (arrow && arrowFloat && arrowShape && hero && vision && loopSection && lab) {
-        gsap.set(arrow, {
-          left: '50%',
-          top: '44%',
-          xPercent: -50,
-          yPercent: -50,
-          rotation: 0,
-          scale: 1,
-          opacity: 1,
-          visibility: 'visible',
-        })
-        gsap.set(arrowShape, { backgroundColor: ARROW_WHITE })
-
-        gsap.to(arrowFloat, {
-          y: 10,
-          duration: 3.4,
-          repeat: -1,
-          yoyo: true,
-          ease: 'sine.inOut',
-        })
-
         const setArrowAt = (x: number, y: number, rotation = 0) => {
           gsap.set(arrow, {
             left: x,
@@ -503,13 +517,53 @@ export function HomeAnimations() {
           })
         }
 
+        /** S-curve control points for a segment (bulge left then right). */
+        function sControls(from: ArrowPt, to: ArrowPt, amp = 0.22) {
+          const midY = (from.y + to.y) * 0.5
+          const spanX = Math.max(window.innerWidth * amp, 120)
+          return {
+            p0: from,
+            p1: { x: from.x + spanX, y: from.y + (midY - from.y) * 0.35 },
+            p2: { x: to.x - spanX, y: to.y - (to.y - midY) * 0.35 },
+            p3: to,
+          }
+        }
+
+        const placeOnS = (from: ArrowPt, to: ArrowPt, t: number, amp?: number) => {
+          const { p0, p1, p2, p3 } = sControls(from, to, amp)
+          const pt = cubicPoint(p0, p1, p2, p3, t)
+          const lean = cubicLean(p0, p1, p2, p3, t)
+          setArrowAt(pt.x, pt.y, lean)
+        }
+
+        gsap.set(arrow, {
+          left: '50%',
+          top: '28%',
+          xPercent: -50,
+          yPercent: -50,
+          rotation: 0,
+          scale: 1,
+          opacity: 1,
+          visibility: 'visible',
+        })
+        gsap.set(arrowShape, { backgroundColor: ARROW_YELLOW })
+
+        gsap.to(arrowFloat, {
+          y: 10,
+          duration: 3.4,
+          repeat: -1,
+          yoyo: true,
+          ease: 'sine.inOut',
+        })
+
         const resetHeroArrow = () => {
           const p = heroArrowPoint()
           setArrowAt(p.x, p.y, 0)
-          gsap.set(arrowShape, { backgroundColor: ARROW_WHITE })
+          gsap.set(arrowShape, { backgroundColor: ARROW_YELLOW })
           gsap.set(arrowFloat, { y: 0 })
         }
 
+        // Hero → Vision: linear progress on S-track
         ScrollTrigger.create({
           trigger: hero,
           start: 'top top',
@@ -518,21 +572,15 @@ export function HomeAnimations() {
           scrub: true,
           onUpdate: (self: ST) => {
             gsap.set(arrowFloat, { y: 0 })
-            const p = self.progress
-            const from = heroArrowPoint()
-            const to = visionArrowPoint()
-            setArrowAt(
-              gsap.utils.interpolate(from.x, to.x, p),
-              gsap.utils.interpolate(from.y, to.y, p),
-              gsap.utils.interpolate(0, 18, p),
-            )
-            const colorP = gsap.utils.clamp(0, 1, (p - 0.2) / 0.8)
+            const t = self.progress // linear with scroll
+            placeOnS(heroArrowPoint(), visionArrowPoint(), t, 0.2)
+            const colorP = gsap.utils.clamp(0, 1, (t - 0.15) / 0.85)
             gsap.set(arrowShape, { backgroundColor: mixArrowColor(colorP) })
           },
           onLeaveBack: resetHeroArrow,
         })
 
-        /* Match vision pin travel so arrow holds while video expands. */
+        // Vision pin: hold on track end (upright lean ≈ 0)
         ScrollTrigger.create({
           trigger: vision,
           start: 'top top',
@@ -541,11 +589,12 @@ export function HomeAnimations() {
           onUpdate: () => {
             gsap.set(arrowFloat, { y: 0 })
             const p = visionArrowPoint()
-            setArrowAt(p.x, p.y, 18)
+            setArrowAt(p.x, p.y, 0)
             gsap.set(arrowShape, { backgroundColor: ARROW_GREEN })
           },
         })
 
+        // Vision → Loop → Lab: second S-track, linear scrub
         ScrollTrigger.create({
           trigger: vision,
           start: '+=140% top',
@@ -554,25 +603,15 @@ export function HomeAnimations() {
           scrub: true,
           onUpdate: (self: ST) => {
             gsap.set(arrowFloat, { y: 0 })
-            const p = self.progress
+            const t = self.progress
             const from = visionArrowPoint()
             const mid = loopArrowPoint()
             const to = labSlotCenter()
-            let x: number
-            let y: number
-            let rot: number
-            if (p < 0.45) {
-              const t = p / 0.45
-              x = gsap.utils.interpolate(from.x, mid.x, t)
-              y = gsap.utils.interpolate(from.y, mid.y, t)
-              rot = gsap.utils.interpolate(18, 28, t)
+            if (t < 0.5) {
+              placeOnS(from, mid, t / 0.5, 0.18)
             } else {
-              const t = (p - 0.45) / 0.55
-              x = gsap.utils.interpolate(mid.x, to.x, t)
-              y = gsap.utils.interpolate(mid.y, to.y, t)
-              rot = gsap.utils.interpolate(28, 0, t)
+              placeOnS(mid, to, (t - 0.5) / 0.5, 0.16)
             }
-            setArrowAt(x, y, rot)
             gsap.set(arrowShape, { backgroundColor: ARROW_GREEN })
           },
         })

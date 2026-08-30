@@ -19,8 +19,8 @@ import {
 import { SiteFooter } from '../components/home/SiteFooter'
 import '../App.css'
 
-/** Temporarily hide the scroll arrow motif (float + scroll momentum). Flip to `true` to restore. */
-const SHOW_SCROLL_ARROW = false
+/** Scroll arrow motif — sits above the hero prism, travels into Vision on scroll. */
+const SHOW_SCROLL_ARROW = true
 
 export function HomePage() {
   return (

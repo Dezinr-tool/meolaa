@@ -89,6 +89,7 @@
 
 .app--inner .pg-eyebrow,
 .app--inner .pg-eyebrow--dark {
+  margin: 0;
   font-family: var(--font-mono);
   font-size: var(--section-head-eyebrow-size);
   font-weight: var(--section-head-eyebrow-weight);
@@ -118,6 +119,51 @@
   line-height: var(--section-head-title-lh);
   letter-spacing: var(--section-head-title-tracking);
   text-transform: uppercase;
+}
+
+.app--inner .story-hero__headline,
+.app--inner .lab-hero__headline,
+.app--inner .lab-caps__title,
+.app--inner .lab-tech__title,
+.app--inner .lab-case__title,
+.app--inner .lab-intro__headline,
+.app--inner .au-fold2__lede,
+.app--inner .how-work__title,
+.app--inner .ct-hero__title,
+.app--inner .ct-section-title {
+  font-weight: var(--section-head-title-weight, var(--fw-semibold));
+}
+
+/* Eyebrow → title = 24px on inner pages */
+.app--inner .pg-eyebrow + .pg-display,
+.app--inner .pg-eyebrow + .pg-h2,
+.app--inner .pg-eyebrow + .ct-section-title,
+.app--inner .pg-eyebrow--dark + .pg-display,
+.app--inner .pg-eyebrow--dark + .pg-h2,
+.app--inner .pg-eyebrow--light + .pg-display,
+.app--inner .pg-eyebrow--light + .pg-h2,
+.app--inner .lead-grid__eyebrow + .lead-grid__title {
+  margin-top: var(--section-head-eyebrow-title-gap, 24px);
+}
+
+/* Title → sub = 12px on inner pages */
+.app--inner .pg-display + .pg-lede,
+.app--inner .pg-display + .pg-body,
+.app--inner .pg-h2 + .pg-lede,
+.app--inner .pg-h2 + .pg-body,
+.app--inner .pg-h2 + .ct-section-lede,
+.app--inner .ct-section-title + .ct-section-lede,
+.app--inner .story-hero__headline + .story-hero__lede,
+.app--inner .story-chapter__lede,
+.app--inner .lab-hero__headline + .lab-hero__lede,
+.app--inner .lab-caps__title + .lab-caps__lede,
+.app--inner .lab-tech__title + .lab-tech__lede,
+.app--inner .lab-case__title + .lab-case__lede,
+.app--inner .ct-hero__title + .ct-hero__body,
+.app--inner .inner-hero__title + .inner-hero__body,
+.app--inner .au-fold2__lede + .au-fold2__body,
+.app--inner .how-work__title + .how-work__lede {
+  margin-top: var(--section-head-title-sub-gap, 12px);
 }
 
 .app--inner .pg-body,
@@ -228,7 +274,7 @@
 
 .inner-hero__title {
   font-size: var(--text-display);
-  font-weight: var(--fw-light);
+  font-weight: var(--section-head-title-weight, var(--fw-semibold));
   text-transform: uppercase;
 }
 
@@ -301,8 +347,8 @@
 .app--inner .pillars__title {
   color: color-mix(in srgb, var(--color-ecru) 92%, transparent);
   font-family: var(--font-display);
-  font-size: clamp(28px, 4.5vw, 52px);
-  font-weight: var(--fw-medium);
+  font-size: var(--section-head-title-size, 4.5rem);
+  font-weight: var(--section-head-title-weight, var(--fw-semibold));
   letter-spacing: 0.06em;
   text-align: center;
   text-transform: uppercase;
