@@ -159,8 +159,8 @@
 
 /* ——— Section shells that reuse the header ——— */
 
-/* Metrics — ONE section (not two folds): section-head on Ecru +
-   full-bleed Deep Ecru stats band as the same unit’s footer.
+/* Metrics — ONE section (not two folds): section-head on white +
+   full-bleed pastel stair band (Figma washes) as the same unit’s footer.
    Four absolute columns keep .metric:nth-child(n) for the stair reveal. */
 .metrics {
   --metrics-pad-x: clamp(24px, 4vw, 64px);
@@ -235,11 +235,11 @@
 .metrics__chart {
   position: relative;
   flex: 0 0 auto;
-  /* Ecru ground so Deep Ecru bars read as ascending stairs (prototype match). */
-  background: var(--color-ecru, #f8ece4);
-  /* Taller stair band so the steps read as a chart, not a strip. */
-  height: clamp(340px, 54svh, 500px);
-  min-height: clamp(340px, 54svh, 500px);
+  /* White ground — pastel stair washes provide the color (Figma 10:2). */
+  background: #ffffff;
+  /* Taller band so the Figma-scale steps read as a chart. */
+  height: clamp(420px, 68svh, 703px);
+  min-height: clamp(420px, 68svh, 703px);
   /* Bars stay full-bleed despite the section's shared side padding. */
   margin-inline: calc(var(--metrics-pad-x) * -1);
   margin-block: 0;

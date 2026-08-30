@@ -94,10 +94,6 @@
   will-change: auto;
 }
 
-.app--inner .footer-reveal-section--static {
-  background: var(--color-planet-blue, #002f3a);
-}
-
 .app--inner .footer-reveal-section--static .footer-content,
 .app--inner .footer-reveal-section--static .footer-copy-reveal,
 .app--inner .footer-reveal-section--static .site-footer__mark-wrap,

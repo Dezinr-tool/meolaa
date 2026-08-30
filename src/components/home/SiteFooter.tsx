@@ -1,10 +1,10 @@
 /**
- * Site footer — white pre-stage (matches Press), black circle expand
- * (GSAP pin + scrub), jump rows → column grid → legal → liquid-fill MEOLAA.
+ * Site footer — white pre-stage (matches Press), then a Luke-style black
+ * scale-blob expands from bottom-center (GSAP pin + scrub). Jump rows →
+ * column grid → legal → liquid-fill MEOLAA.
  * Lenis sync via SmoothScroll (ScrollTrigger.update only; no scrollerProxy).
  *
- * Reveal runs only while the footer is pinned (flush-top). Copy uses a
- * scrubbed clip-path wipe; mark plays once and stays visible.
+ * Blob + copy reveal run only while pinned (flush-top). Mark plays once.
  */
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
@@ -13,7 +13,7 @@ import {
   MeolaaLogoMark,
 } from '../brand/MeolaaLogoMark'
 import { gsap, ScrollTrigger } from '../../lib/motion'
-import { refreshScrollAndLenis } from '../../lib/lenisInstance'
+import { getLenisInstance, refreshScrollAndLenis } from '../../lib/lenisInstance'
 import './SiteFooter.css'
 
 const PRIMARY = '#000000'
@@ -22,8 +22,13 @@ const REVEAL_START = 'top top'
 /** Pin when footer is flush; longer travel so the disc expands more slowly. */
 const PIN_START = 'top top'
 const PIN_END = '+=280%'
-/** Same window as pin — slow scrubbed expand across the pinned stage. */
-const REVEAL_END = 'top top+=280%'
+/**
+ * Same window as pin — slow scrubbed expand across the pinned stage.
+ * Must stay a relative end (`+=`): the two-value form `top top+=280%`
+ * resolves to start === end, so the trigger fires onLeave immediately and
+ * settleFooterStage() collapses the pin spacer mid-Press.
+ */
+const REVEAL_END = PIN_END
 /** Soft catch-up behind Lenis — higher = gentler, less “snap open”. */
 const STAGE_SCRUB = 3.0
 /**
@@ -35,14 +40,30 @@ const CONTENT_MASK_DUR = 0.34
 /** Brand mark clip reveal shortly after content is readable. */
 const LOGO_FILL_AT = 0.76
 const LOGO_FILL_DUR = 0.75
-/**
- * vmax radius covers viewport corners from bottom-center regardless of
- * host height (%-of-box left white wedges on tall/short stages).
- */
-const CIRCLE_END = 'circle(150vmax at 50% 100%)'
+/** Blob rests half-below the fold (Luke pattern) so scale grows upward. */
+const BLOB_X_PERCENT = -50
+const BLOB_Y_PERCENT = 50
 const MOBILE_MQ = '(max-width: 900px)'
 const DESKTOP_MQ = '(min-width: 901px)'
 const REDUCED_MQ = '(prefers-reduced-motion: reduce)'
+
+function showBlobOpen(el: HTMLElement) {
+  gsap.set(el, {
+    xPercent: BLOB_X_PERCENT,
+    yPercent: BLOB_Y_PERCENT,
+    scale: 1,
+    backgroundColor: PRIMARY,
+  })
+}
+
+function resetBlob(el: HTMLElement) {
+  gsap.set(el, {
+    xPercent: BLOB_X_PERCENT,
+    yPercent: BLOB_Y_PERCENT,
+    scale: 0,
+    backgroundColor: PRIMARY,
+  })
+}
 
 const CLIP_HIDDEN = 'inset(100% 0 0 0)'
 /** Slight bottom outset avoids antialiased hairline under glyphs. */
@@ -278,10 +299,7 @@ export function SiteFooter({ simple = false }: SiteFooterProps) {
 
       mm.add(MOBILE_MQ, () => {
         circle.classList.add('is-visible')
-        gsap.set(circle, {
-          clipPath: CIRCLE_END,
-          backgroundColor: PRIMARY,
-        })
+        showBlobOpen(circle)
         if (copyReveal) showCopyRevealed(copyReveal)
 
         let fillPlayed = false
@@ -307,7 +325,7 @@ export function SiteFooter({ simple = false }: SiteFooterProps) {
         return () => {
           circle.classList.remove('is-visible')
           ScrollTrigger.getById('footer-logo-fill')?.kill()
-          gsap.set(circle, { clearProps: 'clipPath,backgroundColor' })
+          gsap.set(circle, { clearProps: 'transform,backgroundColor' })
           if (copyReveal) {
             copyReveal.classList.remove('is-revealed')
             gsap.set(copyReveal, { clearProps: 'clipPath' })
@@ -321,10 +339,7 @@ export function SiteFooter({ simple = false }: SiteFooterProps) {
 
       mm.add(DESKTOP_MQ, () => {
         circle.classList.remove('is-visible')
-        gsap.set(circle, {
-          clipPath: 'circle(0% at 50% 100%)',
-          backgroundColor: PRIMARY,
-        })
+        resetBlob(circle)
         if (copyReveal) resetCopyReveal(copyReveal)
         if (markWrap) {
           markWrap.classList.remove('is-revealed')
@@ -333,6 +348,14 @@ export function SiteFooter({ simple = false }: SiteFooterProps) {
 
         let fillPlayed = false
         let settled = false
+        /**
+         * Settling removes ~280vh of pin-spacer, so the browser clamps scroll
+         * back above the stage start and ScrollTrigger fires onLeaveBack —
+         * which unsettles, restores the spacer and lets us fall into the stage
+         * again, forever. Ignore leave-back until the collapse has been
+         * re-anchored to the new document bottom.
+         */
+        let settling = false
 
         /** Pin leaves inline height on `.footer-pin` — collapse + remeasure. */
         const settleFooterStage = () => {
@@ -342,6 +365,7 @@ export function SiteFooter({ simple = false }: SiteFooterProps) {
           if (revealST && revealST.progress < 0.995) return
 
           settled = true
+          settling = true
           if (copyReveal) showCopyRevealed(copyReveal)
           if (markWrap && !markWrap.classList.contains('is-revealed')) {
             fillPlayed = true
@@ -349,27 +373,59 @@ export function SiteFooter({ simple = false }: SiteFooterProps) {
           }
 
           circle.classList.add('is-visible')
-          gsap.set(circle, { clipPath: CIRCLE_END, backgroundColor: PRIMARY })
+          showBlobOpen(circle)
+          /* Collapsing pin-spacer remaps scrub progress to ~0 — stop the
+             timeline so it cannot rewind the blob/copy after refresh. */
+          if (revealST) revealST.disable(false)
 
           root.classList.add('is-settled')
-          gsap.set([pin, circle], {
+          gsap.set(pin, {
             clearProps: 'height,minHeight,maxHeight',
           })
 
-          /* Wait for is-settled collapse before measuring pin height. */
+          const lockSettledVisuals = () => {
+            showBlobOpen(circle)
+            if (copyReveal) showCopyRevealed(copyReveal)
+            if (markWrap) showLogoFilled(markWrap)
+          }
+
+          /* `.is-settled` CSS already collapses the spacer (height/padding are
+             !important there). Setting an explicit height here re-measured the
+             pin mid-collapse as 0, which shrank the document a further ~900px
+             and flashed the viewport back to Press before the anchor landed. */
+          refreshScrollAndLenis()
+          anchorToDocumentEnd()
           requestAnimationFrame(() => {
-            const pinSpacer = pin.parentElement
-            if (pinSpacer?.classList.contains('pin-spacer')) {
-              gsap.set(pinSpacer, { paddingBottom: 0, height: pin.offsetHeight })
-            }
             refreshScrollAndLenis()
-            requestAnimationFrame(refreshScrollAndLenis)
+            anchorToDocumentEnd()
+            requestAnimationFrame(() => {
+              refreshScrollAndLenis()
+              lockSettledVisuals()
+              anchorToDocumentEnd()
+              settling = false
+            })
           })
         }
 
+        /** Re-anchor scroll (and Lenis) to the post-collapse document bottom. */
+        const anchorToDocumentEnd = () => {
+          const max = Math.max(
+            0,
+            document.documentElement.scrollHeight - window.innerHeight,
+          )
+          const lenis = getLenisInstance()
+          if (lenis) lenis.scrollTo(max, { immediate: true, force: true })
+          else window.scrollTo(0, max)
+        }
+
         const unsettleFooterStage = () => {
+          if (settling) return
           settled = false
           root.classList.remove('is-settled')
+          const revealST = ScrollTrigger.getById('footer-circle-reveal')
+          /* ScrollTrigger has no `enabled` getter (types or runtime), so the
+             old `!revealST.enabled` guard was always true — enable outright. */
+          if (revealST) revealST.enable(false)
           const pinSpacer = pin.parentElement
           if (pinSpacer?.classList.contains('pin-spacer')) {
             gsap.set(pinSpacer, { clearProps: 'height,paddingBottom' })
@@ -396,10 +452,11 @@ export function SiteFooter({ simple = false }: SiteFooterProps) {
             fillPlayed = false
             if (markWrap) resetLogoFill(markWrap)
             if (copyReveal) resetCopyReveal(copyReveal)
+            resetBlob(circle)
           },
         })
 
-        /* Scrubbed expand across the pinned stage only.
+        /* Scrubbed blob scale across the pinned stage.
            Logo fill fires once — never re-hidden by scrub bounce. */
         const tl = gsap.timeline({
           scrollTrigger: {
@@ -425,6 +482,7 @@ export function SiteFooter({ simple = false }: SiteFooterProps) {
               fillPlayed = false
               if (markWrap) resetLogoFill(markWrap)
               if (copyReveal) resetCopyReveal(copyReveal)
+              resetBlob(circle)
             },
             onUpdate: (self) => {
               if (copyReveal) {
@@ -446,11 +504,18 @@ export function SiteFooter({ simple = false }: SiteFooterProps) {
           },
         })
 
+        /* Luke-style: giant disc scales 0 → 1 from bottom-center (black). */
         tl.fromTo(
           circle,
-          { clipPath: 'circle(0% at 50% 100%)' },
           {
-            clipPath: CIRCLE_END,
+            xPercent: BLOB_X_PERCENT,
+            yPercent: BLOB_Y_PERCENT,
+            scale: 0,
+          },
+          {
+            xPercent: BLOB_X_PERCENT,
+            yPercent: BLOB_Y_PERCENT,
+            scale: 1,
             duration: 1,
             ease: 'none',
           },
@@ -484,7 +549,7 @@ export function SiteFooter({ simple = false }: SiteFooterProps) {
           ScrollTrigger.getById('footer-circle-reveal')?.kill()
           tl.kill()
           circle.classList.remove('is-visible')
-          gsap.set(circle, { clearProps: 'clipPath,backgroundColor' })
+          gsap.set(circle, { clearProps: 'transform,backgroundColor' })
           if (copyReveal) {
             copyReveal.classList.remove('is-revealed')
             gsap.set(copyReveal, { clearProps: 'clipPath' })
@@ -534,12 +599,11 @@ export function SiteFooter({ simple = false }: SiteFooterProps) {
       <div ref={runwayRef} className="footer-runway">
         <div ref={pinRef} className="footer-pin">
           {animated ? (
-            <div ref={circleRef} className="footer-circle-reveal">
-              {content}
+            <div className="footer-blob-wrap" aria-hidden="true">
+              <div ref={circleRef} className="footer-blob" />
             </div>
-          ) : (
-            content
-          )}
+          ) : null}
+          {content}
         </div>
       </div>
     </footer>

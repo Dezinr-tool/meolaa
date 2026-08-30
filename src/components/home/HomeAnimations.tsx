@@ -2,7 +2,7 @@
  * Homepage scroll interactions — ported from prototype main.js.
  */
 import { useEffect } from 'react'
-import { gsap, ScrollTrigger } from '../../lib/motion'
+import { gsap } from '../../lib/motion'
 import { getLenisInstance, refreshScrollAndLenis } from '../../lib/lenisInstance'
 import { initLoop } from '../../lib/loopAnimations'
 import { initVision } from '../../lib/visionAnimations'
@@ -367,7 +367,6 @@ export function HomeAnimations() {
       const lab = document.querySelector('[data-section="lab"]')
       const founding = document.querySelector('[data-section="founding"]')
       const portfolio = document.querySelector('[data-section="brands"]')
-      const investors = document.querySelector('[data-section="investors"]')
       const press = document.querySelector('[data-section="press"]')
       const reduceMotion = prefersReducedMotion()
 
@@ -621,9 +620,10 @@ export function HomeAnimations() {
           gsap.set(metricBlocks, { clipPath: 'inset(100% 0 0 0)' })
           gsap.to(metricBlocks, {
             clipPath: 'inset(0% 0 0 0)',
-            duration: 0.7,
-            ease: 'power3.out',
-            stagger: { each: 0.16, from: 'end' },
+            /* Slower rise so each stair reads before the next starts. */
+            duration: 1.35,
+            ease: 'power2.out',
+            stagger: { each: 0.32, from: 'end' },
             scrollTrigger: {
               trigger: "[data-section='metrics']",
               start: 'top 75%',
@@ -636,9 +636,10 @@ export function HomeAnimations() {
             {
               autoAlpha: 0,
               y: 18,
-              duration: 0.55,
-              stagger: { each: 0.12, from: 'end' },
+              duration: 0.95,
+              stagger: { each: 0.28, from: 'end' },
               ease: REVEAL_EASE,
+              delay: 0.18,
               scrollTrigger: {
                 trigger: "[data-section='metrics']",
                 start: 'top 75%',
@@ -647,16 +648,16 @@ export function HomeAnimations() {
             },
           )
 
-          const countStagger = 0.13
+          const countStagger = 0.28
           const countFromEnd = parsedMetrics.length - 1
           parsedMetrics.forEach(({ el, parsed }, i) => {
             el.textContent = formatMetricDisplay(parsed, 0)
             const obj = { val: 0 }
             gsap.to(obj, {
               val: parsed.value,
-              duration: 1.85,
+              duration: 2.6,
               ease: 'power2.out',
-              delay: (countFromEnd - i) * countStagger + 0.2,
+              delay: (countFromEnd - i) * countStagger + 0.45,
               onUpdate: () => {
                 el.textContent = formatMetricDisplay(parsed, obj.val)
               },
@@ -681,20 +682,7 @@ export function HomeAnimations() {
         revealTitleLikeHero(metricsHead, metricsSection, { start: 'top 82%' })
       }
 
-      /* ——— Investors ticker (header + Partner CTA stay removed) ——— */
-      if (investors) {
-        /* Reveal the marquee as one unit — per-item transforms fight CSS translateX */
-        const investorLogos = investors.querySelector('.investor-logos')
-        if (investorLogos) {
-          revealOnEnter(investorLogos, investors, {
-            start: 'top 78%',
-            y: 20,
-            blur: 0,
-            duration: 0.7,
-            delay: 0.08,
-          })
-        }
-      }
+      /* ——— Investors ticker — no enter reveal; logos paint immediately ——— */
 
       /* ——— Press: one-time entrance + drag carousel (no pin) ——— */
       if (press) {

@@ -162,14 +162,22 @@ export function initPress(): () => void {
     if (!entered) return
     measure()
     if (minX >= 0) return
+
     const absX = Math.abs(event.deltaX)
     const absY = Math.abs(event.deltaY)
-    const delta =
-      absX > absY ? event.deltaX : absX > 0 && absX === absY ? event.deltaX : event.deltaY
+    const current = Number(gsap.getProperty(track, 'x')) || 0
+
+    /* Vertical intent → page/Lenis scroll. Only hijack horizontal swipes. */
+    if (absY > absX) {
+      if (event.deltaY > 0 && current <= minX + 0.5) return
+      if (event.deltaY < 0 && current >= -0.5) return
+      return
+    }
+
+    const delta = event.deltaX
     if (delta === 0) return
     event.preventDefault()
     gsap.killTweensOf(track)
-    const current = Number(gsap.getProperty(track, 'x')) || 0
     const next = gsap.utils.clamp(minX, 0, current - delta)
     if (reduceMotion) {
       gsap.set(track, { x: snapX(next, step, minX) })

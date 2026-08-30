@@ -116,6 +116,34 @@ export { FoundingSection } from './FoundingSection'
 /* Portfolio — title + filters + brand bento grid (see PortfolioSection). */
 export { PortfolioSection } from './PortfolioSection'
 
+/** Stair washes from Figma 8i9eIHImFGm2Mrf9haxErD / 10:2 — soft pastel blobs. */
+const METRIC_STAIRS = [
+  {
+    value: '$6M',
+    label: 'Raised across seed rounds',
+    hPct: '50%',
+    wash: '/assets/metrics/bar-1.svg',
+  },
+  {
+    value: '120+',
+    label: 'Categories mapped',
+    hPct: '64%',
+    wash: '/assets/metrics/bar-2.svg',
+  },
+  {
+    value: '1',
+    label: 'Brand live',
+    hPct: '80%',
+    wash: '/assets/metrics/bar-3.svg',
+  },
+  {
+    value: '3',
+    label: 'Market Served',
+    hPct: '100%',
+    wash: '/assets/metrics/bar-4.svg',
+  },
+] as const
+
 /** Proof / By the numbers — one section: shared section-head + primary stats band. */
 export function MetricsSection() {
   return (
@@ -136,22 +164,25 @@ export function MetricsSection() {
       </header>
 
       <div className="metrics__chart" aria-label="Key metrics">
-        <div className="metric" data-metric style={{ ['--h-pct' as string]: '39%' }}>
-          <strong>$6M</strong>
-          <span>Raised across seed rounds</span>
-        </div>
-        <div className="metric" data-metric style={{ ['--h-pct' as string]: '58%' }}>
-          <strong>120+</strong>
-          <span>Categories mapped</span>
-        </div>
-        <div className="metric" data-metric style={{ ['--h-pct' as string]: '80%' }}>
-          <strong>1</strong>
-          <span>Brand live</span>
-        </div>
-        <div className="metric" data-metric style={{ ['--h-pct' as string]: '100%' }}>
-          <strong>3</strong>
-          <span>Market Served</span>
-        </div>
+        {METRIC_STAIRS.map((stair) => (
+          <div
+            key={stair.value}
+            className="metric"
+            data-metric
+            style={{ ['--h-pct' as string]: stair.hPct }}
+          >
+            <div className="metric__wash" aria-hidden="true">
+              <img
+                className="metric__wash-img"
+                src={stair.wash}
+                alt=""
+                draggable={false}
+              />
+            </div>
+            <strong>{stair.value}</strong>
+            <span>{stair.label}</span>
+          </div>
+        ))}
       </div>
     </section>
   )

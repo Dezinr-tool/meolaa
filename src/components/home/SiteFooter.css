@@ -1,8 +1,7 @@
 /**
  * Footer — stage + content in one place.
- * Pre-reveal: white (same as Press) so no empty ecru fold before the circle.
- * Circle host: black fill; expands only while pinned (see SiteFooter.tsx).
- * Content lives inside `.footer-circle-reveal` (no floating disc over text).
+ * Black ground throughout (pre-reveal, pin, settled). Blob still scales for
+ * timing; content wipe reveals on the black stage.
  */
 
 /* ——— Stage / reveal ——— */
@@ -13,23 +12,15 @@
   z-index: 1;
   width: 100%;
   overflow: visible;
-  background: transparent;
+  background: #000000;
   /* Reset any global `footer {}` leftovers */
   padding: 0;
   text-align: left;
   color: color-mix(in srgb, var(--color-ecru, #f8ece4) 55%, transparent);
 }
 
-/* Match Press (#fff) — ecru here painted a blank peach band before the pin. */
-.footer-reveal-section--animated {
-  background: var(--color-white, #fff);
-}
-
-/* After pin ends — white pre-stage must not bleed below the wordmark. */
-.footer-reveal-section--animated.is-settled {
-  background: #000000;
-}
-
+.footer-reveal-section--animated,
+.footer-reveal-section--animated.is-settled,
 .footer-reveal-section--static {
   background: #000000;
 }
@@ -39,18 +30,19 @@
   /* Height from pin/content — no forced empty 100svh fold after Press. */
   min-height: 0;
   height: auto;
-  background: transparent;
+  background: #000000;
   overflow: visible;
 }
 
 .footer-reveal-section--animated .footer-runway,
-.footer-reveal-section--animated .footer-pin {
-  background: var(--color-white, #fff);
+.footer-reveal-section--animated .footer-pin,
+.footer-reveal-section--animated.is-settled .footer-runway,
+.footer-reveal-section--animated.is-settled .footer-pin {
+  background: #000000;
 }
 
 .footer-reveal-section--animated.is-settled .footer-runway,
 .footer-reveal-section--animated.is-settled .footer-pin {
-  background: #000000;
   min-height: 0 !important;
   height: auto !important;
 }
@@ -58,59 +50,62 @@
 .footer-pin {
   position: relative;
   z-index: 10;
-  /* Stage fills one fold for the circle; grows with content so jumps aren’t clipped. */
+  /* Stage fills one fold for the blob; grows with content so jumps aren’t clipped. */
   min-height: 100svh;
   height: auto;
-  /* Hide vertical bleed into Press; allow the aurora’s native width to show. */
-  overflow-x: visible;
-  overflow-y: hidden;
+  /* Clip blob overspill so the disc can’t paint over Press above. */
+  overflow: hidden;
   background: transparent;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
 }
 
-.footer-circle-reveal {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  flex: 1 0 auto;
-  /*
-   * Host matches the pin fold (no negative margin). Upward extension used to
-   * avoid a chord but painted a teal disc over Press; overflow:hidden on the
-   * pin + vmax end-radius keeps corners covered without leaving the stage.
-   */
-  margin-top: 0;
-  padding-top: 0;
-  min-height: 100svh;
-  height: auto;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
+/* Luke-style blob host — fills the pin; disc grows from bottom-center. */
+.footer-blob-wrap {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
   pointer-events: none;
-  clip-path: circle(0% at 50% 100%);
-  will-change: clip-path;
-  backface-visibility: hidden;
-  transform: translateZ(0);
+}
+
+.footer-blob {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 300vmax;
+  height: 300vmax;
+  border-radius: 50%;
   background: #000000;
-  overflow: visible;
+  /* Half the disc sits below the fold; scale expands the black stage upward. */
+  transform: translate(-50%, 50%) scale(0);
+  transform-origin: center center;
+  will-change: transform;
+  backface-visibility: hidden;
+  pointer-events: none;
 }
 
 /*
  * After pin ends — collapse stage so no black band below the wordmark.
- * Only when `.is-settled` — :has(.is-revealed) mid-scrub collapsed the
- * 100svh stage and broke pin spacing / Lenis scroll range.
+ * Only when `.is-settled` — mid-scrub collapse broke pin spacing / Lenis.
  */
 .footer-reveal-section--animated.is-settled .footer-pin {
   min-height: 0;
   height: auto;
+  overflow: visible;
 }
 
-.footer-reveal-section--animated.is-settled .footer-circle-reveal {
-  min-height: 0;
-  height: auto;
-  flex: 0 0 auto;
+.footer-reveal-section--animated.is-settled .footer-blob-wrap {
+  position: absolute;
+  inset: 0;
+  /* Solid black under content once settled — no scrub rewind to scale(0). */
+  background: #000000;
+}
+
+.footer-reveal-section--animated.is-settled .footer-blob {
+  transform: translate(-50%, 50%) scale(1) !important;
+  will-change: auto;
 }
 
 /* GSAP pin-spacer keeps pinSpacing padding after unpin — collapse on settle. */
@@ -131,6 +126,16 @@
   flex-direction: column;
   min-height: 0;
   pointer-events: auto;
+}
+
+/* Animated home: give the pin fold room before content settles. */
+.footer-reveal-section--animated .footer-content {
+  min-height: 100svh;
+  box-sizing: border-box;
+}
+
+.footer-reveal-section--animated.is-settled .footer-content {
+  min-height: 0;
 }
 
 /* Copy (jumps / grid / legal) — upward clip wipe, not opacity fade. */
@@ -458,12 +463,19 @@
     overflow: visible;
   }
 
-  .footer-circle-reveal {
+  .footer-blob-wrap {
+    position: absolute;
+    inset: 0;
+    background: #000000;
+  }
+
+  .footer-blob {
+    transform: translate(-50%, 50%) scale(1);
+    will-change: auto;
+  }
+
+  .footer-reveal-section--animated .footer-content {
     min-height: 0;
-    margin-top: 0;
-    padding-top: 0;
-    clip-path: none;
-    pointer-events: auto;
   }
 
   .site-footer__mark-wrap {

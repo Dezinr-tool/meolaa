@@ -543,22 +543,21 @@ html {
   min-height: 0;
   max-height: none;
   box-sizing: border-box;
-  /* Ecru head ground only — stats band uses Deep Ecru below. */
-  background: var(--color-ecru, #f8ece4) !important;
-  background-color: var(--color-ecru, #f8ece4) !important;
+  /* Figma Proof stairs — white section + white columns. */
+  background: #ffffff !important;
+  background-color: #ffffff !important;
 }
 
-/* Chart ground — regular Ecru so Deep Ecru bars show stair contrast. */
 .metrics__chart,
 [data-section='metrics'] .metrics__chart {
-  background: var(--color-ecru, #f8ece4) !important;
-  background-color: var(--color-ecru, #f8ece4) !important;
+  background: #ffffff !important;
+  background-color: #ffffff !important;
 }
 
 .metrics__chart .metric,
 [data-section='metrics'] .metric {
-  background: var(--color-ecru-deep, #f0d5cc) !important;
-  background-color: var(--color-ecru-deep, #f0d5cc) !important;
+  background: #ffffff !important;
+  background-color: #ffffff !important;
 }
 
 /*
@@ -573,9 +572,9 @@ section.investors,
   max-height: none;
   box-sizing: border-box;
   justify-content: flex-start;
-  background: var(--color-black, #000000) !important;
-  background-color: var(--color-black, #000000) !important;
-  color: var(--color-ecru, #f8ece4) !important;
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  color: var(--color-planet-blue, #002f3a) !important;
   border-top: none;
   position: relative;
   /* Overlap metrics join by 1px so compositor hairlines don't read full-bleed. */
@@ -622,9 +621,9 @@ section.investors,
 
 .investors .investor-logos__item img,
 [data-section='investors'] .investor-logos__item img {
-  /* Dark SVG marks → white on black ground. */
-  filter: brightness(0) invert(1) !important;
-  opacity: 0.85;
+  /* Dark marks on white — muted grayscale, always visible (no reveal tween). */
+  filter: grayscale(1) !important;
+  opacity: 0.55;
 }
 
 .investor-logos {
