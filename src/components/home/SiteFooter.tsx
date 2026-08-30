@@ -168,10 +168,10 @@ function FooterBody() {
       <div className="site-footer__mark-wrap">
         <img
           className="site-footer__mark-art"
-          src="/assets/footer-mark-hero.png"
+          src="/assets/footer-horizon.jpg"
           alt=""
-          width={1844}
-          height={853}
+          width={1024}
+          height={625}
           decoding="async"
         />
         <MeolaaLogoMark

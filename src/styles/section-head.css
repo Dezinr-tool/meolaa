@@ -237,8 +237,8 @@
   flex: 0 0 auto;
   /* Ecru ground so Deep Ecru bars read as ascending stairs (prototype match). */
   background: var(--color-ecru, #f8ece4);
-  height: clamp(200px, 32svh, 280px);
-  min-height: clamp(200px, 32svh, 280px);
+  height: clamp(260px, 42svh, 375px);
+  min-height: clamp(260px, 42svh, 375px);
   /* Bars stay full-bleed despite the section's shared side padding. */
   margin-inline: calc(var(--metrics-pad-x) * -1);
   margin-block: 0;
