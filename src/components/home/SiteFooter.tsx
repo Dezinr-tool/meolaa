@@ -334,18 +334,23 @@ export function SiteFooter({ simple = false }: SiteFooterProps) {
 
         /** Pin leaves inline height on `.footer-pin` — collapse + remeasure. */
         const settleFooterStage = () => {
+          if (copyReveal) showCopyRevealed(copyReveal)
+          if (markWrap && !markWrap.classList.contains('is-revealed')) {
+            fillPlayed = true
+            showLogoFilled(markWrap)
+          }
+
           root.classList.add('is-settled')
           gsap.set([pin, circle], {
             clearProps: 'height,minHeight,maxHeight',
           })
 
-          const pinSpacer = pin.parentElement
-          if (pinSpacer?.classList.contains('pin-spacer')) {
-            /* GSAP pinSpacing keeps padding-bottom on the spacer after unpin. */
-            gsap.set(pinSpacer, { paddingBottom: 0, height: pin.offsetHeight })
-          }
-
+          /* Wait for :has(.is-revealed) collapse before measuring pin height. */
           requestAnimationFrame(() => {
+            const pinSpacer = pin.parentElement
+            if (pinSpacer?.classList.contains('pin-spacer')) {
+              gsap.set(pinSpacer, { paddingBottom: 0, height: pin.offsetHeight })
+            }
             ScrollTrigger.refresh()
             requestAnimationFrame(() => ScrollTrigger.refresh())
           })
@@ -373,7 +378,6 @@ export function SiteFooter({ simple = false }: SiteFooterProps) {
           invalidateOnRefresh: true,
           onEnter: () => circle.classList.add('is-visible'),
           onEnterBack: () => circle.classList.add('is-visible'),
-          onLeave: settleFooterStage,
           onLeaveBack: () => {
             unsettleFooterStage()
             fillPlayed = false
@@ -394,15 +398,7 @@ export function SiteFooter({ simple = false }: SiteFooterProps) {
             invalidateOnRefresh: true,
             onEnter: () => circle.classList.add('is-visible'),
             onEnterBack: () => circle.classList.add('is-visible'),
-            onLeave: () => {
-              /* Pin settle complete — guarantee copy + logo stay painted. */
-              if (copyReveal) showCopyRevealed(copyReveal)
-              if (markWrap && !markWrap.classList.contains('is-revealed')) {
-                fillPlayed = true
-                showLogoFilled(markWrap)
-              }
-              settleFooterStage()
-            },
+            onLeave: settleFooterStage,
             onLeaveBack: () => {
               unsettleFooterStage()
               circle.classList.remove('is-visible')
