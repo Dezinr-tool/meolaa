@@ -217,7 +217,7 @@ const WORD_STAGGER_SELECTOR = [
   '.meola-lab__desc',
   '.founding__sub',
   '.founding__lede',
-  '.brand-tile__desc',
+  '.brand-hero__desc',
 ].join(', ')
 
 /**
@@ -562,7 +562,7 @@ export function HomeAnimations() {
 
         const portfolioIntroBits = gsap.utils.toArray<Element>(
           portfolioTitleSection.querySelectorAll(
-            '.section-head__eyebrow, .brand-filters',
+            '.section-head__eyebrow',
           ),
         )
         revealTitleLikeHero(portfolioIntroBits, portfolioTrigger, {
@@ -574,7 +574,7 @@ export function HomeAnimations() {
       /* Bento tiles: staggered opacity + y lift + soft scale (no blur — cleaner on photos). */
       if (portfolio && !reduceMotion) {
         const brandTiles = gsap.utils.toArray<Element>(
-          portfolio.querySelectorAll('.brand-tile'),
+          portfolio.querySelectorAll('.brand-hero, .brand-row'),
         )
         if (brandTiles.length) {
           revealOnEnter(brandTiles, portfolio, {
@@ -588,7 +588,7 @@ export function HomeAnimations() {
           })
         }
       } else if (portfolio && reduceMotion) {
-        gsap.set(portfolio.querySelectorAll('.brand-tile'), {
+        gsap.set(portfolio.querySelectorAll('.brand-hero, .brand-row'), {
           autoAlpha: 1,
           y: 0,
           scale: 1,

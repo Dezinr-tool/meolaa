@@ -1,15 +1,17 @@
 /**
- * Footer — stage + content in one place.
- * Black ground throughout (pre-reveal, pin, settled). Blob still scales for
- * timing; content wipe reveals on the black stage.
+ * Footer — flat black section with a domed top edge (`.footer-arc`).
+ *
+ * The pinned blob stage and the clip-path copy wipe were removed: the wipe
+ * kept the whole footer clipped to nothing for the entire 280vh stage. The
+ * arc is a background shape only, so it cannot hide the copy.
  */
 
-/* ——— Stage / reveal ——— */
+/* ——— Shell ——— */
 
 .footer-reveal-section {
   position: relative;
-  /* Stay under Press so any residual paint can’t cover cards mid-scroll. */
-  z-index: 1;
+  /* Above Press (z-index 2) so the arc can swell into it. */
+  z-index: 3;
   width: 100%;
   overflow: visible;
   background: #000000;
@@ -19,101 +21,34 @@
   color: color-mix(in srgb, var(--color-ecru, #f8ece4) 55%, transparent);
 }
 
-.footer-reveal-section--animated,
-.footer-reveal-section--animated.is-settled,
 .footer-reveal-section--static {
   background: #000000;
 }
 
-.footer-runway {
-  position: relative;
-  /* Height from pin/content — no forced empty 100svh fold after Press. */
-  min-height: 0;
-  height: auto;
-  background: #000000;
-  overflow: visible;
-}
-
-.footer-reveal-section--animated .footer-runway,
-.footer-reveal-section--animated .footer-pin,
-.footer-reveal-section--animated.is-settled .footer-runway,
-.footer-reveal-section--animated.is-settled .footer-pin {
-  background: #000000;
-}
-
-.footer-reveal-section--animated.is-settled .footer-runway,
-.footer-reveal-section--animated.is-settled .footer-pin {
-  min-height: 0 !important;
-  height: auto !important;
-}
-
-.footer-pin {
-  position: relative;
-  z-index: 10;
-  /* Stage fills one fold for the blob; grows with content so jumps aren’t clipped. */
-  min-height: 100svh;
-  height: auto;
-  /* Clip blob overspill so the disc can’t paint over Press above. */
-  overflow: hidden;
-  background: transparent;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-}
-
-/* Luke-style blob host — fills the pin; disc grows from bottom-center. */
-.footer-blob-wrap {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.footer-blob {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  width: 300vmax;
-  height: 300vmax;
-  border-radius: 50%;
-  background: #000000;
-  /* Half the disc sits below the fold; scale expands the black stage upward. */
-  transform: translate(-50%, 50%) scale(0);
-  transform-origin: center center;
-  will-change: transform;
-  backface-visibility: hidden;
-  pointer-events: none;
-}
-
 /*
- * After pin ends — collapse stage so no black band below the wordmark.
- * Only when `.is-settled` — mid-scrub collapse broke pin spacing / Lenis.
+ * Domed top edge. Sits in the gap directly above the footer (bottom: 100%) and
+ * is drawn with an elliptical top radius, so its height is the dome depth.
+ * scaleY from the bottom keeps the flatten/swell on the compositor.
  */
-.footer-reveal-section--animated.is-settled .footer-pin {
-  min-height: 0;
-  height: auto;
-  overflow: visible;
-}
-
-.footer-reveal-section--animated.is-settled .footer-blob-wrap {
+.footer-arc {
   position: absolute;
-  inset: 0;
-  /* Solid black under content once settled — no scrub rewind to scale(0). */
+  bottom: 100%;
+  left: 0;
+  right: 0;
+  /* Depth matched to the madewithgsap boundary: fitting their arc to a
+     border-radius ellipse gives ~171px of dome over a 1600px width. */
+  height: clamp(66px, 10.7vw, 172px);
   background: #000000;
+  border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+  transform: scaleY(1);
+  transform-origin: 50% 100%;
+  will-change: transform;
+  pointer-events: none;
 }
 
-.footer-reveal-section--animated.is-settled .footer-blob {
-  transform: translate(-50%, 50%) scale(1) !important;
-  will-change: auto;
-}
-
-/* GSAP pin-spacer keeps pinSpacing padding after unpin — collapse on settle. */
-.footer-reveal-section--animated.is-settled .pin-spacer {
-  height: auto !important;
-  min-height: 0 !important;
-  padding-bottom: 0 !important;
-  background: #000000;
+/* Inner pages butt the footer against their own last section — no dome. */
+.app--inner .footer-arc {
+  display: none;
 }
 
 .footer-content {
@@ -129,14 +64,6 @@
 }
 
 /* Animated home: give the pin fold room before content settles. */
-.footer-reveal-section--animated .footer-content {
-  min-height: 100svh;
-  box-sizing: border-box;
-}
-
-.footer-reveal-section--animated.is-settled .footer-content {
-  min-height: 0;
-}
 
 /* Copy (jumps / grid / legal) — upward clip wipe, not opacity fade. */
 .footer-copy-reveal {
@@ -150,28 +77,12 @@
   box-sizing: border-box;
 }
 
-.footer-reveal-section--animated .footer-copy-reveal {
-  clip-path: inset(100% 0 0 0);
-  will-change: clip-path;
-}
-
-.footer-reveal-section--animated .footer-copy-reveal.is-revealed,
 .footer-reveal-section--static .footer-copy-reveal {
   clip-path: none !important;
   will-change: auto;
 }
 
 /* Circle supplies fill — no second opaque slab (avoids gray bar mid-scrub) */
-.footer-reveal-section--animated .footer-content.site-footer {
-  background: transparent;
-}
-
-.footer-reveal-section--static .footer-runway,
-.footer-reveal-section--static .footer-pin {
-  min-height: 0;
-  height: auto;
-  overflow: visible;
-}
 
 .footer-reveal-section--static .footer-content.site-footer {
   background: transparent;
@@ -194,10 +105,6 @@
 }
 
 /* Safe top under sticky nav so jump rows aren’t clipped at pin start. */
-.footer-reveal-section--animated .site-footer {
-  background: transparent;
-  padding-top: max(56px, calc(var(--nav-height, 92px) + 12px));
-}
 
 /*
  * Footer copy always above the brand mark image.
@@ -428,13 +335,7 @@
   paint-order: stroke fill;
 }
 
-.footer-reveal-section--animated .site-footer__mark-wrap {
-  clip-path: inset(100% 0 0 0);
-  will-change: clip-path;
-}
-
 /* Lock after clip reveal — CSS inset(100%) must not re-hide the mark. */
-.footer-reveal-section--animated .site-footer__mark-wrap.is-revealed,
 .footer-reveal-section--static .site-footer__mark-wrap {
   clip-path: none !important;
   will-change: auto;
@@ -455,28 +356,6 @@
 /* ——— Mobile ——— */
 
 @media (max-width: 900px) {
-
-  .footer-runway,
-  .footer-pin {
-    min-height: 0;
-    height: auto;
-    overflow: visible;
-  }
-
-  .footer-blob-wrap {
-    position: absolute;
-    inset: 0;
-    background: #000000;
-  }
-
-  .footer-blob {
-    transform: translate(-50%, 50%) scale(1);
-    will-change: auto;
-  }
-
-  .footer-reveal-section--animated .footer-content {
-    min-height: 0;
-  }
 
   .site-footer__mark-wrap {
     width: 100%;
@@ -507,23 +386,15 @@
     align-items: flex-start;
   }
 
-  .footer-reveal-section--animated .footer-copy-reveal {
-    clip-path: none;
-    will-change: auto;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
 
-  .footer-reveal-section--animated .footer-copy-reveal,
-  .footer-reveal-section--animated .footer-copy-reveal.is-revealed,
   .footer-copy-reveal {
     clip-path: none !important;
     will-change: auto;
   }
 
-  .footer-reveal-section--animated .site-footer__mark-wrap,
-  .footer-reveal-section--animated .site-footer__mark-wrap.is-revealed,
   .site-footer__mark-wrap {
     clip-path: none !important;
     will-change: auto;

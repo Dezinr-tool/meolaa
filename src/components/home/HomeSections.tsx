@@ -14,6 +14,11 @@ export function HeroSection() {
         <div className="hero__bg" />
         <div className="hero__shade" />
       </div>
+      {/* Display type behind the prism — the Next.js Conf hero puts its title
+          on the same plane so the crystal occludes part of it. */}
+      <p className="hero__mark-line" aria-hidden="true">
+        House of brands
+      </p>
       <HeroPrism />
       {/* The big centre wordmark lives in SiteNav, not here — it's one element
           that starts scaled up over this fold and docks into the nav on scroll

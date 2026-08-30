@@ -184,6 +184,35 @@ html {
       var(--color-planet-blue, #002f3a) 100%);
 }
 
+/* “HOUSE OF BRANDS” — sits behind the prism (prism is z-index 3) so the
+   crystal cuts across the type, as in the Next.js Conf reference. */
+.hero__mark-line {
+  position: absolute;
+  left: 50%;
+  top: 26%;
+  z-index: 2;
+  margin: 0;
+  transform: translate(-50%, -50%);
+  width: max-content;
+  max-width: 92vw;
+  font-size: clamp(34px, 7.4vw, 116px);
+  font-weight: 500;
+  line-height: 0.94;
+  letter-spacing: -0.02em;
+  text-align: center;
+  text-transform: uppercase;
+  white-space: nowrap;
+  pointer-events: none;
+  color: color-mix(in srgb, var(--color-ecru, #f8ece4) 30%, transparent);
+}
+
+@media (max-width: 900px) {
+  .hero__mark-line {
+    top: 22%;
+    font-size: clamp(26px, 8.6vw, 52px);
+  }
+}
+
 .hero--blank .hero__shade {
   position: absolute;
   inset: 0;
@@ -788,8 +817,8 @@ section.investors,
 .site-nav__cta,
 .site-nav__toggle,
 .vision__video,
-.brand-tile,
-.brand-filter,
+.brand-hero__cta,
+.brand-row__preview,
 .portfolio__cat,
 .portfolio__dot,
 .case,

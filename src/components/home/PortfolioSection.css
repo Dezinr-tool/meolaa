@@ -1,17 +1,25 @@
-/* Portfolio — responsive brand bento grid.
-   Meolaa tokens (Planet Blue / ecru / sustainable green via section-head).
-   No pin/scrub; no box-shadow on tiles. */
+/* Portfolio — HIRA hero row + stacked pipeline rows.
+   Figma: Meolaa / Frame 2147228113 (node 193:400), 1422 frame. Rows are
+   full-bleed; only their labels keep a 73px inset. Ecru ground, joyous-yellow
+   row hover. Meolaa tokens; no pin/scrub, no box-shadow. */
 
 .brands {
   --pf-ink: var(--color-primary, #002f3a);
-  --pf-muted: color-mix(in srgb, var(--color-primary, #002f3a) 68%, transparent);
-  --pf-soft: color-mix(in srgb, var(--color-primary, #002f3a) 45%, transparent);
-  --pf-line: color-mix(in srgb, var(--color-primary, #002f3a) 12%, transparent);
-  --pf-hairline: color-mix(in srgb, var(--color-primary, #002f3a) 18%, transparent);
-  --pf-gap: clamp(10px, 1.2vw, 14px);
-  --pf-radius: 0;
-  --pf-ecru: var(--color-ecru, #f8ece4);
+  --pf-line: color-mix(in srgb, var(--color-black, #000) 10%, transparent);
   --pf-green: var(--color-sustainable-green, #41857a);
+
+  /* Rows run edge to edge; labels sit 73px in from the frame edge. */
+  --pf-inset: clamp(20px, 5.13vw, 73px);
+  /* Hero copy keeps the tighter 43px gutter. */
+  --pf-gutter: clamp(20px, 3.02vw, 43px);
+  /* Figma 56px display size for hero + row names. */
+  --pf-display: clamp(30px, 3.9vw, 56px);
+  /* Figma 14px uppercase labels. */
+  --pf-label: clamp(11px, 0.98vw, 14px);
+  --pf-row-h: clamp(84px, 8.9vw, 128px);
+  /* Space between every ticker item — this is what keeps the stills clear of
+     the words at any width. */
+  --pf-ticker-gap: clamp(24px, 3.66vw, 52px);
 
   position: relative;
   z-index: 2;
@@ -19,11 +27,11 @@
   flex-direction: column;
   box-sizing: border-box;
   overflow: visible;
-  background: var(--color-white, #fff);
+  background: var(--color-ecru, #f8ece4);
   color: var(--pf-ink);
   height: auto;
   max-height: none;
-  padding-bottom: clamp(48px, 8vw, 96px);
+  padding-bottom: 0;
 }
 
 /* Header — shared section-head tokens */
@@ -32,8 +40,8 @@
   width: 100%;
   max-width: min(64rem, 94vw);
   margin-inline: auto;
-  padding: clamp(56px, 7svh, 80px) clamp(20px, 3vw, 48px) clamp(16px, 2.5vw, 28px) !important;
-  background: var(--color-white, #fff) !important;
+  padding: clamp(56px, 7svh, 80px) clamp(20px, 3vw, 48px) clamp(24px, 3.4vw, 44px) !important;
+  background: transparent !important;
   color: var(--pf-ink) !important;
   box-sizing: border-box;
   height: auto !important;
@@ -43,469 +51,349 @@
 .portfolio-title .section-head__title,
 .portfolio-title h2.section-head__title {
   filter: none !important;
-  color: var(--sh-title) !important;
+  /* Figma #0a3038 — the planet-blue family, not the shared on-light black. */
+  color: var(--color-planet-blue, #002f3a) !important;
 }
 
-.brand-filters {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 2px;
+/* Figma subcopy: 18px/1.3, 60% opacity, 518px measure. */
+.portfolio-title .section-head__sub {
+  max-width: 518px;
+  opacity: 0.6;
 }
 
-.brand-filter {
-  font-family: var(--font-display);
-  font-size: 12px;
-  font-weight: var(--fw-medium, 500);
-  padding: 8px 16px;
-  border: 1px solid var(--pf-hairline);
-  border-radius: 0;
-  background: transparent;
-  color: color-mix(in srgb, var(--color-primary, #002f3a) 62%, transparent);
-  cursor: pointer;
-  transition:
-    background 0.2s ease,
-    color 0.2s ease,
-    border-color 0.2s ease;
+.brands__list {
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.brand-filter:hover:not(.is-active) {
-  border-color: color-mix(in srgb, var(--color-primary, #002f3a) 40%, transparent);
-  color: var(--color-primary, #002f3a);
-}
+/* ——— HIRA hero row ——— */
 
-.brand-filter.is-active {
-  background: var(--color-primary, #002f3a);
-  color: var(--color-ecru, #f8ece4);
-  border-color: var(--color-primary, #002f3a);
-}
-
-/* ——— Bento stage ——— */
-.brands__bento {
-  width: min(1120px, calc(100% - clamp(32px, 6vw, 80px)));
-  margin-inline: auto;
+.brand-hero {
   display: grid;
-  gap: var(--pf-gap);
+  /* Figma: media is right-0 w-866 → body 0→556, media 556→1422. */
+  grid-template-columns: minmax(0, 556fr) minmax(0, 866fr);
+  align-items: stretch;
+  gap: 0;
+  border-top: 1px solid var(--pf-line);
+  border-bottom: 1px solid var(--pf-line);
 }
 
-/* All: Aurivus-style 12-col / 2-row bento */
-.brands--bento .brands__bento {
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  grid-template-rows:
-    minmax(260px, 38vh)
-    minmax(200px, 28vh);
+.brand-hero__body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: clamp(10px, 1.1vw, 16px);
+  padding: clamp(24px, 3vw, 40px) clamp(16px, 2vw, 32px) clamp(24px, 3vw, 40px)
+    var(--pf-gutter);
 }
 
-.brands--bento .brand-tile--featured {
-  grid-column: 1 / 9; /* ~2/3 */
-  grid-row: 1;
+/* LIVE NOW pill — 112x34, 40px radius, 10% black hairline (Figma 193:437). */
+.brand-hero__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin: 0;
+  min-height: 34px;
+  padding: 0 15px 0 12px;
+  border: 1px solid rgb(0 0 0 / 0.1);
+  border-radius: 40px;
+  font-size: var(--pf-label);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-black, #000);
 }
 
-.brands--bento .brand-tile--photo:nth-of-type(2) {
-  grid-column: 9 / 13; /* ~1/3 */
-  grid-row: 1;
+.brand-hero__dot {
+  display: block;
+  width: 8px;
+  height: 8px;
+  flex: 0 0 8px;
+  animation: brand-live-blink 1.6s ease-in-out infinite;
 }
 
-.brands--bento .brand-tile--text {
-  grid-column: 1 / 4;
-  grid-row: 2;
+/* Softer than an on/off blink — reads as a live signal, not a warning. */
+@keyframes brand-live-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.2;
+  }
 }
 
-.brands--bento .brand-tile--photo:nth-of-type(4) {
-  grid-column: 4 / 8;
-  grid-row: 2;
+.brand-hero__name {
+  margin: 0;
+  font-size: var(--pf-display);
+  font-weight: 500;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--color-black, #000);
 }
 
-.brands--bento .brand-tile--photo:nth-of-type(5) {
-  grid-column: 8 / 11;
-  grid-row: 2;
+/* Figma: 16px/1.3, 60% opacity, 312px measure. */
+.brand-hero__desc {
+  margin: 0;
+  max-width: 312px;
+  font-size: clamp(14px, 1.12vw, 16px);
+  line-height: 1.3;
+  opacity: 0.6;
+  color: var(--color-black, #000);
 }
 
-.brands--bento .brand-tile--cta {
-  grid-column: 11 / 13;
-  grid-row: 2;
+/* EXPLORE NOW — 203x58 square button, 10% black hairline. */
+.brand-hero__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 203px;
+  min-height: 58px;
+  margin-top: clamp(6px, 0.9vw, 12px);
+  padding-inline: clamp(16px, 1.6vw, 24px);
+  border: 1px solid rgb(0 0 0 / 0.1);
+  background: var(--color-white, #fff);
+  font-size: var(--pf-label);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--color-black, #000);
+  transition:
+    background-color 0.28s ease,
+    color 0.28s ease,
+    border-color 0.28s ease;
 }
 
-/* Filtered: auto-fit cards */
-.brands--filtered .brands__bento {
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
-  grid-auto-rows: minmax(240px, 32vh);
+.brand-hero__cta:hover,
+.brand-hero__cta:focus-visible {
+  background: var(--color-black, #000);
+  border-color: var(--color-black, #000);
+  color: var(--color-white, #fff);
 }
 
-.brands--filtered .brand-tile--featured {
-  grid-column: 1 / -1;
-  min-height: min(42vh, 380px);
-}
-
-/* ——— Tile shell ——— */
-.brand-tile {
+.brand-hero__media {
   position: relative;
-  border-radius: var(--pf-radius);
   overflow: hidden;
-  isolation: isolate;
-  background: color-mix(in srgb, var(--color-primary, #002f3a) 6%, #fff);
-  min-height: 0;
-  box-shadow: none;
+  /* Figma media box 866x368. */
+  aspect-ratio: 866 / 368;
 }
 
-.brand-tile__media {
+.brand-hero__media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  /* Figma: img height 294.16%, top -116.78% of the 368px box.
+     overflow = 1082.5 - 368 = 714.5; 429.8 / 714.5 = 60.1%. */
+  object-fit: cover;
+  object-position: 50% 60%;
+}
+
+/* ——— Pipeline rows ——— */
+
+.brand-row {
+  position: relative;
+  min-height: var(--pf-row-h);
+  border-bottom: 1px solid var(--pf-line);
+  background: transparent;
+  color: var(--color-black, #000);
+  overflow: hidden;
+  transition: background-color 0.4s ease;
+}
+
+/* Resting layer — also what defines the row's height. */
+.brand-row__static {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  min-height: var(--pf-row-h);
+  padding-inline: var(--pf-inset);
+  opacity: 1;
+  transition: opacity 0.28s ease;
+}
+
+.brand-row__status,
+.brand-row__cat {
+  margin: 0;
+  font-size: var(--pf-label);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.brand-row__status {
+  justify-self: start;
+}
+
+.brand-row__cat {
+  justify-self: end;
+}
+
+.brand-row__name {
+  margin: 0;
+  justify-self: center;
+  font-size: var(--pf-display);
+  font-weight: 500;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* ——— Hover ticker ——— */
+
+.brand-row__ticker {
   position: absolute;
   inset: 0;
-  z-index: 0;
+  display: flex;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.28s ease;
+}
+
+.brand-row__ticker-track {
+  display: flex;
+  width: max-content;
+  /* Two identical groups → -50% is exactly one group, so the seam is
+     invisible and the loop never jumps. */
+  animation: brand-ticker-scroll 20s linear infinite;
+  animation-play-state: paused;
+}
+
+/* The trailing pad lives on the group, not as a track gap — a track gap would
+   make the group width and the -50% travel disagree and the seam would drift. */
+.brand-row__ticker-group {
+  display: flex;
+  align-items: center;
+  gap: var(--pf-ticker-gap);
+  padding-right: var(--pf-ticker-gap);
+}
+
+.brand-row__ticker-word {
+  flex: none;
+  font-size: var(--pf-display);
+  font-weight: 500;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Figma 175x76. flex:none keeps the still from being squeezed into the text. */
+.brand-row__ticker-still {
+  display: block;
+  flex: none;
+  width: clamp(96px, 12.3vw, 175px);
+  aspect-ratio: 175 / 76;
   overflow: hidden;
 }
 
-.brand-tile__media img {
+.brand-row__ticker-still img {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 40%;
-  display: block;
-  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.brand-tile:hover .brand-tile__media img {
-  transform: scale(1.04);
+@keyframes brand-ticker-scroll {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
 }
 
-.brand-tile__media--dim img {
-  filter: brightness(0.45) saturate(0.85);
+/* Hover: flood the row with joyous yellow and cross-fade the resting line for
+   the scrolling ticker. Text stays black; the hairline keeps its 10% black. */
+.brand-row:hover,
+.brand-row:focus-within {
+  background: var(--color-joyous-yellow, #fdf28c);
 }
 
-.brand-tile__media--dim::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: color-mix(in srgb, var(--color-primary, #002f3a) 55%, transparent);
+.brand-row:hover .brand-row__static,
+.brand-row:focus-within .brand-row__static {
+  opacity: 0;
 }
 
-.brand-tile__media--wash img {
-  opacity: 0.18;
-  object-position: center;
-  filter: grayscale(0.2);
+.brand-row:hover .brand-row__ticker,
+.brand-row:focus-within .brand-row__ticker {
+  opacity: 1;
 }
 
-.brand-tile__media--wash::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: color-mix(in srgb, var(--color-ecru, #f8ece4) 82%, transparent);
+.brand-row:hover .brand-row__ticker-track,
+.brand-row:focus-within .brand-row__ticker-track {
+  animation-play-state: running;
 }
 
-.brand-tile__inner {
-  position: relative;
-  z-index: 2;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  gap: 4px;
-  padding: clamp(14px, 1.8vw, 22px);
-  box-sizing: border-box;
-  pointer-events: none;
-}
+/* ——— Narrow ——— */
 
-.brand-tile__inner a {
-  pointer-events: auto;
-}
-
-/* Gradient wash for photo tiles */
-.brand-tile--featured .brand-tile__inner::before,
-.brand-tile--photo .brand-tile__inner::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background: linear-gradient(
-    180deg,
-    transparent 28%,
-    rgb(0 47 58 / 18%) 55%,
-    rgb(0 47 58 / 72%) 100%
-  );
-}
-
-.brand-tile__num {
-  position: absolute;
-  top: clamp(12px, 1.4vw, 18px);
-  left: clamp(14px, 1.8vw, 22px);
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: clamp(28px, 3.2vw, 48px);
-  font-weight: var(--fw-bold, 700);
-  line-height: 0.85;
-  letter-spacing: -0.04em;
-  color: rgb(255 255 255 / 88%);
-  opacity: 0.9;
-}
-
-.brand-tile--text .brand-tile__num,
-.brand-tile--cta .brand-tile__num {
-  color: color-mix(in srgb, var(--color-primary, #002f3a) 28%, transparent);
-}
-
-.brand-tile--cta .brand-tile__num {
-  color: rgb(248 236 228 / 35%);
-}
-
-.brand-tile__body h3 {
-  margin: 0 0 2px;
-  font-family: var(--font-display);
-  font-size: clamp(1.05rem, 1.5vw, 1.4rem);
-  font-weight: var(--fw-semibold, 600);
-  line-height: 1.15;
-  letter-spacing: var(--tracking-display, -0.02em);
-  color: #fff;
-}
-
-.brand-tile__soon,
-.brand-tile__live {
-  margin: 0 0 4px;
-  font-family: var(--font-mono);
-  font-size: 9px;
-  font-weight: var(--fw-semibold, 600);
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-}
-
-.brand-tile__soon {
-  color: rgb(255 255 255 / 72%);
-}
-
-.brand-tile__live {
-  color: var(--pf-green);
-}
-
-.brand-tile__desc,
-.brand-tile__cat {
-  margin: 0;
-  font-family: var(--font-sans);
-  font-size: clamp(0.75rem, 0.95vw, 0.875rem);
-  line-height: 1.4;
-  color: rgb(255 255 255 / 78%);
-  max-width: 36ch;
-}
-
-.brand-tile__cat {
-  font-size: 11px;
-  color: rgb(255 255 255 / 68%);
-}
-
-.brand-tile__cta {
-  display: inline-flex;
-  align-items: center;
-  margin-top: 10px;
-  width: fit-content;
-  font-family: var(--font-sans);
-  font-size: clamp(0.8125rem, 1vw, 0.9375rem);
-  font-weight: var(--fw-medium, 500);
-  color: var(--pf-ecru);
-  text-decoration: none;
-  border-bottom: 1px solid color-mix(in srgb, var(--color-ecru, #f8ece4) 45%, transparent);
-  padding-bottom: 2px;
-  transition: border-color 0.2s ease;
-}
-
-.brand-tile__cta:hover {
-  border-color: var(--pf-ecru);
-}
-
-.brand-tile__soon-cta {
-  display: inline-block;
-  margin-top: 8px;
-  font-family: var(--font-sans);
-  font-size: 12px;
-  font-weight: var(--fw-medium, 500);
-  color: var(--pf-soft);
-  cursor: default;
-}
-
-/* Featured (HIRA) — stronger type + live accent */
-.brand-tile--featured .brand-tile__body h3 {
-  font-size: clamp(1.5rem, 2.6vw, 2.25rem);
-  font-weight: var(--fw-bold, 700);
-}
-
-.brand-tile--featured .brand-tile__desc {
-  max-width: 42ch;
-  margin-top: 4px;
-  color: rgb(255 255 255 / 82%);
-}
-
-.brand-tile--featured .brand-tile__live {
-  color: color-mix(in srgb, var(--pf-green) 85%, #fff);
-}
-
-.brand-tile--featured .brand-tile__media img {
-  object-position: center 35%;
-}
-
-/* Text / metric tile — ecru ground, no photo */
-.brand-tile--text {
-  background: var(--pf-ecru);
-  display: flex;
-}
-
-.brand-tile--text .brand-tile__inner {
-  justify-content: flex-end;
-}
-
-.brand-tile--text .brand-tile__body h3 {
-  color: var(--pf-ink);
-}
-
-.brand-tile--text .brand-tile__soon {
-  color: var(--pf-green);
-}
-
-.brand-tile--text .brand-tile__desc {
-  color: var(--pf-muted);
-  max-width: 22ch;
-}
-
-.brand-tile--text .brand-tile__soon-cta {
-  color: var(--pf-ink);
-  opacity: 0.55;
-}
-
-/* CTA tile — Planet Blue emphasis */
-.brand-tile--cta {
-  background: var(--color-primary, #002f3a);
-}
-
-.brand-tile--cta .brand-tile__inner {
-  justify-content: flex-end;
-}
-
-.brand-tile--cta .brand-tile__body h3 {
-  color: var(--pf-ecru);
-  writing-mode: horizontal-tb;
-}
-
-.brand-tile--cta .brand-tile__soon {
-  color: color-mix(in srgb, var(--pf-green) 70%, #fff);
-}
-
-.brand-tile--cta .brand-tile__desc {
-  color: color-mix(in srgb, var(--color-ecru, #f8ece4) 72%, transparent);
-  max-width: 16ch;
-}
-
-.brand-tile--cta .brand-tile__soon-cta {
-  color: var(--pf-ecru);
-  opacity: 0.7;
-}
-
-/* Photo-only tiles: hide long desc, keep name + soon */
-.brand-tile--photo .brand-tile__desc {
-  display: none;
-}
-
-/* ——— Tablet ——— */
 @media (max-width: 900px) {
-  .brands--bento .brands__bento {
-    grid-template-columns: repeat(6, minmax(0, 1fr));
-    grid-template-rows: none;
-    grid-auto-rows: minmax(180px, 28vw);
+  .brand-hero {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
   }
 
-  .brands--bento .brand-tile--featured {
-    grid-column: 1 / 5;
-    grid-row: 1 / 3;
-    min-height: 280px;
+  .brand-hero__body {
+    padding-block: clamp(20px, 5vw, 32px);
   }
 
-  .brands--bento .brand-tile--photo:nth-of-type(2) {
-    grid-column: 5 / 7;
-    grid-row: 1;
+  .brand-hero__media {
+    aspect-ratio: 16 / 10;
   }
 
-  .brands--bento .brand-tile--text {
-    grid-column: 5 / 7;
-    grid-row: 2;
-  }
-
-  .brands--bento .brand-tile--photo:nth-of-type(4) {
-    grid-column: 1 / 4;
-    grid-row: 3;
-  }
-
-  .brands--bento .brand-tile--photo:nth-of-type(5) {
-    grid-column: 4 / 7;
-    grid-row: 3;
-  }
-
-  .brands--bento .brand-tile--cta {
-    grid-column: 1 / 7;
-    grid-row: 4;
-    min-height: 140px;
-  }
-
-  .portfolio-title.section-head {
-    padding: clamp(64px, 9svh, 80px) 16px clamp(14px, 2svh, 20px) !important;
-  }
-
-  .brand-filters {
-    gap: 6px;
-  }
-
-  .brand-filter {
-    padding: 6px 12px;
-    font-size: 11px;
+  /* Less to scroll past on a narrow row — speed the loop up so it still
+     reads as motion rather than a crawl. */
+  .brand-row__ticker-track {
+    animation-duration: 14s;
   }
 }
 
-/* ——— Mobile: 2-col bento ——— */
-@media (max-width: 640px) {
-  .brands__bento {
-    width: calc(100% - 32px);
+@media (max-width: 600px) {
+  .brands {
+    --pf-row-h: 76px;
   }
 
-  .brands--bento .brands__bento {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-auto-rows: minmax(160px, 42vw);
+  /* The grid lives on __static, not the row — stack the three parts. */
+  .brand-row__static {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: start;
+    gap: 2px;
+    padding-block: 14px;
   }
 
-  .brands--bento .brand-tile--featured {
-    grid-column: 1 / -1;
-    grid-row: auto;
-    min-height: 240px;
-  }
-
-  .brands--bento .brand-tile--photo:nth-of-type(2),
-  .brands--bento .brand-tile--text,
-  .brands--bento .brand-tile--photo:nth-of-type(4),
-  .brands--bento .brand-tile--photo:nth-of-type(5),
-  .brands--bento .brand-tile--cta {
-    grid-column: auto;
-    grid-row: auto;
-  }
-
-  .brands--bento .brand-tile--cta {
-    grid-column: 1 / -1;
-    min-height: 160px;
-  }
-
-  .brand-tile__num {
-    font-size: 24px;
-  }
-
-  .brand-tile--featured .brand-tile__body h3 {
-    font-size: 1.35rem;
-  }
-
-  .brand-tile--photo .brand-tile__cat {
-    display: none;
+  .brand-row__name,
+  .brand-row__cat {
+    justify-self: start;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .brand-tile__media img {
-    transition: none;
+  .brand-row,
+  .brand-row__static,
+  .brand-row__ticker,
+  .brand-hero__cta {
+    transition-duration: 0.01ms;
   }
 
-  .brand-tile:hover .brand-tile__media img {
-    transform: none;
+  /* No scrolling marquee and no blink — hover just floods the row and the
+     resting line stays put and readable. */
+  .brand-row__ticker-track,
+  .brand-hero__dot {
+    animation: none;
+  }
+
+  .brand-row:hover .brand-row__static,
+  .brand-row:focus-within .brand-row__static {
+    opacity: 1;
+  }
+
+  .brand-row:hover .brand-row__ticker,
+  .brand-row:focus-within .brand-row__ticker {
+    opacity: 0;
   }
 }

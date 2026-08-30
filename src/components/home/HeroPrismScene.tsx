@@ -38,9 +38,9 @@ export function equilateralPyramidHeight(baseSide: number) {
   return baseSide / Math.SQRT2
 }
 
-function pyramidCorners(baseSide: number) {
+function pyramidCorners(baseSide: number, height?: number) {
   const s = baseSide
-  const h = equilateralPyramidHeight(s)
+  const h = height && height > 0 ? height : equilateralPyramidHeight(s)
   const yA = h * 0.55
   const yB = -h * 0.45
   const half = s / 2
@@ -59,21 +59,9 @@ function pyramidCorners(baseSide: number) {
  * Square-base pyramid with four equilateral side faces.
  * Apex → each base corner distance equals `baseSide`.
  */
-function buildSquarePyramid(baseSide: number) {
-  const { s, A, B } = pyramidCorners(baseSide)
+function buildSquarePyramid(baseSide: number, height?: number) {
+  const { A, B } = pyramidCorners(baseSide, height)
   const [B0, B1, B2, B3] = B
-
-  if (import.meta.env.DEV) {
-    const tol = 1e-5
-    for (const corner of B) {
-      const d = A.distanceTo(corner)
-      if (Math.abs(d - s) > tol) {
-        console.warn(
-          `[HeroPrism] equilateral check failed: apex→corner ${d.toFixed(6)} vs side ${s}`,
-        )
-      }
-    }
-  }
 
   const positions: number[] = []
   const push = (p: THREE.Vector3) => positions.push(p.x, p.y, p.z)
@@ -98,8 +86,8 @@ function buildSquarePyramid(baseSide: number) {
   return geo
 }
 
-function buildPyramidEdges(baseSide: number) {
-  const { A, B } = pyramidCorners(baseSide)
+function buildPyramidEdges(baseSide: number, height?: number) {
+  const { A, B } = pyramidCorners(baseSide, height)
   const segs: number[] = []
   const line = (a: THREE.Vector3, b: THREE.Vector3) =>
     segs.push(a.x, a.y, a.z, b.x, b.y, b.z)
@@ -130,8 +118,12 @@ function CameraRig({ settings }: { settings: HeroPrismSettings }) {
   return null
 }
 
-/** Near-black FBO clear — body stays dark; env + fringe carry the glass read. */
-const TRANSMISSION_BG = new THREE.Color('#020608')
+/**
+ * FBO clear behind the glass. Transmission can only show what it refracts, and
+ * the stage behind the prism is empty — so this, not the material, is what
+ * decides how light the crystal reads. Near-black here made it look matte.
+ */
+const TRANSMISSION_BG = new THREE.Color('#33454f')
 
 function GlassPyramid({
   samples,
@@ -147,12 +139,12 @@ function GlassPyramid({
   const whiteMat = useRef<THREE.LineBasicMaterial>(null)
 
   const geo = useMemo(
-    () => buildSquarePyramid(settings.baseSide),
-    [settings.baseSide],
+    () => buildSquarePyramid(settings.baseSide, settings.height),
+    [settings.baseSide, settings.height],
   )
   const edges = useMemo(
-    () => buildPyramidEdges(settings.baseSide),
-    [settings.baseSide],
+    () => buildPyramidEdges(settings.baseSide, settings.height),
+    [settings.baseSide, settings.height],
   )
 
   const reducedMotion =
@@ -195,10 +187,10 @@ function GlassPyramid({
           distortionScale={0}
           temporalDistortion={0}
           color="#ffffff"
-          attenuationColor="#0a1218"
-          attenuationDistance={3.5}
-          clearcoat={0.08}
-          clearcoatRoughness={0.12}
+          attenuationColor="#cfe4f0"
+          attenuationDistance={12}
+          clearcoat={0.4}
+          clearcoatRoughness={0.05}
           metalness={0}
           reflectivity={settings.reflectivity}
           envMapIntensity={settings.envMapIntensity}
@@ -249,15 +241,18 @@ export default function HeroPrismScene() {
       <CameraRig settings={settings} />
 
       {/* Soft fill so transmission has something to sample besides empty black */}
-      <ambientLight intensity={0.04} color="#a8b8c4" />
-      <directionalLight position={[-5, 2.5, 4]} intensity={0.3} color="#ffffff" />
-      <directionalLight position={[4, 1.5, 3]} intensity={0.18} color="#d8e8f0" />
+      <ambientLight intensity={0.35} color="#cfe0ec" />
+      {/* Key from the ray side so the entry face catches a highlight. */}
+      <directionalLight position={[-5, 2.5, 4]} intensity={0.85} color="#ffffff" />
+      <directionalLight position={[4, 1.5, 3]} intensity={0.5} color="#d8e8f0" />
+      {/* Rim from behind — lights the arrises the way the reference does. */}
+      <directionalLight position={[0, -2, -5]} intensity={0.55} color="#9fd8ff" />
 
       <Environment
         map={envMap}
         resolution={q.envRes}
         background={false}
-        environmentIntensity={0.55}
+        environmentIntensity={1.0}
       />
 
       <GlassPyramid
