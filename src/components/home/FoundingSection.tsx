@@ -56,6 +56,14 @@ const DEAL_HOLD = 0.45
 /** Fade-out. */
 const DEAL_OUT = 0.3
 
+/** Reading-order pairs: mark word → corner sticker (TL / TR / BL / BR). */
+const STICKER_CHOREO = [
+  { mark: 'asking', badge: 'worldwide', rotate: -8 },
+  { mark: 'demand', badge: 'new', rotate: 14 },
+  { mark: 'brands', badge: 'dreams', rotate: -10 },
+  { mark: 'move', badge: 'happy', rotate: 9 },
+] as const
+
 /**
  * About / founding — near-black ground, small eyebrow, one large centred
  * statement with the key words underlined, and brand photos dealing themselves
@@ -96,6 +104,95 @@ export function FoundingSection() {
     return () => {
       mm.revert()
       ScrollTrigger.refresh()
+    }
+  }, [])
+
+  /* Sequential mark highlight + sticker pop-in (ASKING→WORLDWIDE, …, MOVE→HAPPY).
+   * Plays once when the fold enters; pin hold gives the sequence time to land. */
+  useEffect(() => {
+    const section = sectionRef.current
+    if (!section) return
+
+    const pairs = STICKER_CHOREO.map(({ mark, badge, rotate }) => ({
+      word: section.querySelector<HTMLElement>(
+        `[data-founding-mark="${mark}"]`,
+      ),
+      sticker: section.querySelector<HTMLElement>(
+        `[data-founding-sticker="${badge}"]`,
+      ),
+      rotate,
+    })).filter((p) => p.word && p.sticker) as Array<{
+      word: HTMLElement
+      sticker: HTMLElement
+      rotate: number
+    }>
+
+    if (!pairs.length) return
+
+    const reduceMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)',
+    ).matches
+
+    if (reduceMotion) {
+      pairs.forEach(({ word, sticker, rotate }) => {
+        word.classList.add('is-lit')
+        gsap.set(sticker, {
+          autoAlpha: 1,
+          scale: 1,
+          rotate,
+          transformOrigin: '50% 50%',
+        })
+      })
+      return
+    }
+
+    pairs.forEach(({ word, sticker, rotate }) => {
+      word.classList.remove('is-lit')
+      gsap.set(sticker, {
+        autoAlpha: 0,
+        scale: 0.55,
+        rotate,
+        transformOrigin: '50% 50%',
+      })
+    })
+
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: section,
+        start: 'top 62%',
+        toggleActions: 'play none none none',
+        once: true,
+      },
+    })
+
+    /* Beat after the title fade-in so marks don't light before the line is read. */
+    tl.to({}, { duration: 0.5 })
+
+    pairs.forEach(({ word, sticker }) => {
+      tl.call(() => {
+        word.classList.add('is-lit')
+      })
+      tl.to(
+        sticker,
+        {
+          autoAlpha: 1,
+          scale: 1,
+          duration: 0.55,
+          ease: 'back.out(1.7)',
+        },
+        '<0.04',
+      )
+      tl.to({}, { duration: 0.32 })
+    })
+
+    return () => {
+      tl.scrollTrigger?.kill()
+      tl.kill()
+      pairs.forEach(({ word, sticker, rotate }) => {
+        word.classList.remove('is-lit')
+        gsap.set(sticker, { clearProps: 'transform,opacity,visibility' })
+        gsap.set(sticker, { rotate, transformOrigin: '50% 50%' })
+      })
     }
   }, [])
 
@@ -225,6 +322,54 @@ export function FoundingSection() {
     >
       <div className="founding__bg" aria-hidden="true" />
 
+      {/* Corner stickers — margins around the manifesto; decorative only. */}
+      <div className="founding__badges" aria-hidden="true">
+        <img
+          className="founding__badge founding__badge--worldwide"
+          data-founding-sticker="worldwide"
+          src="/story/badges/worldwide.png"
+          alt=""
+          width={140}
+          height={140}
+          loading="eager"
+          decoding="async"
+          draggable={false}
+        />
+        <img
+          className="founding__badge founding__badge--new"
+          data-founding-sticker="new"
+          src="/story/badges/new.png"
+          alt=""
+          width={150}
+          height={100}
+          loading="eager"
+          decoding="async"
+          draggable={false}
+        />
+        <img
+          className="founding__badge founding__badge--dreams"
+          data-founding-sticker="dreams"
+          src="/story/badges/dreams-come-true.png"
+          alt=""
+          width={200}
+          height={140}
+          loading="eager"
+          decoding="async"
+          draggable={false}
+        />
+        <img
+          className="founding__badge founding__badge--happy"
+          data-founding-sticker="happy"
+          src="/story/badges/happy.png"
+          alt=""
+          width={160}
+          height={120}
+          loading="eager"
+          decoding="async"
+          draggable={false}
+        />
+      </div>
+
       <div className="founding__stage" data-founding-reveal>
         <p className="founding__eyebrow">Founding</p>
 
@@ -238,11 +383,22 @@ export function FoundingSection() {
             stylesheet and so wins at equal specificity. */}
         <h2 id="founding-title" className="founding__title founding__statement">
           It started with a question no one else was{' '}
-          <span className="founding__mark-word">asking</span>. We turn emerging{' '}
-          <span className="founding__mark-word">demand</span> into a system that
-          launches <span className="founding__mark-word">brands</span> faster
-          than traditional FMCG can{' '}
-          <span className="founding__mark-word">move</span>.
+          <span className="founding__mark-word" data-founding-mark="asking">
+            asking
+          </span>
+          . We turn emerging{' '}
+          <span className="founding__mark-word" data-founding-mark="demand">
+            demand
+          </span>{' '}
+          into a system that launches{' '}
+          <span className="founding__mark-word" data-founding-mark="brands">
+            brands
+          </span>{' '}
+          faster than traditional FMCG can{' '}
+          <span className="founding__mark-word" data-founding-mark="move">
+            move
+          </span>
+          .
         </h2>
 
         <div className="founding__actions">

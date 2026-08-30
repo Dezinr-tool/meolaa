@@ -730,85 +730,44 @@
     linear-gradient(135deg, #f2f2f2 0%, #fafafa 42%, #ececec 100%);
 }
 
-/* Scattered sticker badges — decorative only; irregular PNG shapes (no radius). */
-.story-hero__badges {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  pointer-events: none;
-  overflow: hidden;
+/* Marker emphasis — starts unlit; `.is-lit` lands one-by-one on enter.
+   Story hero ground is Joyous Yellow, so marks use a Lilac Deep highlighter
+   stripe + Joyous Yellow underline (same yellow accent as Founding, readable
+   here because the stripe provides contrast). */
+.story-hero__mark {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 0.11em;
+  text-underline-offset: 0.14em;
+  text-decoration-color: transparent;
+  background-image: linear-gradient(transparent 58%, transparent 58%);
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  transition:
+    color 0.35s ease,
+    text-decoration-color 0.35s ease,
+    background-image 0.35s ease;
 }
 
-.story-hero__badge {
-  position: absolute;
-  display: block;
-  width: auto;
-  height: auto;
-  max-width: none;
-  object-fit: contain;
-  user-select: none;
-  -webkit-user-drag: none;
+.story-hero__mark.is-lit {
+  color: var(--color-white, #fff);
+  text-decoration-color: var(--color-joyous-yellow, #fdf28c);
+  background-image: linear-gradient(
+    transparent 48%,
+    var(--color-lilac-deep, #5656ad) 48%
+  );
+  padding-inline: 0.06em;
 }
 
-.story-hero__badge--happy {
-  top: clamp(72px, 11vh, 110px);
-  left: clamp(8px, 2.2vw, 36px);
-  width: clamp(72px, 9vw, 128px);
-  transform: rotate(-14deg);
-}
-
-.story-hero__badge--worldwide {
-  top: clamp(96px, 14vh, 150px);
-  right: clamp(6%, 9vw, 14%);
-  width: clamp(64px, 7.5vw, 112px);
-  transform: rotate(16deg);
-}
-
-.story-hero__badge--dreams {
-  bottom: clamp(28px, 6vh, 72px);
-  left: clamp(4%, 8vw, 14%);
-  width: clamp(110px, 14vw, 200px);
-  transform: rotate(9deg);
-}
-
-.story-hero__badge--new {
-  bottom: clamp(18%, 22vh, 28%);
-  right: clamp(2%, 4vw, 7%);
-  width: clamp(70px, 8.5vw, 128px);
-  transform: rotate(-11deg);
-}
-
-@media (max-width: 900px) {
-  /* Keep top-corner stickers in the first viewport; hide lower ones. */
-  .story-hero__badge--happy {
-    top: clamp(76px, 11vh, 100px);
-    left: clamp(6px, 2vw, 16px);
-    width: clamp(64px, 16vw, 96px);
-    transform: rotate(-12deg);
-  }
-
-  .story-hero__badge--worldwide {
-    top: clamp(88px, 12vh, 120px);
-    right: clamp(12px, 4vw, 28px);
-    width: clamp(56px, 14vw, 88px);
-    transform: rotate(12deg);
-  }
-
-  .story-hero__badge--dreams,
-  .story-hero__badge--new {
-    display: none;
-  }
-}
-
-@media (max-width: 560px) {
-  .story-hero__badge--happy {
-    width: clamp(56px, 18vw, 80px);
-    opacity: 0.95;
-  }
-
-  .story-hero__badge--worldwide {
-    width: clamp(48px, 16vw, 72px);
-    opacity: 0.92;
+@media (prefers-reduced-motion: reduce) {
+  .story-hero__mark {
+    color: var(--color-white, #fff);
+    text-decoration-color: var(--color-joyous-yellow, #fdf28c);
+    background-image: linear-gradient(
+      transparent 48%,
+      var(--color-lilac-deep, #5656ad) 48%
+    );
+    padding-inline: 0.06em;
   }
 }
 

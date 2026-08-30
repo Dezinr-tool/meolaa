@@ -1,6 +1,8 @@
+import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { PageLayout } from '../components/layout/PageLayout'
 import { WhereNextSection } from '../components/layout/WhereNextSection'
+import { gsap } from '../lib/motion'
 
 const RAIL = [
   { id: 'chapter-insight', year: 'Mar 2022', name: 'Insight' },
@@ -80,47 +82,46 @@ const WHERE_NEXT = [
 ] as const
 
 export function StoryPage() {
+  const heroRef = useRef<HTMLElement>(null)
+
+  /* Joyous Yellow marks light one-by-one on enter — same language as Founding. */
+  useEffect(() => {
+    const hero = heroRef.current
+    if (!hero) return
+
+    const marks = Array.from(
+      hero.querySelectorAll<HTMLElement>('[data-story-mark]'),
+    )
+    if (!marks.length) return
+
+    const reduceMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)',
+    ).matches
+
+    if (reduceMotion) {
+      marks.forEach((el) => el.classList.add('is-lit'))
+      return
+    }
+
+    marks.forEach((el) => el.classList.remove('is-lit'))
+
+    const tl = gsap.timeline({ delay: 0.35 })
+    marks.forEach((el) => {
+      tl.call(() => {
+        el.classList.add('is-lit')
+      })
+      tl.to({}, { duration: 0.38 })
+    })
+
+    return () => {
+      tl.kill()
+      marks.forEach((el) => el.classList.remove('is-lit'))
+    }
+  }, [])
+
   return (
     <PageLayout pageClass="page-editorial">
-      <header className="story-hero">
-        <div className="story-hero__badges" aria-hidden="true">
-          <img
-            className="story-hero__badge story-hero__badge--happy"
-            src="/story/badges/happy.png"
-            alt=""
-            width={160}
-            height={120}
-            loading="eager"
-            decoding="async"
-          />
-          <img
-            className="story-hero__badge story-hero__badge--worldwide"
-            src="/story/badges/worldwide.png"
-            alt=""
-            width={140}
-            height={140}
-            loading="eager"
-            decoding="async"
-          />
-          <img
-            className="story-hero__badge story-hero__badge--dreams"
-            src="/story/badges/dreams-come-true.png"
-            alt=""
-            width={200}
-            height={140}
-            loading="eager"
-            decoding="async"
-          />
-          <img
-            className="story-hero__badge story-hero__badge--new"
-            src="/story/badges/new.png"
-            alt=""
-            width={150}
-            height={100}
-            loading="eager"
-            decoding="async"
-          />
-        </div>
+      <header className="story-hero" ref={heroRef}>
         <div className="story-hero__inner">
           <div className="story-hero__copy">
             <div className="story-hero__meta">
@@ -128,13 +129,26 @@ export function StoryPage() {
               <p className="section-head__eyebrow">Our Story</p>
             </div>
             <h1 className="story-hero__headline pg-display">
-              It started with a question no one else was asking.
+              It started with a question no one else was{' '}
+              <span className="story-hero__mark" data-story-mark="asking">
+                asking
+              </span>
+              .
             </h1>
             <p className="story-hero__lede">
-              In 2022, Ishita Sawant set out to prove that emerging consumer
-              demand could be identified and served faster than any traditional
-              FMCG company could move — Meolaa is the system built to do exactly
-              that.
+              In 2022, Ishita Sawant set out to prove that emerging consumer{' '}
+              <span className="story-hero__mark" data-story-mark="demand">
+                demand
+              </span>{' '}
+              could be identified and served{' '}
+              <span className="story-hero__mark" data-story-mark="faster">
+                faster
+              </span>{' '}
+              than any traditional FMCG company could{' '}
+              <span className="story-hero__mark" data-story-mark="move">
+                move
+              </span>{' '}
+              — Meolaa is the system built to do exactly that.
             </p>
           </div>
           <figure className="story-hero__panel" aria-hidden="true">

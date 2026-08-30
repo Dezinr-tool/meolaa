@@ -495,6 +495,99 @@
   background: var(--founding-ground) !important;
 }
 
+/* Corner stickers — float in the margins around the manifesto (reference mock). */
+.founding__badges {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.founding__badge {
+  position: absolute;
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: none;
+  object-fit: contain;
+  user-select: none;
+  -webkit-user-drag: none;
+  /* GSAP owns transform (scale + rotate) for the pop-in choreography. */
+  will-change: transform, opacity;
+  visibility: hidden;
+  opacity: 0;
+}
+
+/* WORLDWIDE — upper left of the type block */
+.founding__badge--worldwide {
+  top: clamp(14%, 18vh, 22%);
+  left: clamp(2.5%, 4.5vw, 7%);
+  width: clamp(72px, 8.5vw, 118px);
+}
+
+/* new — upper right */
+.founding__badge--new {
+  top: clamp(8%, 12vh, 16%);
+  right: clamp(3%, 5.5vw, 9%);
+  width: clamp(88px, 11vw, 148px);
+}
+
+/* DREAMS COME TRUE — lower left */
+.founding__badge--dreams {
+  bottom: clamp(10%, 14vh, 18%);
+  left: clamp(3%, 5vw, 8%);
+  width: clamp(110px, 13vw, 188px);
+}
+
+/* HAPPY — lower right, clear of the CTA */
+.founding__badge--happy {
+  bottom: clamp(11%, 15vh, 20%);
+  right: clamp(6%, 10vw, 15%);
+  width: clamp(78px, 9.5vw, 132px);
+}
+
+@media (max-width: 900px) {
+  .founding__badge--worldwide {
+    top: clamp(72px, 10vh, 96px);
+    left: clamp(8px, 3vw, 20px);
+    width: clamp(56px, 14vw, 88px);
+  }
+
+  .founding__badge--new {
+    top: clamp(64px, 9vh, 88px);
+    right: clamp(8px, 3vw, 20px);
+    width: clamp(64px, 16vw, 100px);
+  }
+
+  .founding__badge--dreams {
+    bottom: clamp(20px, 4vh, 40px);
+    left: clamp(10px, 3vw, 24px);
+    width: clamp(88px, 22vw, 140px);
+  }
+
+  .founding__badge--happy {
+    bottom: clamp(24px, 5vh, 48px);
+    right: clamp(12px, 4vw, 28px);
+    width: clamp(64px, 16vw, 104px);
+  }
+}
+
+@media (max-width: 560px) {
+  .founding__badge--worldwide,
+  .founding__badge--new {
+    width: clamp(48px, 15vw, 72px);
+  }
+
+  .founding__badge--dreams {
+    width: clamp(72px, 24vw, 112px);
+  }
+
+  .founding__badge--happy {
+    width: clamp(56px, 17vw, 88px);
+  }
+}
+
 .founding__stage {
   position: relative;
   z-index: 4; /* above the card layer's ground, below nothing else */
@@ -542,25 +635,34 @@
   text-wrap: balance;
 }
 
-/* Underlined key words — the reference's only emphasis. Underline sits clear of
-   the descenders so it reads as a rule, not a strikethrough. */
+/* Key words start unlit; `.is-lit` lands one-by-one with the sticker pop-ins. */
 .founding__mark-word {
-  /* These are the hover triggers, so they take a pointer. */
   cursor: pointer;
-  /* Joyous Yellow sets the trigger words apart from the white statement — the
-     same accent as the CTA, so the two read as "the interactive bits". The
-     underline inherits it via currentColor. */
-  color: var(--color-joyous-yellow, #fdf28c);
+  color: var(--founding-white);
   text-decoration: underline;
   text-decoration-thickness: 0.045em;
   text-underline-offset: 0.14em;
-  text-decoration-color: currentColor;
-  transition: color 0.2s ease;
+  text-decoration-color: transparent;
+  transition:
+    color 0.35s ease,
+    text-decoration-color 0.35s ease;
 }
 
-/* Hovering the word you're already dealing from — brighten to confirm the hit. */
-.founding__mark-word:hover {
+.founding__mark-word.is-lit {
+  color: var(--color-joyous-yellow, #fdf28c);
+  text-decoration-color: currentColor;
+}
+
+/* Hovering a lit word you're dealing from — brighten to confirm the hit. */
+.founding__mark-word.is-lit:hover {
   color: var(--color-white, #fff);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .founding__mark-word {
+    color: var(--color-joyous-yellow, #fdf28c);
+    text-decoration-color: currentColor;
+  }
 }
 
 /* Cards sit between the ground and the type: the reference has photos crossing
