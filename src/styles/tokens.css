@@ -150,6 +150,14 @@
   --nav-glass-light-border: rgba(0, 0, 0, 0.10);
   --nav-glass-dark-bg: rgba(0, 47, 58, 0.25);
   --nav-glass-dark-border: rgba(248, 236, 228, 0.16);
+
+  /* Footer wordmark — frosted band on black */
+  --footer-glass-blur: 12px;
+  --footer-glass-saturate: 160%;
+  --footer-glass-bg: rgba(255, 255, 255, 0.045);
+  --footer-glass-bg-deep: rgba(0, 47, 58, 0.14);
+  --footer-glass-border: rgba(248, 236, 228, 0.10);
+  --footer-glass-highlight: rgba(255, 255, 255, 0.07);
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
