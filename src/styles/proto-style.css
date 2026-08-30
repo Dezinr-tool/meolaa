@@ -891,7 +891,7 @@ img { display: block; max-width: 100%; }
   }
 }
 
-/* METRICS — one section: white section-head + Deep Ecru stats band.
+/* METRICS — one section: Deep Ecru head + stats band (single fold).
    Stair steps are a temporary GSAP clip-path reveal only; final state is one
    equal-height band. Padding/rhythm owned by section-head.css (.metrics). */
 .metrics {
@@ -899,7 +899,7 @@ img { display: block; max-width: 100%; }
   height: auto;
   min-height: 0;
   max-height: none;
-  background: var(--color-white, #fff);
+  background: var(--color-ecru-deep, #f0d5cc);
   overflow: hidden;
   box-sizing: border-box;
 }
