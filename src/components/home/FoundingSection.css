@@ -547,10 +547,20 @@
 .founding__mark-word {
   /* These are the hover triggers, so they take a pointer. */
   cursor: pointer;
+  /* Joyous Yellow sets the trigger words apart from the white statement — the
+     same accent as the CTA, so the two read as "the interactive bits". The
+     underline inherits it via currentColor. */
+  color: var(--color-joyous-yellow, #fdf28c);
   text-decoration: underline;
   text-decoration-thickness: 0.045em;
   text-underline-offset: 0.14em;
   text-decoration-color: currentColor;
+  transition: color 0.2s ease;
+}
+
+/* Hovering the word you're already dealing from — brighten to confirm the hit. */
+.founding__mark-word:hover {
+  color: var(--color-white, #fff);
 }
 
 /* Cards sit between the ground and the type: the reference has photos crossing

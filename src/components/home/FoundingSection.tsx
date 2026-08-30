@@ -31,17 +31,30 @@ const DEAL_IMAGES = [
   '/assets/founding-hero.jpg',
 ] as const
 
+/* Rendered pool is larger than the image list: at a 90ms interval and a ~0.75s
+   lifetime about 8 cards are alive at once, so 10 nodes left almost no
+   headroom and a card could be recycled mid-fade. Repeating the first few
+   images gives 14 nodes — the same photo showing twice is invisible in
+   practice because the two are at different positions and moments. */
+const DEAL_POOL = [...DEAL_IMAGES, ...DEAL_IMAGES.slice(0, 4)]
+
 /* Cards on screen at once ≈ lifetime / interval, where lifetime is
-   HOLD + the 0.4s fade. At 150ms / 0.6s that's ~6-7 of a 10-card pool — a
-   visible stack while the cursor moves, with headroom before recycling bites. */
+   IN + HOLD + OUT. These are balanced against the 10-card pool: at 90ms with a
+   ~0.73s lifetime that's ~8 of 10, so a card is never recycled while still
+   visible. Shortening the interval without shortening HOLD would overrun the
+   pool and yank fading cards back to a new position. */
 
 /** Minimum gap between cards (ms) while the cursor is over a word. */
-const DEAL_INTERVAL_MS = 150
+const DEAL_INTERVAL_MS = 90
 /** Cursor travel required before the next card (px) — stops a resting pointer
  *  from spraying cards on its own micro-jitter. */
-const DEAL_MIN_TRAVEL = 20
+const DEAL_MIN_TRAVEL = 16
+/** Pop-in. */
+const DEAL_IN = 0.28
 /** How long each card stays at full opacity before it fades. */
-const DEAL_HOLD = 0.6
+const DEAL_HOLD = 0.45
+/** Fade-out. */
+const DEAL_OUT = 0.3
 
 /**
  * About / founding — near-black ground, small eyebrow, one large centred
@@ -171,10 +184,10 @@ export function FoundingSection() {
         scale: 0.84,
         autoAlpha: 1,
       })
-      gsap.to(card, { scale: 1, duration: 0.45, ease: 'power3.out' })
+      gsap.to(card, { scale: 1, duration: DEAL_IN, ease: 'power3.out' })
       gsap.to(card, {
         autoAlpha: 0,
-        duration: 0.4,
+        duration: DEAL_OUT,
         delay: DEAL_HOLD,
         ease: 'power2.out',
       })
@@ -242,9 +255,9 @@ export function FoundingSection() {
       {/* Card pool for the auto deal. Decorative, so aria-hidden and no alt;
           a fixed pool that gets recycled rather than nodes created per tick. */}
       <div className="founding__medias" ref={mediasRef} aria-hidden="true">
-        {DEAL_IMAGES.map((src) => (
+        {DEAL_POOL.map((src, i) => (
           <img
-            key={src}
+            key={`${src}-${i}`}
             className="founding__card"
             src={src}
             alt=""
