@@ -28,7 +28,7 @@ const VIEWBOX = '420 420 1080 250'
 
 /**
  * Tight crop to the real glyph bounds (measured via getBBox: aspect 4.983).
- * Matches the framing of the legacy /assets/logo-white.png, which is cropped
+ * Matches the framing of the legacy white wordmark crop (letter paths only,
  * flush to the glyphs at aspect 4.971 — so passing this makes the component a
  * drop-in for boxes that were sized for that PNG.
  */

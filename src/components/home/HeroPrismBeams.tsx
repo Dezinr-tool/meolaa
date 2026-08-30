@@ -50,7 +50,7 @@ function makeSoftBeamTexture(opts: {
       const u = (x + 0.5) / w
       const axial =
         mode === 'exit'
-          ? Math.pow(1 - u, 1.05) * (0.6 + 0.4 * Math.sin(u * Math.PI))
+          ? Math.pow(1 - u, 0.9) * (0.88 + 0.12 * Math.sin(Math.min(1, u * 1.15) * Math.PI))
           : Math.pow(Math.min(1, u * 1.35), 0.45)
       const a = Math.min(1, softY * axial * 0.7 + coreY * axial * 0.85)
       const i = (y * w + x) * 4
@@ -95,8 +95,8 @@ function makeSpectrumGradientTexture(): THREE.CanvasTexture {
     const edge = Math.sin(v * Math.PI)
     for (let x = 0; x < w; x++) {
       const u = (x + 0.5) / w
-      const axial = Math.pow(1 - u, 1.1)
-      const a = Math.min(1, edge * axial * 0.95)
+      const axial = Math.pow(1 - u, 0.85) * (0.9 + 0.1 * Math.sin(Math.min(1, u * 1.1) * Math.PI))
+      const a = Math.min(1, edge * axial)
       data[(y * w + x) * 4 + 3] = Math.round(a * 255)
     }
   }
@@ -153,7 +153,7 @@ function WhiteBeam({
       settings
     glowMat.current.opacity = t * beamOpacity * 0.75
     coreMat.current.opacity = t * beamOpacity
-    group.current.position.set(beamEntryX - beamLength / 2, beamEntryY, 0.12)
+    group.current.position.set(beamEntryX - beamLength / 2, beamEntryY, -0.55)
     group.current.rotation.z = beamAngle
     const glow = group.current.children[0] as THREE.Mesh
     const core = group.current.children[1] as THREE.Mesh
@@ -171,7 +171,7 @@ function WhiteBeam({
           transparent
           opacity={0}
           depthWrite={false}
-          depthTest={false}
+          depthTest
           blending={THREE.AdditiveBlending}
           side={THREE.DoubleSide}
           toneMapped={false}
@@ -185,7 +185,7 @@ function WhiteBeam({
           transparent
           opacity={0}
           depthWrite={false}
-          depthTest={false}
+          depthTest
           blending={THREE.AdditiveBlending}
           side={THREE.DoubleSide}
           toneMapped={false}
@@ -229,7 +229,7 @@ function SpectrumRibbon({
       spectrumFan,
       spectrumOpacity,
     } = settings
-    group.current.position.set(spectrumExitX, spectrumExitY, 0.1)
+    group.current.position.set(spectrumExitX, spectrumExitY, -0.55)
     group.current.rotation.z = spectrumAngle
     if (baseMat.current) baseMat.current.opacity = t * spectrumOpacity * 0.55
     const bands = group.current.children[1] as THREE.Group
@@ -289,9 +289,11 @@ function SpectrumRibbon({
   )
 }
 
-/** Beam-only scene — separate Canvas so glass refraction never samples these. */
-export default function HeroPrismBeams() {
-  const settings = usePrismSettings()
+function BeamsCamera({ settings }: { settings: HeroPrismSettings }) {
+  return <CameraRig settings={settings} />
+}
+
+function useBeamIntensity() {
   const intensity = useRef(0)
   const reducedMotion =
     typeof window !== 'undefined' &&
@@ -306,9 +308,43 @@ export default function HeroPrismBeams() {
     )
   })
 
+  return intensity
+}
+
+/** Incoming white beam only — drawn on a canvas *behind* the glass. */
+export function HeroPrismEnterBeams() {
+  const settings = usePrismSettings()
+  const intensity = useBeamIntensity()
+
   return (
     <>
-      <CameraRig settings={settings} />
+      <BeamsCamera settings={settings} />
+      <WhiteBeam intensity={intensity} settings={settings} />
+    </>
+  )
+}
+
+/** Exit spectrum only — drawn on a canvas *in front of* the glass. */
+export function HeroPrismExitBeams() {
+  const settings = usePrismSettings()
+  const intensity = useBeamIntensity()
+
+  return (
+    <>
+      <BeamsCamera settings={settings} />
+      <SpectrumRibbon intensity={intensity} settings={settings} />
+    </>
+  )
+}
+
+/** Beam-only scene — separate Canvas so glass refraction never samples these. */
+export default function HeroPrismBeams() {
+  const settings = usePrismSettings()
+  const intensity = useBeamIntensity()
+
+  return (
+    <>
+      <BeamsCamera settings={settings} />
       <WhiteBeam intensity={intensity} settings={settings} />
       <SpectrumRibbon intensity={intensity} settings={settings} />
     </>

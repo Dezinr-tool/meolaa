@@ -27,7 +27,34 @@ function HeroPrismCanvas({ onReady }: { onReady: () => void }) {
 
   return (
     <>
-      {/* Layer 1: clean glass crystal (no beams in this scene). */}
+      {/* Beams under the glass — white beam reads as entering behind the crystal;
+          spectrum still shows to the right where the glass canvas is clear. */}
+      <Canvas
+        className="hero-prism__canvas hero-prism__canvas--beams"
+        dpr={dpr}
+        camera={{
+          position: [s.camX, s.camY, s.camZ],
+          fov: s.camFov,
+          near: 0.1,
+          far: 40,
+        }}
+        gl={{
+          antialias: true,
+          alpha: true,
+          powerPreference: 'high-performance',
+          toneMapping: NoToneMapping,
+          preserveDrawingBuffer: true,
+        }}
+        onCreated={({ gl, camera }) => {
+          gl.setClearColor(0x000000, 0)
+          camera.lookAt(s.lookX, s.lookY, s.lookZ)
+        }}
+      >
+        <Suspense fallback={null}>
+          <HeroPrismBeams />
+        </Suspense>
+      </Canvas>
+
       <Canvas
         className="hero-prism__canvas hero-prism__canvas--glass"
         dpr={dpr}
@@ -52,33 +79,6 @@ function HeroPrismCanvas({ onReady }: { onReady: () => void }) {
       >
         <Suspense fallback={null}>
           <HeroPrismScene />
-        </Suspense>
-      </Canvas>
-
-      {/* Layer 2: beams only — never sampled into glass refraction. */}
-      <Canvas
-        className="hero-prism__canvas hero-prism__canvas--beams"
-        dpr={dpr}
-        camera={{
-          position: [s.camX, s.camY, s.camZ],
-          fov: s.camFov,
-          near: 0.1,
-          far: 40,
-        }}
-        gl={{
-          antialias: true,
-          alpha: true,
-          powerPreference: 'high-performance',
-          toneMapping: NoToneMapping,
-          preserveDrawingBuffer: true,
-        }}
-        onCreated={({ gl, camera }) => {
-          gl.setClearColor(0x000000, 0)
-          camera.lookAt(s.lookX, s.lookY, s.lookZ)
-        }}
-      >
-        <Suspense fallback={null}>
-          <HeroPrismBeams />
         </Suspense>
       </Canvas>
     </>
@@ -106,11 +106,14 @@ export function HeroPrism() {
           {!webglReady && <HeroPrismFallback />}
           {webglSupported === true && (
             <div className={`hero-prism__webgl${webglReady ? ' is-ready' : ''}`}>
-              <HeroErrorBoundary fallback={null}>
+              <HeroErrorBoundary
+                fallback={webglReady ? null : <HeroPrismFallback />}
+              >
                 <HeroPrismCanvas onReady={() => setWebglReady(true)} />
               </HeroErrorBoundary>
             </div>
           )}
+          {webglSupported === false && <HeroPrismFallback />}
         </div>
       </div>
       <HeroPrismDebugPanel />

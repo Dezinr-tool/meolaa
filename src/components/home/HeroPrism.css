@@ -30,9 +30,15 @@
   inset: 0;
 }
 
+/* Beams fully behind the glass canvas so enter + exit only show where the
+   crystal doesn’t cover them (reads as light through the back of the prism). */
 .hero-prism__canvas--beams {
-  z-index: 1;
+  z-index: 0;
   pointer-events: none;
+}
+
+.hero-prism__canvas--glass {
+  z-index: 1;
 }
 
 .hero-prism__img {
