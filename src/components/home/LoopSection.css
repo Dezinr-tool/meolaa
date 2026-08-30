@@ -7,7 +7,7 @@
 .loop {
   --loop-bg: #0a3038;
   --loop-track: var(--color-joyous-yellow, #fdf28c);
-  --loop-node: #061e24;
+  --loop-node: var(--color-primary);
   --loop-fg: #ffffff;
   --loop-fg-muted: rgba(255, 255, 255, 0.6);
   --loop-dot: clamp(40px, 4.43vw, 63px);
