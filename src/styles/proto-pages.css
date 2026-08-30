@@ -717,52 +717,6 @@
 
 /* ——— OUR STORY ——— */
 
-/* Pixel hand cursor — scoped to /story only.
-   System cursor is hidden; a fixed .story-pixel-cursor <img> follows the pointer
-   (CSS cursor:url is flaky on Chromium/macOS even when computed style shows it). */
-body.story-page-active,
-body.story-page-active *,
-.story-page,
-.story-page * {
-  cursor: none !important;
-}
-
-.story-pixel-cursor {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 40px;
-  height: 40px;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  pointer-events: none;
-  z-index: 2147483646;
-  opacity: 0;
-  image-rendering: pixelated;
-  image-rendering: crisp-edges;
-  will-change: transform;
-  user-select: none;
-  -webkit-user-drag: none;
-}
-
-.story-pixel-cursor.is-on {
-  opacity: 1;
-}
-
-@media (pointer: coarse) {
-  body.story-page-active,
-  body.story-page-active *,
-  .story-page,
-  .story-page * {
-    cursor: auto !important;
-  }
-
-  .story-pixel-cursor {
-    display: none !important;
-  }
-}
-
 .story-hero {
   position: relative;
   min-height: 100vh;

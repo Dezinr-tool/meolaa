@@ -707,3 +707,45 @@
     cursor: inherit;
   }
 }
+
+/* Pixel hand cursor — only while the pointer is inside this fold.
+   System cursor is hidden; a fixed .founding-pixel-cursor <img> follows
+   (CSS cursor:url is flaky on Chromium/macOS even when computed style shows it). */
+.founding.is-founding-cursor,
+.founding.is-founding-cursor * {
+  cursor: none !important;
+}
+
+.founding-pixel-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 40px;
+  height: 40px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  pointer-events: none;
+  z-index: 2147483646;
+  opacity: 0;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  will-change: transform;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.founding-pixel-cursor.is-on {
+  opacity: 1;
+}
+
+@media (pointer: coarse) {
+  .founding.is-founding-cursor,
+  .founding.is-founding-cursor * {
+    cursor: auto !important;
+  }
+
+  .founding-pixel-cursor {
+    display: none !important;
+  }
+}

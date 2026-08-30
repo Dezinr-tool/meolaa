@@ -9,6 +9,10 @@ import './FoundingSection.css'
  *  pinned; this one wasn't, which is why it read too fast. */
 const FOUNDING_HOLD_VH = 0.9
 
+/** Hotspot near the pixel finger tip (40×40 display of trimmed hand art). */
+const CURSOR_HOT_X = 6
+const CURSOR_HOT_Y = 2
+
 /* ——— Auto-playing image deal (madewithgsap tutorial 036 layout) ———
  * Reference look: near-black ground, small eyebrow, one large centred
  * statement with certain words underlined, and photos flicking over the type.
@@ -72,6 +76,75 @@ const STICKER_CHOREO = [
 export function FoundingSection() {
   const sectionRef = useRef<HTMLElement>(null)
   const mediasRef = useRef<HTMLDivElement>(null)
+
+  /* Pixel hand while the pointer is over this fold. CSS `cursor: url()` is
+   * flaky on Chromium/macOS, so a fixed <img> follower + cursor:none is the
+   * reliable path. Off on leave / touch. Does not apply on /story. */
+  useEffect(() => {
+    const section = sectionRef.current
+    if (!section) return
+
+    const coarse = window.matchMedia('(pointer: coarse)').matches
+    if (coarse) return
+
+    const cursorEl = document.createElement('img')
+    cursorEl.src = '/story/cursor-hand.png'
+    cursorEl.alt = ''
+    cursorEl.className = 'founding-pixel-cursor'
+    cursorEl.setAttribute('aria-hidden', 'true')
+    cursorEl.draggable = false
+    document.body.appendChild(cursorEl)
+
+    let lastX = 0
+    let lastY = 0
+    let hasPoint = false
+
+    const pointOverSection = (x: number, y: number) => {
+      const hit = document.elementFromPoint(x, y)
+      return !!(hit && section.contains(hit))
+    }
+
+    const show = (x: number, y: number) => {
+      section.classList.add('is-founding-cursor')
+      cursorEl.style.transform = `translate3d(${x - CURSOR_HOT_X}px, ${y - CURSOR_HOT_Y}px, 0)`
+      cursorEl.classList.add('is-on')
+    }
+
+    const hide = () => {
+      section.classList.remove('is-founding-cursor')
+      cursorEl.classList.remove('is-on')
+    }
+
+    const sync = (x: number, y: number) => {
+      if (pointOverSection(x, y)) show(x, y)
+      else hide()
+    }
+
+    const onMove = (e: PointerEvent) => {
+      lastX = e.clientX
+      lastY = e.clientY
+      hasPoint = true
+      sync(lastX, lastY)
+    }
+
+    const onScroll = () => {
+      if (hasPoint) sync(lastX, lastY)
+    }
+
+    const onLeaveDoc = () => hide()
+
+    window.addEventListener('pointermove', onMove, { passive: true })
+    window.addEventListener('scroll', onScroll, { passive: true })
+    document.documentElement.addEventListener('mouseleave', onLeaveDoc)
+
+    return () => {
+      window.removeEventListener('pointermove', onMove)
+      window.removeEventListener('scroll', onScroll)
+      document.documentElement.removeEventListener('mouseleave', onLeaveDoc)
+      section.classList.remove('is-founding-cursor')
+      cursorEl.remove()
+    }
+  }, [])
 
   /* Hold the fold still for FOUNDING_HOLD_VH of scroll so the story can be
    * read. Pin only — no scrubbed animation attached, so there is nothing here
