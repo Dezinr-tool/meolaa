@@ -102,7 +102,7 @@
   position: relative;
   z-index: 3;
   flex: 0 0 auto;
-  /* Gutters live here — mark band below stays stage-edge full-bleed. */
+  /* Gutters shared with .site-footer__mark-wrap below. */
   padding-left: var(--footer-gutter);
   padding-right: var(--footer-gutter);
   /* Tight gap so mark band sits just under the legal row. */
