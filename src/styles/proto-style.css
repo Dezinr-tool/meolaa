@@ -913,7 +913,8 @@ img { display: block; max-width: 100%; }
   /* Final layout: equal full-height band. Stair look is clip-only in GSAP. */
   height: 100%;
   background: var(--color-primary, #002f3a);
-  color: var(--color-joyous-yellow, #fdf28c);
+  /* Deep Ecru accent on Planet Blue stats band (replaces Joyous Yellow). */
+  color: var(--color-ecru-deep, #f0d5cc);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -936,7 +937,7 @@ img { display: block; max-width: 100%; }
   font-size: clamp(2rem, 4vw, 3.25rem);
   font-weight: 300;
   line-height: 1.1;
-  color: var(--color-joyous-yellow, #fdf28c);
+  color: var(--color-ecru-deep, #f0d5cc);
 }
 
 .metric span {
