@@ -8,6 +8,12 @@ import {
 const REVEAL_EASE = 'power2.out'
 const VISION_PIN_END = '+=140%'
 
+/**
+ * Lifestyle collage beat inside the Vision film. Autoplay from t=0 flashes
+ * unrelated cuts ("From strategy", "A full stack", …) before this frame.
+ */
+const VISION_COLLAGE_TIME = 4.25
+
 /** Per-char spans for vision headline scroll highlight (opacity only — no y/blur). */
 function splitVisionLines(lines: Element[]) {
   lines.forEach((line) => {
@@ -37,32 +43,128 @@ function splitVisionLines(lines: Element[]) {
   })
 }
 
-function revealVideoWrap(
-  target: Element,
-  trigger: Element,
+function loadImage(src: string): Promise<void> {
+  return new Promise((resolve) => {
+    const img = new Image()
+    img.onload = () => resolve()
+    img.onerror = () => resolve()
+    img.src = src
+    if (img.complete) resolve()
+  })
+}
+
+function whenVideoReady(video: HTMLVideoElement): Promise<void> {
+  if (video.readyState >= 1) return Promise.resolve()
+  return new Promise((resolve) => {
+    const done = () => {
+      video.removeEventListener('loadedmetadata', done)
+      video.removeEventListener('error', done)
+      resolve()
+    }
+    video.addEventListener('loadedmetadata', done, { once: true })
+    video.addEventListener('error', done, { once: true })
+    window.setTimeout(done, 1600)
+  })
+}
+
+function seekVideo(video: HTMLVideoElement, time: number): Promise<void> {
+  return new Promise((resolve) => {
+    let settled = false
+    const finish = () => {
+      if (settled) return
+      settled = true
+      video.removeEventListener('seeked', finish)
+      resolve()
+    }
+    video.addEventListener('seeked', finish, { once: true })
+    try {
+      const duration = Number.isFinite(video.duration) ? video.duration : time
+      video.currentTime = Math.min(time, Math.max(0, duration - 0.05))
+    } catch {
+      finish()
+      return
+    }
+    window.setTimeout(finish, 900)
+  })
+}
+
+/**
+ * Keep the Vision media wrap covered until the collage poster is decoded and
+ * (when possible) the film is parked on the collage beat — then reveal once.
+ */
+async function armVisionMedia(
+  wrap: HTMLElement,
+  video: HTMLVideoElement | null | undefined,
   reduceMotion: boolean,
-) {
-  if (reduceMotion) {
-    gsap.set(target, { autoAlpha: 1, y: 0, filter: 'blur(0px)' })
-    return
+): Promise<() => void> {
+  const poster =
+    wrap.querySelector<HTMLImageElement>('.vision__poster') ||
+    (video?.getAttribute('poster')
+      ? ({ src: video.getAttribute('poster')! } as HTMLImageElement)
+      : null)
+
+  const posterSrc =
+    poster instanceof HTMLImageElement
+      ? poster.currentSrc || poster.src
+      : poster?.src
+
+  if (posterSrc) await loadImage(posterSrc)
+
+  const cleanups: Array<() => void> = []
+
+  if (video) {
+    await whenVideoReady(video)
+    await seekVideo(video, VISION_COLLAGE_TIME)
+    video.classList.add('is-armed')
+
+    /* After a full-loop restart the film returns to t≈0 — jump back so the
+       first visible cut stays the collage, not a random early frame.
+       Drop .is-armed while seeking so the static collage poster shows. */
+    const onTimeUpdate = () => {
+      if (video.currentTime < VISION_COLLAGE_TIME - 0.05) {
+        video.classList.remove('is-armed')
+        try {
+          video.currentTime = VISION_COLLAGE_TIME
+        } catch {
+          /* ignore */
+        }
+      }
+    }
+    const onSeeked = () => {
+      if (video.currentTime >= VISION_COLLAGE_TIME - 0.05) {
+        video.classList.add('is-armed')
+      }
+    }
+    video.addEventListener('timeupdate', onTimeUpdate)
+    video.addEventListener('seeked', onSeeked)
+    cleanups.push(() => {
+      video.removeEventListener('timeupdate', onTimeUpdate)
+      video.removeEventListener('seeked', onSeeked)
+    })
+    video.play().catch(() => {})
   }
 
-  gsap.fromTo(
-    target,
-    { autoAlpha: 0, y: 36, filter: 'blur(4px)' },
-    {
+  /* Prime hidden state before lifting the CSS cover so nothing peeks. */
+  gsap.set(wrap, { autoAlpha: 0, y: reduceMotion ? 0 : 36, filter: reduceMotion ? 'blur(0px)' : 'blur(4px)' })
+  wrap.classList.add('is-ready')
+  document.documentElement.dataset.visionMedia = 'ready'
+
+  if (reduceMotion) {
+    gsap.set(wrap, { autoAlpha: 1, y: 0, filter: 'blur(0px)' })
+  } else {
+    gsap.to(wrap, {
       autoAlpha: 1,
       y: 0,
       filter: 'blur(0px)',
       duration: 1,
       ease: REVEAL_EASE,
-      scrollTrigger: {
-        trigger,
-        start: 'top 92%',
-        toggleActions: 'play none none none',
-      },
-    },
-  )
+      overwrite: 'auto',
+    })
+  }
+
+  return () => {
+    cleanups.forEach((fn) => fn())
+  }
 }
 
 type InitVisionOptions = {
@@ -82,7 +184,9 @@ export function initVision(options: InitVisionOptions = {}): () => void {
   const lines = gsap.utils.toArray<Element>('[data-vision-line]')
   const videoBox = document.querySelector('[data-video-box]') as HTMLElement | null
   const visionCopy = document.querySelector('.vision__copy') as HTMLElement | null
-  const visionVideo = videoBox?.querySelector('video')
+  const visionVideo =
+    videoBox?.querySelector<HTMLVideoElement>('video[data-vision-video]') ||
+    videoBox?.querySelector('video')
   const visionStage = document.querySelector('.vision__stage') as HTMLElement | null
   const visionVideoWrap = document.querySelector(
     '.vision__video-wrap',
@@ -95,10 +199,27 @@ export function initVision(options: InitVisionOptions = {}): () => void {
   const reduceMotion = prefersReducedMotion()
 
   gsap.set(chars, { opacity: reduceMotion ? 1 : 0.14 })
-  visionVideo?.play().catch(() => {})
+
+  /* Cover until collage is armed — never let t=0 of the film paint first. */
+  if (visionVideoWrap) {
+    gsap.set(visionVideoWrap, { autoAlpha: 0 })
+  }
+
+  let disposeMedia: (() => void) | null = null
+  let cancelled = false
 
   if (visionVideoWrap) {
-    revealVideoWrap(visionVideoWrap, vision, reduceMotion)
+    void armVisionMedia(visionVideoWrap, visionVideo, reduceMotion).then(
+      (dispose) => {
+        if (cancelled) {
+          dispose()
+          return
+        }
+        disposeMedia = dispose
+      },
+    )
+  } else {
+    visionVideo?.play().catch(() => {})
   }
 
   let scrollTrigger: ReturnType<typeof gsap.timeline>['scrollTrigger'] | null = null
@@ -116,6 +237,10 @@ export function initVision(options: InitVisionOptions = {}): () => void {
         clearProps:
           'position,top,left,width,height,maxWidth,maxHeight,inset,display,padding,margin,zIndex,borderRadius,x,y,opacity,transform,filter',
       })
+      /* Re-hide only if media never finished arming (teardown / leave-back). */
+      if (visionVideoWrap && !visionVideoWrap.classList.contains('is-ready')) {
+        gsap.set(visionVideoWrap, { autoAlpha: 0 })
+      }
     }
 
     const resetVisionScrubVisuals = () => {
@@ -260,6 +385,11 @@ export function initVision(options: InitVisionOptions = {}): () => void {
   }
 
   return () => {
+    cancelled = true
+    disposeMedia?.()
+    delete document.documentElement.dataset.visionMedia
+    visionVideoWrap?.classList.remove('is-ready')
+    visionVideo?.classList.remove('is-armed')
     scrollTrigger?.kill()
     gsap.killTweensOf([visionCopy, visionVideoWrap, videoBox, chars].filter(Boolean))
     gsap.set([visionCopy, visionVideoWrap, videoBox, chars].filter(Boolean), {

@@ -777,7 +777,7 @@ export function HomeAnimations() {
       if (press) {
         const pressHead = gsap.utils.toArray<Element>(
           press.querySelectorAll(
-            '.press-feed__head .section-head__eyebrow, .press-feed__title, .btn-ghost-dark',
+            '.press-feed__head .section-head__eyebrow, .press-feed__head .section-head__title, .btn-ghost-dark',
           ),
         )
         revealTitleLikeHero(pressHead, press, { start: 'top 86%' })

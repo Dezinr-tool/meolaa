@@ -230,21 +230,9 @@
   }
 }
 
-/* Press: split header needs full content measure. */
+/* Press: split header needs full content measure; type from .section-head__*. */
 .press-feed__head.section-head {
   max-width: 100%;
-}
-
-.press-feed__head .press-feed__title,
-.press-feed__head .section-head__title {
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: var(--section-head-title-size);
-  font-weight: var(--section-head-title-weight);
-  line-height: var(--section-head-title-lh);
-  letter-spacing: var(--section-head-title-tracking);
-  text-transform: uppercase;
-  color: var(--sh-title);
 }
 
 /* Loop header ink/accent owned by LoopSection.css (yellow eyebrow / ecru). */

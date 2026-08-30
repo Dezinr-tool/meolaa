@@ -34,6 +34,8 @@ npm run dev
 
 Opens at [http://127.0.0.1:5173](http://127.0.0.1:5173).
 
+**Keep it up:** leave that terminal running. Do **not** kill port 5173 if the server is already healthy (`curl -I http://127.0.0.1:5173` returns 200). Agents and scripts should not run `lsof -ti :5173 | xargs kill` just to “restart” — that is why the site keeps going down. `strictPort` is on, so a second `npm run dev` will fail if 5173 is already taken; that is expected, not a crash.
+
 | Script | What it does |
 |--------|----------------|
 | `npm run dev` | Dev server on **5173** (strict) |

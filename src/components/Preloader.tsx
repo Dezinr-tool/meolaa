@@ -13,7 +13,7 @@ import { MeolaaLogoMark } from './brand/MeolaaLogoMark'
 import './Preloader.css'
 
 /** Bump when shipping a new preloader so prior session skips don't hide it. */
-const SESSION_KEY = 'meolaa-preloader-v7'
+const SESSION_KEY = 'meolaa-preloader-v8'
 
 /** Tweak timing here (seconds, except *Ms fields). */
 export const PRELOADER_TIMING = {
@@ -46,9 +46,19 @@ export const PRELOADER_TIMING = {
 
 /** Above-fold / brand-critical assets worth tracking when present. */
 const CRITICAL_IMAGE_HINTS = [
-  '/assets/imgImage234.png',
+  '/assets/vision-collage.jpg',
   '/assets/pages/story-hero-portrait.jpg',
 ]
+
+/** Homepage opens on Vision (hero hidden) — wait for collage media when present. */
+function visionMediaReady(): boolean {
+  const wrap = document.querySelector('[data-vision-media], .vision__video-wrap')
+  if (!wrap) return true
+  return (
+    wrap.classList.contains('is-ready') ||
+    document.documentElement.dataset.visionMedia === 'ready'
+  )
+}
 
 function prefersReducedMotion() {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -146,8 +156,11 @@ function computeRawProgress(
   const imgs = imagesScore(images)
   const vid = videoScore()
 
-  // Document + fonts are always available; images/video soft-weight
-  return doc * 0.28 + fonts * 0.22 + imgs * 0.35 + vid * 0.15
+  const vision = visionMediaReady() ? 1 : 0.35
+
+  // Document + fonts are always available; images/video soft-weight.
+  // Vision collage readiness matters on the hero-less homepage.
+  return doc * 0.22 + fonts * 0.18 + imgs * 0.3 + vid * 0.12 + vision * 0.18
 }
 
 function formatPct(value01: number): string {
@@ -369,7 +382,8 @@ export function Preloader() {
       const assetsReady =
         fontsReady &&
         document.readyState !== 'loading' &&
-        (raw >= 0.88 || document.readyState === 'complete')
+        (raw >= 0.88 || document.readyState === 'complete') &&
+        visionMediaReady()
       const canFinish =
         (assetsReady && minMet && logoIntroDone) ||
         (forceComplete && logoIntroDone)
