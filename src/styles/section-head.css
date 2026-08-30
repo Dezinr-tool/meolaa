@@ -159,8 +159,8 @@
 
 /* ——— Section shells that reuse the header ——— */
 
-/* Metrics — ONE section (not two folds): shared section-head on Ecru +
-   full-bleed Ecru stats band as the same unit’s footer.
+/* Metrics — ONE section (not two folds): section-head on Ecru +
+   full-bleed Deep Ecru stats band as the same unit’s footer.
    Four absolute columns keep .metric:nth-child(n) for the stair reveal. */
 .metrics {
   --metrics-pad-x: clamp(24px, 4vw, 64px);
@@ -235,7 +235,8 @@
 .metrics__chart {
   position: relative;
   flex: 0 0 auto;
-  /* Section footer band — same unit as .metrics__head, not a second fold. */
+  /* Section footer band — Deep Ecru stair/stats only (head stays Ecru). */
+  background: var(--color-ecru-deep, #f0d5cc);
   height: clamp(200px, 32svh, 280px);
   min-height: clamp(200px, 32svh, 280px);
   /* Bars stay full-bleed despite the section's shared side padding. */
