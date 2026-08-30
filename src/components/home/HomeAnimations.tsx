@@ -416,33 +416,21 @@ export function HomeAnimations() {
       /* ——— The Loop: pin + path draw + camera zoom (Build → Run → Signal) ——— */
       initLoop()
 
-      /* ——— Lab: intro — title like hero; sub/desc via word stagger ——— */
+      /* ——— Lab: first card title like hero; sub/desc via word stagger ——— */
       if (lab) {
         const labTitleBits = gsap.utils.toArray<Element>(
           lab.querySelectorAll(
-            '.meola-lab__eyebrow, .meola-lab__mark, .meola-lab__headline',
+            '.meola-lab__card--intro .meola-lab__label, .meola-lab__mark, .meola-lab__headline',
           ),
         )
         revealTitleLikeHero(labTitleBits, lab, { start: 'top 88%' })
 
-        /* ——— Lab fades out as it hands over to Founding ———
-         * Deliberately NOT scrubbed: crossing the start point fires the tween
-         * and it plays out on its own clock, so the fade doesn't feel welded to
-         * the scrollbar (scrubbing made it read as "dragging" the opacity).
-         * Linear ease, so the dissolve is even end to end.
-         * Reverses on the way back up, matching revealOnEnter's convention.
-         *
-         * Targets the two column containers, NOT the section — .meola-lab's
-         * white ground has to stay put, or the fade would expose the black body
-         * between two sections that are white and Planet Blue.
-         *
-         * Pin travel lives in LabSection (~3.6vh); `bottom` is the pin-spacer
-         * end, so this fires on release into Founding — not mid-scrub. */
-        const labColumns = gsap.utils.toArray<Element>(
-          lab.querySelectorAll('.meola-lab__intro, .meola-lab__panels'),
-        )
-        if (labColumns.length && !reduceMotion) {
-          gsap.to(labColumns, {
+        /* Fade the stack as Lab hands to Founding. Section ecru ground stays
+         * so the dissolve does not flash the black body between Lab and
+         * Planet Blue Founding. `bottom` is after the last pin-spacer. */
+        const labStack = lab.querySelector('.meola-lab__stack')
+        if (labStack && !reduceMotion) {
+          gsap.to(labStack, {
             opacity: 0,
             duration: LAB_FADE_OUT,
             ease: 'none',

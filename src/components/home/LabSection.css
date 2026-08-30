@@ -1,70 +1,168 @@
-/* Brand Lab — two-way accordion panels (Tutorial 109 pattern).
-   Tokens: Joyous Yellow ground + Planet Blue ink (no white BG). */
+/* Brand Lab — Get Hyped expertise stack, Meolaa type + theme colors.
+   Scoped to .meola-lab so Loop / Vision / header stay untouched. */
 
 .meola-lab {
-  --meola-lab-ease: cubic-bezier(0.33, 1, 0.68, 1);
-  --meola-lab-dur: 0.7s;
-  --meola-lab-surface: var(--color-joyous-yellow, #fdf28c);
-  --meola-lab-panel: var(--color-joyous-yellow, #fdf28c);
+  --meola-lab-radius: 2.5em;
+  --meola-lab-pad: clamp(28px, 4vw, 64px);
+  --meola-lab-gap: 4em;
   --meola-lab-ink: var(--color-primary, #002f3a);
   --meola-lab-muted: color-mix(in srgb, var(--color-primary, #002f3a) 55%, transparent);
   --meola-lab-body: color-mix(in srgb, var(--color-primary, #002f3a) 72%, transparent);
-  --meola-lab-rule: color-mix(in srgb, var(--color-primary, #002f3a) 14%, transparent);
-  --meola-lab-strip-min: 4.25rem;
+  --meola-lab-card: var(--color-white, #ffffff);
+  --meola-lab-outline: var(--color-lilac-deep, #5656ad);
+  --meola-lab-num: color-mix(in srgb, var(--color-primary, #002f3a) 22%, transparent);
 
-  background: var(--meola-lab-panel);
-  color: var(--meola-lab-ink);
-  display: flex;
-  flex-direction: row;
-  align-items: stretch;
+  position: relative;
   width: 100%;
   max-width: none;
-  height: 100vh;
-  height: 100svh;
-  min-height: 100svh;
-  max-height: 100svh;
+  height: auto;
+  min-height: 0;
+  max-height: none;
   margin: 0;
   padding: 0;
-  padding-inline: 0;
   overflow: hidden;
   box-sizing: border-box;
+  background: var(--color-ecru, #f8ece4);
+  color: var(--meola-lab-ink);
 }
 
-/* ——— Left intro ——— */
-.meola-lab__intro {
-  flex: 0 0 clamp(380px, 36vw, 560px);
-  width: clamp(380px, 36vw, 560px);
-  background: var(--meola-lab-surface);
-  padding: 56px 28px 40px clamp(24px, 3vw, 48px);
+.meola-lab__stack {
+  width: 100%;
   display: flex;
-  flex-direction: column;
+  flex-flow: column;
+  position: relative;
+  overflow: hidden;
+  padding-top: var(--meola-lab-gap);
+  padding-bottom: var(--meola-lab-gap);
+}
+
+.meola-lab__slide {
+  /* Fixed height like Get Hyped — pin-spacers overflow so the next card
+     sits ~1vh below and slides over the pinned card during the pin. */
+  height: calc(100vh - var(--meola-lab-gap));
+  height: calc(100svh - var(--meola-lab-gap));
+  padding-top: var(--meola-lab-gap);
+  box-sizing: border-box;
+  overflow: visible;
+}
+
+.meola-lab__wrap {
+  perspective: 250vw;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.meola-lab__card {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--meola-lab-radius);
+  padding: var(--meola-lab-pad);
+  display: flex;
+  flex-flow: column;
+  justify-content: space-between;
+  overflow: hidden;
+  box-sizing: border-box;
+  background: var(--meola-lab-card);
   color: var(--meola-lab-ink);
+  transform-origin: 50% 10%;
+  transform-style: preserve-3d;
+  cursor: default;
+  outline: none;
+}
+
+.meola-lab__card:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--color-primary, #002f3a);
+}
+
+/* ——— Themes (01 lilac / 02 yellow / 03 planet blue / 04 green) ——— */
+
+.meola-lab__card--intro {
+  --meola-lab-card: var(--color-white, #ffffff);
+  --meola-lab-ink: var(--color-black, #000000);
+  --meola-lab-muted: var(--section-head-on-light-muted);
+  --meola-lab-body: var(--section-head-on-light-muted);
+  --meola-lab-outline: var(--color-joyous-yellow, #fdf28c);
+  --meola-lab-num: color-mix(in srgb, var(--color-primary, #002f3a) 18%, transparent);
+}
+
+.meola-lab__card--lilac {
+  --meola-lab-card: var(--color-lilac-deep, #5656ad);
+  --meola-lab-ink: var(--color-white, #ffffff);
+  --meola-lab-muted: color-mix(in srgb, var(--color-white, #ffffff) 72%, transparent);
+  --meola-lab-body: color-mix(in srgb, var(--color-white, #ffffff) 82%, transparent);
+  --meola-lab-outline: var(--color-white, #ffffff);
+  --meola-lab-num: color-mix(in srgb, var(--color-white, #ffffff) 28%, transparent);
+}
+
+.meola-lab__card--yellow {
+  --meola-lab-card: var(--color-joyous-yellow, #fdf28c);
+  --meola-lab-ink: var(--color-primary, #002f3a);
+  --meola-lab-muted: color-mix(in srgb, var(--color-primary, #002f3a) 55%, transparent);
+  --meola-lab-body: color-mix(in srgb, var(--color-primary, #002f3a) 72%, transparent);
+  --meola-lab-outline: var(--color-primary, #002f3a);
+  --meola-lab-num: color-mix(in srgb, var(--color-primary, #002f3a) 22%, transparent);
+}
+
+.meola-lab__card--blue {
+  --meola-lab-card: var(--color-planet-blue, #002f3a);
+  --meola-lab-ink: var(--color-white, #ffffff);
+  --meola-lab-muted: color-mix(in srgb, var(--color-white, #ffffff) 70%, transparent);
+  --meola-lab-body: color-mix(in srgb, var(--color-white, #ffffff) 82%, transparent);
+  --meola-lab-outline: var(--color-white, #ffffff);
+  --meola-lab-num: color-mix(in srgb, var(--color-white, #ffffff) 22%, transparent);
+}
+
+.meola-lab__card--green {
+  --meola-lab-card: var(--color-sustainable-green, #41857a);
+  --meola-lab-ink: var(--color-white, #ffffff);
+  --meola-lab-muted: color-mix(in srgb, var(--color-white, #ffffff) 72%, transparent);
+  --meola-lab-body: color-mix(in srgb, var(--color-white, #ffffff) 82%, transparent);
+  --meola-lab-outline: var(--color-white, #ffffff);
+  --meola-lab-num: color-mix(in srgb, var(--color-white, #ffffff) 26%, transparent);
+}
+
+/* ——— Card chrome ——— */
+
+.meola-lab__card-top {
   position: relative;
   z-index: 2;
-  box-sizing: border-box;
-  border-right: 1px solid var(--meola-lab-rule);
+  display: flex;
+  flex-flow: column;
+  align-items: flex-start;
+  gap: 1.25rem;
+  max-width: min(22ch, 100%);
 }
 
-.meola-lab__mark {
-  position: relative;
-  overflow: hidden;
-  width: min(100%, 7.5rem);
-  height: 220px;
-  /* Equal step from eyebrow above and toward the title stack below. */
-  margin: var(--section-head-eyebrow-title-gap, 24px) 0;
+/* 14px CAPS strip label — same token as the old collapsed rails. */
+.meola-lab__label {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.25em;
+  padding: 0.35em 0.85em;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--meola-lab-ink) 10%, transparent);
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: var(--fw-semibold, 600);
+  line-height: 1.1;
+  letter-spacing: var(--tracking-display, -0.02em);
+  text-transform: uppercase;
+  color: var(--meola-lab-ink);
 }
 
-.meola-lab__mark svg {
-  display: block;
-  width: auto;
-  height: 100%;
-  max-width: 100%;
-  opacity: 0.5;
-  fill: var(--color-primary, #002f3a);
+.meola-lab__card--intro .meola-lab__label {
+  background: color-mix(in srgb, var(--color-primary, #002f3a) 8%, transparent);
+  color: var(--section-head-accent, #41857a);
+  font-family: var(--font-mono);
+  font-size: var(--section-head-eyebrow-size);
+  font-weight: var(--section-head-eyebrow-weight);
+  letter-spacing: var(--section-head-eyebrow-tracking);
 }
 
 .meola-lab__headline {
-  /* Shared --section-head-title-size (tokens.css) — same as every section. */
+  margin: 0;
   max-width: none;
   text-wrap: wrap;
   color: var(--section-head-on-light-ink, #000) !important;
@@ -78,327 +176,175 @@
   opacity: 1;
 }
 
-.meola-lab__sub {
-  /* Title → sub = 12px */
-  margin: 0;
-  margin-top: var(--section-head-title-sub-gap, 12px);
-  max-width: min(var(--section-head-sub-max, 42ch), 100%);
-}
-
-.meola-lab__intro > .parallax-heading {
-  margin-top: auto;
-}
-
-/* ——— Accordion container (gap: 0, edge-to-edge) ——— */
-.meola-lab__panels {
-  display: flex;
-  flex: 1 1 auto;
-  min-width: 0;
-  min-height: 0;
-  align-items: stretch;
-  gap: 0;
-  column-gap: 0;
-  row-gap: 0;
-  background: transparent;
-  width: 100%;
-  margin: 0;
-  padding: 0;
-}
-
-.meola-lab__panel {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  flex-basis: 0;
-  flex-grow: 0.68;
-  flex-shrink: 1;
-  min-width: var(--meola-lab-strip-min);
-  margin: 0;
-  padding: 0;
-  border: 0;
-  border-right: 1px solid var(--meola-lab-rule);
-  background: var(--meola-lab-panel);
-  color: var(--meola-lab-ink);
-  cursor: default;
-  overflow: hidden;
-  outline: none;
-}
-
-.meola-lab__panel.is-active {
-  flex-grow: 4.1;
-  /* Slightly deeper yellow active strip — Planet Blue ink for contrast */
-  background: color-mix(in srgb, var(--color-joyous-yellow, #fdf28c) 88%, var(--color-primary, #002f3a));
-  color: var(--color-primary, #002f3a);
-  --meola-lab-ink: var(--color-primary, #002f3a);
-  --meola-lab-muted: color-mix(in srgb, var(--color-primary, #002f3a) 55%, transparent);
-  --meola-lab-body: color-mix(in srgb, var(--color-primary, #002f3a) 72%, transparent);
-}
-
-/* Click remains for a11y jump-to-step; scroll is primary activation. */
-.meola-lab--pinned .meola-lab__panel,
-.meola-lab--snap .meola-lab__panel {
-  cursor: pointer;
-}
-
-.meola-lab--pinned .meola-lab__panel.is-active,
-.meola-lab--snap .meola-lab__panel.is-active {
-  cursor: default;
-}
-
-.meola-lab__panel:last-child {
-  border-right: 0;
-}
-
-.meola-lab__panel:focus-visible {
-  box-shadow: inset 0 0 0 2px var(--color-primary, #002f3a);
-}
-
-/* Hover tint de-emphasized — scroll drives activation, not pointer. */
-.meola-lab__panel:not(.is-active):focus-visible {
-  background: color-mix(in srgb, var(--color-primary, #002f3a) 6%, var(--meola-lab-panel));
-}
-
-/* ——— Open content (slides horizontally via GSAP) ——— */
-.meola-lab__content {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  padding: 56px 28px 36px;
-  box-sizing: border-box;
-  opacity: 0;
-  visibility: hidden;
-  will-change: transform, opacity;
-}
-
-.meola-lab__panel.is-active .meola-lab__content {
-  opacity: 1;
-  visibility: visible;
-}
-
-.meola-lab__num {
-  margin: 0 0 10px;
-  font-family: var(--font-mono);
-  font-size: var(--text-eyebrow, 12px);
-  font-weight: var(--fw-semibold, 600);
-  letter-spacing: 0.18em;
-  line-height: 1.2;
-  text-transform: uppercase;
-  color: var(--meola-lab-muted);
-}
-
 .meola-lab__title {
   margin: 0;
   font-family: var(--font-display);
-  font-size: clamp(1.35rem, 2vw, 1.85rem);
-  font-weight: var(--fw-semibold, 600);
-  line-height: var(--lh-tight, 1.08);
-  letter-spacing: var(--tracking-display, -0.03em);
+  font-size: var(--section-head-title-size);
+  font-weight: var(--section-head-title-weight);
+  line-height: var(--section-head-title-lh);
+  letter-spacing: var(--section-head-title-tracking);
+  text-transform: uppercase;
   color: var(--meola-lab-ink);
-  max-width: 14ch;
+  text-wrap: balance;
 }
 
-.meola-lab__bottom {
-  margin-top: auto;
+.meola-lab__num {
+  position: absolute;
+  inset: 0 0 auto auto;
   display: flex;
-  flex-direction: column;
-  gap: 18px;
-  min-height: 0;
-  flex: 1 1 auto;
-  padding-top: 28px;
+  pointer-events: none;
+  font-family: var(--font-display);
+  font-size: var(--section-head-title-size);
+  font-weight: var(--section-head-title-weight);
+  line-height: 0.95;
+  letter-spacing: var(--section-head-title-tracking);
+  text-transform: uppercase;
+  color: var(--meola-lab-num);
 }
 
-.meola-lab__media {
-  position: relative;
-  flex: 1 1 auto;
-  width: 92%;
-  max-width: 92%;
-  min-height: 140px;
-  overflow: hidden;
-}
-
-.meola-lab__img {
-  width: 100%;
-  height: 100%;
-  max-width: none;
-  object-fit: cover;
-  object-position: center;
-}
-
-.meola-lab__desc {
+.meola-lab__card-bottom {
   position: relative;
   z-index: 2;
+  display: flex;
+  flex-flow: column;
+  align-items: flex-start;
+  max-width: min(36em, 52%);
+}
+
+.meola-lab__sub,
+.meola-lab__desc {
   margin: 0;
   font-family: var(--font-sans);
-  font-size: var(--text-sm, 0.875rem);
+  font-size: 16px;
   font-weight: var(--fw-regular, 400);
   line-height: 1.55;
   color: var(--meola-lab-body);
-  max-width: 36ch;
+  max-width: min(var(--section-head-sub-max, 42ch), 100%);
+  text-wrap: balance;
+}
+
+.meola-lab__sub {
+  font-size: var(--section-head-sub-size);
+  font-weight: var(--section-head-sub-weight);
+  line-height: var(--section-head-sub-lh);
+}
+
+/* ——— Intro E mark ——— */
+
+.meola-lab__mark {
+  position: absolute;
+  inset: auto var(--meola-lab-pad) 42% auto;
+  width: min(7.5rem, 18vw);
+  height: 220px;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.meola-lab__mark svg {
+  display: block;
+  width: auto;
+  height: 100%;
+  max-width: 100%;
+  fill: var(--color-joyous-yellow, #fdf28c);
+}
+
+/* ——— Polaroid media (capability cards) ——— */
+
+.meola-lab__media {
+  position: absolute;
+  inset: auto var(--meola-lab-pad) var(--meola-lab-pad) auto;
+  width: min(18em, 38vw);
+  padding: 8px;
+  border-radius: 1.15em;
+  background: var(--meola-lab-outline);
+  transform: rotate(2.5deg);
+  transform-origin: center center;
+  z-index: 1;
   box-sizing: border-box;
 }
 
-/* ——— Collapsed strip label (~90° rotated) ——— */
-.meola-lab__small-title {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-  opacity: 1;
-  will-change: opacity;
+.meola-lab__img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 0.85em;
 }
 
-.meola-lab__panel.is-active .meola-lab__small-title {
-  opacity: 0;
-}
+/* ——— Breakpoints ——— */
 
-.meola-lab__small-title > p {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 0.65rem;
-  margin: 0;
-  writing-mode: vertical-rl;
-  transform: rotate(180deg);
-  white-space: nowrap;
-  font-family: var(--font-display);
-  font-size: clamp(0.95rem, 1.15vw, 1.15rem);
-  font-weight: var(--fw-semibold, 600);
-  line-height: 1.1;
-  letter-spacing: var(--tracking-display, -0.02em);
-  color: var(--meola-lab-ink);
-}
-
-.meola-lab__small-num {
-  font-family: var(--font-mono);
-  font-size: 0.7em;
-  font-weight: var(--fw-semibold, 600);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--meola-lab-muted);
-}
-
-.meola-lab__small-label {
-  text-transform: none;
-}
-
-/* ——— Mobile: vertical stack + scroll-snap ——— */
-@media (max-width: 900px) {
-  .meola-lab {
-    flex-direction: column;
-    height: auto;
-    max-height: none;
-    min-height: 100svh;
-    overflow: visible;
-    --meola-lab-strip-min: 0;
+@media (max-width: 991px) {
+  .meola-lab__slide {
+    height: calc(100svh - var(--meola-lab-gap));
   }
 
-  .meola-lab__intro {
-    flex: 0 0 auto;
-    width: 100%;
-    padding: 40px var(--pad-x, 24px) 28px;
-    border-right: 0;
-    border-bottom: 1px solid var(--meola-lab-rule);
-  }
-
-  .meola-lab__mark {
-    width: min(100%, 5rem);
-    height: 120px;
-    margin: 20px 0;
-  }
-
-  .meola-lab__mark svg {
-    height: 100%;
-  }
-
-  .meola-lab__headline {
-    margin-top: 12px;
-  }
-
-  .meola-lab__panels {
-    flex-direction: column;
-    gap: 0;
-  }
-
-  /* Window-level snap: align expanded panels as they enter the viewport. */
-  .meola-lab--snap .meola-lab__panel {
-    scroll-snap-align: start;
-    scroll-margin-top: 12px;
-  }
-
-  .meola-lab__panel {
-    flex: 0 0 auto !important;
-    flex-grow: 0 !important;
-    width: 100%;
-    min-width: 0;
-    min-height: 3.5rem;
-    height: auto;
-    border-right: 0;
-    border-bottom: 1px solid var(--meola-lab-rule);
-    transition: min-height var(--meola-lab-dur) var(--meola-lab-ease);
-  }
-
-  .meola-lab__panel:last-child {
-    border-bottom: 0;
-  }
-
-  .meola-lab__panel.is-active {
-    flex: 1 1 auto !important;
-    min-height: min(72svh, 560px);
-  }
-
-  .meola-lab__panel:not(.is-active) {
-    min-height: 3.5rem;
-  }
-
-  /* On stack, labels read horizontally in the strip. */
-  .meola-lab__small-title {
-    justify-content: flex-start;
-    padding-inline: var(--pad-x, 24px);
-  }
-
-  .meola-lab__small-title > p {
-    writing-mode: horizontal-tb;
-    transform: none;
-    flex-direction: row;
-    gap: 0.75rem;
-    font-size: 1.15rem;
-  }
-
-  .meola-lab__content {
-    padding: 28px var(--pad-x, 24px) 28px;
-  }
-
-  .meola-lab__title {
-    font-size: clamp(1.35rem, 5vw, 1.75rem);
-    max-width: none;
-  }
-
-  .meola-lab__bottom {
-    padding-top: 20px;
-    gap: 14px;
+  .meola-lab__card {
+    padding: clamp(22px, 4vw, 48px);
   }
 
   .meola-lab__media {
-    min-height: 160px;
+    width: min(16em, 42vw);
+    padding: 6px;
+    bottom: clamp(22px, 4vw, 48px);
+    right: clamp(22px, 4vw, 48px);
+  }
+}
+
+@media (max-width: 720px) {
+  .meola-lab {
+    --meola-lab-radius: 1.5em;
+    --meola-lab-gap: 3em;
+  }
+
+  .meola-lab__wrap {
+    perspective: 180vw;
+  }
+
+  .meola-lab__card-top {
+    max-width: 100%;
+    gap: 1rem;
+  }
+
+  .meola-lab__title {
+    font-size: clamp(1.75rem, 8vw, 2.5rem);
+  }
+
+  .meola-lab__num {
+    font-size: clamp(1.75rem, 8vw, 2.5rem);
+  }
+
+  .meola-lab__card-bottom {
+    max-width: 100%;
+  }
+
+  .meola-lab__mark {
+    width: min(5rem, 28vw);
+    height: 120px;
+    inset: auto auto 38% var(--meola-lab-pad);
+  }
+
+  .meola-lab__media {
+    position: static;
+    width: 12em;
+    margin-top: 0.5rem;
+    margin-bottom: 0.25rem;
+    transform: rotate(-2deg);
+    transform-origin: 0 0;
+    z-index: 0;
+  }
+
+  .meola-lab__img {
+    aspect-ratio: 3 / 4;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .meola-lab__content,
-  .meola-lab__small-title {
-    will-change: auto;
-  }
-
-  .meola-lab__panel {
-    transition: none !important;
-  }
-
-  .meola-lab--static .meola-lab__panels {
-    scroll-snap-type: none;
+  .meola-lab--static .meola-lab__card {
+    transform: none !important;
+    opacity: 1 !important;
+    visibility: visible !important;
   }
 }
