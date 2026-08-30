@@ -8,8 +8,8 @@
   --lab-bg: var(--color-joyous-yellow, #fdf28c);
 
   /* Type scale — sitewide hierarchy */
-  --text-display: 4.5rem;                              /* 72 · all titles */
-  --text-display-sm: 4.5rem;                           /* 72 · all titles */
+  --text-display: 3.5rem;                              /* 56 · all titles */
+  --text-display-sm: 3.5rem;                           /* 56 · all titles */
   --text-h2: clamp(1.75rem, 3.6vw, 2.75rem);          /* 28–44 · section */
   --text-h2-lg: clamp(2rem, 4.2vw, 3.5rem);           /* 32–56 · large section */
   --text-h3: clamp(1.25rem, 2.2vw, 1.75rem);          /* 20–28 · card / stage */

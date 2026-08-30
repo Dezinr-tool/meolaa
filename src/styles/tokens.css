@@ -57,8 +57,8 @@
   --color-border-dark: rgba(0, 47, 58, 0.28);
 
   /* ——— Type scale ——— */
-  --text-display: 4.5rem; /* 72 — all titles */
-  --text-display-sm: 4.5rem; /* 72 — same as titles */
+  --text-display: 3.5rem; /* 56 — all titles */
+  --text-display-sm: 3.5rem; /* 56 — same as titles */
   --text-h2: clamp(1.75rem, 3.6vw, 2.75rem); /* 28–44 · section */
   --text-h2-lg: clamp(2rem, 4.2vw, 3.5rem); /* 32–56 · large section */
   --text-h3: clamp(1.25rem, 2.2vw, 1.75rem); /* 20–28 · card / stage */
@@ -100,7 +100,7 @@
   --section-head-eyebrow-weight: var(--fw-semibold);
   --section-head-eyebrow-tracking: var(--tracking-eyebrow);
   /* Brand Lab headline scale — one size for every homepage section title. */
-  --section-head-title-size: 4.5rem; /* 72 — every section / display title */
+  --section-head-title-size: 3.5rem; /* 56 — every section / display title */
   /* Semibold — every section / display title. */
   --section-head-title-weight: var(--fw-semibold);
   /* Slightly open tracking for ALL-CAPS section titles. */

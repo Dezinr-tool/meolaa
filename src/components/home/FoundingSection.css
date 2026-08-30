@@ -9,6 +9,9 @@
   --founding-cta: var(--color-joyous-yellow, #fdf28c);
   --founding-ink: var(--color-planet-blue, #002f3a);
   --founding-white: var(--color-white, #fff);
+  /* Generous Lilac ground. Uses the brand token rather than the raw hex so it
+     tracks the palette; the swatch (#5556ad) is this token. */
+  --founding-ground: var(--color-lilac-deep, #5656ad);
   --founding-pad-x: clamp(24px, 2.8vw, 40px);
   --founding-pad-y: clamp(24px, 4vh, 40px);
 
@@ -20,8 +23,10 @@
   height: 100svh;
   max-height: 100svh;
   overflow: hidden;
+  /* Reference layout: near-black ground, light type. Was white-on-white with a
+     cutout photo stage. */
   color: var(--founding-white);
-  background: var(--founding-white);
+  background: var(--founding-ground);
   display: flex;
   flex-direction: column;
 }
@@ -477,5 +482,112 @@
   .founding__deal-word {
     cursor: inherit;
     text-decoration: none;
+  }
+}
+
+/* ——————————————————————————————————————————————————————————————
+   Reference layout (madewithgsap 036): eyebrow + one big centred statement,
+   photos dealing over the type. Supersedes the old cutout-photo stage; those
+   rules stay above but their markup is gone.
+   —————————————————————————————————————————————————————————————— */
+
+.founding__bg {
+  background: var(--founding-ground) !important;
+}
+
+.founding__stage {
+  position: relative;
+  z-index: 4; /* above the card layer's ground, below nothing else */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(18px, 3vh, 34px);
+  height: 100%;
+  padding: clamp(48px, 8vh, 96px) clamp(20px, 5vw, 88px);
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.founding .founding__eyebrow {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--text-sm, 0.875rem);
+  font-weight: var(--fw-regular, 400);
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--founding-white);
+  opacity: 0.92;
+}
+
+/* The statement. Large, tight, centred — the reference sets it well above the
+   shared section-title scale, so this deliberately does NOT use
+   --section-head-title-size. */
+.founding .founding__statement {
+  margin: 0;
+  max-width: 22ch;
+  font-family: var(--font-display);
+  font-size: clamp(1.9rem, 4.6vw, 4.15rem);
+  font-weight: var(--fw-semibold, 600);
+  line-height: 1.06;
+  /* Caps need looser tracking than lowercase display type — the -0.028em that
+     suited mixed case reads as collision once everything is uppercase. */
+  letter-spacing: -0.012em;
+  color: var(--founding-white);
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+/* Underlined key words — the reference's only emphasis. Underline sits clear of
+   the descenders so it reads as a rule, not a strikethrough. */
+.founding__mark-word {
+  /* These are the hover triggers, so they take a pointer. */
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-thickness: 0.045em;
+  text-underline-offset: 0.14em;
+  text-decoration-color: currentColor;
+}
+
+/* Cards sit between the ground and the type: the reference has photos crossing
+   *over* the words, so this layer is above the stage's background but the
+   statement still reads through where they don't overlap. */
+.founding__medias {
+  z-index: 5;
+}
+
+.founding__card {
+  /* Reference proportions — portrait, roughly a fifth of the fold's width. */
+  width: clamp(150px, 15vw, 230px);
+  aspect-ratio: 3 / 4;
+  border-radius: 2px;
+}
+
+.founding .founding__actions {
+  margin-top: clamp(8px, 2vh, 20px);
+}
+
+/* CTA on the dark ground. */
+.founding .founding__cta {
+  background: var(--founding-cta);
+  color: var(--color-primary, #002f3a);
+  border-color: var(--founding-cta);
+}
+
+@media (max-width: 900px) {
+  .founding .founding__statement {
+    max-width: 100%;
+    font-size: clamp(1.6rem, 7vw, 2.4rem);
+  }
+
+  .founding__card {
+    width: clamp(120px, 34vw, 170px);
+  }
+}
+
+/* No hover, no deal — drop the affordance so it doesn't imply one. */
+@media (hover: none), (pointer: coarse) {
+  .founding__mark-word {
+    cursor: inherit;
   }
 }

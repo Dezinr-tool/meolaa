@@ -1,9 +1,5 @@
 import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import {
-  MeolaaLogoMark,
-  MEOLAA_MARK_VIEWBOX_TIGHT,
-} from '../brand/MeolaaLogoMark'
 import { gsap, ScrollTrigger } from '../../lib/motion'
 import './FoundingSection.css'
 
@@ -13,14 +9,15 @@ import './FoundingSection.css'
  *  pinned; this one wasn't, which is why it read too fast. */
 const FOUNDING_HOLD_VH = 0.9
 
-/* ——— "Deal the cards" hover effect (madewithgsap tutorial 036) ———
- * Hovering a marked word in the lede flicks brand images out around the
- * cursor, cycling fast and landing at random angles like cards being dealt.
- * The tutorial's own source is members-only, so this is a from-scratch build
- * to the described behaviour: rapid cycling, random placement, stacking. */
+/* ——— Auto-playing image deal (madewithgsap tutorial 036 layout) ———
+ * Reference look: near-black ground, small eyebrow, one large centred
+ * statement with certain words underlined, and photos flicking over the type.
+ * The tutorial fires on word hover; here it plays on its own, so the section
+ * performs without the reader having to find the trigger words. */
 
-/** Cycled in order; index wraps, so the set just needs to be long enough that
- *  you rarely see the same card twice in one pass. */
+/* Pool size matters: a card is recycled once its turn comes round again, so the
+   pool must be larger than the number on screen at once (see below) or a card
+   still fading would get yanked back to a new position. */
 const DEAL_IMAGES = [
   '/assets/portfolio-hira.jpg',
   '/assets/portfolio-fragrance-01.jpg',
@@ -28,26 +25,28 @@ const DEAL_IMAGES = [
   '/assets/portfolio-kitchen-01.jpg',
   '/assets/portfolio-fragrance-02.jpg',
   '/assets/portfolio-kitchen-02.jpg',
+  '/assets/founding-product-studio.jpg',
+  '/assets/founding-ops-fulfillment.jpg',
+  '/assets/founding-team-office.jpg',
+  '/assets/founding-hero.jpg',
 ] as const
 
-/** Words in the lede that deal cards. Matched on normalised text because the
- *  paragraph is re-split into per-word spans at runtime. */
-const DEAL_WORDS = new Set(['demand', 'brands'])
+/* Cards on screen at once ≈ lifetime / interval, where lifetime is
+   HOLD + the 0.4s fade. At 150ms / 0.6s that's ~6-7 of a 10-card pool — a
+   visible stack while the cursor moves, with headroom before recycling bites. */
 
-/** Minimum gap between cards (ms). Lower = denser trail. */
-const DEAL_INTERVAL_MS = 95
+/** Minimum gap between cards (ms) while the cursor is over a word. */
+const DEAL_INTERVAL_MS = 150
 /** Cursor travel required before the next card (px) — stops a resting pointer
  *  from spraying cards on its own micro-jitter. */
-const DEAL_MIN_TRAVEL = 26
-/** How long a card sits before it fades. */
-const DEAL_HOLD = 0.5
+const DEAL_MIN_TRAVEL = 20
+/** How long each card stays at full opacity before it fades. */
+const DEAL_HOLD = 0.6
 
 /**
- * About / founding — white section ground, full-bleed team cutout as hero stage,
- * large primary Meolaa wordmark watermark behind subjects (shows through PNG alpha),
- * bottom row mirrors hero (title + sub | lede + CTA).
- *
- * Layering: bg → mark (Planet Blue) → cutout photo → veil → copy
+ * About / founding — near-black ground, small eyebrow, one large centred
+ * statement with the key words underlined, and brand photos dealing themselves
+ * over the type on a loop. Layout follows madewithgsap tutorial 036.
  */
 export function FoundingSection() {
   const sectionRef = useRef<HTMLElement>(null)
@@ -87,48 +86,50 @@ export function FoundingSection() {
     }
   }, [])
 
-  /* ——— Deal-the-cards on word hover ———
-   * Pointer moving across a marked word flicks the next brand image out at the
-   * cursor with a random angle and offset, then fades it. Cards come from a
-   * fixed recycled pool, so the DOM count stays constant however fast you move.
+  /* ——— Deal the cards on word hover (tutorial 036) ———
+   * Moving the cursor across an underlined word flicks the next image out at
+   * the pointer with a random angle and offset, then fades it. Cards come from
+   * a fixed recycled pool, so several stack up while you sweep and the DOM
+   * count stays constant however fast you move.
    *
-   * The trigger words are found at runtime rather than written in JSX:
-   * HomeAnimations' word-stagger calls splitTextWords() on .founding__lede,
-   * which clears the paragraph and rebuilds it as one span per word. Anything
-   * React put inside is destroyed by that. So we tag the *generated* spans, and
-   * re-tag via MutationObserver whenever the paragraph is rebuilt.
+   * Listeners bind directly to the words here — unlike .founding__lede, this
+   * statement is not in HomeAnimations' WORD_STAGGER_SELECTOR, so nothing
+   * rebuilds its innerHTML out from under them.
    *
-   * Gated to fine-pointer devices: on touch there is no hover, and firing this
-   * on tap would drop a card over the CTA the user is aiming for. */
+   * Gated to fine-pointer devices: on touch there is no hover, and firing on
+   * tap would drop cards over the CTA the user is aiming for. */
   useEffect(() => {
     const section = sectionRef.current
     const medias = mediasRef.current
     if (!section || !medias) return
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return
 
-    const lede = section.querySelector<HTMLElement>('.founding__lede')
     const cards = Array.from(
       medias.querySelectorAll<HTMLImageElement>('.founding__card'),
     )
-    if (!lede || !cards.length) return
+    if (!cards.length) return
 
-    const normalise = (t: string) => t.trim().toLowerCase().replace(/[^a-z]/g, '')
-
-    /* Mark whichever spans currently hold the trigger words. Idempotent, so the
-       observer can call it on every rebuild. */
-    const tagWords = () => {
-      lede.querySelectorAll('span').forEach((span) => {
-        if (span.children.length) return
-        span.classList.toggle(
-          'founding__deal-word',
-          DEAL_WORDS.has(normalise(span.textContent ?? '')),
-        )
-      })
+    /* Reduced motion: one still card, so the layout doesn't read as a missing
+       image, and no hover behaviour at all. */
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const first = cards[0]
+      if (first) {
+        gsap.set(first, {
+          xPercent: -50,
+          yPercent: -50,
+          x: medias.clientWidth * 0.3,
+          y: medias.clientHeight * 0.55,
+          rotate: -6,
+          autoAlpha: 1,
+        })
+      }
+      return
     }
-    tagWords()
-    const observer = new MutationObserver(tagWords)
-    observer.observe(lede, { childList: true, subtree: true })
+    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return
+
+    const words = Array.from(
+      section.querySelectorAll<HTMLElement>('.founding__mark-word'),
+    )
+    if (!words.length) return
 
     let next = 0
     let top = 0
@@ -158,46 +159,41 @@ export function FoundingSection() {
 
       gsap.killTweensOf(card)
       gsap.set(card, {
-        x: clientX - box.left + gsap.utils.random(-38, 38),
-        y: clientY - box.top + gsap.utils.random(-30, 30),
-        rotate: gsap.utils.random(-20, 20),
+        x: clientX - box.left + gsap.utils.random(-70, 70),
+        y: clientY - box.top + gsap.utils.random(-60, 60),
+        rotate: gsap.utils.random(-18, 18),
         xPercent: -50,
         yPercent: -50,
         zIndex: top,
-        scale: 0.82,
+        scale: 0.84,
         autoAlpha: 1,
       })
-      gsap.to(card, { scale: 1, duration: 0.42, ease: 'power3.out' })
+      gsap.to(card, { scale: 1, duration: 0.45, ease: 'power3.out' })
       gsap.to(card, {
         autoAlpha: 0,
-        duration: 0.45,
+        duration: 0.4,
         delay: DEAL_HOLD,
         ease: 'power2.out',
       })
     }
 
-    /* Delegated: the spans are replaced wholesale by the splitter, so listeners
-       bound to them individually would die with them. The <p> survives. */
-    const hitWord = (e: PointerEvent) =>
-      (e.target as HTMLElement | null)?.closest?.('.founding__deal-word') ?? null
-
-    const onMove = (e: PointerEvent) => {
-      if (!hitWord(e)) return
-      deal(e.clientX, e.clientY)
-    }
+    const onMove = (e: PointerEvent) => deal(e.clientX, e.clientY)
     /* Reset travel gating on entry so the first move over a word always deals,
        rather than waiting out the distance from the previous one. */
-    const onOver = (e: PointerEvent) => {
-      if (hitWord(e)) primed = false
+    const onEnter = () => {
+      primed = false
     }
 
-    lede.addEventListener('pointermove', onMove)
-    lede.addEventListener('pointerover', onOver)
+    words.forEach((w) => {
+      w.addEventListener('pointerenter', onEnter)
+      w.addEventListener('pointermove', onMove)
+    })
 
     return () => {
-      observer.disconnect()
-      lede.removeEventListener('pointermove', onMove)
-      lede.removeEventListener('pointerover', onOver)
+      words.forEach((w) => {
+        w.removeEventListener('pointerenter', onEnter)
+        w.removeEventListener('pointermove', onMove)
+      })
       gsap.killTweensOf(cards)
       gsap.set(cards, { autoAlpha: 0 })
     }
@@ -213,67 +209,35 @@ export function FoundingSection() {
     >
       <div className="founding__bg" aria-hidden="true" />
 
-      <div className="founding__inner" data-founding-reveal>
-        <figure className="founding__photo" data-founding-photo>
-          <div className="founding__frame">
-            {/* Watermark under cutout so it reads on the wall behind people */}
-            <div className="founding__mark" aria-hidden="true">
-              <MeolaaLogoMark
-                className="founding__mark-svg"
-                viewBox={MEOLAA_MARK_VIEWBOX_TIGHT}
-                role="presentation"
-                aria-hidden="true"
-              />
-            </div>
-            <img
-              className="founding__cutout"
-              src="/assets/founding-hero.png"
-              alt="Meolaa team collaborating in a meeting"
-              draggable={false}
-            />
-            <span className="founding__veil" aria-hidden="true" />
-          </div>
-        </figure>
+      <div className="founding__stage" data-founding-reveal>
+        <p className="founding__eyebrow">Founding</p>
 
-        <div className="founding__bottom">
-          <div className="founding__lead">
-            <p className="founding__eyebrow">Founding</p>
-            <h2 id="founding-title" className="founding__title">
-              <span className="founding__title-line">
-                <span className="founding__title-inner">
-                  It started with a question
-                </span>
-              </span>
-              <span className="founding__title-line">
-                <span className="founding__title-inner">
-                  no one else was asking.
-                </span>
-              </span>
-            </h2>
-            <p className="founding__sub">
-              How one question became an operating system for consumer brands.
-            </p>
-          </div>
+        {/* One flowing statement, reference-style. Underlined words are set in
+            markup here (not tagged at runtime) because this paragraph is not in
+            HomeAnimations' WORD_STAGGER_SELECTOR — .founding__statement is a new
+            class, so nothing rebuilds its innerHTML. */}
+        {/* Keeps .founding__title so HomeAnimations' existing title reveal still
+            finds it — renaming the class silently dropped that animation.
+            Type comes from .founding__statement, which is later in the
+            stylesheet and so wins at equal specificity. */}
+        <h2 id="founding-title" className="founding__title founding__statement">
+          It started with a question no one else was{' '}
+          <span className="founding__mark-word">asking</span>. We turn emerging{' '}
+          <span className="founding__mark-word">demand</span> into a system that
+          launches <span className="founding__mark-word">brands</span> faster
+          than traditional FMCG can{' '}
+          <span className="founding__mark-word">move</span>.
+        </h2>
 
-          <div className="founding__panel">
-            {/* Trigger words are tagged at runtime, not here: HomeAnimations'
-                word-stagger rebuilds this paragraph's innerHTML, so any span
-                written in JSX is destroyed before it can be hovered. */}
-            <p className="founding__lede">
-              We turn emerging demand into a system that launches brands faster
-              than traditional FMCG can move.
-            </p>
-            <div className="founding__actions">
-              <Link className="hero__btn founding__cta" to="/story">
-                Read Our Story →
-              </Link>
-            </div>
-          </div>
+        <div className="founding__actions">
+          <Link className="hero__btn founding__cta" to="/story">
+            Read Our Story →
+          </Link>
         </div>
       </div>
 
-      {/* Card pool for the hover deal. Decorative, so aria-hidden and no alt;
-          a fixed pool that gets recycled rather than nodes created per move. */}
+      {/* Card pool for the auto deal. Decorative, so aria-hidden and no alt;
+          a fixed pool that gets recycled rather than nodes created per tick. */}
       <div className="founding__medias" ref={mediasRef} aria-hidden="true">
         {DEAL_IMAGES.map((src) => (
           <img

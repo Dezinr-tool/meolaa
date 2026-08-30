@@ -347,7 +347,7 @@
 .app--inner .pillars__title {
   color: color-mix(in srgb, var(--color-ecru) 92%, transparent);
   font-family: var(--font-display);
-  font-size: var(--section-head-title-size, 4.5rem);
+  font-size: var(--section-head-title-size, 3.5rem);
   font-weight: var(--section-head-title-weight, var(--fw-semibold));
   letter-spacing: 0.06em;
   text-align: center;
