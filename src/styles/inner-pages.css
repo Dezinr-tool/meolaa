@@ -29,8 +29,31 @@
 .app--inner .site-nav.site-nav--inner.site-nav--over-dark.is-scrolled .site-nav__logo,
 .app--inner .site-nav.site-nav--inner.site-nav--over-dark.is-scrolled .site-nav__links a {
   color: var(--color-black, #000);
-  opacity: 1 !important;
   text-shadow: none;
+}
+
+.app--inner .site-nav.site-nav--inner:not(.site-nav--over-dark) .site-nav__logo,
+.app--inner .site-nav.site-nav--inner.site-nav--over-dark.is-scrolled .site-nav__logo {
+  opacity: 1;
+}
+
+.app--inner .site-nav.site-nav--inner:not(.site-nav--over-dark) .site-nav__links a:hover,
+.app--inner .site-nav.site-nav--inner:not(.site-nav--over-dark) .site-nav__links a:focus-visible,
+.app--inner .site-nav.site-nav--inner:not(.site-nav--over-dark) .site-nav__links a.is-active,
+.app--inner .site-nav.site-nav--inner.site-nav--over-dark.is-scrolled .site-nav__links a:hover,
+.app--inner .site-nav.site-nav--inner.site-nav--over-dark.is-scrolled .site-nav__links a:focus-visible,
+.app--inner .site-nav.site-nav--inner.site-nav--over-dark.is-scrolled .site-nav__links a.is-active {
+  color: var(--color-planet-blue, #002f3a);
+  opacity: 1;
+  text-decoration: none;
+}
+
+.app--inner .site-nav.site-nav--inner.site-nav--over-dark:not(.is-scrolled) .site-nav__links a:hover,
+.app--inner .site-nav.site-nav--inner.site-nav--over-dark:not(.is-scrolled) .site-nav__links a:focus-visible,
+.app--inner .site-nav.site-nav--inner.site-nav--over-dark:not(.is-scrolled) .site-nav__links a.is-active {
+  color: var(--color-joyous-yellow, #fdf28c);
+  opacity: 1;
+  text-decoration: none;
 }
 
 .app--inner .site-nav.site-nav--inner.site-nav--over-dark:not(.is-scrolled) .site-nav__logo,

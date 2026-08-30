@@ -19,9 +19,6 @@ import {
 import { SiteFooter } from '../components/home/SiteFooter'
 import '../App.css'
 
-/** Scroll arrow motif — sits above the hero prism, travels into Vision on scroll. */
-const SHOW_SCROLL_ARROW = true
-
 export function HomePage() {
   return (
     <>
@@ -29,13 +26,6 @@ export function HomePage() {
       <Preloader />
       <div className="app app--home">
         <SiteNav variant="home" />
-        {SHOW_SCROLL_ARROW ? (
-          <div id="arrow" className="arrow" aria-hidden="true">
-            <div className="arrow__float">
-              <div className="arrow__shape" />
-            </div>
-          </div>
-        ) : null}
         <HomeAnimations />
         <main>
           <HeroSection />

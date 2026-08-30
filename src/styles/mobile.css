@@ -46,7 +46,7 @@ html.is-nav-menu-open body {
 
   .site-nav {
     padding-inline: 16px;
-    min-height: 64px;
+    min-height: var(--nav-height, 80px);
     height: auto;
   }
 
@@ -156,17 +156,23 @@ html.is-nav-menu-open body {
     padding: 14px 4px;
     font-family: var(--font-display);
     font-size: 1.25rem;
-    font-weight: var(--fw-medium);
-    letter-spacing: -0.01em;
+    font-weight: var(--fw-semibold, 600);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
     color: var(--color-ecru, #f8ece4);
     text-decoration: none;
     border-bottom: 1px solid rgba(248, 236, 228, 0.12);
-    opacity: 1 !important;
+    opacity: 0.7;
     text-shadow: none;
+    transition: opacity 0.2s ease, color 0.2s ease;
   }
 
+  .site-nav__drawer-nav a:hover,
+  .site-nav__drawer-nav a:focus-visible,
   .site-nav__drawer-nav a.is-active {
+    opacity: 1;
     color: var(--color-joyous-yellow, #fdf28c);
+    text-decoration: none;
   }
 
   .site-nav__backdrop {
@@ -320,6 +326,6 @@ html.is-nav-menu-open body {
   }
 
   .site-nav__links a {
-    font-size: 0.9375rem;
+    font-size: 14px;
   }
 }

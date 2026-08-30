@@ -247,12 +247,9 @@
   color: var(--sh-title);
 }
 
-/* Loop: Planet Blue ground — on-dark system (green eyebrow / white / muted). */
+/* Loop header ink/accent owned by LoopSection.css (yellow eyebrow / ecru). */
 .loop__header.section-head {
   padding-inline: clamp(20px, 4vw, 64px);
-  --sh-accent: var(--section-head-accent);
-  --sh-title: var(--section-head-on-dark-ink);
-  --sh-sub: var(--section-head-on-dark-muted);
 }
 
 /* Portfolio: white ground — shared tokens only. */

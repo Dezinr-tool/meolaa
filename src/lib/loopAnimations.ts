@@ -99,7 +99,7 @@ export function initLoop(options: InitLoopOptions = {}): () => void {
 
   const loopHeadBits = gsap.utils.toArray<Element>(
     loopSection.querySelectorAll(
-      '.loop__header .section-head__eyebrow, .loop__header .section-head__title',
+      '.loop__header .section-head__eyebrow, .loop__header .section-head__title, .loop__header .section-head__sub',
     ),
   )
   revealLoopHeader(loopHeadBits, loopSection)
@@ -107,6 +107,250 @@ export function initLoop(options: InitLoopOptions = {}): () => void {
   const reduceMotionLoop = prefersReducedMotion()
   let scrollTrigger: ST | null = null
   const cleanups: (() => void)[] = []
+
+  /*
+   * Circular orbit (Figma Untitled 0:3) — pin + scrub:
+   * yellow fill travels clockwise full loop BL → Run → Signal → BL;
+   * each pointer activates + copy + SVG connector draws as the tip arrives.
+   *
+   * Timeline (pin progress):
+   *   0        ghost only — yellow dash fully hidden (no stub)
+   *   0–22%    fill begins from Build (BL) along bottom arc
+   *   ~22%     Build — node + copy + line
+   *   ~42%     Run (BR)
+   *   ~62%     Signal (top)
+   *   78–100%  fill closes loop back to Build; unpin at end
+   */
+  if (loopSection.hasAttribute('data-loop-orbit')) {
+    const orbitArc = loopSection.querySelector(
+      '[data-loop-orbit-arc]',
+    ) as SVGPathElement | null
+    const orbitMark = loopSection.querySelector(
+      '.loop__orbit-mark',
+    ) as HTMLElement | null
+    const orbitLines = gsap.utils.toArray<SVGLineElement>(
+      loopSection.querySelectorAll('[data-loop-orbit-line]'),
+    )
+
+    type OrbitBeat = {
+      step: HTMLElement
+      pinS: number
+      arcS: number
+      line: SVGLineElement | null
+      lineLen: number
+    }
+
+    const beats: OrbitBeat[] = steps.map((step) => {
+      const slot = step.dataset.slot || ''
+      const line =
+        orbitLines.find((el) => el.dataset.loopOrbitLine === slot) ?? null
+      const lineLen = line?.getTotalLength() ?? 0
+      return {
+        step,
+        pinS: Number(step.dataset.s) || 0,
+        arcS: Number(step.dataset.arcS) || 0,
+        line,
+        lineLen,
+      }
+    })
+
+    /** Map pin progress → fill fraction so tip hits each node at its pin beat. */
+    const pinToFill = (p: number): number => {
+      const keys = [
+        { pin: 0, fill: 0 },
+        ...beats.map((b) => ({ pin: b.pinS, fill: b.arcS })),
+        { pin: 0.78, fill: 0.92 },
+        { pin: 1, fill: 1 },
+      ]
+      for (let i = 0; i < keys.length - 1; i += 1) {
+        const a = keys[i]
+        const b = keys[i + 1]
+        if (p <= b.pin) {
+          const t = b.pin === a.pin ? 1 : (p - a.pin) / (b.pin - a.pin)
+          return a.fill + (b.fill - a.fill) * Math.max(0, Math.min(1, t))
+        }
+      }
+      return 1
+    }
+
+    const LINE_DRAW_WINDOW = 0.07
+    /** Half stroke — pads dashoffset so round caps never peek at fill=0. */
+    const ARC_CAP_PAD = 28
+
+    const showOrbitComplete = () => {
+      loopSection.classList.add('is-static', 'is-loop-ready')
+      if (orbitArc) {
+        const len = orbitArc.getTotalLength()
+        gsap.set(orbitArc, {
+          strokeDasharray: len,
+          strokeDashoffset: 0,
+          opacity: 1,
+        })
+      }
+      if (orbitMark) gsap.set(orbitMark, { autoAlpha: 1 })
+      beats.forEach(({ step, line, lineLen }) => {
+        step.classList.add('is-reached', 'is-copy-visible')
+        step.classList.remove('is-active')
+        if (line && lineLen > 0) {
+          gsap.set(line, {
+            strokeDasharray: lineLen,
+            strokeDashoffset: 0,
+            opacity: 1,
+          })
+        }
+      })
+    }
+
+    if (reduceMotionLoop || !steps.length) {
+      showOrbitComplete()
+      return () => {
+        cleanups.forEach((fn) => fn())
+        loopSection.classList.remove('is-loop-ready', 'is-static')
+        steps.forEach((step) => {
+          step.classList.remove('is-reached', 'is-active', 'is-copy-visible')
+        })
+        if (orbitArc) {
+          gsap.set(orbitArc, {
+            clearProps: 'strokeDasharray,strokeDashoffset,opacity',
+          })
+        }
+        orbitLines.forEach((line) => {
+          gsap.set(line, {
+            clearProps: 'strokeDasharray,strokeDashoffset,opacity',
+          })
+        })
+        refreshScrollTriggers()
+      }
+    }
+
+    const arcLen = orbitArc?.getTotalLength() ?? 0
+    if (orbitArc && arcLen > 0) {
+      gsap.set(orbitArc, {
+        strokeDasharray: arcLen,
+        strokeDashoffset: arcLen + ARC_CAP_PAD,
+        opacity: 0,
+      })
+    }
+    if (orbitMark) gsap.set(orbitMark, { autoAlpha: 0 })
+
+    beats.forEach(({ line, lineLen }) => {
+      if (line && lineLen > 0) {
+        gsap.set(line, {
+          strokeDasharray: lineLen,
+          strokeDashoffset: lineLen,
+          opacity: 0,
+        })
+      }
+    })
+
+    const setArcDash = orbitArc
+      ? gsap.quickSetter(orbitArc, 'strokeDashoffset')
+      : null
+
+    const syncOrbit = (progress: number) => {
+      const p = Math.max(0, Math.min(1, progress))
+      const fill = pinToFill(p)
+
+      if (orbitArc && arcLen > 0) {
+        if (fill <= 0) {
+          /* Fully hidden — offset past length so round linecap cannot stub. */
+          if (setArcDash) setArcDash(arcLen + ARC_CAP_PAD)
+          gsap.set(orbitArc, { opacity: 0 })
+        } else {
+          if (setArcDash) setArcDash(arcLen * (1 - fill))
+          gsap.set(orbitArc, { opacity: 1 })
+        }
+      }
+
+      if (orbitMark) {
+        /* Snap E in fast — low-opacity yellow on teal reads as olive. */
+        const markT = Math.min(1, p / 0.05)
+        gsap.set(orbitMark, { autoAlpha: markT })
+      }
+
+      beats.forEach(({ step, pinS, line, lineLen }) => {
+        const reached = p >= pinS - STEP_ARRIVE_BIAS
+        step.classList.toggle('is-reached', reached)
+        step.classList.toggle('is-copy-visible', reached)
+        step.classList.toggle('is-active', false)
+
+        if (line && lineLen > 0) {
+          if (!reached) {
+            gsap.set(line, {
+              strokeDashoffset: lineLen,
+              opacity: 0,
+            })
+          } else {
+            const t = Math.max(
+              0,
+              Math.min(1, (p - pinS + STEP_ARRIVE_BIAS) / LINE_DRAW_WINDOW),
+            )
+            gsap.set(line, {
+              strokeDashoffset: lineLen * (1 - t),
+              opacity: t > 0 ? 1 : 0,
+            })
+          }
+        }
+      })
+
+      loopSection.classList.add('is-loop-ready')
+      loopSection.dataset.loopStage = String(
+        beats.reduce((idx, beat, i) => {
+          return p >= beat.pinS - STEP_ARRIVE_BIAS ? i : idx
+        }, -1),
+      )
+    }
+
+    /** ~3vh of scroll — room for fill + three beats + close before unpin. */
+    const pinVhOrbit = () =>
+      window.matchMedia('(max-width: 900px)').matches ? 3.2 : 2.8
+
+    scrollTrigger = ScrollTrigger.create({
+      trigger: loopSection,
+      start: 'top top',
+      end: () => `+=${window.innerHeight * pinVhOrbit()}`,
+      pin: true,
+      pinSpacing: true,
+      ...(innerPage ? { pinType: editorialPinType() } : {}),
+      scrub: LOOP_SCRUB,
+      anticipatePin: 0,
+      invalidateOnRefresh: true,
+      onUpdate: (self) => syncOrbit(self.progress),
+      onRefresh: (self) => {
+        /* Re-measure connector lengths after layout. */
+        beats.forEach((beat) => {
+          if (beat.line) beat.lineLen = beat.line.getTotalLength()
+        })
+        syncOrbit(self.progress)
+      },
+    })
+
+    syncOrbit(0)
+    refreshScrollTriggers()
+
+    return () => {
+      cleanups.forEach((fn) => fn())
+      scrollTrigger?.kill()
+      scrollTrigger = null
+      loopSection.classList.remove('is-loop-ready', 'is-static')
+      delete loopSection.dataset.loopStage
+      if (orbitArc) {
+        gsap.set(orbitArc, {
+          clearProps: 'strokeDasharray,strokeDashoffset,opacity',
+        })
+      }
+      if (orbitMark) gsap.set(orbitMark, { clearProps: 'opacity,visibility' })
+      orbitLines.forEach((line) => {
+        gsap.set(line, {
+          clearProps: 'strokeDasharray,strokeDashoffset,opacity',
+        })
+      })
+      steps.forEach((step) => {
+        step.classList.remove('is-reached', 'is-active', 'is-copy-visible')
+      })
+      refreshScrollTriggers()
+    }
+  }
 
   if (drawn && camera && viewport && steps.length && !reduceMotionLoop) {
     const svg = loopSection.querySelector('.loop__svg') as SVGSVGElement | null

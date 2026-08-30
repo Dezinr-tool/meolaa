@@ -6,7 +6,6 @@ import { gsap, ScrollTrigger } from '../../lib/motion'
 import { getLenisInstance } from '../../lib/lenisInstance'
 import { initLoop } from '../../lib/loopAnimations'
 import { initVision } from '../../lib/visionAnimations'
-import type { ScrollTrigger as ST } from 'gsap/ScrollTrigger'
 import type Lenis from 'lenis'
 
 const NAV_GLASS_Y = 40
@@ -173,47 +172,6 @@ function revealTitleLikeHero(
       once: true,
     },
   })
-}
-
-/** Joyous Yellow → muted Planet Blue as the arrow leaves the black hero. */
-function mixArrowColor(t: number) {
-  const r = gsap.utils.interpolate(253, 10, t)
-  const g = gsap.utils.interpolate(242, 48, t)
-  const b = gsap.utils.interpolate(140, 56, t)
-  const a = gsap.utils.interpolate(1, 0.35, t)
-  return `rgba(${r | 0}, ${g | 0}, ${b | 0}, ${a.toFixed(2)})`
-}
-
-type ArrowPt = { x: number; y: number }
-
-/** Cubic bezier point on an S-track. */
-function cubicPoint(p0: ArrowPt, p1: ArrowPt, p2: ArrowPt, p3: ArrowPt, t: number): ArrowPt {
-  const u = 1 - t
-  const tt = t * t
-  const uu = u * u
-  const uuu = uu * u
-  const ttt = tt * t
-  return {
-    x: uuu * p0.x + 3 * uu * t * p1.x + 3 * u * tt * p2.x + ttt * p3.x,
-    y: uuu * p0.y + 3 * uu * t * p1.y + 3 * u * tt * p2.y + ttt * p3.y,
-  }
-}
-
-/** Tangent lean (degrees) — tip follows the track, no continuous spin. */
-function cubicLean(p0: ArrowPt, p1: ArrowPt, p2: ArrowPt, p3: ArrowPt, t: number): number {
-  const u = 1 - t
-  // dB/dt of cubic bezier
-  const dx =
-    3 * u * u * (p1.x - p0.x) +
-    6 * u * t * (p2.x - p1.x) +
-    3 * t * t * (p3.x - p2.x)
-  const dy =
-    3 * u * u * (p1.y - p0.y) +
-    6 * u * t * (p2.y - p1.y) +
-    3 * t * t * (p3.y - p2.y)
-  // Arrow art points up (0°). Travel is mostly downward → +180, then lean with dx.
-  const deg = (Math.atan2(dx, dy) * 180) / Math.PI
-  return gsap.utils.clamp(-55, 55, deg)
 }
 
 /**
@@ -399,14 +357,9 @@ export function HomeAnimations() {
       }
 
     ctx = gsap.context(() => {
-      const arrow = document.getElementById('arrow')
-      const arrowFloat = arrow?.querySelector('.arrow__float') as HTMLElement | null
-      const arrowShape = arrow?.querySelector('.arrow__shape') as HTMLElement | null
       const hero = document.querySelector('[data-section="hero"]')
       const vision = document.querySelector('[data-section="vision"]')
-      const loopSection = document.querySelector('[data-section="loop"]')
       const lab = document.querySelector('[data-section="lab"]')
-      const labArrowSlot = document.querySelector('[data-lab-arrow-slot]')
       const founding = document.querySelector('[data-section="founding"]')
       const portfolio = document.querySelector('[data-section="brands"]')
       const investors = document.querySelector('[data-section="investors"]')
@@ -451,168 +404,6 @@ export function HomeAnimations() {
             end: () => `+=${window.innerHeight * DOCK_VH * 0.4}`,
             scrub: true,
             invalidateOnRefresh: true,
-          },
-        })
-      }
-
-      const ARROW_YELLOW = '#fdf28c'
-      const ARROW_GREEN = 'rgba(10, 48, 56, 0.35)'
-
-      function labSlotCenter() {
-        if (!labArrowSlot) return { x: 120, y: window.innerHeight * 0.55 }
-        const rect = labArrowSlot.getBoundingClientRect()
-        return {
-          x: rect.left + rect.width * 0.5,
-          y: rect.top + rect.height * 0.55,
-        }
-      }
-
-      /** Centered above the hero prism (prism sits mid-fold). */
-      function heroArrowPoint() {
-        return {
-          x: window.innerWidth * 0.5,
-          y: window.innerHeight * 0.28,
-        }
-      }
-
-      function visionArrowPoint() {
-        const copy = document.querySelector('.vision__copy')
-        if (!copy) return { x: window.innerWidth * 0.5, y: window.innerHeight * 0.42 }
-        const rect = copy.getBoundingClientRect()
-        return {
-          x: rect.left + rect.width * 0.5,
-          y: rect.top + rect.height * 0.5,
-        }
-      }
-
-      function loopArrowPoint() {
-        const diagram = loopSection?.querySelector('.loop__ribbon')
-        if (diagram) {
-          const rect = diagram.getBoundingClientRect()
-          return {
-            x: rect.left + rect.width * 0.5,
-            y: rect.top + rect.height * 0.5,
-          }
-        }
-        if (!loopSection) return { x: window.innerWidth * 0.48, y: window.innerHeight * 0.42 }
-        const rect = loopSection.getBoundingClientRect()
-        return {
-          x: rect.left + rect.width * 0.48,
-          y: rect.top + rect.height * 0.42,
-        }
-      }
-
-      /* ——— Arrow motif: linear scrub along an S-track (lean with path, no spin) ——— */
-      if (arrow && arrowFloat && arrowShape && hero && vision && loopSection && lab) {
-        const setArrowAt = (x: number, y: number, rotation = 0) => {
-          gsap.set(arrow, {
-            left: x,
-            top: y,
-            xPercent: -50,
-            yPercent: -50,
-            rotation,
-            scale: 1,
-            opacity: 1,
-            visibility: 'visible',
-          })
-        }
-
-        /** S-curve control points for a segment (bulge left then right). */
-        function sControls(from: ArrowPt, to: ArrowPt, amp = 0.22) {
-          const midY = (from.y + to.y) * 0.5
-          const spanX = Math.max(window.innerWidth * amp, 120)
-          return {
-            p0: from,
-            p1: { x: from.x + spanX, y: from.y + (midY - from.y) * 0.35 },
-            p2: { x: to.x - spanX, y: to.y - (to.y - midY) * 0.35 },
-            p3: to,
-          }
-        }
-
-        const placeOnS = (from: ArrowPt, to: ArrowPt, t: number, amp?: number) => {
-          const { p0, p1, p2, p3 } = sControls(from, to, amp)
-          const pt = cubicPoint(p0, p1, p2, p3, t)
-          const lean = cubicLean(p0, p1, p2, p3, t)
-          setArrowAt(pt.x, pt.y, lean)
-        }
-
-        gsap.set(arrow, {
-          left: '50%',
-          top: '28%',
-          xPercent: -50,
-          yPercent: -50,
-          rotation: 0,
-          scale: 1,
-          opacity: 1,
-          visibility: 'visible',
-        })
-        gsap.set(arrowShape, { backgroundColor: ARROW_YELLOW })
-
-        gsap.to(arrowFloat, {
-          y: 10,
-          duration: 3.4,
-          repeat: -1,
-          yoyo: true,
-          ease: 'sine.inOut',
-        })
-
-        const resetHeroArrow = () => {
-          const p = heroArrowPoint()
-          setArrowAt(p.x, p.y, 0)
-          gsap.set(arrowShape, { backgroundColor: ARROW_YELLOW })
-          gsap.set(arrowFloat, { y: 0 })
-        }
-
-        // Hero → Vision: linear progress on S-track
-        ScrollTrigger.create({
-          trigger: hero,
-          start: 'top top',
-          endTrigger: vision,
-          end: 'top top',
-          scrub: true,
-          onUpdate: (self: ST) => {
-            gsap.set(arrowFloat, { y: 0 })
-            const t = self.progress // linear with scroll
-            placeOnS(heroArrowPoint(), visionArrowPoint(), t, 0.2)
-            const colorP = gsap.utils.clamp(0, 1, (t - 0.15) / 0.85)
-            gsap.set(arrowShape, { backgroundColor: mixArrowColor(colorP) })
-          },
-          onLeaveBack: resetHeroArrow,
-        })
-
-        // Vision pin: hold on track end (upright lean ≈ 0)
-        ScrollTrigger.create({
-          trigger: vision,
-          start: 'top top',
-          end: '+=140%',
-          scrub: true,
-          onUpdate: () => {
-            gsap.set(arrowFloat, { y: 0 })
-            const p = visionArrowPoint()
-            setArrowAt(p.x, p.y, 0)
-            gsap.set(arrowShape, { backgroundColor: ARROW_GREEN })
-          },
-        })
-
-        // Vision → Loop → Lab: second S-track, linear scrub
-        ScrollTrigger.create({
-          trigger: vision,
-          start: '+=140% top',
-          endTrigger: lab,
-          end: 'top center',
-          scrub: true,
-          onUpdate: (self: ST) => {
-            gsap.set(arrowFloat, { y: 0 })
-            const t = self.progress
-            const from = visionArrowPoint()
-            const mid = loopArrowPoint()
-            const to = labSlotCenter()
-            if (t < 0.5) {
-              placeOnS(from, mid, t / 0.5, 0.18)
-            } else {
-              placeOnS(mid, to, (t - 0.5) / 0.5, 0.16)
-            }
-            gsap.set(arrowShape, { backgroundColor: ARROW_GREEN })
           },
         })
       }

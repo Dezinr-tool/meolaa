@@ -416,7 +416,7 @@ export function LabSection() {
       data-section="lab"
       id="lab"
     >
-      <div className="meola-lab__intro" data-lab-arrow-slot>
+      <div className="meola-lab__intro">
         <p className="meola-lab__eyebrow">Brand Lab</p>
         <div className="meola-lab__mark" aria-hidden="true">
           <MeolaaEMark />

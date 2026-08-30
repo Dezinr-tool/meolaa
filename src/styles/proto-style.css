@@ -54,46 +54,6 @@ img { display: block; max-width: 100%; }
   min-height: 100vh;
 }
 
-/* Arrow motif — above hero prism → Vision (mask from brand arrow PNG). */
-.arrow {
-  position: fixed;
-  left: 50%;
-  top: 28%;
-  z-index: 5;
-  width: min(200px, 28vw);
-  height: min(132px, 18vw);
-  opacity: 0.95;
-  pointer-events: none;
-  will-change: transform;
-  transform-origin: center center;
-}
-
-.arrow.is-behind-copy {
-  z-index: 1;
-}
-
-.arrow__float {
-  width: 100%;
-  height: 100%;
-  will-change: transform;
-}
-
-.arrow__shape {
-  width: 100%;
-  height: 100%;
-  /* Tintable fill; silhouette from the uploaded arrow asset. */
-  background-color: var(--color-joyous-yellow, #fdf28c);
-  -webkit-mask-image: url('/assets/hero-scroll-arrow.png');
-  mask-image: url('/assets/hero-scroll-arrow.png');
-  -webkit-mask-size: contain;
-  mask-size: contain;
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-  mask-position: center;
-  will-change: background-color, transform;
-}
-
 /* HERO — Figma 32:685 · 1440×952 */
 .hero {
   min-height: 100vh;
@@ -1172,7 +1132,7 @@ section.investors,
   /* Was a hardcoded 92px while tokens.css declared --nav-height: 92px for
      everyone else (SiteFooter's top padding) — two sources that could drift.
      The token is the height now; change it there. */
-  height: var(--nav-height, 68px);
+  height: var(--nav-height, 80px);
   padding: 0 clamp(24px, 4vw, 64px);
   pointer-events: none;
   background: transparent;
@@ -1251,26 +1211,32 @@ section.investors,
 
 .site-nav__links a {
   font-family: var(--font-display);
-  font-size: 1rem; /* 16px — brand UI / headlines */
-  font-weight: var(--fw-medium, 500);
-  letter-spacing: 0.01em;
+  font-size: 14px;
+  font-weight: var(--fw-semibold, 600);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   color: rgba(255,255,255,.92);
-  transition: opacity 0.2s;
+  opacity: 0.7;
+  text-decoration: none;
+  transition: opacity 0.2s ease, color 0.2s ease;
 }
 
 .site-nav__links a:hover,
+.site-nav__links a:focus-visible,
 .site-nav__links a.is-active {
   opacity: 1;
-  text-decoration: underline;
-  text-underline-offset: 4px;
-}
-
-.site-nav__links a:not(.is-active) {
-  opacity: 0.85;
+  text-decoration: none;
+  color: var(--color-joyous-yellow, #fdf28c);
 }
 
 .site-nav--dark .site-nav__links a {
-  color: rgba(0,0,0,.75);
+  color: #111;
+}
+
+.site-nav--dark .site-nav__links a:hover,
+.site-nav--dark .site-nav__links a:focus-visible,
+.site-nav--dark .site-nav__links a.is-active {
+  color: var(--color-planet-blue, #002f3a);
 }
 
 /* Mobile link rows: hidden via mobile.css — hamburger drawer replaces them. */

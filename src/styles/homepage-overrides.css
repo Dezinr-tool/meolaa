@@ -25,6 +25,9 @@ html {
 .site-nav.is-scrolled .site-nav__logo,
 .site-nav.is-scrolled .site-nav__links a {
   color: var(--color-black, #000000);
+}
+
+.site-nav.is-scrolled .site-nav__logo {
   opacity: 1;
 }
 
@@ -113,7 +116,7 @@ html {
    given a tight viewBox, so the docked logo itself is unchanged. */
 /* The wordmark's footprint in the bar. `--nav-logo-w` is the size dial —
    aspect-ratio derives the height from the tight viewBox, so the two can't
-   drift. Bar is --nav-height (68px), so keep width under ~140px here. */
+   drift. Bar is --nav-height (80px), so keep width under ~140px here. */
 .site-nav__logo {
   --nav-logo-w: 120px;
 
@@ -254,26 +257,42 @@ html {
    single pair of rules near the top of this file; don't reintroduce a second
    block for these selectors. */
 
-/* Nav links: clearer weight + full opacity (proto dimmed inactive to 0.75). */
-.site-nav__links a {
+/* Nav links: 14px semibold caps. Quiet at rest; color + full opacity on
+   hover/focus — no underline. Dark bars → Joyous Yellow; light bars → Planet Blue. */
+.site-nav__links a:not(.site-nav__cta) {
+  --nav-link-hover: var(--color-joyous-yellow, #fdf28c);
   font-family: var(--font-display);
-  font-size: 1rem;
+  font-size: 14px;
   font-weight: var(--fw-semibold, 600);
-  letter-spacing: 0.01em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   color: var(--color-white, #fff);
-  opacity: 1 !important;
+  opacity: 0.7;
+  text-decoration: none;
   text-shadow: 0 1px 14px color-mix(in srgb, #000 38%, transparent);
+  transition: opacity 0.2s ease, color 0.2s ease;
 }
 
-.site-nav.is-scrolled .site-nav__links a {
+.site-nav.is-scrolled .site-nav__links a:not(.site-nav__cta) {
+  --nav-link-hover: var(--color-planet-blue, #002f3a);
+  color: var(--color-black, #000000);
   text-shadow: none;
 }
 
-.site-nav__links a:hover,
-.site-nav__links a.is-active {
-  opacity: 1 !important;
-  text-decoration: underline;
-  text-underline-offset: 4px;
+.site-nav--inner:not(.site-nav--over-dark) .site-nav__links a:not(.site-nav__cta) {
+  --nav-link-hover: var(--color-planet-blue, #002f3a);
+}
+
+.site-nav--over-dark:not(.is-scrolled) .site-nav__links a:not(.site-nav__cta) {
+  --nav-link-hover: var(--color-joyous-yellow, #fdf28c);
+}
+
+.site-nav__links a:not(.site-nav__cta):hover,
+.site-nav__links a:not(.site-nav__cta):focus-visible,
+.site-nav__links a:not(.site-nav__cta).is-active {
+  opacity: 1;
+  color: var(--nav-link-hover);
+  text-decoration: none;
 }
 
 /*

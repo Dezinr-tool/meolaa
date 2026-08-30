@@ -137,10 +137,9 @@
   --pad-x: clamp(24px, 5vw, 72px);
   --pad-x-sm: clamp(24px, 4vw, 64px);
   --content-max: 1180px;
-  /* Bar height. Logo is 24px and the Contact pill ~34px, so this leaves
-     ~17px of air above/below the tallest item. Drives .site-nav and
-     SiteFooter's top padding — the single dial for the header. */
-  --nav-height: 68px;
+  /* Bar height. Logo is ~24px; this leaves ~28px of air above/below.
+     Drives .site-nav and SiteFooter's top padding — the single dial. */
+  --nav-height: 80px;
 
   /* Nav — transparent at top, glass on scroll */
   --nav-transparent-bg: transparent;
