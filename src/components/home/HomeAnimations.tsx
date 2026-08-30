@@ -278,6 +278,7 @@ export function HomeAnimations() {
 
       /* ——— Nav glass + direction hide (Lenis-synced) ——— */
       const siteNav = document.querySelector('.site-nav')
+      const hero = document.querySelector('[data-section="hero"]')
       let lastY = window.scrollY
       let unsubLenis: (() => void) | null = null
       let navPollId = 0
@@ -289,7 +290,9 @@ export function HomeAnimations() {
       const syncNav = (y: number, direction: 1 | -1 | 0) => {
         if (!siteNav) return
         if (!dockOwnsScrolled) {
-          siteNav.classList.toggle('is-scrolled', y > NAV_GLASS_Y)
+          /* No hero: Vision (ecru) is the first fold — keep dark-on-light
+           * nav from y=0 so ecru type never sits on ecru. */
+          siteNav.classList.toggle('is-scrolled', !hero || y > NAV_GLASS_Y)
         }
 
         if (y <= NAV_TOP_Y) {
@@ -301,8 +304,10 @@ export function HomeAnimations() {
         const dir = direction !== 0 ? direction : y > lastY ? 1 : y < lastY ? -1 : 0
         /* Hold the bar open until the wordmark has finished docking into it —
          * the mark rides the nav's transform, so hiding early would drag it
-         * off screen mid-flight. */
-        const hideFloor = Math.max(NAV_HIDE_Y, window.innerHeight * DOCK_VH)
+         * off screen mid-flight. Without a hero there is no dock span. */
+        const hideFloor = hero
+          ? Math.max(NAV_HIDE_Y, window.innerHeight * DOCK_VH)
+          : NAV_HIDE_Y
         if (dir === 1 && y > hideFloor) {
           siteNav.classList.add('is-hidden')
         } else if (dir === -1) {
@@ -357,7 +362,6 @@ export function HomeAnimations() {
       }
 
     ctx = gsap.context(() => {
-      const hero = document.querySelector('[data-section="hero"]')
       const vision = document.querySelector('[data-section="vision"]')
       const lab = document.querySelector('[data-section="lab"]')
       const founding = document.querySelector('[data-section="founding"]')
@@ -393,7 +397,7 @@ export function HomeAnimations() {
       const heroPrism = document.querySelector(
         '[data-hero-prism]',
       ) as HTMLElement | null
-      if (heroPrism && !reduceMotion) {
+      if (hero && heroPrism && !reduceMotion) {
         gsap.to(heroPrism, {
           opacity: 0,
           y: -12,

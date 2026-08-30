@@ -1,5 +1,6 @@
 /**
- * Meolaa React homepage — photo hero on Planet Blue + prototype sections + Lenis/GSAP.
+ * Meolaa React homepage — prototype sections + Lenis/GSAP.
+ * Hero fold is intentionally not rendered so the page opens on Vision.
  */
 import { Preloader } from '../components/Preloader'
 import { SiteNav } from '../components/SiteNav'
@@ -7,7 +8,6 @@ import { SectionErrorBoundary } from '../components/SectionErrorBoundary'
 import { HomeAnimations } from '../components/home/HomeAnimations'
 import {
   FoundingSection,
-  HeroSection,
   InvestorsSection,
   LabSection,
   MetricsSection,
@@ -28,7 +28,6 @@ export function HomePage() {
         <SiteNav variant="home" />
         <HomeAnimations />
         <main>
-          <HeroSection />
           <VisionSection />
           <LoopSection />
           <LabSection />
