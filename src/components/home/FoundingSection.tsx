@@ -9,9 +9,9 @@ import './FoundingSection.css'
  *  pinned; this one wasn't, which is why it read too fast. */
 const FOUNDING_HOLD_VH = 0.9
 
-/** Hotspot near the pixel finger tip (40×40 display of trimmed hand art). */
-const CURSOR_HOT_X = 6
-const CURSOR_HOT_Y = 2
+/** Hotspot near the pixel finger tip (72×72 display of trimmed hand art). */
+const CURSOR_HOT_X = 11
+const CURSOR_HOT_Y = 4
 
 /* ——— Auto-playing image deal (madewithgsap tutorial 036 layout) ———
  * Reference look: near-black ground, small eyebrow, one large centred
