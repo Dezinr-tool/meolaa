@@ -518,16 +518,23 @@ export function HomeAnimations() {
           }
         }
 
+        /* .founding__statement uses Vision-style scroll-scrub char fill in
+           FoundingSection — do not blur/fade the whole title over that. */
         const titleInners = gsap.utils.toArray<HTMLElement>(
           founding.querySelectorAll('.founding__title-inner'),
         )
-        revealTitleLikeHero(
-          titleInners.length
-            ? titleInners
-            : founding.querySelectorAll('.founding__title'),
-          founding.querySelector('.founding__title') || revealRoot,
-          { start: 'top 92%' },
-        )
+        const foundingTitles = titleInners.length
+          ? titleInners
+          : gsap.utils
+              .toArray<HTMLElement>(founding.querySelectorAll('.founding__title'))
+              .filter((el) => !el.classList.contains('founding__statement'))
+        if (foundingTitles.length) {
+          revealTitleLikeHero(
+            foundingTitles,
+            founding.querySelector('.founding__title') || revealRoot,
+            { start: 'top 92%' },
+          )
+        }
 
         const captionBits = gsap.utils.toArray<Element>(
           founding.querySelectorAll('.founding__eyebrow, .founding__panel'),

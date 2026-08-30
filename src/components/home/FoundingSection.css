@@ -635,6 +635,26 @@
   text-wrap: balance;
 }
 
+/* Vision-style per-char scrub fill — opacity only; mark-word wrappers stay. */
+.founding__word {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.founding__char {
+  display: inline;
+  will-change: opacity;
+}
+
+.founding__char.is-space {
+  white-space: nowrap;
+}
+
+.founding__mark-word .founding__char {
+  /* Inherit yellow once `.is-lit` lands on the mark wrapper. */
+  color: inherit;
+}
+
 /* Key words start unlit; `.is-lit` lands one-by-one with the sticker pop-ins. */
 .founding__mark-word {
   cursor: pointer;

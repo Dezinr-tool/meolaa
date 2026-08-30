@@ -5,13 +5,85 @@ import './FoundingSection.css'
 
 /** Extra scroll the fold holds for, as a fraction of the viewport. This is the
  *  "slow down and read it" dial: the section parks on screen for this much
- *  additional scrolling before the page moves on. Every other major fold is
- *  pinned; this one wasn't, which is why it read too fast. */
-const FOUNDING_HOLD_VH = 0.9
+ *  additional scrolling before the page moves on. Sized so the Vision-style
+ *  per-char fill can scrub across the pin, then stickers still have room. */
+const FOUNDING_HOLD_VH = 1.3
+
+/** Faded (unfilled) char opacity — same language as Vision headline scrub. */
+const FOUNDING_CHAR_DIM = 0.14
+
+/** When pin scrub passes this, yellow marks + stickers begin (reveal → highlight). */
+const STICKER_ARM_PROGRESS = 0.7
 
 /** Hotspot near the pixel finger tip (72×72 display of trimmed hand art). */
 const CURSOR_HOT_X = 11
 const CURSOR_HOT_Y = 4
+
+/**
+ * Split statement text into per-char spans (Vision `splitVisionLines` pattern).
+ * Preserves `.founding__mark-word` wrappers so yellow highlights + hover deal
+ * still bind to the same elements.
+ */
+function splitFoundingStatement(root: HTMLElement) {
+  if (root.querySelector('.founding__char')) return
+
+  const plain = (root.textContent || '').replace(/\s+/g, ' ').trim()
+  if (plain) root.setAttribute('aria-label', plain)
+
+  const appendTokens = (parent: HTMLElement, text: string, wrapWords: boolean) => {
+    text.split(/(\s+)/).forEach((token) => {
+      if (!token) return
+      if (/^\s+$/.test(token)) {
+        const space = document.createElement('span')
+        space.className = 'founding__char is-space'
+        space.textContent = '\u00a0'
+        space.setAttribute('aria-hidden', 'true')
+        parent.appendChild(space)
+        return
+      }
+      const host = wrapWords ? document.createElement('span') : parent
+      if (wrapWords) {
+        host.className = 'founding__word'
+        host.setAttribute('aria-hidden', 'true')
+      }
+      ;[...token].forEach((char) => {
+        const span = document.createElement('span')
+        span.className = 'founding__char'
+        span.textContent = char
+        span.setAttribute('aria-hidden', 'true')
+        host.appendChild(span)
+      })
+      if (wrapWords) parent.appendChild(host)
+    })
+  }
+
+  const nodes = Array.from(root.childNodes)
+  nodes.forEach((node) => {
+    if (node.nodeType === Node.TEXT_NODE) {
+      const text = node.textContent || ''
+      if (!text) {
+        node.parentNode?.removeChild(node)
+        return
+      }
+      const frag = document.createDocumentFragment()
+      const holder = document.createElement('span')
+      frag.appendChild(holder)
+      appendTokens(holder, text, true)
+      while (holder.firstChild) frag.appendChild(holder.firstChild)
+      frag.removeChild(holder)
+      node.parentNode?.replaceChild(frag, node)
+      return
+    }
+
+    if (node.nodeType !== Node.ELEMENT_NODE) return
+    const el = node as HTMLElement
+    if (el.classList.contains('founding__mark-word')) {
+      const text = (el.textContent || '').trim()
+      el.textContent = ''
+      appendTokens(el, text, false)
+    }
+  })
+}
 
 /* ——— Auto-playing image deal (madewithgsap tutorial 036 layout) ———
  * Reference look: near-black ground, small eyebrow, one large centred
@@ -146,45 +218,21 @@ export function FoundingSection() {
     }
   }, [])
 
-  /* Hold the fold still for FOUNDING_HOLD_VH of scroll so the story can be
-   * read. Pin only — no scrubbed animation attached, so there is nothing here
-   * to fall out of sync; the existing reveals keep their own triggers.
-   * Created in this component (not HomeAnimations) to match how Lab and
-   * Portfolio register their pins, which keeps pin creation in document order. */
+  /* Vision-style per-char opacity fill scrubbed across the pin, then yellow
+   * marks + corner stickers (ASKING→WORLDWIDE, …). Pin lives here (not
+   * HomeAnimations) so document-order pin creation stays aligned with Lab /
+   * Portfolio. Cursor follower is a separate effect — leave it alone. */
   useEffect(() => {
     const section = sectionRef.current
     if (!section) return
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
-    const mm = gsap.matchMedia()
+    const statement = section.querySelector<HTMLElement>('.founding__statement')
+    if (!statement) return
 
-    /* Desktop only: on short/mobile viewports a pinned fold plus the address
-       bar makes the page feel stuck rather than readable. */
-    mm.add('(min-width: 901px)', () => {
-      const st = ScrollTrigger.create({
-        trigger: section,
-        start: 'top top',
-        end: () => `+=${Math.round(window.innerHeight * FOUNDING_HOLD_VH)}`,
-        pin: true,
-        pinSpacing: true,
-        /* No anticipatePin — with Lenis it overshoots and reads as a spring. */
-        anticipatePin: 0,
-        invalidateOnRefresh: true,
-      })
-      return () => st.kill()
-    })
-
-    return () => {
-      mm.revert()
-      ScrollTrigger.refresh()
-    }
-  }, [])
-
-  /* Sequential mark highlight + sticker pop-in (ASKING→WORLDWIDE, …, MOVE→HAPPY).
-   * Plays once when the fold enters; pin hold gives the sequence time to land. */
-  useEffect(() => {
-    const section = sectionRef.current
-    if (!section) return
+    splitFoundingStatement(statement)
+    const chars = gsap.utils.toArray<HTMLElement>(
+      statement.querySelectorAll('.founding__char'),
+    )
 
     const pairs = STICKER_CHOREO.map(({ mark, badge, rotate }) => ({
       word: section.querySelector<HTMLElement>(
@@ -200,13 +248,46 @@ export function FoundingSection() {
       rotate: number
     }>
 
-    if (!pairs.length) return
-
     const reduceMotion = window.matchMedia(
       '(prefers-reduced-motion: reduce)',
     ).matches
 
+    const resetStickers = () => {
+      pairs.forEach(({ word, sticker, rotate }) => {
+        word.classList.remove('is-lit')
+        gsap.killTweensOf(sticker)
+        gsap.set(sticker, {
+          autoAlpha: 0,
+          scale: 0.55,
+          rotate,
+          transformOrigin: '50% 50%',
+        })
+      })
+    }
+
+    const playStickers = () => {
+      const tl = gsap.timeline()
+      pairs.forEach(({ word, sticker }) => {
+        tl.call(() => {
+          word.classList.add('is-lit')
+        })
+        tl.to(
+          sticker,
+          {
+            autoAlpha: 1,
+            scale: 1,
+            duration: 0.55,
+            ease: 'back.out(1.7)',
+          },
+          '<0.04',
+        )
+        tl.to({}, { duration: 0.32 })
+      })
+      return tl
+    }
+
     if (reduceMotion) {
+      gsap.set(chars, { opacity: 1 })
       pairs.forEach(({ word, sticker, rotate }) => {
         word.classList.add('is-lit')
         gsap.set(sticker, {
@@ -219,53 +300,124 @@ export function FoundingSection() {
       return
     }
 
-    pairs.forEach(({ word, sticker, rotate }) => {
-      word.classList.remove('is-lit')
-      gsap.set(sticker, {
-        autoAlpha: 0,
-        scale: 0.55,
-        rotate,
-        transformOrigin: '50% 50%',
-      })
-    })
+    gsap.set(chars, { opacity: FOUNDING_CHAR_DIM })
+    resetStickers()
 
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: section,
-        start: 'top 62%',
-        toggleActions: 'play none none none',
-        once: true,
-      },
-    })
+    let stickerTl: gsap.core.Timeline | null = null
+    let stickersArmed = false
 
-    /* Beat after the title fade-in so marks don't light before the line is read. */
-    tl.to({}, { duration: 0.5 })
+    const armStickers = () => {
+      if (stickersArmed || !pairs.length) return
+      stickersArmed = true
+      stickerTl?.kill()
+      stickerTl = playStickers()
+    }
 
-    pairs.forEach(({ word, sticker }) => {
-      tl.call(() => {
-        word.classList.add('is-lit')
-      })
-      tl.to(
-        sticker,
-        {
-          autoAlpha: 1,
-          scale: 1,
-          duration: 0.55,
-          ease: 'back.out(1.7)',
+    const disarmStickers = () => {
+      stickersArmed = false
+      stickerTl?.kill()
+      stickerTl = null
+      resetStickers()
+    }
+
+    const fillTweenVars = {
+      opacity: 1,
+      duration: 0.08,
+      stagger: 0.006,
+      ease: 'power1.out',
+    } as const
+
+    const mm = gsap.matchMedia()
+
+    /* Desktop: pin + scrub fill (Vision interaction), then arm stickers. */
+    mm.add('(min-width: 901px)', () => {
+      const vtl = gsap.timeline({
+        scrollTrigger: {
+          trigger: section,
+          start: 'top top',
+          end: () => `+=${Math.round(window.innerHeight * FOUNDING_HOLD_VH)}`,
+          pin: true,
+          pinSpacing: true,
+          scrub: true,
+          /* No anticipatePin — with Lenis it overshoots and reads as a spring. */
+          anticipatePin: 0,
+          invalidateOnRefresh: true,
+          onUpdate: (self) => {
+            if (self.progress >= STICKER_ARM_PROGRESS) armStickers()
+            else if (self.progress < STICKER_ARM_PROGRESS * 0.55) disarmStickers()
+          },
+          onLeaveBack: () => {
+            gsap.set(chars, { opacity: FOUNDING_CHAR_DIM })
+            disarmStickers()
+          },
+          onRefresh: (self) => {
+            if (self.progress === 0) {
+              gsap.set(chars, { opacity: FOUNDING_CHAR_DIM })
+              disarmStickers()
+            }
+          },
         },
-        '<0.04',
+      })
+
+      vtl.fromTo(
+        chars,
+        { opacity: FOUNDING_CHAR_DIM },
+        { ...fillTweenVars },
+        0,
       )
-      tl.to({}, { duration: 0.32 })
+      /* Hold fully filled so stickers can land before the pin releases. */
+      vtl.to({}, { duration: 0.38 })
+
+      return () => {
+        vtl.scrollTrigger?.kill()
+        vtl.kill()
+      }
+    })
+
+    /* Mobile: no pin — scrub fill as the fold crosses the viewport. */
+    mm.add('(max-width: 900px)', () => {
+      const vtl = gsap.timeline({
+        scrollTrigger: {
+          trigger: section,
+          start: 'top 72%',
+          end: 'top 22%',
+          scrub: true,
+          onUpdate: (self) => {
+            if (self.progress >= STICKER_ARM_PROGRESS) armStickers()
+            else if (self.progress < STICKER_ARM_PROGRESS * 0.55) disarmStickers()
+          },
+          onLeaveBack: () => {
+            gsap.set(chars, { opacity: FOUNDING_CHAR_DIM })
+            disarmStickers()
+          },
+        },
+      })
+
+      vtl.fromTo(
+        chars,
+        { opacity: FOUNDING_CHAR_DIM },
+        { ...fillTweenVars },
+        0,
+      )
+      vtl.to({}, { duration: 0.16 })
+
+      return () => {
+        vtl.scrollTrigger?.kill()
+        vtl.kill()
+      }
     })
 
     return () => {
-      tl.scrollTrigger?.kill()
-      tl.kill()
+      mm.revert()
+      stickerTl?.kill()
+      gsap.killTweensOf(chars)
+      gsap.set(chars, { clearProps: 'opacity' })
       pairs.forEach(({ word, sticker, rotate }) => {
         word.classList.remove('is-lit')
         gsap.set(sticker, { clearProps: 'transform,opacity,visibility' })
         gsap.set(sticker, { rotate, transformOrigin: '50% 50%' })
       })
+      ScrollTrigger.refresh()
     }
   }, [])
 
