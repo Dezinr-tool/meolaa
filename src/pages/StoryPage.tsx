@@ -84,6 +84,14 @@ const WHERE_NEXT = [
 export function StoryPage() {
   const heroRef = useRef<HTMLElement>(null)
 
+  /* Pixel hand cursor for the whole /story route (cleared on leave). */
+  useEffect(() => {
+    document.body.classList.add('story-page-active')
+    return () => {
+      document.body.classList.remove('story-page-active')
+    }
+  }, [])
+
   /* Joyous Yellow marks light one-by-one on enter — same language as Founding. */
   useEffect(() => {
     const hero = heroRef.current
@@ -120,7 +128,7 @@ export function StoryPage() {
   }, [])
 
   return (
-    <PageLayout pageClass="page-editorial">
+    <PageLayout pageClass="page-editorial story-page">
       <header className="story-hero" ref={heroRef}>
         <div className="story-hero__inner">
           <div className="story-hero__copy">

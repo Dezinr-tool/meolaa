@@ -717,6 +717,29 @@
 
 /* ——— OUR STORY ——— */
 
+/* Pixel hand cursor — scoped to /story only (body class + .story-page root).
+   Hotspot near the finger tip (image points upper-left). */
+body.story-page-active,
+.story-page {
+  cursor: url('/story/cursor-hand.png') 8 4, auto;
+}
+
+body.story-page-active a,
+body.story-page-active button,
+body.story-page-active [role='button'],
+body.story-page-active summary,
+body.story-page-active label[for],
+.story-page a,
+.story-page button,
+.story-page [role='button'],
+.story-page summary,
+.story-page label[for],
+.story-page .story-rail__item,
+.story-page .story-brand-card__cta,
+.story-page .story-cta-band__link {
+  cursor: url('/story/cursor-hand.png') 8 4, pointer;
+}
+
 .story-hero {
   position: relative;
   min-height: 100vh;
