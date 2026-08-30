@@ -190,8 +190,8 @@ function InvestorLogoSet({ ariaHidden = false }: { ariaHidden?: boolean }) {
           <img
             src={logo.src}
             alt={ariaHidden || i >= INVESTOR_LOGOS.length ? '' : logo.alt}
-            width={160}
-            height={36}
+            width={208}
+            height={48}
             draggable={false}
           />
         </li>

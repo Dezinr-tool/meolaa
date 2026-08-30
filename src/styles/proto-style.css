@@ -964,11 +964,11 @@ section.investors,
   background-color: var(--color-black, #000000) !important;
   color: var(--color-ecru, #f8ece4);
   text-align: center;
-  padding: clamp(40px, 6vh, 64px) clamp(24px, 4vw, 64px) clamp(48px, 7vh, 72px);
+  padding: clamp(16px, 2.5vh, 28px) clamp(24px, 4vw, 64px);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: clamp(24px, 3.5vh, 36px);
+  gap: 0;
   box-sizing: border-box;
   border-top: none;
   position: relative;
@@ -1027,12 +1027,12 @@ section.investors,
   display: flex;
   flex-shrink: 0;
   align-items: center;
-  gap: clamp(48px, 6vw, 72px);
+  gap: clamp(40px, 5vw, 60px);
   /* Trailing gap so set A → set B spacing matches item gap */
-  padding-inline-end: clamp(48px, 6vw, 72px);
+  padding-inline-end: clamp(40px, 5vw, 60px);
   list-style: none;
   margin: 0;
-  padding-block: 4px;
+  padding-block: 0;
 }
 
 .investor-logos__item {
@@ -1040,16 +1040,16 @@ section.investors,
   align-items: center;
   justify-content: center;
   flex: 0 0 auto;
-  height: 40px;
-  width: clamp(120px, 14vw, 168px);
+  height: 52px;
+  width: clamp(156px, 18vw, 218px);
 }
 
 .investor-logos__item img {
   display: block;
   width: auto;
-  height: 36px;
+  height: 48px;
   max-width: 100%;
-  max-height: 36px;
+  max-height: 48px;
   object-fit: contain;
   object-position: center;
   /* Dark SVG marks → white on black ground */

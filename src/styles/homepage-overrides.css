@@ -569,6 +569,8 @@ section.investors,
   position: relative;
   /* Overlap metrics join by 1px so compositor hairlines don't read full-bleed. */
   margin-top: -1px;
+  padding: clamp(16px, 2.5vh, 28px) clamp(24px, 4vw, 64px) !important;
+  gap: 0 !important;
 }
 
 .investors .section-head,
