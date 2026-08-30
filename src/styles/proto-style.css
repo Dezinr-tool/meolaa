@@ -209,11 +209,17 @@ img { display: block; max-width: 100%; }
   pointer-events: none;
 }
 
+.vision__video-wrap:not(.is-ready) {
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
 .vision__video {
+  position: relative;
   width: 100%;
   height: clamp(8rem, 34vh, 21rem);
   max-height: 40vh;
-  background: #000;
+  background: var(--color-ecru, #f8ece4);
   overflow: hidden;
   opacity: 1;
   visibility: visible;
@@ -222,12 +228,32 @@ img { display: block; max-width: 100%; }
   pointer-events: auto;
 }
 
-.vision__video video {
+.vision__poster {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: center 40%;
   display: block;
+  z-index: 0;
+  pointer-events: none;
+  user-select: none;
+}
+
+.vision__video video {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 40%;
+  display: block;
+  opacity: 0;
+}
+
+.vision__video video.is-armed {
+  opacity: 1;
 }
 
 .vision__word {
@@ -865,9 +891,9 @@ img { display: block; max-width: 100%; }
   }
 }
 
-/* METRICS — white header ground + intentional primary (Planet Blue) stats band.
+/* METRICS — one section: white section-head + primary (Planet Blue) stats band.
    Stair steps are a temporary GSAP clip-path reveal only; final state is one
-   equal-height band. Shares one scroll fold with .investors (~100–110svh). */
+   equal-height band. Padding/rhythm owned by section-head.css (.metrics). */
 .metrics {
   position: relative;
   height: auto;
@@ -929,7 +955,7 @@ img { display: block; max-width: 100%; }
   }
 }
 
-/* INVESTORS — primary (Planet Blue) ground; pairs with .metrics as one fold.
+/* INVESTORS — primary (Planet Blue) ground; follows metrics as its own section.
    !important beats any secondary/cream ground from sitewide yellow sweeps. */
 .investors,
 section.investors,

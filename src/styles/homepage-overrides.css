@@ -354,9 +354,18 @@ html {
   padding: 0;
   pointer-events: none;
   z-index: 1;
+  /* Covered until collage poster + film arming finish (see visionAnimations).
+     GSAP drives opacity after .is-ready — do not force opacity:1 here or the
+     wrap flashes opaque before the reveal tween. */
+}
+
+.vision__video-wrap:not(.is-ready) {
+  opacity: 0 !important;
+  visibility: hidden !important;
 }
 
 .vision__video {
+  position: relative;
   opacity: 1;
   visibility: visible;
   transform: none;
@@ -365,17 +374,38 @@ html {
   max-height: 40vh;
   border-radius: 0;
   overflow: hidden;
-  background: var(--color-planet-blue, #002f3a);
+  background: var(--color-ecru, #f8ece4);
   will-change: width, height;
   pointer-events: auto;
 }
 
-.vision__video video {
+.vision__poster {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: center 40%;
   display: block;
+  z-index: 0;
+  pointer-events: none;
+  user-select: none;
+}
+
+.vision__video video {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 40%;
+  display: block;
+  /* Stay transparent until parked on the collage beat — poster shows through. */
+  opacity: 0;
+}
+
+.vision__video video.is-armed {
+  opacity: 1;
 }
 
 .vision__copy {
@@ -508,8 +538,9 @@ html {
   padding-top: clamp(28px, 4.5vh, 44px);
 }
 
-/* Metrics + investors share ~one fold without forcing empty min-heights. */
-.metrics {
+/* Metrics is one auto-height section (head + stats band) — never a 100svh fold. */
+.metrics,
+[data-section='metrics'] {
   height: auto;
   min-height: 0;
   max-height: none;

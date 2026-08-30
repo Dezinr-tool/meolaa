@@ -53,13 +53,32 @@ export function HeroSection() {
   )
 }
 
+/** Lifestyle collage still — first paint for Vision (not the film's t=0 frame). */
+export const VISION_COLLAGE_POSTER = '/assets/vision-collage.jpg'
+
 export function VisionSection() {
   return (
     <section className="fold vision" data-section="vision">
       <div className="vision__stage">
-        <div className="vision__video-wrap">
+        <div className="vision__video-wrap" data-vision-media>
           <div className="vision__video" data-video-box>
-            <video muted loop playsInline poster="/assets/imgImage234.png">
+            {/* Static collage under the film so reload never flashes a mid-cut frame. */}
+            <img
+              className="vision__poster"
+              src={VISION_COLLAGE_POSTER}
+              alt=""
+              decoding="async"
+              fetchPriority="high"
+              draggable={false}
+            />
+            <video
+              muted
+              loop
+              playsInline
+              preload="auto"
+              poster={VISION_COLLAGE_POSTER}
+              data-vision-video
+            >
               <source
                 src="/videos/Sales-Marketing_s-Video-Jun-30-2026-2.mp4"
                 type="video/mp4"
@@ -97,12 +116,17 @@ export { FoundingSection } from './FoundingSection'
 /* Portfolio — title + filters + brand bento grid (see PortfolioSection). */
 export { PortfolioSection } from './PortfolioSection'
 
+/** Proof / By the numbers — one section: shared section-head + primary stats band. */
 export function MetricsSection() {
   return (
-    <section className="metrics" data-section="metrics">
-      <header className="section-head section-head--on-light">
+    <section
+      className="metrics"
+      data-section="metrics"
+      aria-labelledby="metrics-title"
+    >
+      <header className="metrics__head section-head section-head--on-light">
         <p className="section-head__eyebrow">By the numbers</p>
-        <ParallaxHeading className="section-head__title">
+        <ParallaxHeading id="metrics-title" className="section-head__title">
           Proof, not promises.
         </ParallaxHeading>
         <p className="section-head__sub">
@@ -111,7 +135,7 @@ export function MetricsSection() {
         </p>
       </header>
 
-      <div className="metrics__chart">
+      <div className="metrics__chart" aria-label="Key metrics">
         <div className="metric" data-metric>
           <strong>$6M</strong>
           <span>Raised across seed rounds</span>
