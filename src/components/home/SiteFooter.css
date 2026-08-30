@@ -281,7 +281,7 @@
   padding: 10px 12px;
   font-family: var(--font-sans);
   font-size: 13px;
-  border-radius: 2px;
+  border-radius: 0;
   margin-top: 8px;
   margin-bottom: 12px;
   outline: none;
@@ -344,7 +344,7 @@
 
 /*
  * Mark band — full width of .site-footer / .footer-circle-reveal (no gutters).
- * Fixed band height; aurora is background-only (does not expand the section).
+ * Height follows the art (no fixed clamp / cover crop).
  */
 .site-footer__mark-wrap {
   position: relative;
@@ -353,20 +353,31 @@
   flex: 0 0 auto;
   isolation: isolate;
   line-height: 0;
-  padding: 0;
+  /* Equal inset so the aurora isn’t flush-clipped against the stage edge. */
+  padding: clamp(12px, 1.6vw, 28px);
   width: 100%;
   max-width: none;
   margin-left: 0;
   margin-right: 0;
-  /* Fixed band height — image fills behind the wordmark, not vice versa. */
-  height: clamp(280px, 46vw, 560px);
-  min-height: 240px;
-  overflow: hidden;
+  height: auto;
+  min-height: 0;
+  overflow: visible;
   background-color: #000000;
-  background-image: url('/assets/footer-mark-hero.png');
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center bottom;
+  border-radius: 0;
+  box-sizing: border-box;
+}
+
+/* Full aurora — natural aspect, never cover-cropped. */
+.site-footer__mark-art {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  object-fit: contain;
+  object-position: center bottom;
+  border-radius: 0;
+  pointer-events: none;
+  user-select: none;
 }
 
 /*
@@ -376,7 +387,7 @@
   position: absolute;
   left: 50%;
   top: auto;
-  bottom: 0;
+  bottom: clamp(12px, 1.6vw, 28px);
   transform: translateX(-50%);
   z-index: 1;
   display: block;
@@ -387,6 +398,7 @@
   padding: 0;
   opacity: 0.92;
   pointer-events: none;
+  border-radius: 0;
 }
 
 /* White fill (soft baseline fade). Solid white fallback if paint server fails. */
@@ -448,14 +460,15 @@
   .site-footer__mark-wrap {
     width: 100%;
     max-width: none;
-    height: clamp(220px, 62vw, 380px);
-    min-height: 200px;
+    height: auto;
+    min-height: 0;
+    padding: clamp(10px, 3vw, 20px);
   }
 
   .site-footer__wordmark {
     width: min(88%, 640px);
     max-width: 92%;
-    bottom: 0;
+    bottom: clamp(10px, 3vw, 20px);
   }
 
   .site-footer__grid {
