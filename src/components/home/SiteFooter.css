@@ -143,8 +143,8 @@
   --footer-gutter: clamp(24px, 4vw, 72px);
   color: color-mix(in srgb, var(--color-ecru, #f8ece4) 55%, transparent);
   /*
-   * No horizontal padding on this shell — gutters are on .footer-copy-reveal
-   * only, so .site-footer__mark-wrap can sit edge-to-edge on the stage.
+   * No horizontal padding on this shell — gutters live on .footer-copy-reveal
+   * and .site-footer__mark-wrap so copy and wordmark share one column.
    */
   padding: 40px 0 0;
   background: #000000;
@@ -342,29 +342,18 @@
 
 /*
  * Mark band — MEOLAA wordmark on black footer base.
+ * Same horizontal gutters as .footer-copy-reveal; height hugs the SVG.
  */
 .site-footer__mark-wrap {
-  --footer-mark-width: min(78%, 980px);
-  --footer-mark-inset: 0;
   position: relative;
   z-index: 0;
   margin-top: 0;
   flex: 0 0 auto;
   isolation: isolate;
   line-height: 0;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
+  display: block;
   width: 100%;
-  max-width: none;
-  margin-left: 0;
-  margin-right: 0;
-  /*
-   * Tall enough for the full tight-crop wordmark (aspect ~4.98) — no extra
-   * inset band below; wordmark sits flush on the footer edge.
-   */
-  min-height: calc(min(78vw, 980px) / 4.98);
-  height: auto;
+  padding-inline: var(--footer-gutter);
   padding-bottom: 0;
   overflow: visible;
   background-color: #000000;
@@ -373,18 +362,14 @@
 }
 
 /*
- * MEOLAA wordmark — anchored to the bottom edge.
+ * MEOLAA wordmark — full content width, natural block height (no dead band).
  */
 .site-footer__wordmark {
-  position: absolute;
-  left: 50%;
-  top: auto;
-  bottom: var(--footer-mark-inset);
-  transform: translateX(-50%);
+  position: relative;
   z-index: 1;
   display: block;
-  width: var(--footer-mark-width);
-  max-width: 85%;
+  width: 100%;
+  max-width: none;
   height: auto;
   margin: 0;
   padding: 0;
@@ -402,14 +387,6 @@
 }
 
 .footer-reveal-section--animated .site-footer__mark-wrap {
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  /* Keep stage-full width — do not shrink inside copy gutters. */
-  width: 100%;
-  max-width: none;
-  margin-left: 0;
-  margin-right: 0;
   clip-path: inset(100% 0 0 0);
   will-change: clip-path;
 }
@@ -453,15 +430,7 @@
   }
 
   .site-footer__mark-wrap {
-    --footer-mark-width: min(88%, 640px);
-    --footer-mark-inset: 0;
-    min-height: calc(min(88vw, 640px) / 4.98);
     width: 100%;
-    max-width: none;
-  }
-
-  .site-footer__wordmark {
-    max-width: 92%;
   }
 
   .site-footer__grid {
