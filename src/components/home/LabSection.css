@@ -75,8 +75,8 @@
   height: clamp(16rem, 42vh, 28rem);
   max-width: 100%;
   max-height: 100%;
-  opacity: 0.5;
-  fill: var(--color-planet-blue, #002f3a);
+  opacity: 1;
+  fill: var(--color-joyous-yellow, #fdf28c);
 }
 
 .meola-lab__headline {
@@ -184,13 +184,13 @@
   );
 }
 
-/* 04 Distribution & ops — Sustainable Green. */
+/* 04 Distribution & ops — Ecru Deep (warm; distinct from 01–03 + green). */
 .meola-lab__panel[data-lab-index='3'] {
-  --meola-lab-strip: var(--color-sustainable-green, #41857a);
-  --meola-lab-strip-ink: var(--color-white, #fff);
+  --meola-lab-strip: var(--color-ecru-deep, #f0d5cc);
+  --meola-lab-strip-ink: var(--color-planet-blue, #002f3a);
   --meola-lab-strip-muted: color-mix(
     in srgb,
-    var(--color-white, #fff) 72%,
+    var(--color-planet-blue, #002f3a) 55%,
     transparent
   );
 }
