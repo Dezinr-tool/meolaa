@@ -160,7 +160,7 @@
 /* ——— Section shells that reuse the header ——— */
 
 /* Metrics — ONE section (not two folds): shared section-head on white +
-   full-bleed primary stats band as the same unit’s footer.
+   full-bleed Deep Ecru stats band as the same unit’s footer.
    Four absolute columns keep .metric:nth-child(n) for the stair reveal. */
 .metrics {
   --metrics-pad-x: clamp(24px, 4vw, 64px);
