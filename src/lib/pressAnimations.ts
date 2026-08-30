@@ -67,13 +67,6 @@ export function initPress(): () => void {
   )
   if (!cards.length) return () => {}
 
-  const prevBtn = press.querySelector(
-    '[data-press-prev]',
-  ) as HTMLButtonElement | null
-  const nextBtn = press.querySelector(
-    '[data-press-next]',
-  ) as HTMLButtonElement | null
-
   const reduceMotion = prefersReducedMotion()
   press.classList.remove('press-feed--static')
 
@@ -93,20 +86,6 @@ export function initPress(): () => void {
     minX = -getTravel(track, slider)
   }
 
-  const syncNav = () => {
-    const x = Number(gsap.getProperty(track, 'x')) || 0
-    const atStart = x >= -1
-    const atEnd = x <= minX + 1
-    if (prevBtn) {
-      prevBtn.disabled = !entered || atStart || minX >= 0
-      prevBtn.setAttribute('aria-disabled', String(prevBtn.disabled))
-    }
-    if (nextBtn) {
-      nextBtn.disabled = !entered || atEnd || minX >= 0
-      nextBtn.setAttribute('aria-disabled', String(nextBtn.disabled))
-    }
-  }
-
   measure()
 
   const [draggable] = Draggable.create(track, {
@@ -123,17 +102,13 @@ export function initPress(): () => void {
         return snapX(value, step, minX)
       },
     },
-    onThrowComplete: syncNav,
     onDragEnd: () => {
       if (reduceMotion) {
         measure()
         const x = Number(gsap.getProperty(track, 'x')) || 0
         gsap.set(track, { x: snapX(x, step, minX) })
       }
-      syncNav()
     },
-    onDrag: syncNav,
-    onThrowUpdate: syncNav,
   })
 
   const enableBrowsing = () => {
@@ -142,7 +117,6 @@ export function initPress(): () => void {
     draggable.applyBounds({ minX, maxX: 0 })
     draggable.enable()
     draggable.update(true)
-    syncNav()
   }
 
   const refreshBounds = () => {
@@ -153,7 +127,6 @@ export function initPress(): () => void {
     const settled = snapX(gsap.utils.clamp(minX, 0, x), step, minX)
     gsap.set(track, { x: settled })
     draggable.update(true)
-    syncNav()
   }
 
   /* Hold drag until the entrance settles so browsing doesn't fight the tween. */
@@ -167,7 +140,6 @@ export function initPress(): () => void {
     enableBrowsing()
   } else {
     gsap.set(track, { x: entryOffset(slider) })
-    syncNav()
 
     entranceTrigger = ScrollTrigger.create({
       trigger: press,
@@ -184,36 +156,6 @@ export function initPress(): () => void {
       },
     })
   }
-
-  const goBy = (dir: -1 | 1) => {
-    if (!entered) return
-    measure()
-    if (minX >= 0) return
-    const current = Number(gsap.getProperty(track, 'x')) || 0
-    const target = snapX(current - dir * step, step, minX)
-    gsap.killTweensOf(track)
-    if (reduceMotion) {
-      gsap.set(track, { x: target })
-      draggable.update(true)
-      syncNav()
-      return
-    }
-    gsap.to(track, {
-      x: target,
-      duration: 0.75,
-      ease: 'power3.out',
-      onUpdate: () => {
-        draggable.update(true)
-        syncNav()
-      },
-      onComplete: syncNav,
-    })
-  }
-
-  const onPrev = () => goBy(-1)
-  const onNext = () => goBy(1)
-  prevBtn?.addEventListener('click', onPrev)
-  nextBtn?.addEventListener('click', onNext)
 
   let wheelSnapTimer = 0
   const onWheel = (event: WheelEvent) => {
@@ -235,7 +177,6 @@ export function initPress(): () => void {
       gsap.set(track, { x: next })
     }
     draggable.update(true)
-    syncNav()
     window.clearTimeout(wheelSnapTimer)
     wheelSnapTimer = window.setTimeout(() => {
       if (reduceMotion) return
@@ -246,7 +187,6 @@ export function initPress(): () => void {
         duration: 0.55,
         ease: 'power3.out',
         onUpdate: () => draggable.update(true),
-        onComplete: syncNav,
       })
     }, 90)
   }
@@ -282,8 +222,6 @@ export function initPress(): () => void {
     window.clearTimeout(wheelSnapTimer)
     window.removeEventListener('resize', onResize)
     slider.removeEventListener('wheel', onWheel)
-    prevBtn?.removeEventListener('click', onPrev)
-    nextBtn?.removeEventListener('click', onNext)
     images.forEach((img) => {
       img.removeEventListener('load', onImg)
       img.removeEventListener('error', onImg)

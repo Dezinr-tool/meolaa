@@ -665,41 +665,6 @@ section.investors,
   gap: 12px;
 }
 
-.press-feed__nav {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.press-feed__arrow {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 42px;
-  height: 42px;
-  margin: 0;
-  padding: 0;
-  border: 1px solid rgba(0, 0, 0, 0.3);
-  border-radius: 0;
-  background: #fff;
-  color: #111;
-  font-size: 16px;
-  line-height: 1;
-  cursor: pointer;
-  transition: background 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
-}
-
-.press-feed__arrow:hover:not(:disabled) {
-  background: #111;
-  border-color: #111;
-  color: #fff;
-}
-
-.press-feed__arrow:disabled {
-  opacity: 0.35;
-  cursor: not-allowed;
-}
-
 /* Press head type/gaps: section-head.css (--section-head-*). */
 
 .press-feed__slider {

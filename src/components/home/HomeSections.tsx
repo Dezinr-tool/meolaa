@@ -275,24 +275,6 @@ export function PressSection() {
           </p>
         </div>
         <div className="press-feed__head-actions">
-          <div className="press-feed__nav" role="group" aria-label="Press cards">
-            <button
-              type="button"
-              className="press-feed__arrow"
-              data-press-prev
-              aria-label="Previous press cards"
-            >
-              <span aria-hidden="true">←</span>
-            </button>
-            <button
-              type="button"
-              className="press-feed__arrow"
-              data-press-next
-              aria-label="Next press cards"
-            >
-              <span aria-hidden="true">→</span>
-            </button>
-          </div>
           <Link className="btn-ghost-dark" to="/press">
             View all →
           </Link>
