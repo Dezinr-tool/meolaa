@@ -1,0 +1,38 @@
+<h2>Hero prism — light concept</h2>
+<p class="subtitle">Hover idea: white light from the left → prism → multi-colour spectrum on the right. Pick the prism form you want.</p>
+
+<div class="mockup" style="margin-bottom:1.5rem">
+  <div class="mockup-header">Interaction sketch (default idle → hover)</div>
+  <div class="mockup-body" style="background:#0a0a0a;padding:2rem 1.5rem;min-height:220px;position:relative;overflow:hidden">
+    <div style="position:absolute;left:8%;top:50%;transform:translateY(-50%);width:28%;height:3px;background:linear-gradient(90deg,transparent,#fff);opacity:.85;box-shadow:0 0 24px #fff"></div>
+    <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:72px;height:88px;background:linear-gradient(135deg,rgba(255,255,255,.15),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.45);clip-path:polygon(50% 0%,100% 100%,0% 100%);backdrop-filter:blur(2px)"></div>
+    <div style="position:absolute;right:6%;top:42%;width:32%;height:4px;background:linear-gradient(90deg,#fdf28c,#41857a,#a8a3e3,#5656ad,#f0d5cc);box-shadow:0 0 20px rgba(253,242,140,.5)"></div>
+    <div style="position:absolute;right:8%;top:50%;width:28%;height:3px;background:linear-gradient(90deg,#002f3a,#41857a,#a8a3e3);opacity:.9"></div>
+    <div style="position:absolute;right:10%;top:58%;width:24%;height:3px;background:linear-gradient(90deg,#fdf28c,#f0d5cc,#fff);opacity:.8"></div>
+    <p style="position:absolute;bottom:12px;left:16px;margin:0;color:rgba(255,255,255,.45);font-size:12px;letter-spacing:.08em;text-transform:uppercase">White in (L) · spectrum out (R)</p>
+  </div>
+</div>
+
+<div class="options">
+  <div class="option" data-choice="triangular" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Triangular prism</h3>
+      <p>Classic optics triangle — clearest “light in → rainbow out” read.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="crystal" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Crystal / faceted gem</h3>
+      <p>More Meolaa luxury — many faces, softer dispersion rays.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="slab" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Glass slab / bar</h3>
+      <p>Long horizontal prism — editorial, fills hero width.</p>
+    </div>
+  </div>
+</div>

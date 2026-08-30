@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 40" fill="none">
+  <g fill="#1a1a1a">
+    <path d="M2 28 L14 8 L18 8 L6 28 Z"/>
+    <path d="M10 28 L22 8 L26 8 L14 28 Z" opacity="0.45"/>
+    <text x="34" y="26" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="16" font-weight="600" letter-spacing="-0.02em">Turbostart</text>
+  </g>
+</svg>

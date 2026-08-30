@@ -1,0 +1,53 @@
+@import 'lenis/dist/lenis.css';
+@import './styles/tokens.css';
+@import './styles/buttons.css';
+@import './styles/proto-style.css';
+@import './styles/proto-pages.css';
+@import './styles/homepage-overrides.css';
+@import './styles/section-head.css';
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Colorful site — never greyscale */
+  -webkit-filter: none !important;
+  filter: none !important;
+  /* Stable gutter so ScrollTrigger pins (prism) don't shift layout width */
+  scrollbar-gutter: stable;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100svh;
+  font-family: var(--font-sans), var(--sans), system-ui, sans-serif;
+  background: #000;
+}
+
+#root {
+  min-height: 100svh;
+}
+
+img {
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+}
+
+/* Form controls don't inherit font-family from their ancestors, so without
+   this they silently fall back to the UA default (Arial) instead of Geist.
+   Family only — sizes stay whatever each component sets. */
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+}

@@ -1,0 +1,421 @@
+/**
+ * Overrides for React rebuild — blank Planet Blue hero, keep prototype layout.
+ */
+
+html {
+  -webkit-filter: none !important;
+  filter: none !important;
+}
+
+/* Blank brand field — Planet Blue only; copy + CTAs at bottom */
+.hero--blank {
+  position: relative;
+  background: var(--color-planet-blue, #002f3a);
+}
+
+/* Keep prototype .hero__bottom absolute bottom bar — headline bottom-left,
+   lede + CTAs bottom-right. Do not restyle into a column. */
+.hero--blank .hero__bottom {
+  z-index: 4;
+  pointer-events: none;
+}
+
+.hero--blank .hero__bottom a,
+.hero--blank .hero__bottom button {
+  pointer-events: auto;
+}
+
+/* Hero H1: Poppins Semibold, fixed 2-line break */
+.hero--blank .hero__headline {
+  color: var(--color-ecru, #f8ece4);
+  font-family: var(--font-display);
+  /* Up from --text-display-sm (36–64). The vw step is capped by what fits
+     beside the panel on the same row — see .hero--blank .hero__panel. */
+  font-size: clamp(2.375rem, 5.4vw, 4.5rem);
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-display);
+  letter-spacing: var(--tracking-display);
+  max-width: min(820px, 58vw);
+  font-variation-settings: normal;
+}
+
+.hero--blank .hero__headline span {
+  display: block;
+  white-space: nowrap; /* each span = one line on desktop */
+}
+
+/* Trimmed from 424/36vw to buy the bigger headline room on the same row. */
+.hero--blank .hero__panel {
+  max-width: min(380px, 32vw);
+}
+
+.hero--blank .hero__lede {
+  color: var(--color-fg-muted, rgba(248, 236, 228, 0.78));
+}
+
+@media (max-width: 900px) {
+  .hero--blank .hero__headline {
+    max-width: 100%;
+  }
+}
+
+/* The fixed two-line break stops fitting once the type is this big. */
+@media (max-width: 640px) {
+  .hero--blank .hero__headline span {
+    white-space: normal;
+  }
+}
+
+.hero__stage,
+.hero__bg,
+.hero-prism {
+  display: none !important;
+}
+
+/* Brand CTAs — Joyous Yellow on Planet Blue */
+.hero__btn--solid {
+  background: var(--color-joyous-yellow, #fdf28c) !important;
+  color: var(--color-planet-blue, #002f3a) !important;
+  border-color: var(--color-joyous-yellow, #fdf28c) !important;
+}
+
+.portfolio__cat.is-active {
+  background: #f8ece4 !important;
+  color: #002f3a !important;
+  border-color: #f8ece4 !important;
+}
+
+.site-nav__logo-img {
+  height: 20px;
+  width: auto;
+  display: block;
+}
+
+.site-nav__logo {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0;
+  letter-spacing: 0;
+}
+
+/* Nav links: Poppins Medium (brand headlines / UI) — bump clarity */
+.site-nav__links a {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: var(--fw-medium);
+}
+
+/*
+ * Vision fold 2 — video above thesis in one fold, then scrub-expands full-bleed.
+ * Media height capped so copy stays readable before/as pin scrub starts.
+ */
+.vision {
+  --vision-media-w: min(52rem, 86vw);
+  --vision-media-h: clamp(10.5rem, 46vh, 28rem);
+  color: var(--color-ink);
+  overflow: hidden;
+}
+
+.vision__stage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  /* Only two children, so this is the breathing room under the video. */
+  gap: clamp(2.25rem, 7vh, 4.5rem);
+  padding: clamp(4.5rem, 10vh, 6.5rem) var(--pad-x) clamp(1.5rem, 4vh, 2.75rem);
+  height: 100%;
+  min-height: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.vision__video-wrap {
+  position: relative;
+  inset: auto;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: var(--vision-media-w);
+  padding: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.vision__video {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  width: 100%;
+  height: var(--vision-media-h);
+  max-height: 52vh;
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--color-planet-blue, #002f3a);
+  will-change: width, height, border-radius;
+  pointer-events: auto;
+}
+
+.vision__video video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 40%;
+  display: block;
+}
+
+.vision__copy {
+  position: relative;
+  flex: 0 0 auto;
+  margin: 0 auto;
+  /* Wide enough for the second line, which now carries a whole sentence. */
+  max-width: min(58rem, 92vw);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 2;
+}
+
+/* Same treatment as the hero H1 — Poppins Semibold, display tracking — scaled
+   to the three lines that share this fold with the video. Each line is its own
+   <p>, so the pitch between them is line-height plus the margin below. */
+.vision__copy p {
+  font-family: var(--font-display, var(--serif));
+  /* Capped by what the two-sentence second line can be without running much
+     wider than the video above it. */
+  font-size: clamp(1.25rem, 2.25vw, 2rem);
+  font-weight: var(--fw-semibold);
+  line-height: 1.02;
+  letter-spacing: var(--tracking-display);
+  color: var(--color-ink);
+  margin: 0 0 0.1em;
+  text-wrap: balance;
+  white-space: nowrap;
+}
+
+.vision__copy p:last-child {
+  margin-bottom: 0;
+}
+
+@media (max-width: 900px) {
+  .vision__copy p {
+    white-space: normal;
+  }
+}
+
+@media (max-width: 720px) {
+  .vision {
+    --vision-media-w: min(100%, 92vw);
+    --vision-media-h: clamp(9rem, 40vh, 18rem);
+  }
+
+  .vision__stage {
+    gap: clamp(1.25rem, 3.5vh, 2rem);
+    padding-top: clamp(4rem, 9vh, 5.5rem);
+  }
+
+  .vision__video {
+    max-height: 42vh;
+  }
+
+  .vision__copy {
+    max-width: min(22rem, 92vw);
+  }
+
+  .vision__copy p {
+    font-size: clamp(1.125rem, 4.4vw, 1.5rem);
+    white-space: normal;
+    /* Display leading is too tight once these wrap to several lines. */
+    line-height: 1.22;
+  }
+}
+
+/* ——— The Loop header — match hero display tokens (Figma 150-340) ——— */
+.fold.loop .loop__eyebrow {
+  letter-spacing: var(--tracking-eyebrow, 0.12em);
+  color: rgba(248, 236, 228, 0.52);
+}
+
+.fold.loop .loop__title {
+  color: var(--color-ecru, #f8ece4);
+  font-family: var(--font-display);
+  font-size: var(--text-display-sm);
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-display);
+  letter-spacing: var(--tracking-display);
+  text-transform: uppercase;
+}
+
+/* ——— One-fold section shells (homepage) ——— */
+.fold.hero,
+.fold.vision,
+.fold.loop,
+.fold.meola-lab,
+.portfolio--fold {
+  height: 100vh;
+  height: 100svh;
+  min-height: 100svh;
+  max-height: 100svh;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.founding {
+  height: 100vh;
+  height: 100svh;
+  min-height: 100svh;
+  max-height: 100svh;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.founding__text {
+  padding: clamp(40px, 7vh, 72px) clamp(24px, 4vw, 64px);
+}
+
+.founding__text h2 {
+  font-size: clamp(1.65rem, 3.2vw, var(--text-h2, 2.25rem));
+  margin-top: clamp(12px, 2vh, 18px);
+}
+
+.founding__body {
+  margin-top: clamp(16px, 2.5vh, 22px);
+  font-size: clamp(0.9rem, 1.05vw, var(--text-body, 1rem));
+}
+
+.portfolio--fold .portfolio__intro,
+.portfolio--fold .portfolio-title {
+  padding: clamp(56px, 8vh, 80px) clamp(20px, 4vw, 48px) clamp(6px, 1.2vh, 12px);
+}
+
+.portfolio--fold .portfolio__deck {
+  padding-top: clamp(28px, 4.5vh, 44px);
+}
+
+.metrics {
+  height: 100vh;
+  height: 100svh;
+  min-height: 100svh;
+  max-height: 100svh;
+  box-sizing: border-box;
+}
+
+.investors {
+  height: 100vh;
+  height: 100svh;
+  min-height: 100svh;
+  max-height: 100svh;
+  box-sizing: border-box;
+  justify-content: center;
+  padding: clamp(48px, 8vh, 90px) clamp(24px, 4vw, 64px);
+  gap: clamp(20px, 3vh, 36px);
+}
+
+.investors h2 {
+  font-size: clamp(1.35rem, 2.8vw, 1.75rem);
+  line-height: 1.25;
+}
+
+.investor-logos {
+  gap: clamp(28px, 4vh, 48px) clamp(32px, 5vw, 56px);
+}
+
+.press-feed {
+  height: 100vh;
+  height: 100svh;
+  min-height: 100svh;
+  max-height: 100svh;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(56px, 8vh, 80px) clamp(24px, 4vw, 64px);
+  overflow: hidden;
+}
+
+.press-feed__head {
+  margin-bottom: clamp(20px, 3vh, 36px);
+  flex: 0 0 auto;
+}
+
+.press-feed__title {
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  margin: 10px 0 12px;
+}
+
+.press-feed__grid {
+  flex: 0 1 auto;
+  min-height: 0;
+  gap: clamp(16px, 2vw, 28px);
+}
+
+.press-card__media {
+  aspect-ratio: 16 / 10;
+  margin-bottom: 12px;
+}
+
+.press-card h3 {
+  font-size: clamp(0.95rem, 1.2vw, 1.15rem);
+  margin-bottom: 6px;
+}
+
+.press-card__excerpt {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.pg-where-next {
+  height: 100vh;
+  height: 100svh;
+  min-height: 100svh;
+  max-height: 100svh;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(48px, 8vh, 90px) clamp(24px, 4vw, 64px);
+  overflow: hidden;
+}
+
+.pg-where-next__grid {
+  margin-top: clamp(20px, 3vh, 32px);
+  gap: clamp(12px, 2vh, 20px);
+}
+
+@media (max-width: 900px) {
+  .fold.loop,
+  .fold.meola-lab,
+  .portfolio--fold,
+  .founding,
+  .metrics,
+  .investors,
+  .press-feed,
+  .pg-where-next {
+    height: auto;
+    max-height: none;
+    min-height: 100svh;
+  }
+
+  .press-feed__grid {
+    grid-template-columns: 1fr;
+    overflow: auto;
+  }
+
+  .press-card:nth-child(n + 3) {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portfolio-title h2,
+  .portfolio__intro h2 {
+    filter: none !important;
+    opacity: 1 !important;
+  }
+}

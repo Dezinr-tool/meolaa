@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Meolaa — Prism concept</title>
+    <style>
+      :root {
+        --bg: #f8ece4;
+        --ink: #002f3a;
+        --yellow: #fdf28c;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: system-ui, sans-serif;
+        background: var(--bg);
+        color: var(--ink);
+        padding: 32px 24px 64px;
+      }
+      h1 {
+        font-size: 1.5rem;
+        margin: 0 0 8px;
+      }
+      .sub {
+        opacity: 0.7;
+        margin: 0 0 28px;
+        max-width: 40rem;
+      }
+      .sketch {
+        position: relative;
+        height: 220px;
+        background: #0a0a0a;
+        border-radius: 8px;
+        overflow: hidden;
+        margin-bottom: 28px;
+      }
+      .beam-in {
+        position: absolute;
+        left: 8%;
+        top: 50%;
+        width: 28%;
+        height: 3px;
+        transform: translateY(-50%);
+        background: linear-gradient(90deg, transparent, #fff);
+        box-shadow: 0 0 24px #fff;
+      }
+      .prism {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 72px;
+        height: 88px;
+        transform: translate(-50%, -50%);
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.02));
+        border: 1px solid rgba(255, 255, 255, 0.45);
+        clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+      }
+      .ray {
+        position: absolute;
+        right: 6%;
+        height: 4px;
+        background: linear-gradient(90deg, #fdf28c, #41857a, #a8a3e3, #5656ad, #f0d5cc);
+      }
+      .ray:nth-child(3) {
+        top: 42%;
+        width: 32%;
+      }
+      .ray:nth-child(4) {
+        top: 50%;
+        width: 28%;
+        height: 3px;
+        background: linear-gradient(90deg, #002f3a, #41857a, #a8a3e3);
+      }
+      .ray:nth-child(5) {
+        top: 58%;
+        width: 24%;
+        height: 3px;
+        background: linear-gradient(90deg, #fdf28c, #f0d5cc, #fff);
+      }
+      .opts {
+        display: grid;
+        gap: 12px;
+        max-width: 36rem;
+      }
+      .opt {
+        display: block;
+        padding: 16px 18px;
+        border: 1px solid rgba(0, 47, 58, 0.2);
+        border-radius: 6px;
+        background: #fff;
+        text-decoration: none;
+        color: inherit;
+      }
+      .opt:hover {
+        border-color: var(--ink);
+        background: var(--yellow);
+      }
+      .opt strong {
+        display: block;
+        margin-bottom: 4px;
+      }
+      .opt span {
+        font-size: 0.9rem;
+        opacity: 0.75;
+      }
+      .note {
+        margin-top: 24px;
+        font-size: 0.9rem;
+        opacity: 0.65;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Hero prism — pick a form</h1>
+    <p class="sub">
+      Hover concept: white light from the left hits the prism; multi-colour
+      spectrum exits on the right. Open this page on Vite (works even when the
+      companion port fails). Reply in chat with <strong>A</strong>,
+      <strong>B</strong>, or <strong>C</strong>.
+    </p>
+    <div class="sketch" aria-hidden="true">
+      <div class="beam-in"></div>
+      <div class="prism"></div>
+      <div class="ray"></div>
+      <div class="ray"></div>
+      <div class="ray"></div>
+    </div>
+    <div class="opts">
+      <div class="opt">
+        <strong>A — Triangular prism</strong>
+        <span>Classic optics triangle — clearest light → rainbow.</span>
+      </div>
+      <div class="opt">
+        <strong>B — Crystal / faceted gem</strong>
+        <span>Luxury Meolaa feel — many faces, softer rays.</span>
+      </div>
+      <div class="opt">
+        <strong>C — Glass slab / bar</strong>
+        <span>Long horizontal prism — fills hero width.</span>
+      </div>
+    </div>
+    <p class="note">Chat में A / B / C लिख दो — उसी से 3D build शुरू करेंगे.</p>
+  </body>
+</html>

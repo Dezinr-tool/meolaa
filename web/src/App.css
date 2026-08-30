@@ -1,0 +1,6 @@
+/* App shell — homepage layout driven by prototype CSS + overrides */
+
+.app--home {
+  min-height: 100svh;
+  background: #000;
+}

@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Our Story — Meolaa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=IBM+Plex+Mono&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lenis@1.3.15/dist/lenis.css" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/pages.css" />
+    <script src="js/figma-capture-prep.js?v=8"></script>
+<script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+</head>
+<body data-page="story" class="page-editorial">
+  <header class="site-nav site-nav--dark">
+    <a class="site-nav__logo" href="index.html">MEOLAA</a>
+    <nav class="site-nav__links" aria-label="Main">
+      <a href="about-us.html" data-nav="about">About Us</a>
+      <a href="our-story.html" data-nav="story">Our Story</a>
+      <a href="platform.html" data-nav="platform">Meolaa Lab</a>
+      <a href="press.html" data-nav="press">Press</a>
+      <a href="partners.html" data-nav="partners">Partners</a>
+      <a href="careers.html" data-nav="careers">Careers</a>
+    </nav>
+  </header>
+
+  <!-- 3.1 Hero — asymmetric editorial (type + tall inset panel) -->
+  <section class="story-hero" data-pg-hero>
+    <div class="story-hero__inner">
+      <div class="story-hero__copy">
+        <div class="story-hero__meta" data-story-hero-fade>
+          <p class="pg-eyebrow pg-eyebrow--dark">MEOLAA · FOUNDED 2022</p>
+          <p class="pg-eyebrow pg-eyebrow--dark">OUR STORY</p>
+        </div>
+        <h1 class="pg-display story-hero__headline" data-story-hero-fade>
+          It started with a question no one else was asking.
+        </h1>
+        <p class="pg-body story-hero__lede" data-story-hero-fade>
+          In 2022, Ishita Sawant set out to prove that emerging consumer demand could be identified and served faster than any traditional FMCG company could move — Meolaa is the system built to do exactly that.
+        </p>
+      </div>
+      <figure class="story-hero__panel" data-story-hero-panel aria-hidden="true">
+        <img
+          src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&amp;fit=crop&amp;w=900&amp;h=1200&amp;q=80"
+          alt=""
+        />
+      </figure>
+    </div>
+  </section>
+
+  <!-- Compact top progress (mobile) — engages with chapters -->
+  <div class="story-rail-mobile" data-story-rail-mobile aria-hidden="true">
+    <div class="story-rail-mobile__track">
+      <div class="story-rail-mobile__fill" data-story-rail-mobile-fill></div>
+    </div>
+    <p class="story-rail-mobile__label" data-story-rail-mobile-label>Mar 2022 · Insight</p>
+  </div>
+
+  <!-- Chapters + sticky left timeline (rail starts after hero) -->
+  <div class="story-body" data-story-body>
+    <aside class="story-rail" data-story-rail aria-label="Story timeline">
+      <div class="story-rail__inner">
+        <div class="story-rail__line" aria-hidden="true">
+          <div class="story-rail__progress" data-story-rail-progress></div>
+        </div>
+        <ol class="story-rail__list">
+          <li>
+            <button type="button" class="story-rail__item" data-story-rail-item="insight" aria-current="step">
+              <span class="story-rail__node" aria-hidden="true"></span>
+              <span class="story-rail__meta">
+                <span class="story-rail__year">Mar 2022</span>
+                <span class="story-rail__name">Insight</span>
+              </span>
+            </button>
+          </li>
+          <li>
+            <button type="button" class="story-rail__item" data-story-rail-item="build" aria-current="false">
+              <span class="story-rail__node" aria-hidden="true"></span>
+              <span class="story-rail__meta">
+                <span class="story-rail__year">Nov 2022</span>
+                <span class="story-rail__name">Build</span>
+              </span>
+            </button>
+          </li>
+          <li>
+            <button type="button" class="story-rail__item" data-story-rail-item="brand" aria-current="false">
+              <span class="story-rail__node" aria-hidden="true"></span>
+              <span class="story-rail__meta">
+                <span class="story-rail__year">Jun 2024</span>
+                <span class="story-rail__name">First Brand</span>
+              </span>
+            </button>
+          </li>
+        </ol>
+      </div>
+    </aside>
+
+    <div class="story-body__main">
+      <!-- 3.2 Chapter 1 — The Insight Thesis -->
+      <section class="story-chapter" id="chapter-insight" data-story-chapter="insight" aria-labelledby="chapter-insight-title">
+        <div class="story-chapter__inner">
+          <header class="story-chapter__head">
+            <p class="story-chapter__milestone">Mar 2022</p>
+            <p class="pg-eyebrow pg-eyebrow--dark">CHAPTER 01 · THE INSIGHT THESIS</p>
+            <h2 class="pg-display" id="chapter-insight-title">Demand leaves a signal before it peaks.</h2>
+          </header>
+
+          <figure class="story-chapter__media">
+            <img
+              src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&amp;fit=crop&amp;w=1400&amp;h=900&amp;q=80"
+              alt="Analytics dashboard showing consumer demand signals and data patterns"
+            />
+          </figure>
+
+          <p class="pg-body story-chapter__narrative">
+            Ishita's conviction: consumer behaviour leaves signals long before a category peaks — search, social, pricing gaps. Most companies find out after the opportunity has already been priced in. We believed demand could be read before it became obvious.
+          </p>
+
+          <div class="story-chapter__stats" role="list">
+            <div class="story-stat" role="listitem">
+              <strong class="story-stat__num">120+</strong>
+              <span class="story-stat__label">Categories mapped for whitespace and demand patterns</span>
+            </div>
+            <div class="story-stat" role="listitem">
+              <strong class="story-stat__num">3</strong>
+              <span class="story-stat__label">Markets where consumer signals are read before they peak</span>
+            </div>
+            <div class="story-stat" role="listitem">
+              <strong class="story-stat__num">2022</strong>
+              <span class="story-stat__label">Year the insight thesis became the company</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3.2 Chapter 2 — The Build System -->
+      <section class="story-chapter" id="chapter-build" data-story-chapter="build" aria-labelledby="chapter-build-title">
+        <div class="story-chapter__inner">
+          <header class="story-chapter__head">
+            <p class="story-chapter__milestone">Nov 2022</p>
+            <p class="pg-eyebrow pg-eyebrow--dark">CHAPTER 02 · THE BUILD SYSTEM</p>
+            <h2 class="pg-display" id="chapter-build-title">The system came first, on purpose.</h2>
+          </header>
+
+          <figure class="story-chapter__media">
+            <img
+              src="https://images.unsplash.com/photo-1504639725590-34d0984388bd?auto=format&amp;fit=crop&amp;w=1400&amp;h=900&amp;q=80"
+              alt="Code and systems architecture on a screen while building a platform"
+            />
+          </figure>
+
+          <p class="pg-body story-chapter__narrative">
+            Before HIRA existed, the platform did — CMI to find the gap, Brand Co-pilot to run what got built. The system came first, on purpose, so every brand after it would launch faster than the one before.
+          </p>
+
+          <div class="story-chapter__stats" role="list">
+            <div class="story-stat" role="listitem">
+              <strong class="story-stat__num">$6M</strong>
+              <span class="story-stat__label">Raised across seed rounds to build the operating system</span>
+            </div>
+            <div class="story-stat" role="listitem">
+              <strong class="story-stat__num">2</strong>
+              <span class="story-stat__label">Core systems first — CMI to find the gap, Brand Co-pilot to run it</span>
+            </div>
+            <div class="story-stat" role="listitem">
+              <strong class="story-stat__num">1</strong>
+              <span class="story-stat__label">Operating layer that finds, builds and runs every brand</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3.2 / 3.3 Chapter 3 — The First Brand (entity cards) -->
+      <section class="story-chapter story-chapter--brands" id="chapter-brand" data-story-chapter="brand" aria-labelledby="chapter-brand-title">
+        <div class="story-chapter__inner">
+          <header class="story-chapter__head">
+            <p class="story-chapter__milestone">Jun 2024</p>
+            <p class="pg-eyebrow pg-eyebrow--dark">CHAPTER 03 · THE FIRST BRAND</p>
+            <h2 class="pg-display" id="chapter-brand-title">Proof that the system works end to end.</h2>
+            <p class="pg-body story-chapter__lede">
+              HIRA ran through the full system — signal, build, launch — and it worked. That proof is what the rest of the portfolio is built on. Brand 02 is already in build from a validated opportunity.
+            </p>
+          </header>
+
+          <figure class="story-chapter__media story-chapter__media--compact">
+            <img
+              src="https://images.unsplash.com/photo-1571781926291-c477ebfd024b?auto=format&amp;fit=crop&amp;w=1400&amp;h=900&amp;q=80"
+              alt="Beauty and skincare products on a shelf — first brand lifestyle"
+            />
+          </figure>
+
+          <div class="story-brand-grid">
+            <article class="story-brand-card">
+              <div class="story-brand-card__media">
+                <img
+                  src="https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&amp;fit=crop&amp;w=960&amp;h=720&amp;q=80"
+                  alt="Beauty and personal care products"
+                  width="960"
+                  height="720"
+                />
+              </div>
+              <div class="story-brand-card__body">
+                <p class="story-brand-card__meta">Beauty &amp; Personal Care · Live</p>
+                <h3 class="story-brand-card__name">HIRA</h3>
+                <p class="story-brand-card__desc">Meolaa's first brand — built end-to-end on the platform, live and shipping.</p>
+                <a class="story-brand-card__cta" href="#">View brand ↗</a>
+              </div>
+            </article>
+
+            <article class="story-brand-card story-brand-card--soon">
+              <div class="story-brand-card__media">
+                <img
+                  src="https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&amp;fit=crop&amp;w=960&amp;h=720&amp;q=80"
+                  alt="Elegant fragrance bottle"
+                  width="960"
+                  height="720"
+                />
+              </div>
+              <div class="story-brand-card__body">
+                <p class="story-brand-card__meta">Fragrance · In build</p>
+                <h3 class="story-brand-card__name">Brand 02</h3>
+                <p class="story-brand-card__soon">Coming Soon</p>
+                <p class="story-brand-card__desc">Validated opportunity, already in build from the same system.</p>
+                <span class="story-brand-card__cta story-brand-card__cta--disabled" aria-disabled="true">Coming soon</span>
+              </div>
+            </article>
+
+            <article class="story-brand-card story-brand-card--soon">
+              <div class="story-brand-card__media">
+                <img
+                  src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&amp;fit=crop&amp;w=960&amp;h=720&amp;q=80"
+                  alt="Kitchen essentials and cookware"
+                  width="960"
+                  height="720"
+                />
+              </div>
+              <div class="story-brand-card__body">
+                <p class="story-brand-card__meta">Kitchen Essentials · Pipeline</p>
+                <h3 class="story-brand-card__name">Brand 03</h3>
+                <p class="story-brand-card__soon">Coming Soon</p>
+                <p class="story-brand-card__desc">Next signal in the pipeline — structure ready as more brands launch.</p>
+                <span class="story-brand-card__cta story-brand-card__cta--disabled" aria-disabled="true">Coming soon</span>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- Founder quote — after timeline chapters; not a rail milestone -->
+  <section class="story-system-hero" id="story-founder-quote" aria-label="Founder quote">
+    <div class="story-system-hero__media" aria-hidden="true">
+      <img
+        class="story-system-hero__img"
+        src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&amp;fit=crop&amp;w=1920&amp;h=1080&amp;q=80"
+        alt=""
+      />
+    </div>
+    <div class="story-system-hero__scrim" aria-hidden="true"></div>
+    <blockquote class="story-system-hero__quote">
+      <p class="story-system-hero__text">We're not building one brand well. We're building the system that builds every brand well.</p>
+      <footer class="story-system-hero__attr">
+        <div class="story-system-hero__portrait">
+          <img src="assets/founder-meolaa.png" alt="" />
+        </div>
+        <div>
+          <cite class="story-system-hero__name">Ishita Sawant</cite>
+          <p class="story-system-hero__role">Founder &amp; CEO</p>
+        </div>
+      </footer>
+    </blockquote>
+  </section>
+
+  <!-- 3.6 Transition CTA to Platform -->
+  <section class="story-cta-band" aria-labelledby="story-cta-heading">
+    <div class="story-cta-band__inner">
+      <article class="story-cta-band__card">
+        <p class="pg-eyebrow pg-eyebrow--dark story-cta-band__eyebrow">THE SYSTEM BEHIND THE STORY</p>
+        <h2 id="story-cta-heading" class="pg-display story-cta-band__title">See how the platform actually works.</h2>
+        <p class="story-cta-band__sub">Insight, product, brand and distribution — one integrated operating system, not three departments handing off.</p>
+        <a class="story-cta-band__link" href="platform.html">Explore Meolaa Lab →</a>
+      </article>
+    </div>
+  </section>
+
+  <section class="pg-where-next">
+    <p class="pg-eyebrow pg-eyebrow--light">WHERE TO NEXT</p>
+    <div class="pg-where-next__grid">
+      <a class="pg-where-next__card" href="about-us.html">
+        <span class="num">02</span>
+        <h3>About Us</h3>
+        <p>The thesis, the model, the team. →</p>
+      </a>
+      <a class="pg-where-next__card" href="platform.html">
+        <span class="num">04</span>
+        <h3>Meolaa Lab</h3>
+        <p>The system this story is about. →</p>
+      </a>
+      <a class="pg-where-next__card" href="careers.html">
+        <span class="num">07</span>
+        <h3>Careers</h3>
+        <p>Help write the next chapter. →</p>
+      </a>
+    </div>
+  </section>
+
+  <footer class="site-footer site-footer--svg">
+    <img class="site-footer__art" src="assets/footer.svg" alt="" />
+    <img class="site-footer__wordmark" src="assets/logo-white.png" alt="Meolaa" />
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.15/dist/lenis.min.js"></script>
+  <script src="js/static-pages.js"></script>
+  <script src="js/story-rail.js"></script>
+</body>
+</html>

@@ -1,0 +1,197 @@
+/**
+ * Shared section header — eyebrow → title → subline, centred.
+ *
+ * Replaces six separate eyebrow systems (.eyebrow.dark, .eyebrow.light,
+ * .pg-eyebrow--light, .founding__eyebrow, .meola-lab__eyebrow, .loop__eyebrow)
+ * and per-section h2 sizes that ranged from 28px to 120px.
+ *
+ * Tone is explicit: --on-dark = light text for a dark ground, --on-light =
+ * dark text for a light ground. Imported last so it beats the per-section
+ * rules it supersedes.
+ */
+
+.section-head {
+  --sh-accent: var(--color-joyous-yellow, #fdf28c);
+  --sh-title: var(--color-ecru, #f8ece4);
+  --sh-sub: rgba(248, 236, 228, 0.68);
+
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: clamp(12px, 1.6vh, 20px);
+  max-width: min(56rem, 92vw);
+  margin-inline: auto;
+}
+
+.section-head--on-light {
+  --sh-accent: var(--color-sustainable-green, #41857a);
+  --sh-title: var(--color-planet-blue, #002f3a);
+  --sh-sub: rgba(0, 47, 58, 0.62);
+}
+
+/* For sections whose layout is a split or a full-bleed bar rather than a
+   centred stack — same type system, left-aligned. */
+.section-head--start {
+  align-items: flex-start;
+  text-align: left;
+  margin-inline: 0;
+  max-width: min(48rem, 100%);
+}
+
+.section-head__eyebrow {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: var(--text-eyebrow, 11px);
+  font-weight: var(--fw-semibold, 600);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  line-height: 1.2;
+  color: var(--sh-accent);
+}
+
+/* One step below the hero H1, same weight and tracking. */
+.section-head .section-head__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-h2-lg, clamp(2rem, 4.2vw, 3.5rem));
+  font-weight: var(--fw-semibold, 600);
+  line-height: var(--lh-display, 1.05);
+  letter-spacing: var(--tracking-display, -0.03em);
+  color: var(--sh-title);
+  text-wrap: balance;
+}
+
+.section-head__sub {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: clamp(0.9375rem, 1.15vw, 1.125rem);
+  line-height: 1.6;
+  color: var(--sh-sub);
+  max-width: 54ch;
+  text-wrap: balance;
+}
+
+/* Anything the section already put after the subline (a ghost CTA, a tab row)
+   keeps its own spacing but stays on the centre line. */
+.section-head > :not(.section-head__eyebrow):not(.section-head__title):not(.section-head__sub) {
+  margin-top: clamp(8px, 1.2vh, 16px);
+}
+
+@media (max-width: 720px) {
+  .section-head {
+    gap: 10px;
+  }
+
+  .section-head__sub {
+    max-width: 40ch;
+  }
+}
+
+/* ——— Section-specific fit for the shared header ——— */
+
+/* Metrics: the bars are absolutely positioned against the bottom, so they get
+   their own stage below the header rather than the whole section. Keeping four
+   children in that stage also keeps .metric:nth-child(n) numbering the columns. */
+.metrics {
+  --metrics-pad-x: clamp(24px, 4vw, 64px);
+
+  display: flex;
+  flex-direction: column;
+  gap: clamp(24px, 4vh, 48px);
+  padding: clamp(48px, 8vh, 90px) var(--metrics-pad-x) 0;
+}
+
+.metrics__chart {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  /* Bars stay full-bleed despite the section's padding. */
+  margin-inline: calc(var(--metrics-pad-x) * -1);
+}
+
+/* Press: the head was a 640px left-aligned block. */
+.press-feed__head.section-head {
+  max-width: min(48rem, 92vw);
+}
+
+/* "PRESS" was a 56–120px statement word; it now sits on the shared scale. */
+.press-feed__head .press-feed__title {
+  margin: 0;
+  line-height: var(--lh-display, 1.05);
+  letter-spacing: var(--tracking-display, -0.03em);
+}
+
+/* Where-next: header sits above the card grid. */
+.pg-where-next .section-head {
+  margin-bottom: clamp(28px, 4vh, 56px);
+}
+
+/* Founding keeps its two-column split; only the type system is shared. */
+.founding__text.section-head {
+  justify-content: center;
+}
+
+.founding__text .section-head__title,
+.founding__text .section-head__sub {
+  margin-top: 0;
+  max-width: none;
+}
+
+/* Lab: the intro was a three-column bar (eyebrow | mark | headline). It is now
+   the shared stack, with the mark leading it. */
+/* Full-bleed bar: no 56rem cap, so the title holds one line and the accordion
+   below keeps its height. */
+.meola-lab__intro.section-head {
+  display: flex;
+  gap: clamp(6px, 1vh, 12px);
+  max-width: none;
+  padding-block: clamp(16px, 2.4vh, 28px) clamp(12px, 1.8vh, 20px);
+}
+
+.meola-lab__intro .meola-lab__mark {
+  margin: 0;
+  height: auto;
+}
+
+.meola-lab__intro .meola-lab__mark img {
+  display: block;
+  height: clamp(26px, 3.4vh, 36px);
+  width: auto;
+}
+
+.meola-lab__intro .section-head__title {
+  text-align: center;
+  max-width: none;
+}
+
+/* Loop header already sat centred; drop its own padding rule's alignment job. */
+.loop__header.section-head {
+  padding-inline: clamp(20px, 4vw, 64px);
+}
+
+/* These two sections carry higher-specificity rules from before the shared
+   pattern existed (.fold.loop .loop__title, .meola-lab__* in the component
+   sheet), so the shared values are restated at matching weight. */
+.fold.loop .loop__header .section-head__eyebrow,
+.meola-lab__intro .section-head__eyebrow {
+  font-family: var(--mono);
+  font-size: var(--text-eyebrow, 11px);
+  font-weight: var(--fw-semibold, 600);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--sh-accent);
+}
+
+.fold.loop .loop__header .section-head__title,
+.meola-lab__intro .section-head__title {
+  font-family: var(--font-display);
+  font-size: var(--text-h2-lg, clamp(2rem, 4.2vw, 3.5rem));
+  font-weight: var(--fw-semibold, 600);
+  line-height: var(--lh-display, 1.05);
+  letter-spacing: var(--tracking-display, -0.03em);
+  text-transform: none;
+  color: var(--sh-title);
+}

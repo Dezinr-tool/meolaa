@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About Us — Meolaa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=IBM+Plex+Mono&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lenis@1.3.15/dist/lenis.css" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/pages.css" />
+    <script src="js/figma-capture-prep.js?v=8"></script>
+<script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+</head>
+<body data-page="about" class="page-editorial">
+  <header class="site-nav site-nav--dark">
+    <a class="site-nav__logo" href="index.html">MEOLAA</a>
+    <nav class="site-nav__links" aria-label="Main">
+      <a href="about-us.html" data-nav="about">About Us</a>
+      <a href="our-story.html" data-nav="story">Our Story</a>
+      <a href="platform.html" data-nav="platform">Meolaa Lab</a>
+      <a href="press.html" data-nav="press">Press</a>
+      <a href="partners.html" data-nav="partners">Partners</a>
+      <a href="careers.html" data-nav="careers">Careers</a>
+    </nav>
+  </header>
+
+  <!-- 2.1 Fold 1 — title + video expands to full bleed (Zoox About pattern) -->
+  <section class="au-fold1 ed-scroll--pin" data-pg-hero aria-label="About Us">
+    <div class="au-fold1__pin">
+      <header class="au-fold1__head">
+        <p class="pg-eyebrow pg-eyebrow--dark">ABOUT US</p>
+        <h1 class="pg-display au-fold1__title">A technology company <span class="au-fold1__accent">building consumer brands</span>.</h1>
+        <div class="au-fold1__ctas">
+          <a class="ct-btn ct-btn--dark" href="#mission">Our thesis ↓</a>
+          <a class="ct-btn ct-btn--dark" href="#leadership">Meet the team ↓</a>
+        </div>
+      </header>
+      <div class="au-fold1__video-box" data-au-video-box>
+        <video
+          class="au-fold1__video"
+          data-au-video
+          poster="assets/pages/about-hero.jpg"
+          muted
+          loop
+          playsinline
+          autoplay
+          aria-label="About Meolaa — placeholder video"
+        >
+          <source src="https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" type="video/mp4" />
+        </video>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2.2–2.3 Model thesis + Mission/Vision (shared pin: zoom starts with Demand/Model copy) -->
+  <section class="au2-mv" id="mission" data-mv-scroll aria-label="Mission and Vision">
+    <div class="au2-mv__pin" data-mv-pin>
+      <div class="au2-mv__thesis" data-mv-thesis aria-label="The Model">
+        <div class="au-fold2__inner">
+          <p class="pg-eyebrow pg-eyebrow--dark">THE MODEL</p>
+          <p class="au-fold2__lede">
+            <span data-reveal-chunk>AI-native, digitally-native,</span>
+            <span data-reveal-chunk>and built to move at the speed of demand.</span>
+          </p>
+          <p class="pg-body au-fold2__body" data-reveal-chunk>Every function — insight, product, brand, distribution — is designed around the same data layer, so a small team can do what used to take a large one.</p>
+        </div>
+      </div>
+
+      <!-- Frame = left-column box; entrance rises from bottom (+ scale), then x to right column -->
+      <div class="au2-mv__frame" data-mv-frame>
+        <img
+          class="au2-mv__img is-active"
+          data-mv-img="mission"
+          src="assets/pages/about-mission.jpg"
+          alt=""
+        />
+        <img
+          class="au2-mv__img"
+          data-mv-img="vision"
+          src="assets/pages/about-hero.jpg"
+          alt=""
+        />
+      </div>
+
+      <div class="au2-mv__strip" data-mv-strip>
+        <article class="au2-mv__panel" data-mv-panel="mission">
+          <div class="au2-mv__panel-media" aria-hidden="true">
+            <img src="assets/pages/about-mission.jpg" alt="" />
+          </div>
+          <div class="au2-mv__panel-text">
+            <p class="pg-eyebrow pg-eyebrow--dark" data-mv-fade>Mission</p>
+            <h2 class="pg-display" data-mv-fade>Our Mission</h2>
+            <p class="pg-body" data-mv-fade>Compress the distance from insight to shelf.</p>
+            <p class="pg-body au2-mv__support" data-mv-fade>
+              Meolaa is an AI-native house of consumer brands, built to read demand and launch faster than any traditional FMCG company can move.
+            </p>
+            <a class="au2-mv__link" data-mv-fade href="our-story.html">Our story →</a>
+          </div>
+        </article>
+
+        <article class="au2-mv__panel" data-mv-panel="vision">
+          <div class="au2-mv__panel-media" aria-hidden="true">
+            <img src="assets/pages/about-hero.jpg" alt="" />
+          </div>
+          <div class="au2-mv__panel-text">
+            <p class="pg-eyebrow pg-eyebrow--dark" data-mv-fade>Vision</p>
+            <h2 class="pg-display" data-mv-fade>Our Vision</h2>
+            <p class="pg-body" data-mv-fade>A category for every validated signal.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2.5 Our Story — roadmap scrub (About only; uses about-roadmap.js) -->
+  <section
+    class="au-roadmap"
+    id="about-story"
+    aria-label="Our Story"
+    data-au-roadmap
+  >
+    <div class="au-roadmap__pin" data-au-roadmap-pin>
+      <div class="au-roadmap__card">
+        <header class="au-roadmap__header">
+          <div class="au-roadmap__intro">
+            <p class="au-roadmap__caption">Milestones</p>
+            <h2 class="au-roadmap__title">Our Story</h2>
+            <p class="au-roadmap__subtitle">From incorporation to one operating system.</p>
+          </div>
+          <p class="au-roadmap__desc">
+            Meolaa is an AI-native house of consumer brands — built to read demand and launch faster than any traditional FMCG company can move. These are the moments that shaped the model.
+          </p>
+        </header>
+
+        <div class="au-roadmap__stage" data-au-roadmap-stage>
+          <div class="au-roadmap__line" aria-hidden="true"></div>
+          <div class="au-roadmap__track" data-au-roadmap-track role="list">
+            <article
+              class="au-roadmap__step is-active"
+              data-au-roadmap-step
+              role="listitem"
+              aria-current="step"
+            >
+              <span class="au-roadmap__capsule">2022 · Founded</span>
+              <span class="au-roadmap__marker" aria-hidden="true">
+                <span class="au-roadmap__ring"></span>
+                <span class="au-roadmap__diamond"></span>
+              </span>
+              <ul class="au-roadmap__bullets">
+                <li>Meolaa incorporated</li>
+                <li>Pre-seed from Ranjan Pai</li>
+                <li>House of brands thesis begins</li>
+              </ul>
+            </article>
+
+            <article class="au-roadmap__step" data-au-roadmap-step role="listitem" aria-current="false">
+              <span class="au-roadmap__capsule">2022 · Seed</span>
+              <span class="au-roadmap__marker" aria-hidden="true">
+                <span class="au-roadmap__ring"></span>
+                <span class="au-roadmap__diamond"></span>
+              </span>
+              <ul class="au-roadmap__bullets">
+                <li>$6M seed raised</li>
+                <li>Colossa Ventures, General Catalyst, Turbostart</li>
+                <li>Capital to scale the model</li>
+              </ul>
+            </article>
+
+            <article class="au-roadmap__step" data-au-roadmap-step role="listitem" aria-current="false">
+              <span class="au-roadmap__capsule">2024 · HIRA</span>
+              <span class="au-roadmap__marker" aria-hidden="true">
+                <span class="au-roadmap__ring"></span>
+                <span class="au-roadmap__diamond"></span>
+              </span>
+              <ul class="au-roadmap__bullets">
+                <li>HIRA launches</li>
+                <li>First brand built end-to-end on the platform</li>
+                <li>Proof from insight to shelf</li>
+              </ul>
+            </article>
+
+            <article class="au-roadmap__step" data-au-roadmap-step role="listitem" aria-current="false">
+              <span class="au-roadmap__capsule">2026 · Platform</span>
+              <span class="au-roadmap__marker" aria-hidden="true">
+                <span class="au-roadmap__ring"></span>
+                <span class="au-roadmap__diamond"></span>
+              </span>
+              <ul class="au-roadmap__bullets">
+                <li>Platform v2 ships</li>
+                <li>CMI and Brand Co-pilot unified</li>
+                <li>One operating system for the house</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW WE BUILD BRANDS — same markup / animation as homepage -->
+  <section class="fold pillars" data-section="pillars" aria-label="How we build brands">
+    <h2 class="pillars__title">HOW WE BUILD BRANDS</h2>
+    <div class="pillars__track" data-pillars-track>
+      <article class="pillar-card">
+        <img src="assets/imgRectangle34624962.png" alt="" />
+        <p class="label">Signal</p>
+        <h3>We read the market before it moves.</h3>
+        <p>Consumer behaviour, demand and whitespace, sorted into a single opportunity score.</p>
+      </article>
+      <article class="pillar-card">
+        <img src="assets/imgRectangle34624962.png" alt="" />
+        <p class="label">Build</p>
+        <h3>AI does the heavy lifting.</h3>
+        <p>Product, brand and go-to-market assembled by a small team, not a large one.</p>
+      </article>
+      <article class="pillar-card">
+        <img src="assets/imgRectangle34624962.png" alt="" />
+        <p class="label">Run</p>
+        <h3>The system keeps it running.</h3>
+        <p>Distribution, content and operations kept alive by the same engine that built it.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- 2.6 Leadership -->
+  <section class="lead-grid" id="leadership">
+    <div class="lead-grid__cell lead-grid__cell--intro">
+      <p class="lead-grid__eyebrow"><span></span>OUR LEADERSHIP TEAM</p>
+      <h2 class="lead-grid__title">Meet our<br />visionaries.</h2>
+    </div>
+    <article class="lead-grid__cell lead-grid__cell--person">
+      <div class="lead-grid__img"><img src="assets/team/team-01.jpg" alt="Ishita Sawant, Founder &amp; CEO" /></div>
+      <div class="lead-grid__foot">
+        <div>
+          <p class="lead-grid__name">Ishita Sawant</p>
+          <p class="lead-grid__role">Founder &amp; CEO</p>
+        </div>
+        <a class="lead-grid__linkedin" href="#" aria-label="LinkedIn">in</a>
+      </div>
+    </article>
+    <article class="lead-grid__cell lead-grid__cell--person">
+      <div class="lead-grid__img"><img src="assets/team/team-02.jpg" alt="Head of Intelligence" /></div>
+      <div class="lead-grid__foot">
+        <div>
+          <p class="lead-grid__name">Head of Intelligence</p>
+          <p class="lead-grid__role">Intelligence</p>
+        </div>
+        <a class="lead-grid__linkedin" href="#" aria-label="LinkedIn">in</a>
+      </div>
+    </article>
+    <article class="lead-grid__cell lead-grid__cell--person">
+      <div class="lead-grid__img"><img src="assets/team/team-03.jpg" alt="Head of Brand" /></div>
+      <div class="lead-grid__foot">
+        <div>
+          <p class="lead-grid__name">Head of Brand</p>
+          <p class="lead-grid__role">Brand build</p>
+        </div>
+        <a class="lead-grid__linkedin" href="#" aria-label="LinkedIn">in</a>
+      </div>
+    </article>
+    <article class="lead-grid__cell lead-grid__cell--person">
+      <div class="lead-grid__img"><img src="assets/team/team-04.jpg" alt="Head of Growth" /></div>
+      <div class="lead-grid__foot">
+        <div>
+          <p class="lead-grid__name">Head of Growth</p>
+          <p class="lead-grid__role">Growth &amp; ops</p>
+        </div>
+        <a class="lead-grid__linkedin" href="#" aria-label="LinkedIn">in</a>
+      </div>
+    </article>
+    <article class="lead-grid__cell lead-grid__cell--text">
+      <div class="lead-grid__foot lead-grid__foot--text">
+        <div>
+          <p class="lead-grid__name">Head of Supply</p>
+          <p class="lead-grid__role">Growth &amp; ops</p>
+        </div>
+        <a class="lead-grid__linkedin" href="#" aria-label="LinkedIn">in</a>
+      </div>
+    </article>
+  </section>
+
+  <!-- 2.7 Values — hover-ticker rows -->
+  <section class="val-rows">
+    <p class="pg-eyebrow pg-eyebrow--dark">CULTURE VALUES</p>
+    <div class="val-rows__list">
+      <div class="val-row" data-val-row>
+        <div class="val-row__ticker" aria-hidden="true">
+          <div class="val-row__ticker-track">
+            <span>Signal over opinion&nbsp;&nbsp;•&nbsp;&nbsp;</span><span>Signal over opinion&nbsp;&nbsp;•&nbsp;&nbsp;</span><span>Signal over opinion&nbsp;&nbsp;•&nbsp;&nbsp;</span><span>Signal over opinion&nbsp;&nbsp;•&nbsp;&nbsp;</span><span>Signal over opinion&nbsp;&nbsp;•&nbsp;&nbsp;</span><span>Signal over opinion&nbsp;&nbsp;•&nbsp;&nbsp;</span><span>Signal over opinion&nbsp;&nbsp;•&nbsp;&nbsp;</span><span>Signal over opinion&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+          </div>
+        </div>
+        <span class="val-row__num">01</span>
+        <strong class="val-row__title">Signal over opinion</strong>
+        <span class="val-row__desc">Data leads, taste refines.</span>
+      </div>
+      <div class="val-row" data-val-row>
+        <div class="val-row__ticker" aria-hidden="true">
+          <div class="val-row__ticker-track">
+            <span>Small teams, real ownership&nbsp;&nbsp;•&nbsp;&nbsp;</span><span>Small teams, real ownership&nbsp;&nbsp;•&nbsp;&nbsp;</span><span>Small teams, real ownership&nbsp;&nbsp;•&nbsp;&nbsp;</span><span>Small teams, real ownership&nbsp;&nbsp;•&nbsp;&nbsp;</span><span>Small teams, real ownership&nbsp;&nbsp;•&nbsp;&nbsp;</span><span>Small teams, real ownership&nbsp;&nbsp;•&nbsp;&nbsp;</span><span>Small teams, real ownership&nbsp;&nbsp;•&nbsp;&nbsp;</span><span>Small teams, real ownership&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+          </div>
+        </div>
+        <span class="val-row__num">02</span>
+        <strong class="val-row__title">Small teams, real ownership</strong>
+        <span class="val-row__desc">One person can own a whole brand.</span>
+      </div>
+      <div class="val-row" data-val-row>
+        <div class="val-row__ticker" aria-hidden="true">
+          <div class="val-row__ticker-track">
+            <span>Ship, then learn&nbsp;&nbsp;•&nbsp;&nbsp;</span><span>Ship, then learn&nbsp;&nbsp;•&nbsp;&nbsp;</span><span>Ship, then learn&nbsp;&nbsp;•&nbsp;&nbsp;</span><span>Ship, then learn&nbsp;&nbsp;•&nbsp;&nbsp;</span><span>Ship, then learn&nbsp;&nbsp;•&nbsp;&nbsp;</span><span>Ship, then learn&nbsp;&nbsp;•&nbsp;&nbsp;</span><span>Ship, then learn&nbsp;&nbsp;•&nbsp;&nbsp;</span><span>Ship, then learn&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+          </div>
+        </div>
+        <span class="val-row__num">03</span>
+        <strong class="val-row__title">Ship, then learn</strong>
+        <span class="val-row__desc">Speed beats certainty.</span>
+      </div>
+      <div class="val-row" data-val-row>
+        <div class="val-row__ticker" aria-hidden="true">
+          <div class="val-row__ticker-track">
+            <span>System first&nbsp;&nbsp;•&nbsp;&nbsp;</span><span>System first&nbsp;&nbsp;•&nbsp;&nbsp;</span><span>System first&nbsp;&nbsp;•&nbsp;&nbsp;</span><span>System first&nbsp;&nbsp;•&nbsp;&nbsp;</span><span>System first&nbsp;&nbsp;•&nbsp;&nbsp;</span><span>System first&nbsp;&nbsp;•&nbsp;&nbsp;</span><span>System first&nbsp;&nbsp;•&nbsp;&nbsp;</span><span>System first&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+          </div>
+        </div>
+        <span class="val-row__num">04</span>
+        <strong class="val-row__title">System first</strong>
+        <span class="val-row__desc">Build the machine, not just the output.</span>
+      </div>
+      <div class="val-row" data-val-row>
+        <div class="val-row__ticker" aria-hidden="true">
+          <div class="val-row__ticker-track">
+            <span>Protect the thesis&nbsp;&nbsp;•&nbsp;&nbsp;</span><span>Protect the thesis&nbsp;&nbsp;•&nbsp;&nbsp;</span><span>Protect the thesis&nbsp;&nbsp;•&nbsp;&nbsp;</span><span>Protect the thesis&nbsp;&nbsp;•&nbsp;&nbsp;</span><span>Protect the thesis&nbsp;&nbsp;•&nbsp;&nbsp;</span><span>Protect the thesis&nbsp;&nbsp;•&nbsp;&nbsp;</span><span>Protect the thesis&nbsp;&nbsp;•&nbsp;&nbsp;</span><span>Protect the thesis&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+          </div>
+        </div>
+        <span class="val-row__num">05</span>
+        <strong class="val-row__title">Protect the thesis</strong>
+        <span class="val-row__desc">Say no to what doesn't compound.</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="pg-where-next">
+    <p class="pg-eyebrow pg-eyebrow--light">WHERE TO NEXT</p>
+    <div class="pg-where-next__grid">
+      <a class="pg-where-next__card" href="our-story.html">
+        <span class="num">03</span>
+        <h3>Our Story</h3>
+        <p>How Meolaa actually got built. →</p>
+      </a>
+      <a class="pg-where-next__card" href="platform.html">
+        <span class="num">04</span>
+        <h3>Meolaa Lab</h3>
+        <p>Inside the system that runs it all. →</p>
+      </a>
+      <a class="pg-where-next__card" href="careers.html">
+        <span class="num">07</span>
+        <h3>Careers</h3>
+        <p>Build with a small team, real ownership. →</p>
+      </a>
+    </div>
+  </section>
+
+  <footer class="site-footer site-footer--svg">
+    <img class="site-footer__art" src="assets/footer.svg" alt="" />
+    <img class="site-footer__wordmark" src="assets/logo-white.png" alt="Meolaa" />
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.15/dist/lenis.min.js"></script>
+  <script src="js/static-pages.js"></script>
+  <script src="js/mission-vision.js"></script>
+  <script src="js/about-roadmap.js"></script>
+  <script src="js/pillars.js"></script>
+</body>
+</html>
