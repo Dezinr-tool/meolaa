@@ -83,6 +83,44 @@ export function StoryPage() {
   return (
     <PageLayout pageClass="page-editorial">
       <header className="story-hero">
+        <div className="story-hero__badges" aria-hidden="true">
+          <img
+            className="story-hero__badge story-hero__badge--happy"
+            src="/story/badges/happy.png"
+            alt=""
+            width={160}
+            height={120}
+            loading="eager"
+            decoding="async"
+          />
+          <img
+            className="story-hero__badge story-hero__badge--worldwide"
+            src="/story/badges/worldwide.png"
+            alt=""
+            width={140}
+            height={140}
+            loading="eager"
+            decoding="async"
+          />
+          <img
+            className="story-hero__badge story-hero__badge--dreams"
+            src="/story/badges/dreams-come-true.png"
+            alt=""
+            width={200}
+            height={140}
+            loading="eager"
+            decoding="async"
+          />
+          <img
+            className="story-hero__badge story-hero__badge--new"
+            src="/story/badges/new.png"
+            alt=""
+            width={150}
+            height={100}
+            loading="eager"
+            decoding="async"
+          />
+        </div>
         <div className="story-hero__inner">
           <div className="story-hero__copy">
             <div className="story-hero__meta">
