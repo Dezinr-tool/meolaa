@@ -345,7 +345,7 @@
  */
 .site-footer__mark-wrap {
   --footer-mark-width: min(78%, 980px);
-  --footer-mark-inset: clamp(16px, 2vw, 32px);
+  --footer-mark-inset: 0;
   position: relative;
   z-index: 0;
   margin-top: 0;
@@ -360,10 +360,10 @@
   margin-left: 0;
   margin-right: 0;
   /*
-   * Tall enough for the full tight-crop wordmark (aspect ~4.98) plus bottom
-   * inset — vw-based calc resolves reliably (nested % min() did not).
+   * Tall enough for the full tight-crop wordmark (aspect ~4.98) — no extra
+   * inset band below; wordmark sits flush on the footer edge.
    */
-  min-height: calc(min(78vw, 980px) / 4.98 + clamp(16px, 2vw, 32px));
+  min-height: calc(min(78vw, 980px) / 4.98);
   height: auto;
   padding-bottom: 0;
   overflow: visible;
@@ -454,8 +454,8 @@
 
   .site-footer__mark-wrap {
     --footer-mark-width: min(88%, 640px);
-    --footer-mark-inset: clamp(12px, 2.5vw, 24px);
-    min-height: calc(min(88vw, 640px) / 4.98 + clamp(12px, 2.5vw, 24px));
+    --footer-mark-inset: 0;
+    min-height: calc(min(88vw, 640px) / 4.98);
     width: 100%;
     max-width: none;
   }
