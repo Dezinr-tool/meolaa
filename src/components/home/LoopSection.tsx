@@ -1,7 +1,7 @@
 /**
  * THE LOOP — Figma circular orbit (Untitled 0:3).
- * Pin + scrub: yellow fill travels clockwise BL → BR → top → BL
- * (Build → Run → Signal). Reverses prior anticlockwise left-arc draw.
+ * Pin + scrub: yellow fill travels BL → top → BR → BL
+ * (Build → Signal → Run). Opposite of the prior bottom-arc (BL → BR) draw.
  */
 import { MeolaaEMark } from '../brand/MeolaaEMark'
 import { LOOP_STEPS } from '../../lib/loopPath'
@@ -51,35 +51,35 @@ function pctY(y: number) {
 }
 
 /**
- * Clockwise delta (user feedback). Decreasing atan2 under SVG Y-down:
- * BL → bottom → BR → right → top → BL.
+ * Increasing-atan2 arc length (SVG Y-down polar):
+ * BL → left → top → right → BR → bottom → BL.
  */
-function cwDelta(from: number, to: number) {
-  let d = from - to
+function orbitDelta(from: number, to: number) {
+  let d = to - from
   while (d < 0) d += Math.PI * 2
   while (d >= Math.PI * 2) d -= Math.PI * 2
   return d
 }
 
 const TWO_PI = Math.PI * 2
-const SEG_BL_BR = cwDelta(A_BL, A_BR)
-const SEG_BR_TOP = cwDelta(A_BR, A_TOP)
+const SEG_BL_TOP = orbitDelta(A_BL, A_TOP)
+const SEG_TOP_BR = orbitDelta(A_TOP, A_BR)
 
-/** Normalised arc positions (BL → Run → Signal → BL). */
+/** Normalised arc positions (BL → Signal → Run → BL). */
 const ARC_S = {
   build: 0,
-  run: SEG_BL_BR / TWO_PI,
-  signal: (SEG_BL_BR + SEG_BR_TOP) / TWO_PI,
+  signal: SEG_BL_TOP / TWO_PI,
+  run: (SEG_BL_TOP + SEG_TOP_BR) / TWO_PI,
 } as const
 
 /**
  * Polyline circle — identical `d` for ghost + yellow.
- * Decreasing atan2 reverses the prior anticlockwise left-arc path.
+ * Increasing atan2: tip leaves Build toward Signal (left-up), not Run.
  */
 function buildOrbitPath(startAngle: number, segments = 96): string {
   const parts: string[] = []
   for (let i = 0; i <= segments; i += 1) {
-    const a = startAngle - (i / segments) * TWO_PI
+    const a = startAngle + (i / segments) * TWO_PI
     const { x, y } = polar(a)
     parts.push(`${i === 0 ? 'M' : 'L'} ${x.toFixed(2)} ${y.toFixed(2)}`)
   }
@@ -90,7 +90,7 @@ const ORBIT_ARC_D = buildOrbitPath(A_BL)
 
 /**
  * Pin progress when each beat activates.
- * Build (BL) → Run (BR) → Signal (top), then close the loop.
+ * Build (BL) → Signal (top) → Run (BR), then close the loop.
  */
 const ORBIT_STEPS = [
   {
@@ -107,27 +107,27 @@ const ORBIT_STEPS = [
     },
   },
   {
-    ...LOOP_STEPS[1],
-    slot: 'br' as const,
-    s: 0.42,
-    arcS: ARC_S.run,
-    line: {
-      x1: ON_TRACK.br.x + DOT_OUTER_R,
-      y1: ON_TRACK.br.y,
-      x2: 1058,
-      y2: ON_TRACK.br.y,
-    },
-  },
-  {
     ...LOOP_STEPS[2],
     slot: 'top' as const,
-    s: 0.62,
+    s: 0.42,
     arcS: ARC_S.signal,
     line: {
       x1: 249,
       y1: ON_TRACK.top.y,
       x2: ON_TRACK.top.x - DOT_OUTER_R,
       y2: ON_TRACK.top.y,
+    },
+  },
+  {
+    ...LOOP_STEPS[1],
+    slot: 'br' as const,
+    s: 0.62,
+    arcS: ARC_S.run,
+    line: {
+      x1: ON_TRACK.br.x + DOT_OUTER_R,
+      y1: ON_TRACK.br.y,
+      x2: 1058,
+      y2: ON_TRACK.br.y,
     },
   },
 ]
