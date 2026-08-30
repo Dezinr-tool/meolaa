@@ -224,10 +224,7 @@ export function PressSection() {
       <div className="press-feed__head section-head section-head--on-light section-head--split">
         <div className="section-head__stack">
           <p className="section-head__eyebrow">Media</p>
-          <ParallaxHeading
-            className="press-feed__title section-head__title"
-            align="start"
-          >
+          <ParallaxHeading className="section-head__title" align="start">
             Press
           </ParallaxHeading>
           <p className="section-head__sub">

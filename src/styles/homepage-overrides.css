@@ -619,7 +619,7 @@ section.investors::before,
   flex: 0 0 auto;
 }
 
-/* Press title scale owned by section-head.css (no mega statement word). */
+/* Press head type/gaps: section-head.css (--section-head-*). */
 
 .press-feed__grid {
   flex: 0 1 auto;

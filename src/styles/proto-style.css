@@ -1660,21 +1660,8 @@ section.investors,
 }
 
 .press-feed__head {
-  max-width: 640px;
+  /* Layout only — eyebrow/title/sub type from section-head.css tokens. */
   margin-bottom: 56px;
-}
-
-.press-feed__title {
-  /* Type from section-head.css when used as .section-head__title */
-  margin: 0;
-}
-
-.press-feed__sub {
-  font-size: 15px;
-  line-height: 1.6;
-  color: rgba(0,0,0,.6);
-  max-width: 420px;
-  margin-bottom: 24px;
 }
 
 .btn-ghost-dark {
