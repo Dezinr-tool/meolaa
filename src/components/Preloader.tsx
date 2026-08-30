@@ -9,6 +9,7 @@ import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { gsap } from '../lib/motion'
 import { getLenisInstance } from '../lib/lenisInstance'
+import { markPreloaderComplete } from '../lib/preloaderComplete'
 import { MeolaaLogoMark } from './brand/MeolaaLogoMark'
 import './Preloader.css'
 
@@ -179,6 +180,11 @@ export function Preloader() {
   const finishedRef = useRef(false)
   const runIdRef = useRef(0)
 
+  // Skipped this session (or already finished) — let intro animations proceed.
+  useEffect(() => {
+    if (!active) markPreloaderComplete()
+  }, [active])
+
   useEffect(() => {
     if (!active) return
 
@@ -192,6 +198,7 @@ export function Preloader() {
       finishedRef.current = true
       markSeen()
       unlockScroll()
+      markPreloaderComplete()
       setActive(false)
     }
 

@@ -45,37 +45,42 @@ export type HeroPrismSettings = {
   lookZ: number
 }
 
+/** baseSide / √2 — keeps four lateral faces equilateral. */
+const DEFAULT_BASE = 1.48
+const DEFAULT_HEIGHT = DEFAULT_BASE / Math.SQRT2 // ≈ 1.0465
+
 /**
- * Apex-up triangular pyramid — defaults from live panel tune.
+ * Square-base pyramid with four equilateral side faces.
+ * Geometry height is computed from baseSide; `height` mirrors that for the panel.
  */
 export const DEFAULT_PRISM_SETTINGS: HeroPrismSettings = {
-  baseSide: 1.48,
-  height: 1.07,
+  baseSide: DEFAULT_BASE,
+  height: DEFAULT_HEIGHT,
+  /* Slight tip so a hint of the base reads; Y≈0 keeps a front edge toward camera. */
   rotX: -0.17,
   rotY: 0.04,
   rotZ: 0,
   posY: 0.02,
   idleAmount: 0,
 
-  /* Physical glass — dark body; refracted graphic + chromatic fringe carry the look. */
+  /* Physical glass — HDRI + fringe; empty stage (no behind-graphic). */
   roughness: 0.03,
   thickness: 1.35,
   ior: 1.5,
-  chromaticAberration: 0.3,
-  envMapIntensity: 0.5,
-  reflectivity: 0.5,
+  chromaticAberration: 0.4,
+  envMapIntensity: 0.55,
+  reflectivity: 0.55,
 
-  /* Right end of white beam meets the prism’s left/back face (no gap). */
+  /* Left / right lateral faces at y≈0 (apex→corner mid ~±0.41). */
   beamEntryX: -0.42,
-  beamEntryY: -0.02,
+  beamEntryY: 0,
   beamLength: 6.35,
   beamWidth: 0.05,
   beamOpacity: 0.68,
   beamAngle: 0,
 
-  /* Flush to the right face (slight overlap kills the dark gap). */
-  spectrumExitX: 0.28,
-  spectrumExitY: 0.02,
+  spectrumExitX: 0.42,
+  spectrumExitY: 0,
   spectrumLength: 2.65,
   spectrumWidth: 0.28,
   spectrumAngle: 0.48,
@@ -84,8 +89,9 @@ export const DEFAULT_PRISM_SETTINGS: HeroPrismSettings = {
   spectrumOpacity: 0.9,
   spectrumLayers: 8,
 
-  edgeCyanOpacity: 0,
-  edgeWhiteOpacity: 0,
+  /* Faint rim reinforce — soft, not wireframe. */
+  edgeCyanOpacity: 0.18,
+  edgeWhiteOpacity: 0.22,
 
   camX: 0.2,
   camY: -0.3,

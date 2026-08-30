@@ -13,20 +13,9 @@ import {
 } from './heroPrismSettings'
 
 /**
- * Apex-up triangular pyramid glass prism.
- *
- * Glass reads as glass by distorting recognizable structure behind it —
- * here: bold brand-colored bars + rings (no text, so it won't clash with
- * hero copy). Dark body; brightness only where content refracts + edges.
+ * Square-base pyramid — four equilateral triangular sides, apex up.
+ * Hand-built BufferGeometry (no ExtrudeGeometry). Glass reads from HDRI + fringe.
  */
-
-const BRAND = {
-  yellow: '#fdf28c',
-  lilac: '#a8a3e3',
-  lilacDeep: '#5656ad',
-  green: '#41857a',
-  ecru: '#f8ece4',
-} as const
 
 function usePrismSettings() {
   return useSyncExternalStore(subscribePrismSettings, getPrismSettings, getPrismSettings)
@@ -44,15 +33,47 @@ function quality() {
   return { samples: 28, resolution: 1024, envRes: 128 }
 }
 
-function buildTrianglePyramid(baseSide: number, height: number) {
-  const R = baseSide / Math.sqrt(3)
-  const yA = height * 0.55
-  const yB = -height * 0.45
+/** Height that makes all four lateral faces equilateral for base side `s`. */
+export function equilateralPyramidHeight(baseSide: number) {
+  return baseSide / Math.SQRT2
+}
+
+function pyramidCorners(baseSide: number) {
+  const s = baseSide
+  const h = equilateralPyramidHeight(s)
+  const yA = h * 0.55
+  const yB = -h * 0.45
+  const half = s / 2
 
   const A = new THREE.Vector3(0, yA, 0)
-  const B0 = new THREE.Vector3(0, yB, R)
-  const B1 = new THREE.Vector3(R * Math.cos(Math.PI / 6), yB, -R * Math.sin(Math.PI / 6))
-  const B2 = new THREE.Vector3(-R * Math.cos(Math.PI / 6), yB, -R * Math.sin(Math.PI / 6))
+  /* Square base, axis-aligned — front edge (B0–B1) faces +Z. */
+  const B0 = new THREE.Vector3(-half, yB, half) // front-left
+  const B1 = new THREE.Vector3(half, yB, half) // front-right
+  const B2 = new THREE.Vector3(half, yB, -half) // back-right
+  const B3 = new THREE.Vector3(-half, yB, -half) // back-left
+
+  return { s, h, yA, yB, half, A, B: [B0, B1, B2, B3] as const }
+}
+
+/**
+ * Square-base pyramid with four equilateral side faces.
+ * Apex → each base corner distance equals `baseSide`.
+ */
+function buildSquarePyramid(baseSide: number) {
+  const { s, A, B } = pyramidCorners(baseSide)
+  const [B0, B1, B2, B3] = B
+
+  if (import.meta.env.DEV) {
+    const tol = 1e-5
+    for (const corner of B) {
+      const d = A.distanceTo(corner)
+      if (Math.abs(d - s) > tol) {
+        console.warn(
+          `[HeroPrism] equilateral check failed: apex→corner ${d.toFixed(6)} vs side ${s}`,
+        )
+      }
+    }
+  }
 
   const positions: number[] = []
   const push = (p: THREE.Vector3) => positions.push(p.x, p.y, p.z)
@@ -62,14 +83,34 @@ function buildTrianglePyramid(baseSide: number, height: number) {
     push(c)
   }
 
-  tri(A, B0, B1)
-  tri(A, B1, B2)
-  tri(A, B2, B0)
+  /* Lateral faces — CCW from outside so normals point outward. */
+  tri(A, B0, B1) // front (+Z)
+  tri(A, B1, B2) // right (+X)
+  tri(A, B2, B3) // back (−Z)
+  tri(A, B3, B0) // left (−X)
+  /* Square base as two triangles — outward normal −Y. */
   tri(B0, B2, B1)
+  tri(B0, B3, B2)
 
   const geo = new THREE.BufferGeometry()
   geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3))
   geo.computeVertexNormals()
+  return geo
+}
+
+function buildPyramidEdges(baseSide: number) {
+  const { A, B } = pyramidCorners(baseSide)
+  const segs: number[] = []
+  const line = (a: THREE.Vector3, b: THREE.Vector3) =>
+    segs.push(a.x, a.y, a.z, b.x, b.y, b.z)
+
+  for (let i = 0; i < 4; i++) {
+    line(A, B[i])
+    line(B[i], B[(i + 1) % 4])
+  }
+
+  const geo = new THREE.BufferGeometry()
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(segs, 3))
   return geo
 }
 
@@ -89,89 +130,7 @@ function CameraRig({ settings }: { settings: HeroPrismSettings }) {
   return null
 }
 
-function SoftMat({
-  color,
-  opacity,
-}: {
-  color: string
-  opacity: number
-}) {
-  return (
-    <meshBasicMaterial
-      color={color}
-      transparent
-      opacity={opacity}
-      depthWrite={false}
-      toneMapped={false}
-      side={THREE.DoubleSide}
-    />
-  )
-}
-
-/**
- * Bold graphic field behind the prism — thick bars + concentric rings in
- * brand colors. Straight edges make refractive displacement obvious; sized
- * so some structure peeks outside the silhouette for comparison.
- */
-function BehindGraphic() {
-  const bars = useMemo(
-    () =>
-      [
-        { x: -1.55, color: BRAND.lilac, opacity: 0.38, w: 0.11 },
-        { x: -1.1, color: BRAND.yellow, opacity: 0.42, w: 0.13 },
-        { x: -0.65, color: BRAND.ecru, opacity: 0.36, w: 0.1 },
-        { x: -0.2, color: BRAND.green, opacity: 0.4, w: 0.12 },
-        { x: 0.25, color: BRAND.lilacDeep, opacity: 0.34, w: 0.11 },
-        { x: 0.7, color: BRAND.yellow, opacity: 0.4, w: 0.13 },
-        { x: 1.15, color: BRAND.ecru, opacity: 0.35, w: 0.1 },
-        { x: 1.55, color: BRAND.lilac, opacity: 0.32, w: 0.11 },
-      ] as const,
-    [],
-  )
-
-  const rings = useMemo(
-    () =>
-      [
-        { inner: 0.35, outer: 0.48, color: BRAND.yellow, opacity: 0.34 },
-        { inner: 0.62, outer: 0.76, color: BRAND.lilac, opacity: 0.3 },
-        { inner: 0.9, outer: 1.05, color: BRAND.green, opacity: 0.28 },
-        { inner: 1.18, outer: 1.32, color: BRAND.ecru, opacity: 0.24 },
-      ] as const,
-    [],
-  )
-
-  return (
-    <group position={[0.08, 0.02, -0.95]} renderOrder={-1}>
-      {/* Vertical bars — strongest straight-edge refraction cue */}
-      {bars.map((bar) => (
-        <mesh key={bar.x} position={[bar.x, 0, 0]}>
-          <planeGeometry args={[bar.w, 2.6]} />
-          <SoftMat color={bar.color} opacity={bar.opacity} />
-        </mesh>
-      ))}
-
-      {/* Slight diagonal accent bars for asymmetric warp */}
-      <mesh position={[-0.9, 0.15, 0.02]} rotation={[0, 0, 0.38]}>
-        <planeGeometry args={[0.09, 2.2]} />
-        <SoftMat color={BRAND.yellow} opacity={0.28} />
-      </mesh>
-      <mesh position={[0.95, -0.1, 0.02]} rotation={[0, 0, -0.32]}>
-        <planeGeometry args={[0.09, 2.1]} />
-        <SoftMat color={BRAND.lilac} opacity={0.26} />
-      </mesh>
-
-      {/* Concentric rings centered behind the prism */}
-      {rings.map((ring) => (
-        <mesh key={ring.inner} position={[0, 0, 0.04]} rotation={[0, 0, 0]}>
-          <ringGeometry args={[ring.inner, ring.outer, 64]} />
-          <SoftMat color={ring.color} opacity={ring.opacity} />
-        </mesh>
-      ))}
-    </group>
-  )
-}
-
-/** Near-black FBO clear — glass body stays dark where no content refracts. */
+/** Near-black FBO clear — body stays dark; env + fringe carry the glass read. */
 const TRANSMISSION_BG = new THREE.Color('#020608')
 
 function GlassPyramid({
@@ -184,15 +143,24 @@ function GlassPyramid({
   settings: HeroPrismSettings
 }) {
   const group = useRef<THREE.Group>(null)
+  const cyanMat = useRef<THREE.LineBasicMaterial>(null)
+  const whiteMat = useRef<THREE.LineBasicMaterial>(null)
 
   const geo = useMemo(
-    () => buildTrianglePyramid(settings.baseSide, settings.height),
-    [settings.baseSide, settings.height],
+    () => buildSquarePyramid(settings.baseSide),
+    [settings.baseSide],
+  )
+  const edges = useMemo(
+    () => buildPyramidEdges(settings.baseSide),
+    [settings.baseSide],
   )
 
   const reducedMotion =
     typeof window !== 'undefined' &&
     window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+  const showEdges =
+    settings.edgeCyanOpacity > 0.01 || settings.edgeWhiteOpacity > 0.01
 
   useFrame((state) => {
     if (!group.current) return
@@ -202,6 +170,8 @@ function GlassPyramid({
     group.current.rotation.x = settings.rotX + Math.sin(t * 0.28) * idle * 0.35
     group.current.rotation.y = settings.rotY + Math.sin(t * 0.22) * idle * 0.45
     group.current.rotation.z = settings.rotZ
+    if (cyanMat.current) cyanMat.current.opacity = settings.edgeCyanOpacity
+    if (whiteMat.current) whiteMat.current.opacity = settings.edgeWhiteOpacity
   })
 
   const thickness = settings.thickness
@@ -221,8 +191,8 @@ function GlassPyramid({
           chromaticAberration={settings.chromaticAberration}
           anisotropicBlur={0}
           anisotropy={0}
-          distortion={0.45}
-          distortionScale={0.6}
+          distortion={0}
+          distortionScale={0}
           temporalDistortion={0}
           color="#ffffff"
           attenuationColor="#0a1218"
@@ -235,6 +205,36 @@ function GlassPyramid({
           background={TRANSMISSION_BG}
         />
       </mesh>
+
+      {/* Soft rim reinforce — kept faint so edges aren’t wireframe (no Extrude bevel). */}
+      {showEdges && settings.edgeCyanOpacity > 0.01 && (
+        <lineSegments geometry={edges} renderOrder={3}>
+          <lineBasicMaterial
+            ref={cyanMat}
+            color="#7af8ff"
+            transparent
+            opacity={settings.edgeCyanOpacity}
+            depthTest
+            depthWrite={false}
+            blending={THREE.AdditiveBlending}
+            toneMapped={false}
+          />
+        </lineSegments>
+      )}
+      {showEdges && settings.edgeWhiteOpacity > 0.01 && (
+        <lineSegments geometry={edges} scale={1.004} renderOrder={4}>
+          <lineBasicMaterial
+            ref={whiteMat}
+            color="#ffffff"
+            transparent
+            opacity={settings.edgeWhiteOpacity}
+            depthTest
+            depthWrite={false}
+            blending={THREE.AdditiveBlending}
+            toneMapped={false}
+          />
+        </lineSegments>
+      )}
     </group>
   )
 }
@@ -248,7 +248,7 @@ export default function HeroPrismScene() {
     <>
       <CameraRig settings={settings} />
 
-      {/* Minimal fill — dark body; brightness from refracted graphic + edges */}
+      {/* Soft fill so transmission has something to sample besides empty black */}
       <ambientLight intensity={0.04} color="#a8b8c4" />
       <directionalLight position={[-5, 2.5, 4]} intensity={0.3} color="#ffffff" />
       <directionalLight position={[4, 1.5, 3]} intensity={0.18} color="#d8e8f0" />
@@ -257,10 +257,8 @@ export default function HeroPrismScene() {
         map={envMap}
         resolution={q.envRes}
         background={false}
-        environmentIntensity={0.5}
+        environmentIntensity={0.55}
       />
-
-      <BehindGraphic />
 
       <GlassPyramid
         samples={q.samples}

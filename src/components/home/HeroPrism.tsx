@@ -22,7 +22,7 @@ function detectWebGL(): boolean {
 function HeroPrismCanvas({ onReady }: { onReady: () => void }) {
   const isMobile = window.matchMedia('(max-width: 900px)').matches
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  const dpr = reducedMotion ? 1 : isMobile ? 1 : Math.min(window.devicePixelRatio, 2)
+  const dpr: number | [number, number] = reducedMotion || isMobile ? 1 : [1, 2]
   const s = DEFAULT_PRISM_SETTINGS
 
   return (
@@ -85,7 +85,7 @@ function HeroPrismCanvas({ onReady }: { onReady: () => void }) {
   )
 }
 
-/** Apex-up triangular pyramid glass prism + dispersion beams (tunable with P). */
+/** Square-base pyramid glass (four equilateral faces) + dispersion beams (tunable with P). */
 export function HeroPrism() {
   const [webglSupported, setWebglSupported] = useState<boolean | null>(null)
   const [webglReady, setWebglReady] = useState(false)

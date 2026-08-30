@@ -1,6 +1,11 @@
 import { useFrame, useThree } from '@react-three/fiber'
-import { useMemo, useRef, useSyncExternalStore } from 'react'
+import { useEffect, useMemo, useRef, useSyncExternalStore } from 'react'
 import * as THREE from 'three'
+import { gsap } from '../../lib/motion'
+import {
+  isPreloaderComplete,
+  subscribePreloaderComplete,
+} from '../../lib/preloaderComplete'
 import {
   getPrismSettings,
   subscribePrismSettings,
@@ -20,6 +25,11 @@ const SPECTRUM_COLORS = [
   '#ffd24d',
   '#ffe66d',
 ] as const
+
+const WHITE_DRAW_DURATION = 1.05
+const SPECTRUM_DRAW_DURATION = 1.0
+/** Spectrum starts just before white finishes — light in, then light out. */
+const SPECTRUM_OVERLAP = 0.18
 
 function usePrismSettings() {
   return useSyncExternalStore(subscribePrismSettings, getPrismSettings, getPrismSettings)
@@ -129,13 +139,14 @@ function CameraRig({ settings }: { settings: HeroPrismSettings }) {
 }
 
 function WhiteBeam({
-  intensity,
+  progress,
   settings,
 }: {
-  intensity: { current: number }
+  progress: { current: number }
   settings: HeroPrismSettings
 }) {
-  const group = useRef<THREE.Group>(null)
+  const root = useRef<THREE.Group>(null)
+  const reveal = useRef<THREE.Group>(null)
   const glowMat = useRef<THREE.MeshBasicMaterial>(null)
   const coreMat = useRef<THREE.MeshBasicMaterial>(null)
   const textures = useMemo(() => {
@@ -147,62 +158,74 @@ function WhiteBeam({
   }, [])
 
   useFrame(() => {
-    if (!group.current || !glowMat.current || !coreMat.current) return
-    const t = intensity.current
+    if (!root.current || !reveal.current || !glowMat.current || !coreMat.current) return
+    const p = progress.current
     const { beamEntryX, beamEntryY, beamLength, beamWidth, beamOpacity, beamAngle } =
       settings
-    glowMat.current.opacity = t * beamOpacity * 0.75
-    coreMat.current.opacity = t * beamOpacity
-    group.current.position.set(beamEntryX - beamLength / 2, beamEntryY, -0.55)
-    group.current.rotation.z = beamAngle
-    const glow = group.current.children[0] as THREE.Mesh
-    const core = group.current.children[1] as THREE.Mesh
+
+    /* Pivot at prism entry (local x=0); beam grows right←left from -beamLength. */
+    root.current.position.set(beamEntryX, beamEntryY, -0.55)
+    root.current.rotation.z = beamAngle
+    reveal.current.position.set(-beamLength, 0, 0)
+    reveal.current.scale.set(Math.max(0.0001, p), 1, 1)
+
+    const visible = p > 0.001
+    glowMat.current.opacity = visible ? beamOpacity * 0.75 : 0
+    coreMat.current.opacity = visible ? beamOpacity : 0
+
+    const glow = reveal.current.children[0] as THREE.Mesh
+    const core = reveal.current.children[1] as THREE.Mesh
+    glow.position.set(beamLength / 2, 0, 0)
+    core.position.set(beamLength / 2, 0, 0.001)
     glow.scale.set(1, beamWidth / 0.14, 1)
     core.scale.set(1, (beamWidth * 0.35) / 0.05, 1)
   })
 
   return (
-    <group ref={group}>
-      <mesh>
-        <planeGeometry args={[settings.beamLength, 0.14]} />
-        <meshBasicMaterial
-          ref={glowMat}
-          map={textures.soft}
-          transparent
-          opacity={0}
-          depthWrite={false}
-          depthTest
-          blending={THREE.AdditiveBlending}
-          side={THREE.DoubleSide}
-          toneMapped={false}
-        />
-      </mesh>
-      <mesh position={[0, 0, 0.001]}>
-        <planeGeometry args={[settings.beamLength, 0.05]} />
-        <meshBasicMaterial
-          ref={coreMat}
-          map={textures.core}
-          transparent
-          opacity={0}
-          depthWrite={false}
-          depthTest
-          blending={THREE.AdditiveBlending}
-          side={THREE.DoubleSide}
-          toneMapped={false}
-        />
-      </mesh>
+    <group ref={root}>
+      <group ref={reveal} scale={[0.0001, 1, 1]}>
+        <mesh position={[settings.beamLength / 2, 0, 0]}>
+          <planeGeometry args={[settings.beamLength, 0.14]} />
+          <meshBasicMaterial
+            ref={glowMat}
+            map={textures.soft}
+            transparent
+            opacity={0}
+            depthWrite={false}
+            depthTest
+            blending={THREE.AdditiveBlending}
+            side={THREE.DoubleSide}
+            toneMapped={false}
+          />
+        </mesh>
+        <mesh position={[settings.beamLength / 2, 0, 0.001]}>
+          <planeGeometry args={[settings.beamLength, 0.05]} />
+          <meshBasicMaterial
+            ref={coreMat}
+            map={textures.core}
+            transparent
+            opacity={0}
+            depthWrite={false}
+            depthTest
+            blending={THREE.AdditiveBlending}
+            side={THREE.DoubleSide}
+            toneMapped={false}
+          />
+        </mesh>
+      </group>
     </group>
   )
 }
 
 function SpectrumRibbon({
-  intensity,
+  progress,
   settings,
 }: {
-  intensity: { current: number }
+  progress: { current: number }
   settings: HeroPrismSettings
 }) {
   const group = useRef<THREE.Group>(null)
+  const baseMesh = useRef<THREE.Mesh>(null)
   const baseMat = useRef<THREE.MeshBasicMaterial>(null)
   const gradient = useMemo(() => makeSpectrumGradientTexture(), [])
   const layerCount = Math.max(5, Math.min(16, Math.round(settings.spectrumLayers)))
@@ -218,7 +241,7 @@ function SpectrumRibbon({
 
   useFrame(() => {
     if (!group.current) return
-    const t = intensity.current
+    const t = progress.current
     const {
       spectrumExitX,
       spectrumExitY,
@@ -231,27 +254,37 @@ function SpectrumRibbon({
     } = settings
     group.current.position.set(spectrumExitX, spectrumExitY, -0.55)
     group.current.rotation.z = spectrumAngle
-    if (baseMat.current) baseMat.current.opacity = t * spectrumOpacity * 0.55
+
+    const visible = t > 0.001
+    const grow = Math.max(0.0001, t)
+
+    if (baseMesh.current && baseMat.current) {
+      baseMesh.current.scale.set(grow, 1, 1)
+      baseMesh.current.position.set((spectrumLength * grow) / 2, 0, 0)
+      baseMat.current.opacity = visible ? spectrumOpacity * 0.55 : 0
+    }
+
     const bands = group.current.children[1] as THREE.Group
     if (!bands) return
     const mid = (bands.children.length - 1) / 2
     bands.children.forEach((child, i) => {
       const ray = child as THREE.Group
       const spread = i - mid
-      const grow = Math.max(0.001, t * (0.96 + i * 0.01))
-      ray.scale.set(grow, 1, 1)
-      ray.position.set((spectrumLength * grow) / 2, spread * spectrumSpread, 0)
+      const rayGrow = Math.max(0.0001, grow * (0.96 + i * 0.01))
+      ray.scale.set(rayGrow, 1, 1)
+      ray.position.set((spectrumLength * rayGrow) / 2, spread * spectrumSpread, 0)
       ray.rotation.z = spread * spectrumFan
       const glow = ray.children[0] as THREE.Mesh
-      ;(glow.material as THREE.MeshBasicMaterial).opacity =
-        t * spectrumOpacity * (0.35 + (i % 3) * 0.06)
+      ;(glow.material as THREE.MeshBasicMaterial).opacity = visible
+        ? spectrumOpacity * (0.35 + (i % 3) * 0.06)
+        : 0
       glow.scale.setY(spectrumWidth / 0.4)
     })
   })
 
   return (
     <group ref={group}>
-      <mesh position={[settings.spectrumLength / 2, 0, 0]}>
+      <mesh ref={baseMesh} position={[settings.spectrumLength / 2, 0, 0]} scale={[0.0001, 1, 1]}>
         <planeGeometry args={[settings.spectrumLength, settings.spectrumWidth * 1.35]} />
         <meshBasicMaterial
           ref={baseMat}
@@ -293,33 +326,85 @@ function BeamsCamera({ settings }: { settings: HeroPrismSettings }) {
   return <CameraRig settings={settings} />
 }
 
-function useBeamIntensity() {
-  const intensity = useRef(0)
-  const reducedMotion =
+/** Shared reveal progress — singleton so enter/exit canvases stay in sync. */
+const whiteProgress = { current: 0 }
+const spectrumProgress = { current: 0 }
+let revealStarted = false
+let revealTween: gsap.core.Timeline | null = null
+
+function prefersReducedMotion() {
+  return (
     typeof window !== 'undefined' &&
     window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  )
+}
 
-  useFrame((_, dt) => {
-    intensity.current = THREE.MathUtils.damp(
-      intensity.current,
-      reducedMotion ? 0.75 : 1,
-      2.2,
-      dt,
+function runBeamReveal() {
+  if (revealStarted) return
+  revealStarted = true
+
+  if (prefersReducedMotion()) {
+    whiteProgress.current = 1
+    spectrumProgress.current = 1
+    return
+  }
+
+  const proxy = { white: 0, spectrum: 0 }
+  whiteProgress.current = 0
+  spectrumProgress.current = 0
+
+  revealTween?.kill()
+  revealTween = gsap
+    .timeline({ defaults: { ease: 'power2.out' } })
+    .to(proxy, {
+      white: 1,
+      duration: WHITE_DRAW_DURATION,
+      onUpdate: () => {
+        whiteProgress.current = proxy.white
+      },
+    })
+    .to(
+      proxy,
+      {
+        spectrum: 1,
+        duration: SPECTRUM_DRAW_DURATION,
+        onUpdate: () => {
+          spectrumProgress.current = proxy.spectrum
+        },
+      },
+      `-=${SPECTRUM_OVERLAP}`,
     )
-  })
+}
 
-  return intensity
+function useBeamReveal() {
+  useEffect(() => {
+    if (prefersReducedMotion()) {
+      whiteProgress.current = 1
+      spectrumProgress.current = 1
+      revealStarted = true
+      return
+    }
+
+    if (isPreloaderComplete()) {
+      runBeamReveal()
+      return
+    }
+
+    return subscribePreloaderComplete(runBeamReveal)
+  }, [])
+
+  return { whiteProgress, spectrumProgress }
 }
 
 /** Incoming white beam only — drawn on a canvas *behind* the glass. */
 export function HeroPrismEnterBeams() {
   const settings = usePrismSettings()
-  const intensity = useBeamIntensity()
+  const { whiteProgress: white } = useBeamReveal()
 
   return (
     <>
       <BeamsCamera settings={settings} />
-      <WhiteBeam intensity={intensity} settings={settings} />
+      <WhiteBeam progress={white} settings={settings} />
     </>
   )
 }
@@ -327,12 +412,12 @@ export function HeroPrismEnterBeams() {
 /** Exit spectrum only — drawn on a canvas *in front of* the glass. */
 export function HeroPrismExitBeams() {
   const settings = usePrismSettings()
-  const intensity = useBeamIntensity()
+  const { spectrumProgress: spectrum } = useBeamReveal()
 
   return (
     <>
       <BeamsCamera settings={settings} />
-      <SpectrumRibbon intensity={intensity} settings={settings} />
+      <SpectrumRibbon progress={spectrum} settings={settings} />
     </>
   )
 }
@@ -340,13 +425,13 @@ export function HeroPrismExitBeams() {
 /** Beam-only scene — separate Canvas so glass refraction never samples these. */
 export default function HeroPrismBeams() {
   const settings = usePrismSettings()
-  const intensity = useBeamIntensity()
+  const { whiteProgress: white, spectrumProgress: spectrum } = useBeamReveal()
 
   return (
     <>
       <BeamsCamera settings={settings} />
-      <WhiteBeam intensity={intensity} settings={settings} />
-      <SpectrumRibbon intensity={intensity} settings={settings} />
+      <WhiteBeam progress={white} settings={settings} />
+      <SpectrumRibbon progress={spectrum} settings={settings} />
     </>
   )
 }
