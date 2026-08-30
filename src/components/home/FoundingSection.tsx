@@ -159,9 +159,12 @@ export function FoundingSection() {
 
       gsap.killTweensOf(card)
       gsap.set(card, {
-        x: clientX - box.left + gsap.utils.random(-70, 70),
-        y: clientY - box.top + gsap.utils.random(-60, 60),
-        rotate: gsap.utils.random(-18, 18),
+        /* Tight offsets and a shallow angle: the reference stacks the cards
+           almost on top of each other so the pile reads as a deck with edges
+           peeking out. Wide scatter + steep rotation reads as confetti. */
+        x: clientX - box.left + gsap.utils.random(-26, 26),
+        y: clientY - box.top + gsap.utils.random(-22, 22),
+        rotate: gsap.utils.random(-5, 5),
         xPercent: -50,
         yPercent: -50,
         zIndex: top,

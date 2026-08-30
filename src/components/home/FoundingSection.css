@@ -525,7 +525,11 @@
    --section-head-title-size. */
 .founding .founding__statement {
   margin: 0;
-  max-width: 22ch;
+  /* Wider measure so the statement runs in a few long lines like the reference
+     rather than a narrow 7-line column. `min(..., 100%)` keeps it inside the
+     stage's padding at every width — a bare ch value overflows on small
+     screens once the font clamps up. */
+  max-width: min(36ch, 100%);
   font-family: var(--font-display);
   font-size: clamp(1.9rem, 4.6vw, 4.15rem);
   font-weight: var(--fw-semibold, 600);
