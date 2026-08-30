@@ -955,14 +955,14 @@ img { display: block; max-width: 100%; }
   }
 }
 
-/* INVESTORS — Deep Ecru ground; follows metrics as its own section.
+/* INVESTORS — black ground; logo ticker only.
    !important beats any secondary/cream ground from sitewide yellow sweeps. */
 .investors,
 section.investors,
 [data-section='investors'] {
-  background: var(--color-ecru-deep, #f0d5cc) !important;
-  background-color: var(--color-ecru-deep, #f0d5cc) !important;
-  color: var(--color-planet-blue, #002f3a);
+  background: var(--color-black, #000000) !important;
+  background-color: var(--color-black, #000000) !important;
+  color: var(--color-ecru, #f8ece4);
   text-align: center;
   padding: clamp(40px, 6vh, 64px) clamp(24px, 4vw, 64px) clamp(48px, 7vh, 72px);
   display: flex;
@@ -1052,9 +1052,9 @@ section.investors,
   max-height: 36px;
   object-fit: contain;
   object-position: center;
-  /* Dark marks on Deep Ecru ground */
-  filter: grayscale(1) brightness(0) !important;
-  opacity: 0.72;
+  /* Dark SVG marks → white on black ground */
+  filter: brightness(0) invert(1) !important;
+  opacity: 0.85;
   user-select: none;
   pointer-events: none;
 }

@@ -548,7 +548,7 @@ html {
 }
 
 /*
- * Investors / Partners — Deep Ecru ground (was Planet Blue).
+ * Investors / Partners — black ground; logo ticker only.
  * Last in cascade vs proto-style; !important blocks legacy cream sweeps.
  */
 .investors,
@@ -559,29 +559,13 @@ section.investors,
   max-height: none;
   box-sizing: border-box;
   justify-content: flex-start;
-  background: var(--color-ecru-deep, #f0d5cc) !important;
-  background-color: var(--color-ecru-deep, #f0d5cc) !important;
-  color: var(--color-planet-blue, #002f3a) !important;
-  /* Kill any full-bleed top edge; short centered rule via ::before. */
+  background: var(--color-black, #000000) !important;
+  background-color: var(--color-black, #000000) !important;
+  color: var(--color-ecru, #f8ece4) !important;
   border-top: none;
   position: relative;
   /* Overlap metrics join by 1px so compositor hairlines don't read full-bleed. */
   margin-top: -1px;
-}
-
-/* Metrics stairs → Investors: short centered hairline (not full-bleed). */
-.investors::before,
-section.investors::before,
-[data-section='investors']::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: clamp(120px, 28vw, 200px);
-  height: 1px;
-  background: color-mix(in srgb, var(--color-planet-blue, #002f3a) 18%, transparent);
-  pointer-events: none;
 }
 
 .investors .section-head,
@@ -622,9 +606,9 @@ section.investors::before,
 
 .investors .investor-logos__item img,
 [data-section='investors'] .investor-logos__item img {
-  /* Dark marks on Deep Ecru — drop the white invert used on Planet Blue. */
-  filter: grayscale(1) brightness(0) !important;
-  opacity: 0.72;
+  /* Dark SVG marks → white on black ground. */
+  filter: brightness(0) invert(1) !important;
+  opacity: 0.85;
 }
 
 .investor-logos {
