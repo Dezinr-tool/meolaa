@@ -69,7 +69,7 @@
 /* Soft single orbit — muted underlay matching yellow stroke width */
 .loop__orbit-ghost {
   fill: none;
-  stroke: rgba(248, 236, 228, 0.22);
+  stroke: rgba(248, 236, 228, 0.14);
 }
 
 /* Hidden until scrub reveals fill (also avoids FOUC of full yellow ring) */
