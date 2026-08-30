@@ -357,8 +357,10 @@
   max-width: none;
   margin-left: 0;
   margin-right: 0;
-  height: clamp(100px, 14vh, 160px);
-  min-height: clamp(100px, 14vh, 160px);
+  /* Size to the wordmark — tight viewBox aspect ~4.98 at min(78%, 980px). */
+  height: auto;
+  min-height: 0;
+  padding-bottom: clamp(8px, 1.2vw, 20px);
   overflow: hidden;
   background-color: #000000;
   border-radius: 0;
@@ -369,17 +371,17 @@
  * MEOLAA wordmark — anchored to the bottom edge.
  */
 .site-footer__wordmark {
-  position: absolute;
-  left: 50%;
+  position: relative;
+  left: auto;
   top: auto;
-  bottom: clamp(16px, 2vw, 32px);
-  transform: translateX(-50%);
+  bottom: auto;
+  transform: none;
   z-index: 1;
   display: block;
   width: min(78%, 980px);
   max-width: 85%;
   height: auto;
-  margin: 0;
+  margin: 0 auto;
   padding: 0;
   opacity: 0.92;
   pointer-events: none;
@@ -446,15 +448,14 @@
   .site-footer__mark-wrap {
     width: 100%;
     max-width: none;
-    height: clamp(72px, 12vh, 120px);
-    min-height: clamp(72px, 12vh, 120px);
-    padding: 0;
+    height: auto;
+    min-height: 0;
+    padding-bottom: clamp(8px, 2vw, 16px);
   }
 
   .site-footer__wordmark {
     width: min(88%, 640px);
     max-width: 92%;
-    bottom: clamp(12px, 2.5vw, 24px);
   }
 
   .site-footer__grid {
