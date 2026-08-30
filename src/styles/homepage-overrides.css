@@ -333,7 +333,8 @@ html {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: clamp(2rem, 5vh, 3.25rem);
+  /* Collage ↔ MEOLAA copy: was clamp(2rem, 5vh, 3.25rem); +~24–40px breathing room */
+  gap: clamp(3.5rem, 7.5vh, 5.5rem);
   padding: clamp(5rem, 11vh, 7rem) var(--pad-x) clamp(4.5rem, 10vh, 6rem);
   height: 100%;
   min-height: 0;
@@ -464,7 +465,7 @@ html {
   }
 
   .vision__stage {
-    gap: clamp(1.25rem, 3vh, 1.75rem);
+    gap: clamp(2.5rem, 5.5vh, 3.5rem);
     padding-top: clamp(4.5rem, 10vh, 6rem);
     padding-bottom: clamp(3.75rem, 9vh, 5rem);
   }
