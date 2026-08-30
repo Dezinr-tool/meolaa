@@ -9,14 +9,20 @@ import { ParallaxHeading } from './ParallaxHeading'
 import './LoopSection.css'
 
 /** Orbit geometry in Figma artboard space (1422×1117). */
+const AB_W = 1422
+const AB_H = 1117
+/** Ellipse 0:26 — size 578, top 340, centred → centre (711, 629). */
 const CX = 711
 const CY = 629
-/** Ghost + yellow share this centerline radius. */
-const TRACK_R = 248
+/** Ghost + yellow centerline = Figma ellipse radius (578 / 2). */
+const TRACK_R = 289
 /** Shared stroke width — ghost and yellow sit on the same track. */
 const TRACK_SW = 56
+/** Outer node disc (Figma 63px) — connector stops at its rim. */
+const DOT_OUTER_R = 31.5
 
-const NODE = {
+/** Angle seeds from Figma node centres (Build / Signal / Run). */
+const ANGLE_SEED = {
   bl: { x: 469.5, y: 787.5 },
   top: { x: 714.5, y: 340.5 },
   br: { x: 949.5, y: 792.5 },
@@ -26,9 +32,23 @@ function polar(angle: number, r = TRACK_R) {
   return { x: CX + r * Math.cos(angle), y: CY + r * Math.sin(angle) }
 }
 
-const A_BL = Math.atan2(NODE.bl.y - CY, NODE.bl.x - CX)
-const A_TOP = Math.atan2(NODE.top.y - CY, NODE.top.x - CX)
-const A_BR = Math.atan2(NODE.br.y - CY, NODE.br.x - CX)
+const A_BL = Math.atan2(ANGLE_SEED.bl.y - CY, ANGLE_SEED.bl.x - CX)
+const A_TOP = Math.atan2(ANGLE_SEED.top.y - CY, ANGLE_SEED.top.x - CX)
+const A_BR = Math.atan2(ANGLE_SEED.br.y - CY, ANGLE_SEED.br.x - CX)
+
+/** On-track centres — same radius as ORBIT_ARC_D / ghost. */
+const ON_TRACK = {
+  bl: polar(A_BL),
+  top: polar(A_TOP),
+  br: polar(A_BR),
+} as const
+
+function pctX(x: number) {
+  return `${((x / AB_W) * 100).toFixed(3)}%`
+}
+function pctY(y: number) {
+  return `${((y / AB_H) * 100).toFixed(3)}%`
+}
 
 /**
  * Clockwise delta (user feedback). Decreasing atan2 under SVG Y-down:
@@ -78,23 +98,55 @@ const ORBIT_STEPS = [
     slot: 'bl' as const,
     s: 0.22,
     arcS: ARC_S.build,
-    line: { x1: 355, y1: 789, x2: 461, y2: 789 },
+    /* Copy left of Build — line ends at left rim of the dark disc. */
+    line: {
+      x1: 355,
+      y1: ON_TRACK.bl.y,
+      x2: ON_TRACK.bl.x - DOT_OUTER_R,
+      y2: ON_TRACK.bl.y,
+    },
   },
   {
     ...LOOP_STEPS[1],
     slot: 'br' as const,
     s: 0.42,
     arcS: ARC_S.run,
-    line: { x1: 952, y1: 793, x2: 1058, y2: 793 },
+    line: {
+      x1: ON_TRACK.br.x + DOT_OUTER_R,
+      y1: ON_TRACK.br.y,
+      x2: 1058,
+      y2: ON_TRACK.br.y,
+    },
   },
   {
     ...LOOP_STEPS[2],
     slot: 'top' as const,
     s: 0.62,
     arcS: ARC_S.signal,
-    line: { x1: 249, y1: 340, x2: 683, y2: 340 },
+    line: {
+      x1: 249,
+      y1: ON_TRACK.top.y,
+      x2: ON_TRACK.top.x - DOT_OUTER_R,
+      y2: ON_TRACK.top.y,
+    },
   },
 ]
+
+/** CSS custom props — dots + copy share polar TRACK_R with the SVG path. */
+const ORBIT_STYLE = {
+  ['--loop-dot-bl-x' as string]: pctX(ON_TRACK.bl.x),
+  ['--loop-dot-bl-y' as string]: pctY(ON_TRACK.bl.y),
+  ['--loop-dot-br-x' as string]: pctX(ON_TRACK.br.x),
+  ['--loop-dot-br-y' as string]: pctY(ON_TRACK.br.y),
+  ['--loop-dot-top-x' as string]: pctX(ON_TRACK.top.x),
+  ['--loop-dot-top-y' as string]: pctY(ON_TRACK.top.y),
+  ['--loop-copy-bl-x' as string]: pctX(202),
+  ['--loop-copy-bl-y' as string]: pctY(ON_TRACK.bl.y),
+  ['--loop-copy-br-x' as string]: pctX(1092),
+  ['--loop-copy-br-y' as string]: pctY(ON_TRACK.br.y),
+  ['--loop-copy-top-x' as string]: pctX(149),
+  ['--loop-copy-top-y' as string]: pctY(ON_TRACK.top.y),
+} as const
 
 export function LoopSection() {
   return (
@@ -104,7 +156,11 @@ export function LoopSection() {
       data-loop-orbit
       aria-labelledby="loop-title"
     >
-      <div className="loop__artboard" data-loop-orbit-stage>
+      <div
+        className="loop__artboard"
+        data-loop-orbit-stage
+        style={ORBIT_STYLE}
+      >
         <header className="loop__header section-head">
           <p className="section-head__eyebrow">The Loop</p>
           <ParallaxHeading
@@ -121,7 +177,7 @@ export function LoopSection() {
 
         <svg
           className="loop__orbit-svg"
-          viewBox="0 0 1422 1117"
+          viewBox={`0 0 ${AB_W} ${AB_H}`}
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
           aria-hidden="true"

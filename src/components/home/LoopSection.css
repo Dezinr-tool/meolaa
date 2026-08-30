@@ -187,39 +187,45 @@
   max-width: 225px;
 }
 
+/*
+ * Dot + copy positions come from LoopSection.tsx CSS vars —
+ * polar(TRACK_R) so nodes cannot drift off the ghost/yellow path.
+ * Copy `top` is the block’s top edge (Figma), not vertically centred —
+ * keep free of translateY so reveal animation can own `transform`.
+ */
 /* ——— Signal (top) ——— */
 .loop__step--orbit-top .loop__dot {
-  left: 50.25%;
-  top: 30.5%;
+  left: var(--loop-dot-top-x);
+  top: var(--loop-dot-top-y);
 }
 
 .loop__step--orbit-top .loop__copy {
-  left: 10.5%;
-  top: 30.3%;
+  left: var(--loop-copy-top-x);
+  top: var(--loop-copy-top-y);
   text-align: left;
 }
 
 /* ——— Build (BL) ——— */
 .loop__step--orbit-bl .loop__dot {
-  left: 33%;
-  top: 70.5%;
+  left: var(--loop-dot-bl-x);
+  top: var(--loop-dot-bl-y);
 }
 
 .loop__step--orbit-bl .loop__copy {
-  left: 14.2%;
-  top: 70.5%;
+  left: var(--loop-copy-bl-x);
+  top: var(--loop-copy-bl-y);
   text-align: left;
 }
 
 /* ——— Run (BR) ——— */
 .loop__step--orbit-br .loop__dot {
-  left: 66.8%;
-  top: 70.9%;
+  left: var(--loop-dot-br-x);
+  top: var(--loop-dot-br-y);
 }
 
 .loop__step--orbit-br .loop__copy {
-  left: 76.8%;
-  top: 70.5%;
+  left: var(--loop-copy-br-x);
+  top: var(--loop-copy-br-y);
   text-align: left;
 }
 
