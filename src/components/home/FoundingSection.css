@@ -448,7 +448,7 @@
   width: clamp(140px, 13vw, 210px);
   aspect-ratio: 4 / 5;
   object-fit: cover;
-  border-radius: 4px;
+  border-radius: 0;
   /* GSAP owns transform/opacity; start hidden so nothing flashes on mount.
      visibility pairs with autoAlpha so hidden cards aren't composited. */
   opacity: 0;
@@ -574,7 +574,7 @@
   /* Reference proportions — portrait, roughly a fifth of the fold's width. */
   width: clamp(150px, 15vw, 230px);
   aspect-ratio: 3 / 4;
-  border-radius: 2px;
+  border-radius: 0;
 }
 
 .founding .founding__actions {

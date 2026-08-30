@@ -374,7 +374,7 @@ export function initMissionVision(): () => void {
       y: startY(),
       scale: START_SCALE,
       transformOrigin: 'center bottom',
-      borderRadius: 32,
+      borderRadius: 0,
       force3D: true,
     })
     if (thesis) gsap.set(thesis, { opacity: 1, y: 0, scale: 1 })

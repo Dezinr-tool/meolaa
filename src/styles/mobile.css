@@ -76,7 +76,7 @@ html.is-nav-menu-open body {
     height: 44px;
     padding: 0;
     border: 0;
-    border-radius: 999px;
+    border-radius: 0;
     /* Readable on both light and dark heroes */
     background: color-mix(in srgb, #000 35%, transparent);
     -webkit-backdrop-filter: blur(8px);
@@ -102,7 +102,7 @@ html.is-nav-menu-open body {
     display: block;
     width: 20px;
     height: 2px;
-    border-radius: 1px;
+    border-radius: 0;
     background: currentColor;
     transition:
       transform 0.25s ease,

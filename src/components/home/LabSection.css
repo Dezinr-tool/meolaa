@@ -2,7 +2,7 @@
    Scoped to .meola-lab so Loop / Vision / header stay untouched. */
 
 .meola-lab {
-  --meola-lab-radius: 2.5em;
+  --meola-lab-radius: 0;
   --meola-lab-pad: clamp(28px, 4vw, 64px);
   --meola-lab-gap: 4em;
   --meola-lab-ink: var(--color-primary, #002f3a);
@@ -141,7 +141,7 @@
   align-items: center;
   min-height: 2.25em;
   padding: 0.35em 0.85em;
-  border-radius: 999px;
+  border-radius: 0;
   background: color-mix(in srgb, var(--meola-lab-ink) 10%, transparent);
   font-family: var(--font-display);
   font-size: 14px;
@@ -256,7 +256,7 @@
   inset: auto var(--meola-lab-pad) var(--meola-lab-pad) auto;
   width: min(18em, 38vw);
   padding: 8px;
-  border-radius: 1.15em;
+  border-radius: 0;
   background: var(--meola-lab-outline);
   transform: rotate(2.5deg);
   transform-origin: center center;
@@ -271,7 +271,7 @@
   aspect-ratio: 4 / 5;
   object-fit: cover;
   object-position: center;
-  border-radius: 0.85em;
+  border-radius: 0;
 }
 
 /* ——— Breakpoints ——— */
@@ -295,7 +295,7 @@
 
 @media (max-width: 720px) {
   .meola-lab {
-    --meola-lab-radius: 1.5em;
+    --meola-lab-radius: 0;
     --meola-lab-gap: 3em;
   }
 

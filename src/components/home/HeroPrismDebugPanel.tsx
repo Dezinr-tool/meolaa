@@ -194,7 +194,7 @@ export function HeroPrismDebugPanel() {
           maxHeight: 120,
           overflow: 'auto',
           background: 'rgba(255,255,255,0.04)',
-          borderRadius: 6,
+          borderRadius: 0,
           whiteSpace: 'pre-wrap',
         }}
       >

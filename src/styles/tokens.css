@@ -160,10 +160,16 @@
   --space-8: 64px;
   --space-9: 72px;
 
-  /* ——— Radius / motion ——— */
-  --radius-sharp: 2px;
-  --radius-card: 12px;
-  --radius-pill: 999px;
+  /* ——— Radius / motion ———
+     Sharp-edge system: rectangles are 0. Circles stay `border-radius: 50%`
+     (Loop orbit nodes, status dots, avatars) — never use these tokens for those. */
+  --radius: 0;
+  --radius-sm: 0;
+  --radius-md: 0;
+  --radius-lg: 0;
+  --radius-sharp: 0;
+  --radius-card: 0;
+  --radius-pill: 0;
   --ease-fast: 0.2s ease;
   --ease-nav: 0.35s ease;
 

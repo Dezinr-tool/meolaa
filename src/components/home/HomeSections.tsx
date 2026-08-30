@@ -4,7 +4,7 @@ import { HeroPrism } from './HeroPrism'
 import { ParallaxHeading } from './ParallaxHeading'
 import { VideoModal } from './VideoModal'
 
-/** Brand gradient hero stage — Planet Blue / black / soft Lilac behind the prism. */
+/** Brand gradient hero stage — Planet Blue → teal, whisper of Joyous Yellow. */
 export function HeroSection() {
   const [isFilmOpen, setFilmOpen] = useState(false)
 

@@ -49,7 +49,7 @@
   gap: clamp(36px, 6vh, 64px);
   padding: clamp(28px, 4vw, 48px) clamp(24px, 4vw, 56px) clamp(32px, 5vh, 48px);
   border: none;
-  border-radius: clamp(18px, 2.5vw, 28px);
+  border-radius: 0;
   background: var(--au-rm-card);
   box-sizing: border-box;
 }
@@ -186,7 +186,7 @@
   min-height: 34px;
   padding: 0 16px;
   border: 1px solid color-mix(in srgb, var(--au-rm-fg) 12%, transparent);
-  border-radius: 999px;
+  border-radius: 0;
   background: var(--au-rm-pill-inactive);
   color: var(--au-rm-fg);
   font-family: var(--font-sans);

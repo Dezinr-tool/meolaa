@@ -148,10 +148,10 @@ html {
   transition: fill 0.35s ease;
 }
 
-/* Hero fold — solid black stage. */
+/* Hero fold — Planet Blue field with a teal lift and a whisper of Joyous Yellow. */
 .hero--blank {
   position: relative;
-  background: var(--color-black, #000000);
+  background: var(--color-planet-blue, #002f3a);
 }
 
 .hero--blank .hero__stage {
@@ -160,14 +160,34 @@ html {
   z-index: 0;
   pointer-events: none;
   overflow: hidden;
-  background: var(--color-black, #000000);
+  background: var(--color-planet-blue, #002f3a);
 }
 
 .hero--blank .hero__bg {
   position: absolute;
   inset: 0;
-  background: var(--color-black, #000000);
-  background-image: none;
+  background-color: var(--color-planet-blue, #002f3a);
+  background-image:
+    radial-gradient(
+      ellipse 62% 48% at 88% 6%,
+      color-mix(in srgb, var(--color-joyous-yellow, #fdf28c) 11%, transparent) 0%,
+      transparent 54%
+    ),
+    radial-gradient(
+      ellipse 78% 68% at 8% 92%,
+      color-mix(in srgb, var(--color-sustainable-green, #41857a) 32%, transparent) 0%,
+      transparent 58%
+    ),
+    linear-gradient(
+      168deg,
+      var(--color-planet-blue, #002f3a) 0%,
+      color-mix(
+        in srgb,
+        var(--color-planet-blue, #002f3a) 76%,
+        var(--color-sustainable-green, #41857a) 24%
+      ) 46%,
+      var(--color-planet-blue, #002f3a) 100%
+    );
 }
 
 .hero--blank .hero__shade {
@@ -690,14 +710,19 @@ section.investors::before,
 .video-modal__panel,
 .video-modal__close,
 .site-footer__newsletter input,
-.meola-lab,
 .meola-lab__panel,
 .meola-lab__card,
 .meola-lab__media,
 .meola-lab__img,
 .meola-lab__label,
 .meola-lab__content {
-  --meola-lab-radius: 0;
-  --pf-radius: 0;
   border-radius: 0;
+}
+
+.meola-lab {
+  --meola-lab-radius: 0;
+}
+
+.brands {
+  --pf-radius: 0;
 }

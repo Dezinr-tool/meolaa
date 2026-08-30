@@ -172,7 +172,7 @@ export function initVision(options: InitVisionOptions = {}): () => void {
         width: fromW,
         height: fromH,
         maxHeight: 'none',
-        borderRadius: 4,
+        borderRadius: 0,
         x: 0,
         y: 0,
       })
@@ -240,7 +240,7 @@ export function initVision(options: InitVisionOptions = {}): () => void {
         left: () => fromLeft,
         width: () => fromW,
         height: () => fromH,
-        borderRadius: 4,
+        borderRadius: 0,
       },
       {
         top: 0,
