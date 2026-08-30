@@ -1,18 +1,18 @@
 /* Brand Lab — two-way accordion panels (Tutorial 109 pattern).
-   Tokens: Joyous Yellow ground + Planet Blue ink (no white BG). */
+   Tokens: white fold/intro chrome + Joyous Yellow panels + Planet Blue ink. */
 
 .meola-lab {
   --meola-lab-ease: cubic-bezier(0.33, 1, 0.68, 1);
   --meola-lab-dur: 0.7s;
-  --meola-lab-surface: var(--color-joyous-yellow, #fdf28c);
+  --meola-lab-surface: var(--color-white, #fff);
   --meola-lab-panel: var(--color-joyous-yellow, #fdf28c);
-  --meola-lab-ink: var(--color-primary, #002f3a);
-  --meola-lab-muted: color-mix(in srgb, var(--color-primary, #002f3a) 55%, transparent);
-  --meola-lab-body: color-mix(in srgb, var(--color-primary, #002f3a) 72%, transparent);
-  --meola-lab-rule: color-mix(in srgb, var(--color-primary, #002f3a) 14%, transparent);
+  --meola-lab-ink: var(--color-planet-blue, #002f3a);
+  --meola-lab-muted: color-mix(in srgb, var(--color-planet-blue, #002f3a) 55%, transparent);
+  --meola-lab-body: color-mix(in srgb, var(--color-planet-blue, #002f3a) 72%, transparent);
+  --meola-lab-rule: color-mix(in srgb, var(--color-planet-blue, #002f3a) 14%, transparent);
   --meola-lab-strip-min: 4.25rem;
 
-  background: var(--meola-lab-panel);
+  background: var(--meola-lab-surface);
   color: var(--meola-lab-ink);
   display: flex;
   flex-direction: row;
@@ -60,14 +60,15 @@
   height: 100%;
   max-width: 100%;
   opacity: 0.5;
-  fill: var(--color-primary, #002f3a);
+  fill: var(--color-planet-blue, #002f3a);
 }
 
 .meola-lab__headline {
   /* Shared --section-head-title-size (tokens.css) — same as every section. */
   max-width: none;
   text-wrap: wrap;
-  color: var(--section-head-on-light-ink, #000) !important;
+  text-transform: uppercase;
+  color: var(--color-planet-blue, #002f3a) !important;
   opacity: 1 !important;
 }
 
@@ -127,11 +128,11 @@
 .meola-lab__panel.is-active {
   flex-grow: 4.1;
   /* Slightly deeper yellow active strip — Planet Blue ink for contrast */
-  background: color-mix(in srgb, var(--color-joyous-yellow, #fdf28c) 88%, var(--color-primary, #002f3a));
-  color: var(--color-primary, #002f3a);
-  --meola-lab-ink: var(--color-primary, #002f3a);
-  --meola-lab-muted: color-mix(in srgb, var(--color-primary, #002f3a) 55%, transparent);
-  --meola-lab-body: color-mix(in srgb, var(--color-primary, #002f3a) 72%, transparent);
+  background: color-mix(in srgb, var(--color-joyous-yellow, #fdf28c) 88%, var(--color-planet-blue, #002f3a));
+  color: var(--color-planet-blue, #002f3a);
+  --meola-lab-ink: var(--color-planet-blue, #002f3a);
+  --meola-lab-muted: color-mix(in srgb, var(--color-planet-blue, #002f3a) 55%, transparent);
+  --meola-lab-body: color-mix(in srgb, var(--color-planet-blue, #002f3a) 72%, transparent);
 }
 
 /* Click remains for a11y jump-to-step; scroll is primary activation. */
@@ -150,12 +151,12 @@
 }
 
 .meola-lab__panel:focus-visible {
-  box-shadow: inset 0 0 0 2px var(--color-primary, #002f3a);
+  box-shadow: inset 0 0 0 2px var(--color-planet-blue, #002f3a);
 }
 
 /* Hover tint de-emphasized — scroll drives activation, not pointer. */
 .meola-lab__panel:not(.is-active):focus-visible {
-  background: color-mix(in srgb, var(--color-primary, #002f3a) 6%, var(--meola-lab-panel));
+  background: color-mix(in srgb, var(--color-planet-blue, #002f3a) 6%, var(--meola-lab-panel));
 }
 
 /* ——— Open content (slides horizontally via GSAP) ——— */
@@ -195,6 +196,7 @@
   font-weight: var(--fw-semibold, 600);
   line-height: var(--lh-tight, 1.08);
   letter-spacing: var(--tracking-display, -0.03em);
+  text-transform: uppercase;
   color: var(--meola-lab-ink);
   max-width: 14ch;
 }
@@ -212,8 +214,9 @@
 .meola-lab__media {
   position: relative;
   flex: 1 1 auto;
-  width: 92%;
-  max-width: 92%;
+  /* Full content width — L/R inset comes only from .meola-lab__content padding. */
+  width: 100%;
+  max-width: 100%;
   min-height: 140px;
   overflow: hidden;
 }
@@ -231,11 +234,13 @@
   z-index: 2;
   margin: 0;
   font-family: var(--font-sans);
-  font-size: var(--text-sm, 0.875rem);
-  font-weight: var(--fw-regular, 400);
-  line-height: 1.55;
-  color: var(--meola-lab-body);
-  max-width: 36ch;
+  /* Site subtext — match .section-head__sub (16px / regular / muted). */
+  font-size: var(--section-head-sub-size, 1rem);
+  font-weight: var(--section-head-sub-weight, var(--fw-regular, 400));
+  line-height: var(--section-head-sub-lh, 1.55);
+  color: var(--section-head-on-light-muted, var(--meola-lab-body));
+  max-width: min(var(--section-head-sub-max, 42ch), 36ch);
+  text-wrap: balance;
   box-sizing: border-box;
 }
 
@@ -266,16 +271,18 @@
   transform: rotate(180deg);
   white-space: nowrap;
   font-family: var(--font-display);
-  font-size: clamp(0.95rem, 1.15vw, 1.15rem);
+  /* Strip number + label share one size (14px). */
+  font-size: 14px;
   font-weight: var(--fw-semibold, 600);
   line-height: 1.1;
   letter-spacing: var(--tracking-display, -0.02em);
+  text-transform: uppercase;
   color: var(--meola-lab-ink);
 }
 
 .meola-lab__small-num {
   font-family: var(--font-mono);
-  font-size: 0.7em;
+  font-size: 1em;
   font-weight: var(--fw-semibold, 600);
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -283,7 +290,7 @@
 }
 
 .meola-lab__small-label {
-  text-transform: none;
+  text-transform: uppercase;
 }
 
 /* ——— Mobile: vertical stack + scroll-snap ——— */
@@ -366,7 +373,7 @@
     transform: none;
     flex-direction: row;
     gap: 0.75rem;
-    font-size: 1.15rem;
+    font-size: 14px;
   }
 
   .meola-lab__content {
