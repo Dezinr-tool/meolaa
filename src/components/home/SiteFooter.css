@@ -397,7 +397,9 @@
 }
 
 .footer-reveal-section--animated .site-footer__mark-wrap {
-  display: block;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
   /* Keep stage-full width — do not shrink inside copy gutters. */
   width: 100%;
   max-width: none;

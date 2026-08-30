@@ -20,19 +20,19 @@ const PRIMARY = '#000000'
 const REVEAL_START = 'top top'
 /** Pin when footer is flush; longer travel so the disc expands more slowly. */
 const PIN_START = 'top top'
-const PIN_END = '+=175%'
+const PIN_END = '+=280%'
 /** Same window as pin — slow scrubbed expand across the pinned stage. */
-const REVEAL_END = 'top top+=175%'
+const REVEAL_END = 'top top+=280%'
 /** Soft catch-up behind Lenis — higher = gentler, less “snap open”. */
-const STAGE_SCRUB = 1.9
+const STAGE_SCRUB = 3.0
 /**
  * Wait until the disc covers the fold — revealing earlier left text clipped by
  * the circle edge and a flat chord across the top of the box.
  */
-const CONTENT_MASK_AT = 0.66
-const CONTENT_MASK_DUR = 0.32
+const CONTENT_MASK_AT = 0.64
+const CONTENT_MASK_DUR = 0.34
 /** Brand mark clip reveal shortly after content is readable. */
-const LOGO_FILL_AT = 0.78
+const LOGO_FILL_AT = 0.76
 const LOGO_FILL_DUR = 0.75
 /**
  * vmax radius covers viewport corners from bottom-center regardless of
@@ -332,7 +332,7 @@ export function SiteFooter({ simple = false }: SiteFooterProps) {
 
         let fillPlayed = false
 
-        /* Pin + reveal share flush-top → +=150% so the disc never grows
+        /* Pin + reveal share flush-top → +=280% so the disc never grows
            while Press still owns the viewport. */
         ScrollTrigger.create({
           id: 'footer-circle-stage',
