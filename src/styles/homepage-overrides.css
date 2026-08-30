@@ -545,9 +545,9 @@ html {
   min-height: 0;
   max-height: none;
   box-sizing: border-box;
-  /* Deep Ecru ground — unified with stats band (not a white header fold). */
-  background: var(--color-ecru-deep, #f0d5cc) !important;
-  background-color: var(--color-ecru-deep, #f0d5cc) !important;
+  /* Ecru ground — unified with stats band (not a white header fold). */
+  background: var(--color-ecru, #f8ece4) !important;
+  background-color: var(--color-ecru, #f8ece4) !important;
 }
 
 /*

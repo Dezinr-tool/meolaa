@@ -891,7 +891,7 @@ img { display: block; max-width: 100%; }
   }
 }
 
-/* METRICS — one section: Deep Ecru head + stats band (single fold).
+/* METRICS — one section: Ecru head + stats band (single fold).
    Stair steps are a temporary GSAP clip-path reveal only; final state is one
    equal-height band. Padding/rhythm owned by section-head.css (.metrics). */
 .metrics {
@@ -899,7 +899,7 @@ img { display: block; max-width: 100%; }
   height: auto;
   min-height: 0;
   max-height: none;
-  background: var(--color-ecru-deep, #f0d5cc);
+  background: var(--color-ecru, #f8ece4);
   overflow: hidden;
   box-sizing: border-box;
 }
@@ -912,7 +912,7 @@ img { display: block; max-width: 100%; }
   width: 25%;
   /* Final layout: equal full-height band. Stair look is clip-only in GSAP. */
   height: 100%;
-  background: var(--color-ecru-deep, #f0d5cc);
+  background: var(--color-ecru, #f8ece4);
   color: var(--color-planet-blue, #002f3a);
   display: flex;
   flex-direction: column;
@@ -944,7 +944,7 @@ img { display: block; max-width: 100%; }
   max-width: 16ch;
   font-size: clamp(0.75rem, 1vw, 0.875rem);
   line-height: 1.35;
-  /* Muted ink on Deep Ecru — matches on-light section sub copy. */
+  /* Muted ink on Ecru — matches on-light section sub copy. */
   color: var(--section-head-on-light-muted, color-mix(in srgb, var(--color-black, #000) 58%, transparent));
 }
 
