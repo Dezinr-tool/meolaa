@@ -891,9 +891,8 @@ img { display: block; max-width: 100%; }
   }
 }
 
-/* METRICS — one section: Ecru head + Deep Ecru stats band (single fold).
-   Stair steps are a temporary GSAP clip-path reveal only; final state is one
-   equal-height band. Padding/rhythm owned by section-head.css (.metrics). */
+/* METRICS — Ecru head + Ecru chart ground; Deep Ecru bars in ascending stair
+   heights (prototype: 39/58/80/100%). Clip-path reveal on scroll; stairs hold. */
 .metrics {
   position: relative;
   height: auto;
@@ -910,8 +909,8 @@ img { display: block; max-width: 100%; }
   bottom: 0;
   top: auto;
   width: 25%;
-  /* Final layout: equal full-height band. Stair look is clip-only in GSAP. */
-  height: 100%;
+  /* Physical stair heights — matches prototype-tau-ebon proportions. */
+  height: var(--h-pct, 40%);
   background: var(--color-ecru-deep, #f0d5cc);
   color: var(--color-planet-blue, #002f3a);
   display: flex;

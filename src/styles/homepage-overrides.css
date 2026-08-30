@@ -550,11 +550,11 @@ html {
   background-color: var(--color-ecru, #f8ece4) !important;
 }
 
-/* Stair animation / stats band — Deep Ecru only (not the section head). */
+/* Chart ground — regular Ecru so Deep Ecru bars show stair contrast. */
 .metrics__chart,
 [data-section='metrics'] .metrics__chart {
-  background: var(--color-ecru-deep, #f0d5cc) !important;
-  background-color: var(--color-ecru-deep, #f0d5cc) !important;
+  background: var(--color-ecru, #f8ece4) !important;
+  background-color: var(--color-ecru, #f8ece4) !important;
 }
 
 .metrics__chart .metric,

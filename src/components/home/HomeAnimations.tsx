@@ -596,19 +596,12 @@ export function HomeAnimations() {
       }
 
       /* ——— Metrics ———
-       * Stair clip reveal → continuous settle to equal band (no mid hold).
-       * Glitch sources we avoid:
-       *  - Overlapping stair + settle tweens on the same clipPath (overwrite jumps)
-       *  - Separate ScrollTriggers fighting the same section (75% vs 70%)
-       *  - String clipPath mid-overwrite; use a numeric proxy per bar instead
-       * prefers-reduced-motion: skip stairs; show final equal band immediately. */
+       * Prototype match (prototype-tau-ebon): physical stair heights via --h-pct,
+       * clip-path reveal bottom→top, stagger from end. Final state keeps stairs. */
       const metricBlocks = gsap.utils.toArray<HTMLElement>('[data-metric]')
       if (metricBlocks.length) {
         const metricStrong = metricBlocks
           .map((m) => m.querySelector('strong'))
-          .filter((el): el is HTMLElement => el instanceof HTMLElement)
-        const metricSpans = metricBlocks
-          .map((m) => m.querySelector('span'))
           .filter((el): el is HTMLElement => el instanceof HTMLElement)
 
         const parsedMetrics = metricStrong
@@ -621,94 +614,38 @@ export function HomeAnimations() {
               entry !== null,
           )
 
-        /* Interim stair peaks — last step < 100 so every bar still has settle
-         * travel (avoids a completed stair silhouette that then snaps equal). */
-        const STAIR_VISIBLE_PCT = [48, 66, 84, 96] as const
-        const stairTops = metricBlocks.map((_, i) => {
-          const visible =
-            STAIR_VISIBLE_PCT[i] ??
-            STAIR_VISIBLE_PCT[STAIR_VISIBLE_PCT.length - 1]
-          return 100 - visible
-        })
-
-        const applyClip = (el: HTMLElement, topPct: number) => {
-          el.style.clipPath = `inset(${topPct}% 0 0 0)`
-        }
-
         if (reduceMotion) {
-          metricBlocks.forEach((block) => applyClip(block, 0))
-          gsap.set(metricBlocks, { autoAlpha: 1 })
-          /* Final numbers already in the DOM — leave them as-is. */
+          gsap.set(metricBlocks, { clipPath: 'inset(0% 0 0 0)', autoAlpha: 1 })
         } else {
-          /* Continuous per-bar motion: rise through stair into equal settle.
-           * Hitch we kill: power2.out into the mid keyframe zeros velocity so the
-           * stair silhouette "sticks", then settle feels like a second phase.
-           * Settle starts at 42% with power1.in through the join so bars never
-           * park on the stair before equalize. */
-          const stairStagger = 0.07
-          const barDuration = 1.2
-          /* Settle blends from ~42% — stair never fully "lands" before equalize. */
-          const stairPortion = 0.42
-
-          const clipProxies = metricBlocks.map(() => ({ top: 100 }))
-          metricBlocks.forEach((block) => applyClip(block, 100))
-          gsap.set([...metricStrong, ...metricSpans], { autoAlpha: 0, y: 16 })
-
-          const metricTl = gsap.timeline({
-            defaults: { overwrite: 'auto' },
+          gsap.set(metricBlocks, { clipPath: 'inset(100% 0 0 0)' })
+          gsap.to(metricBlocks, {
+            clipPath: 'inset(0% 0 0 0)',
+            duration: 0.7,
+            ease: 'power3.out',
+            stagger: { each: 0.16, from: 'end' },
             scrollTrigger: {
               trigger: "[data-section='metrics']",
-              start: 'top 72%',
+              start: 'top 75%',
               toggleActions: 'play none none reverse',
-              invalidateOnRefresh: true,
             },
           })
 
-          metricBlocks.forEach((block, i) => {
-            const fromEnd = metricBlocks.length - 1 - i
-            const proxy = clipProxies[i]
-            const stairPct = `${stairPortion * 100}%`
-            /* power1.in carries speed through the stair join; power2.out lands. */
-            metricTl.to(
-              proxy,
-              {
-                duration: barDuration,
-                keyframes: {
-                  '0%': { top: 100 },
-                  [stairPct]: { top: stairTops[i], ease: 'power1.in' },
-                  '100%': { top: 0, ease: 'power2.out' },
-                },
-                onUpdate: () => applyClip(block, proxy.top),
-              },
-              fromEnd * stairStagger,
-            )
-          })
-
-          /* Copy rides the same timeline as the bars (one trigger, one reverse). */
-          metricTl.to(
+          gsap.from(
             metricStrong,
             {
-              autoAlpha: 1,
-              y: 0,
+              autoAlpha: 0,
+              y: 18,
               duration: 0.55,
-              stagger: { each: 0.1, from: 'end' },
+              stagger: { each: 0.12, from: 'end' },
               ease: REVEAL_EASE,
+              scrollTrigger: {
+                trigger: "[data-section='metrics']",
+                start: 'top 75%',
+                toggleActions: 'play none none reverse',
+              },
             },
-            stairStagger * 0.5,
-          )
-          metricTl.to(
-            metricSpans,
-            {
-              autoAlpha: 1,
-              y: 0,
-              duration: 0.5,
-              stagger: { each: 0.1, from: 'end' },
-              ease: REVEAL_EASE,
-            },
-            stairStagger * 0.5 + 0.08,
           )
 
-          /* Count-up: once, timed with the shared enter point. */
           const countStagger = 0.13
           const countFromEnd = parsedMetrics.length - 1
           parsedMetrics.forEach(({ el, parsed }, i) => {
@@ -724,7 +661,7 @@ export function HomeAnimations() {
               },
               scrollTrigger: {
                 trigger: "[data-section='metrics']",
-                start: 'top 72%',
+                start: 'top 75%',
                 once: true,
               },
             })

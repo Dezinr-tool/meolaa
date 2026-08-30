@@ -136,19 +136,19 @@ export function MetricsSection() {
       </header>
 
       <div className="metrics__chart" aria-label="Key metrics">
-        <div className="metric" data-metric>
+        <div className="metric" data-metric style={{ ['--h-pct' as string]: '39%' }}>
           <strong>$6M</strong>
           <span>Raised across seed rounds</span>
         </div>
-        <div className="metric" data-metric>
+        <div className="metric" data-metric style={{ ['--h-pct' as string]: '58%' }}>
           <strong>120+</strong>
           <span>Categories mapped</span>
         </div>
-        <div className="metric" data-metric>
+        <div className="metric" data-metric style={{ ['--h-pct' as string]: '80%' }}>
           <strong>1</strong>
           <span>Brand live</span>
         </div>
-        <div className="metric" data-metric>
+        <div className="metric" data-metric style={{ ['--h-pct' as string]: '100%' }}>
           <strong>3</strong>
           <span>Market Served</span>
         </div>

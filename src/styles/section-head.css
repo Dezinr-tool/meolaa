@@ -235,8 +235,8 @@
 .metrics__chart {
   position: relative;
   flex: 0 0 auto;
-  /* Section footer band — Deep Ecru stair/stats only (head stays Ecru). */
-  background: var(--color-ecru-deep, #f0d5cc);
+  /* Ecru ground so Deep Ecru bars read as ascending stairs (prototype match). */
+  background: var(--color-ecru, #f8ece4);
   height: clamp(200px, 32svh, 280px);
   min-height: clamp(200px, 32svh, 280px);
   /* Bars stay full-bleed despite the section's shared side padding. */
