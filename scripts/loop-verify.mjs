@@ -15,16 +15,52 @@ await page.goto('http://127.0.0.1:5173/', { waitUntil: 'domcontentloaded' })
 await page.waitForSelector('[data-section="loop"][data-loop-orbit]', { state: 'attached' })
 await page.waitForTimeout(3500)
 
-// Confirm live order from DOM
+// Confirm layout + winding: Build BL, Run top, Signal BR; tip BL → top.
 const live = await page.evaluate(() => {
   const section = document.querySelector('[data-section="loop"]')
+  const labels = [...section.querySelectorAll('.loop__copy-label')].map((el) =>
+    el.textContent.trim(),
+  )
+  const slots = [...section.querySelectorAll('[data-loop-step]')].map((el) => el.dataset.slot)
+  const bySlot = Object.fromEntries(
+    [...section.querySelectorAll('[data-loop-step]')].map((el) => [
+      el.dataset.slot,
+      el.querySelector('.loop__copy-label')?.textContent?.trim(),
+    ]),
+  )
+  const arc = section.querySelector('[data-loop-orbit-arc]')
+  const len = arc?.getTotalLength?.() ?? 0
+  const p0 = arc?.getPointAtLength?.(0)
+  const pEarly = arc?.getPointAtLength?.(len * 0.12)
   return {
-    labels: [...section.querySelectorAll('.loop__copy-label')].map((el) => el.textContent.trim()),
-    slots: [...section.querySelectorAll('[data-loop-step]')].map((el) => el.dataset.slot),
-    comment: 'ok',
+    labels,
+    slots,
+    bySlot,
+    tipTowardRun:
+      p0 && pEarly
+        ? pEarly.x < p0.x && pEarly.y < p0.y
+        : false,
+    p0: p0 ? { x: +p0.x.toFixed(1), y: +p0.y.toFixed(1) } : null,
+    pEarly: pEarly
+      ? { x: +pEarly.x.toFixed(1), y: +pEarly.y.toFixed(1) }
+      : null,
   }
 })
 console.log('live', JSON.stringify(live))
+if (
+  live.bySlot.bl !== 'Build' ||
+  live.bySlot.top !== 'Run' ||
+  live.bySlot.br !== 'Signal' ||
+  live.labels.join(',') !== 'Build,Run,Signal' ||
+  live.slots.join(',') !== 'bl,top,br'
+) {
+  throw new Error(
+    `layout expected BL=Build top=Run BR=Signal order Build/Run/Signal, got ${JSON.stringify(live)}`,
+  )
+}
+if (!live.tipTowardRun) {
+  throw new Error(`path winding should leave Build toward Run (left-up / top), got ${JSON.stringify(live)}`)
+}
 
 const range = await page.evaluate(() => {
   const section = document.querySelector('[data-section="loop"]')
@@ -66,6 +102,16 @@ for (const [name, p] of [['start', 0.08], ['mid', 0.48], ['end', 0.96]]) {
     }
   })
   console.log(name, JSON.stringify(state))
+  if (name === 'mid') {
+    const run = state.steps.find((s) => s.label === 'Run')
+    const signal = state.steps.find((s) => s.label === 'Signal')
+    if (!run?.reached || signal?.reached) {
+      throw new Error(
+        `mid expected Run reached before Signal, got ${JSON.stringify(state.steps)}`,
+      )
+    }
+    console.log('midAssert Run before Signal: ok')
+  }
   await page.locator('[data-section="loop"]').screenshot({
     path: path.join(outDir, `tmp-loop-${name}.png`),
     animations: 'disabled',

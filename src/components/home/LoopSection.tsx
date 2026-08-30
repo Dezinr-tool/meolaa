@@ -1,7 +1,8 @@
 /**
  * THE LOOP — Figma circular orbit (Untitled 0:3).
+ * Layout: Build at BL, Run at top, Signal at BR.
  * Pin + scrub: yellow fill travels BL → top → BR → BL
- * (Build → Signal → Run). Opposite of the prior bottom-arc (BL → BR) draw.
+ * (Build → Run → Signal). Increasing atan2 in SVG Y-down.
  */
 import { MeolaaEMark } from '../brand/MeolaaEMark'
 import { LOOP_STEPS } from '../../lib/loopPath'
@@ -21,7 +22,7 @@ const TRACK_SW = 56
 /** Outer node disc (Figma 63px) — connector stops at its rim. */
 const DOT_OUTER_R = 31.5
 
-/** Angle seeds from Figma node centres (Build / Signal / Run). */
+/** Angle seeds from Figma node centres (Build BL / Run top / Signal BR). */
 const ANGLE_SEED = {
   bl: { x: 469.5, y: 787.5 },
   top: { x: 714.5, y: 340.5 },
@@ -65,16 +66,16 @@ const TWO_PI = Math.PI * 2
 const SEG_BL_TOP = orbitDelta(A_BL, A_TOP)
 const SEG_TOP_BR = orbitDelta(A_TOP, A_BR)
 
-/** Normalised arc positions (BL → Signal → Run → BL). */
+/** Normalised arc positions (BL → Run → Signal → BL). */
 const ARC_S = {
   build: 0,
-  signal: SEG_BL_TOP / TWO_PI,
-  run: (SEG_BL_TOP + SEG_TOP_BR) / TWO_PI,
+  run: SEG_BL_TOP / TWO_PI,
+  signal: (SEG_BL_TOP + SEG_TOP_BR) / TWO_PI,
 } as const
 
 /**
  * Polyline circle — identical `d` for ghost + yellow.
- * Increasing atan2: tip leaves Build toward Signal (left-up), not Run.
+ * Increasing atan2: tip leaves Build toward Run (left-up / top).
  */
 function buildOrbitPath(startAngle: number, segments = 96): string {
   const parts: string[] = []
@@ -90,7 +91,7 @@ const ORBIT_ARC_D = buildOrbitPath(A_BL)
 
 /**
  * Pin progress when each beat activates.
- * Build (BL) → Signal (top) → Run (BR), then close the loop.
+ * Build (BL) → Run (top) → Signal (BR), then close the loop.
  */
 const ORBIT_STEPS = [
   {
@@ -107,10 +108,10 @@ const ORBIT_STEPS = [
     },
   },
   {
-    ...LOOP_STEPS[2],
+    ...LOOP_STEPS[1],
     slot: 'top' as const,
     s: 0.42,
-    arcS: ARC_S.signal,
+    arcS: ARC_S.run,
     line: {
       x1: 249,
       y1: ON_TRACK.top.y,
@@ -119,10 +120,10 @@ const ORBIT_STEPS = [
     },
   },
   {
-    ...LOOP_STEPS[1],
+    ...LOOP_STEPS[2],
     slot: 'br' as const,
     s: 0.62,
-    arcS: ARC_S.run,
+    arcS: ARC_S.signal,
     line: {
       x1: ON_TRACK.br.x + DOT_OUTER_R,
       y1: ON_TRACK.br.y,

@@ -193,7 +193,7 @@
  * Copy `top` is the block’s top edge (Figma), not vertically centred —
  * keep free of translateY so reveal animation can own `transform`.
  */
-/* ——— Signal (top) ——— */
+/* ——— Run (top) ——— */
 .loop__step--orbit-top .loop__dot {
   left: var(--loop-dot-top-x);
   top: var(--loop-dot-top-y);
@@ -217,7 +217,7 @@
   text-align: left;
 }
 
-/* ——— Run (BR) ——— */
+/* ——— Signal (BR) ——— */
 .loop__step--orbit-br .loop__dot {
   left: var(--loop-dot-br-x);
   top: var(--loop-dot-br-y);

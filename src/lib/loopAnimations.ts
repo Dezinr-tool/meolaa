@@ -110,15 +110,15 @@ export function initLoop(options: InitLoopOptions = {}): () => void {
 
   /*
    * Circular orbit (Figma Untitled 0:3) — pin + scrub:
-   * yellow fill travels full loop BL → Signal → Run → BL;
+   * yellow fill travels full loop BL → top (Run) → BR (Signal) → BL;
    * each pointer activates + copy + SVG connector draws as the tip arrives.
    *
    * Timeline (pin progress):
    *   0        ghost only — yellow dash fully hidden (no stub)
-   *   0–22%    fill begins from Build (BL) toward Signal (left-up)
+   *   0–22%    fill parked at Build (BL); no stub
    *   ~22%     Build — node + copy + line
-   *   ~42%     Signal (top)
-   *   ~62%     Run (BR)
+   *   ~42%     Run (top)
+   *   ~62%     Signal (BR)
    *   78–100%  fill closes loop back to Build; unpin at end
    */
   if (loopSection.hasAttribute('data-loop-orbit')) {
