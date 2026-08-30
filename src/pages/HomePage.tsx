@@ -5,6 +5,7 @@ import { Preloader } from '../components/Preloader'
 import { SiteNav } from '../components/SiteNav'
 import { SectionErrorBoundary } from '../components/SectionErrorBoundary'
 import { HomeAnimations } from '../components/home/HomeAnimations'
+import { FoldTransition } from '../components/home/FoldTransition'
 import {
   FoundingSection,
   HeroSection,
@@ -37,6 +38,8 @@ export function HomePage() {
           </div>
         ) : null}
         <HomeAnimations />
+        {/* Fixed wipe panel — sits above the folds, below the nav. */}
+        <FoldTransition />
         <main>
           <HeroSection />
           <VisionSection />

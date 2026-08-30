@@ -1,0 +1,68 @@
+/* Fold-to-fold wipe — see FoldTransition.tsx.
+   The wrapper is the fixed viewport clip; the panel inside is what moves. */
+
+.fold-wipe {
+  position: fixed;
+  inset: 0;
+  z-index: 100; /* over the folds, under .site-nav (200) so the bar stays put */
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.fold-wipe__panel {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--color-primary, #002f3a);
+  /* No transform here on purpose. GSAP parses an existing CSS transform as a
+     baseline `y` and keeps it, so `translateY(100%)` plus GSAP's yPercent:-100
+     cancelled out and left the panel covering the page. The start position is
+     set by gsap.set() instead, so GSAP owns the transform outright. */
+  will-change: transform;
+  /* Hidden until the first frame positions it — avoids a flash of full-screen
+     blue between paint and the effect running. */
+  visibility: hidden;
+}
+
+/* Soft leading edge. Sits directly above the panel and travels with it, so the
+   wipe arrives as a gradient rather than a hard horizon — the panel itself
+   stays solid, which is what actually hides the seam between folds. */
+.fold-wipe__panel::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 100%;
+  height: 22vh;
+  background: linear-gradient(
+    to top,
+    var(--color-primary, #002f3a) 0%,
+    color-mix(in srgb, var(--color-primary, #002f3a) 55%, transparent) 45%,
+    transparent 100%
+  );
+}
+
+/* Trailing edge — softens the reveal as the panel clears the top, so the
+   incoming fold doesn't snap in behind a hard line. */
+.fold-wipe__panel::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  height: 14vh;
+  background: linear-gradient(
+    to bottom,
+    var(--color-primary, #002f3a) 0%,
+    transparent 100%
+  );
+}
+
+/* The wipe is pure scroll-linked motion — with reduced motion preferred the
+   component bails out of its effect, so make sure nothing is left on screen. */
+@media (prefers-reduced-motion: reduce) {
+  .fold-wipe {
+    display: none;
+  }
+}
