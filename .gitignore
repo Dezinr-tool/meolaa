@@ -51,5 +51,10 @@ Thumbs.db
 
 # Misc
 tmp/
+# Scratch screenshots / scratch dirs from local verification runs. `tmp/` above
+# only matches a directory literally named tmp; these are tmp-PREFIXED files and
+# folders (tmp-loop-mid.png, tmp-founding-stickers/), which it never caught.
+tmp-*
 *.tsbuildinfo
 .claude/
+.cursor/
