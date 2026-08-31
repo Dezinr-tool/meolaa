@@ -46,8 +46,8 @@ export type HeroPrismSettings = {
 }
 
 /** baseSide / √2 — keeps four lateral faces equilateral. */
-const DEFAULT_BASE = 1.18
-const DEFAULT_HEIGHT = 1.05
+const DEFAULT_BASE = 0.95
+const DEFAULT_HEIGHT = 1.07
 
 /**
  * Square-base pyramid with four equilateral side faces.
@@ -57,11 +57,14 @@ export const DEFAULT_PRISM_SETTINGS: HeroPrismSettings = {
   baseSide: DEFAULT_BASE,
   height: DEFAULT_HEIGHT,
   /* Slight tip so a hint of the base reads; Y≈0 keeps a front edge toward camera. */
-  rotX: -0.07,
-  rotY: 0.84,
-  rotZ: 0,
-  posY: 0.06,
-  idleAmount: 0.11,
+  rotX: -0.15,
+  rotY: 0.78,
+  rotZ: 0.04,
+  posY: 0.09,
+  /* No idle drift — the crystal holds still. The sin terms in the frame loop
+     multiply through this, so 0 disables the float without removing the
+     mechanism from the panel. */
+  idleAmount: 0,
 
   /* Physical glass. envMapIntensity/reflectivity were low enough that the
      faces read as matte grey — the HDRI is the only thing giving the crystal
