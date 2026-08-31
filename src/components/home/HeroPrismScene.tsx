@@ -1,7 +1,7 @@
 import {
   Environment,
+  Lightformer,
   MeshTransmissionMaterial,
-  useEnvironment,
 } from '@react-three/drei'
 import { useFrame, useThree } from '@react-three/fiber'
 import { useMemo, useRef, useSyncExternalStore } from 'react'
@@ -30,7 +30,7 @@ function quality() {
   if (reduced || mobile) {
     return { samples: 10, resolution: 512, envRes: 64 }
   }
-  return { samples: 28, resolution: 1024, envRes: 128 }
+  return { samples: 48, resolution: 1024, envRes: 256 }
 }
 
 /** Height that makes all four lateral faces equilateral for base side `s`. */
@@ -119,11 +119,12 @@ function CameraRig({ settings }: { settings: HeroPrismSettings }) {
 }
 
 /**
- * FBO clear behind the glass. Transmission can only show what it refracts, and
- * the stage behind the prism is empty — so this, not the material, is what
- * decides how light the crystal reads. Near-black here made it look matte.
+ * FBO clear behind the glass — what the crystal refracts. This is sampled from
+ * the hero's own painted background (rgb(2,18,20)) rather than an arbitrary
+ * grey, so the body reads as the page seen through glass instead of a pasted-in
+ * object carrying its own unrelated colour.
  */
-const TRANSMISSION_BG = new THREE.Color('#33454f')
+const TRANSMISSION_BG = new THREE.Color('#0a2c36')
 
 function GlassPyramid({
   samples,
@@ -172,12 +173,13 @@ function GlassPyramid({
     <group ref={group} position={[0, settings.posY, 0]}>
       <mesh geometry={geo}>
         <MeshTransmissionMaterial
-          backside
-          backsideThickness={thickness * 1.2}
+          /* backside double-refracts through the far faces; on a convex solid
+             at this FBO resolution that showed as internal moiré. */
+          backside={false}
           samples={samples}
           resolution={resolution}
           transmission={1}
-          roughness={settings.roughness}
+          roughness={Math.min(settings.roughness, 0.06)}
           thickness={thickness}
           ior={settings.ior}
           chromaticAberration={settings.chromaticAberration}
@@ -187,8 +189,8 @@ function GlassPyramid({
           distortionScale={0}
           temporalDistortion={0}
           color="#ffffff"
-          attenuationColor="#cfe4f0"
-          attenuationDistance={12}
+          attenuationColor="#a9d2e2"
+          attenuationDistance={22}
           clearcoat={0.4}
           clearcoatRoughness={0.05}
           metalness={0}
@@ -234,26 +236,68 @@ function GlassPyramid({
 export default function HeroPrismScene() {
   const q = useMemo(() => quality(), [])
   const settings = usePrismSettings()
-  const envMap = useEnvironment({ preset: 'city' })
 
   return (
     <>
       <CameraRig settings={settings} />
 
       {/* Soft fill so transmission has something to sample besides empty black */}
-      <ambientLight intensity={0.35} color="#cfe0ec" />
-      {/* Key from the ray side so the entry face catches a highlight. */}
-      <directionalLight position={[-5, 2.5, 4]} intensity={0.85} color="#ffffff" />
-      <directionalLight position={[4, 1.5, 3]} intensity={0.5} color="#d8e8f0" />
-      {/* Rim from behind — lights the arrises the way the reference does. */}
-      <directionalLight position={[0, -2, -5]} intensity={0.55} color="#9fd8ff" />
+      <ambientLight intensity={0.18} color="#9fc4d4" />
+      <directionalLight position={[-5, 2.5, 4]} intensity={0.35} color="#ffffff" />
 
-      <Environment
-        map={envMap}
-        resolution={q.envRes}
-        background={false}
-        environmentIntensity={1.0}
-      />
+      {/*
+        Environment built from the page's own palette instead of drei's `city`
+        HDRI. The preset reflected an unrelated outdoor scene, which is why the
+        crystal looked pasted on — nothing it mirrored belonged to this page.
+        These emitters are the hero ground plus the spectrum's own colours, so
+        the reflections come from the background it actually sits in. The narrow
+        rects are what produce the specular streaks along the arrises, and those
+        streaks are most of what reads as "crystal".
+      */}
+      <Environment resolution={q.envRes} background={false} environmentIntensity={1}>
+        {/* Hero ground — the dark teal the crystal sits in, wrapping it. */}
+        <Lightformer
+          form="rect"
+          intensity={1.1}
+          color="#12495a"
+          scale={[26, 26, 1]}
+          position={[0, 0, -10]}
+        />
+        {/* Key streak, ray side — lights the entry face and its top arris. */}
+        <Lightformer
+          form="rect"
+          intensity={3.4}
+          color="#ffffff"
+          scale={[9, 1.1, 1]}
+          position={[-4.2, 2.6, 3.4]}
+          rotation={[0, 0, 0.42]}
+        />
+        {/* Low fill along the incoming beam. */}
+        <Lightformer
+          form="rect"
+          intensity={1.7}
+          color="#cfe8ff"
+          scale={[8, 0.9, 1]}
+          position={[-5.2, -0.2, 2.2]}
+        />
+        {/* Exit side picks up the spectrum's warm and cool ends. */}
+        <Lightformer
+          form="rect"
+          intensity={1.5}
+          color="#ff8347"
+          scale={[4.5, 0.8, 1]}
+          position={[4.1, 1.4, 2.4]}
+          rotation={[0, 0, -0.38]}
+        />
+        <Lightformer
+          form="rect"
+          intensity={1.4}
+          color="#5a7dff"
+          scale={[4.5, 0.8, 1]}
+          position={[4.4, -0.5, 2.4]}
+          rotation={[0, 0, -0.38]}
+        />
+      </Environment>
 
       <GlassPyramid
         samples={q.samples}

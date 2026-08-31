@@ -69,12 +69,15 @@ export const DEFAULT_PRISM_SETTINGS: HeroPrismSettings = {
   /* Physical glass. envMapIntensity/reflectivity were low enough that the
      faces read as matte grey — the HDRI is the only thing giving the crystal
      its highlights on an otherwise empty stage, so it has to carry. */
-  roughness: 0.285,
+  /* Low: rough transmission blur-samples the backbuffer and reads as grain. */
+  roughness: 0.05,
   thickness: 1.05,
   ior: 1.23,
-  chromaticAberration: 0.83,
-  envMapIntensity: 0.9,
-  reflectivity: 0.38,
+  /* High CA refracted the small bright emitters into blocky colour bands at
+     the transmission FBO's resolution — keep the fringe, lose the blocks. */
+  chromaticAberration: 0.22,
+  envMapIntensity: 1.15,
+  reflectivity: 0.55,
 
   /* Left / right lateral faces at y≈0 (apex→corner mid ~±0.41). */
   beamEntryX: -0.49,
