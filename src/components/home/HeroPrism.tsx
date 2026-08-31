@@ -3,7 +3,6 @@ import { Canvas } from '@react-three/fiber'
 import { ACESFilmicToneMapping, NoToneMapping } from 'three'
 import { HeroErrorBoundary } from './HeroErrorBoundary'
 import { HeroPrismDebugPanel } from './HeroPrismDebugPanel'
-import { HeroPrismFallback } from './HeroPrismFallback'
 import { DEFAULT_PRISM_SETTINGS } from './heroPrismSettings'
 import './HeroPrism.css'
 
@@ -104,20 +103,18 @@ export function HeroPrism() {
       <div className="hero-prism" data-hero-prism aria-hidden="true">
         <div className="hero-prism__float">
           {/*
-           * No placeholder while WebGL boots. The still cutout used to show for
-           * ~1s and then swap to the canvas, which read as the wrong image
-           * flashing in. The hero background carries the gap instead.
-           * The cutout is still the fallback when WebGL is unsupported or the
-           * canvas throws — those cases have nothing else to show.
+           * No still fallback at all. The cutout that used to fill in here was
+           * a stock graphic carrying "-FUTURE" branding that is not Meolaa's,
+           * so showing it on a WebGL failure was worse than showing nothing —
+           * the hero background covers the gap.
            */}
           {webglSupported === true && (
             <div className={`hero-prism__webgl${webglReady ? ' is-ready' : ''}`}>
-              <HeroErrorBoundary fallback={<HeroPrismFallback />}>
+              <HeroErrorBoundary fallback={null}>
                 <HeroPrismCanvas onReady={() => setWebglReady(true)} />
               </HeroErrorBoundary>
             </div>
           )}
-          {webglSupported === false && <HeroPrismFallback />}
         </div>
       </div>
       <HeroPrismDebugPanel />

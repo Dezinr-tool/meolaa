@@ -81,6 +81,8 @@ const SECTIONS: Section[] = [
         step: 10,
       },
       { key: 'iridescenceIOR', label: 'Irid. IOR', min: 1, max: 2.4, step: 0.01 },
+      { key: 'fresnel', label: 'Fresnel rim', min: 0, max: 3, step: 0.01 },
+      { key: 'fresnelPower', label: 'Fresnel falloff', min: 0.5, max: 8, step: 0.1 },
     ],
   },
   {

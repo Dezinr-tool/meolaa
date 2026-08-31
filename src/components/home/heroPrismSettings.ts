@@ -25,6 +25,8 @@ export type HeroPrismSettings = {
   attenuationDistance: number
   clearcoat: number
   clearcoatRoughness: number
+  fresnel: number
+  fresnelPower: number
 
   /* Environment emitters — these are what the glass refracts, so they control
      the colour and gradient across each face. */
@@ -110,6 +112,8 @@ export const DEFAULT_PRISM_SETTINGS: HeroPrismSettings = {
   attenuationDistance: 40,
   clearcoat: 0.4,
   clearcoatRoughness: 0.05,
+  fresnel: 0.55,
+  fresnelPower: 3.2,
 
   envBase: 1.4,
   envKey: 7,

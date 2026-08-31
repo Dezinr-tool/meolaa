@@ -47,19 +47,6 @@
   z-index: 1;
 }
 
-.hero-prism__img {
-  /* Fallback stays centred; WebGL fills the fold. */
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: min(520px, 72vw);
-  height: min(360px, 48vw);
-  transform: translate(-50%, -50%);
-  object-fit: contain;
-  animation: hero-prism-shimmer 7s ease-in-out infinite;
-  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.28));
-}
-
 .hero-prism__webgl {
   position: absolute;
   inset: 0;
@@ -78,29 +65,8 @@
   background: transparent;
 }
 
-@keyframes hero-prism-shimmer {
-  0%,
-  100% {
-    opacity: 0.94;
-    filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.28));
-  }
-
-  50% {
-    opacity: 1;
-    filter: drop-shadow(0 10px 28px rgba(0, 0, 0, 0.34));
-  }
-}
-
 @media (max-width: 900px) {
-  .hero-prism__img {
-    width: min(300px, 78vw);
-    height: min(220px, 42vw);
-    filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.24));
   }
-}
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-prism__img {
-    animation: none;
   }
-}

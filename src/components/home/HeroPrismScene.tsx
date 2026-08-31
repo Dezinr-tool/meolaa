@@ -33,6 +33,34 @@ function quality() {
   return { samples: 48, resolution: 1024, envRes: 256 }
 }
 
+/**
+ * Fresnel rim. Reflectance rises at grazing angles, which is what gives real
+ * glass its bright edge — the existing lineSegments are a fixed wireframe and
+ * do not respond to view angle, so the crystal read as a drawn outline.
+ */
+const FRESNEL_VERT = `
+  varying vec3 vNormalW;
+  varying vec3 vViewW;
+  void main() {
+    vec4 wp = modelMatrix * vec4(position, 1.0);
+    vNormalW = normalize(mat3(modelMatrix) * normal);
+    vViewW = normalize(cameraPosition - wp.xyz);
+    gl_Position = projectionMatrix * viewMatrix * wp;
+  }
+`
+
+const FRESNEL_FRAG = `
+  uniform float uIntensity;
+  uniform float uPower;
+  uniform vec3 uColor;
+  varying vec3 vNormalW;
+  varying vec3 vViewW;
+  void main() {
+    float f = pow(1.0 - clamp(dot(normalize(vNormalW), normalize(vViewW)), 0.0, 1.0), uPower);
+    gl_FragColor = vec4(uColor * f * uIntensity, f * uIntensity);
+  }
+`
+
 /** Height that makes all four lateral faces equilateral for base side `s`. */
 export function equilateralPyramidHeight(baseSide: number) {
   return baseSide / Math.SQRT2
@@ -141,6 +169,15 @@ function GlassPyramid({
 }) {
   const group = useRef<THREE.Group>(null)
   const cyanMat = useRef<THREE.LineBasicMaterial>(null)
+  const fresnelMat = useRef<THREE.ShaderMaterial>(null)
+  const fresnelUniforms = useMemo(
+    () => ({
+      uIntensity: { value: 1 },
+      uPower: { value: 3 },
+      uColor: { value: new THREE.Color('#ffffff') },
+    }),
+    [],
+  )
   const whiteMat = useRef<THREE.LineBasicMaterial>(null)
 
   const geo = useMemo(
@@ -167,6 +204,10 @@ function GlassPyramid({
     group.current.rotation.x = settings.rotX + Math.sin(t * 0.28) * idle * 0.35
     group.current.rotation.y = settings.rotY + Math.sin(t * 0.22) * idle * 0.45
     group.current.rotation.z = settings.rotZ
+    if (fresnelMat.current) {
+      fresnelUniforms.uIntensity.value = settings.fresnel
+      fresnelUniforms.uPower.value = settings.fresnelPower
+    }
     if (cyanMat.current) cyanMat.current.opacity = settings.edgeCyanOpacity
     if (whiteMat.current) whiteMat.current.opacity = settings.edgeWhiteOpacity
   })
@@ -212,6 +253,21 @@ function GlassPyramid({
           background={TRANSMISSION_BG}
         />
       </mesh>
+
+      {settings.fresnel > 0.001 && (
+        <mesh geometry={geo} scale={1.002} renderOrder={2}>
+          <shaderMaterial
+            ref={fresnelMat}
+            vertexShader={FRESNEL_VERT}
+            fragmentShader={FRESNEL_FRAG}
+            uniforms={fresnelUniforms}
+            transparent
+            depthWrite={false}
+            blending={THREE.AdditiveBlending}
+            toneMapped={false}
+          />
+        </mesh>
+      )}
 
       {/* Soft rim reinforce — kept faint so edges aren’t wireframe (no Extrude bevel). */}
       {showEdges && settings.edgeCyanOpacity > 0.01 && (
