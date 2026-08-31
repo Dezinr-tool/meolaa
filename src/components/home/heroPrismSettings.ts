@@ -115,14 +115,21 @@ export const DEFAULT_PRISM_SETTINGS: HeroPrismSettings = {
   fresnel: 0.55,
   fresnelPower: 3.2,
 
-  envBase: 1.4,
-  envKey: 7,
-  envFill: 3.5,
-  envMagenta: 3.2,
-  envCyan: 3.0,
-  envViolet: 2.8,
-  envAmber: 2.6,
-  envGreen: 2.4,
+  /*
+   * Rig was inverted: the big white studio panel (576u², by far the largest)
+   * was the *dimmest* emitter at 1.4, while five saturated colour panels at
+   * 2.4–3.2 dominated. The reference is one bright white studio panel with a
+   * couple of subtle colour accents — so the white now leads and the colours
+   * drop to tints.
+   */
+  envBase: 4.6,
+  envKey: 8,
+  envFill: 4.2,
+  envMagenta: 1.5,
+  envCyan: 1.4,
+  envViolet: 1.1,
+  envAmber: 1.0,
+  envGreen: 0.8,
 
   /* Left / right lateral faces at y≈0 (apex→corner mid ~±0.41). */
   beamEntryX: -0.04,

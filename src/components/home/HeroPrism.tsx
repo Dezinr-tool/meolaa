@@ -68,6 +68,9 @@ function HeroPrismCanvas({ onReady }: { onReady: () => void }) {
           alpha: true,
           powerPreference: 'high-performance',
           toneMapping: ACESFilmicToneMapping,
+          /* Was unset (1.0). Lifting it makes highlights and env reflections
+             pop without shifting hue, since ACES is applied after. */
+          toneMappingExposure: 1.2,
           preserveDrawingBuffer: true,
         }}
         onCreated={({ gl, camera }) => {
