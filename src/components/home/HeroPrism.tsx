@@ -103,12 +103,16 @@ export function HeroPrism() {
     <>
       <div className="hero-prism" data-hero-prism aria-hidden="true">
         <div className="hero-prism__float">
-          {!webglReady && <HeroPrismFallback />}
+          {/*
+           * No placeholder while WebGL boots. The still cutout used to show for
+           * ~1s and then swap to the canvas, which read as the wrong image
+           * flashing in. The hero background carries the gap instead.
+           * The cutout is still the fallback when WebGL is unsupported or the
+           * canvas throws — those cases have nothing else to show.
+           */}
           {webglSupported === true && (
             <div className={`hero-prism__webgl${webglReady ? ' is-ready' : ''}`}>
-              <HeroErrorBoundary
-                fallback={webglReady ? null : <HeroPrismFallback />}
-              >
+              <HeroErrorBoundary fallback={<HeroPrismFallback />}>
                 <HeroPrismCanvas onReady={() => setWebglReady(true)} />
               </HeroErrorBoundary>
             </div>

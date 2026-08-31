@@ -58,10 +58,16 @@ function makeSoftBeamTexture(opts: {
     const coreY = Math.exp(-dy * dy * 9)
     for (let x = 0; x < w; x++) {
       const u = (x + 0.5) / w
+      /*
+       * `enter` used pow(min(1, u*1.35), 0.45), which saturates by u≈0.74 and
+       * then plateaus — the ray read as a uniform bar all the way across. A
+       * steeper ramp keeps it faint at the far edge and concentrates the
+       * brightness where it meets the crystal, which is what the reference does.
+       */
       const axial =
         mode === 'exit'
           ? Math.pow(1 - u, 0.9) * (0.88 + 0.12 * Math.sin(Math.min(1, u * 1.15) * Math.PI))
-          : Math.pow(Math.min(1, u * 1.35), 0.45)
+          : 0.06 + 0.94 * Math.pow(u, 2.6)
       const a = Math.min(1, softY * axial * 0.7 + coreY * axial * 0.85)
       const i = (y * w + x) * 4
       data[i] = r
@@ -69,6 +75,40 @@ function makeSoftBeamTexture(opts: {
       data[i + 2] = b
       data[i + 3] = Math.round(a * 255)
     }
+  }
+  ctx.putImageData(img, 0, 0)
+  const tex = new THREE.CanvasTexture(canvas)
+  tex.colorSpace = THREE.SRGBColorSpace
+  tex.needsUpdate = true
+  return tex
+}
+
+/** Soft radial falloff — used for the entry hotspot and the spectrum's end bloom. */
+function makeRadialGlowTexture(hex: string): THREE.CanvasTexture {
+  const size = 256
+  const canvas = document.createElement('canvas')
+  canvas.width = size
+  canvas.height = size
+  const ctx = canvas.getContext('2d')!
+  const grad = ctx.createRadialGradient(
+    size / 2,
+    size / 2,
+    0,
+    size / 2,
+    size / 2,
+    size / 2,
+  )
+  grad.addColorStop(0, hex)
+  grad.addColorStop(0.22, hex)
+  grad.addColorStop(1, 'rgba(0,0,0,0)')
+  ctx.fillStyle = grad
+  ctx.fillRect(0, 0, size, size)
+  /* Square the alpha so the falloff is gaussian-ish rather than linear. */
+  const img = ctx.getImageData(0, 0, size, size)
+  const d = img.data
+  for (let i = 3; i < d.length; i += 4) {
+    const a = d[i] / 255
+    d[i] = Math.round(a * a * 255)
   }
   ctx.putImageData(img, 0, 0)
   const tex = new THREE.CanvasTexture(canvas)
@@ -149,36 +189,64 @@ function WhiteBeam({
   const reveal = useRef<THREE.Group>(null)
   const glowMat = useRef<THREE.MeshBasicMaterial>(null)
   const coreMat = useRef<THREE.MeshBasicMaterial>(null)
+  const hotspotMat = useRef<THREE.MeshBasicMaterial>(null)
   const textures = useMemo(() => {
     const white = { r: 255, g: 255, b: 255 }
     return {
       soft: makeSoftBeamTexture({ ...white, mode: 'enter' }),
       core: makeSoftBeamTexture({ ...white, mode: 'enter' }),
+      hotspot: makeRadialGlowTexture('#ffffff'),
     }
   }, [])
 
   useFrame(() => {
     if (!root.current || !reveal.current || !glowMat.current || !coreMat.current) return
     const p = progress.current
-    const { beamEntryX, beamEntryY, beamLength, beamWidth, beamOpacity, beamAngle } =
-      settings
+    const {
+      beamEntryX,
+      beamEntryY,
+      beamLength,
+      beamWidth,
+      beamOpacity,
+      beamAngle,
+      spectrumExitX,
+    } = settings
 
-    /* Pivot at prism entry (local x=0); beam grows right←left from -beamLength. */
-    root.current.position.set(beamEntryX, beamEntryY, -0.55)
+    /*
+     * The ray used to stop dead at the entry face. Carry it across the crystal
+     * to the exit instead: the beams canvas sits behind the glass, and the
+     * glass is transmissive, so the crossing segment is seen *through* the
+     * prism — which is the light passing through rather than hitting a wall.
+     */
+    const cross = Math.max(0, spectrumExitX - beamEntryX)
+    const total = beamLength + cross
+    const stretch = total / beamLength
+
+    /* Pivot now at the exit; the beam still grows right←left. */
+    root.current.position.set(beamEntryX + cross, beamEntryY, -0.55)
     root.current.rotation.z = beamAngle
-    reveal.current.position.set(-beamLength, 0, 0)
-    reveal.current.scale.set(Math.max(0.0001, p), 1, 1)
+    reveal.current.position.set(-total, 0, 0)
+    const grow = Math.max(0.0001, p)
+    reveal.current.scale.set(grow, 1, 1)
 
     const visible = p > 0.001
     glowMat.current.opacity = visible ? beamOpacity * 0.75 : 0
     coreMat.current.opacity = visible ? beamOpacity : 0
+    /* Dimmer inside the crystal than in open air. */
+    if (hotspotMat.current) hotspotMat.current.opacity = visible ? beamOpacity * 1.15 : 0
 
+    /* children: 0 glow, 1 hotspot, 2 core — the hotspot sits between them. */
     const glow = reveal.current.children[0] as THREE.Mesh
-    const core = reveal.current.children[1] as THREE.Mesh
-    glow.position.set(beamLength / 2, 0, 0)
-    core.position.set(beamLength / 2, 0, 0.001)
-    glow.scale.set(1, beamWidth / 0.14, 1)
-    core.scale.set(1, (beamWidth * 0.35) / 0.05, 1)
+    const hotspot = reveal.current.children[1] as THREE.Mesh
+    const core = reveal.current.children[2] as THREE.Mesh
+    glow.position.set(total / 2, 0, 0)
+    core.position.set(total / 2, 0, 0.001)
+    glow.scale.set(stretch, beamWidth / 0.14, 1)
+    core.scale.set(stretch, (beamWidth * 0.35) / 0.05, 1)
+    /* Hotspot marks the entry face, `cross` back from the exit end, and
+       counter-scales so the reveal's x-squash doesn't oval it. */
+    hotspot.position.set(total - cross, 0, 0.002)
+    hotspot.scale.set(1 / grow, 1, 1)
   })
 
   return (
@@ -195,6 +263,21 @@ function WhiteBeam({
             depthTest
             blending={THREE.AdditiveBlending}
             side={THREE.DoubleSide}
+            toneMapped={false}
+          />
+        </mesh>
+        {/* Hotspot where the ray meets the crystal — a beam that simply stops
+            at the face reads as a drawn line, not as light arriving. */}
+        <mesh position={[settings.beamLength, 0, 0.002]}>
+          <planeGeometry args={[0.62, 0.62]} />
+          <meshBasicMaterial
+            ref={hotspotMat}
+            map={textures.hotspot}
+            transparent
+            opacity={0}
+            depthWrite={false}
+            depthTest={false}
+            blending={THREE.AdditiveBlending}
             toneMapped={false}
           />
         </mesh>
@@ -228,6 +311,9 @@ function SpectrumRibbon({
   const baseMesh = useRef<THREE.Mesh>(null)
   const baseMat = useRef<THREE.MeshBasicMaterial>(null)
   const gradient = useMemo(() => makeSpectrumGradientTexture(), [])
+  const endGlow = useMemo(() => makeRadialGlowTexture('#ff9a4d'), [])
+  const endMat = useRef<THREE.MeshBasicMaterial>(null)
+  const endMesh = useRef<THREE.Mesh>(null)
   const layerCount = Math.max(5, Math.min(16, Math.round(settings.spectrumLayers)))
   const colors = useMemo(() => SPECTRUM_COLORS.slice(0, layerCount), [layerCount])
   const textures = useMemo(
@@ -264,7 +350,14 @@ function SpectrumRibbon({
       baseMat.current.opacity = visible ? spectrumOpacity * 0.55 : 0
     }
 
-    const bands = group.current.children[1] as THREE.Group
+    if (endMesh.current && endMat.current) {
+      endMesh.current.position.set(spectrumLength * grow, 0, -0.002)
+      const s = 0.42 + grow * 0.5
+      endMesh.current.scale.set(s, s, 1)
+      endMat.current.opacity = visible ? spectrumOpacity * 0.16 * grow : 0
+    }
+
+    const bands = group.current.children[2] as THREE.Group
     if (!bands) return
     const mid = (bands.children.length - 1) / 2
     bands.children.forEach((child, i) => {
@@ -295,6 +388,21 @@ function SpectrumRibbon({
           depthTest={false}
           blending={THREE.AdditiveBlending}
           side={THREE.DoubleSide}
+          toneMapped={false}
+        />
+      </mesh>
+      {/* Warm bloom where the spectrum falls off — the reference's beam ends in
+          a glow rather than simply fading to nothing. */}
+      <mesh ref={endMesh} position={[settings.spectrumLength, 0, -0.002]}>
+        <planeGeometry args={[2.6, 2.6]} />
+        <meshBasicMaterial
+          ref={endMat}
+          map={endGlow}
+          transparent
+          opacity={0}
+          depthWrite={false}
+          depthTest={false}
+          blending={THREE.AdditiveBlending}
           toneMapped={false}
         />
       </mesh>

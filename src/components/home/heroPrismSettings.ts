@@ -92,8 +92,8 @@ export const DEFAULT_PRISM_SETTINGS: HeroPrismSettings = {
   spectrumLength: 2.2,
   spectrumWidth: 0.19,
   spectrumAngle: 0.48,
-  spectrumSpread: 0.065,
-  spectrumFan: 0.08,
+  spectrumSpread: 0.115,
+  spectrumFan: 0.16,
   spectrumOpacity: 0.9,
   spectrumLayers: 8,
 
