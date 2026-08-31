@@ -1,0 +1,16 @@
+/* Dust ring — sits under the orbit SVG (z-index 1) and the steps, over the
+   artboard ground. Scaled to the artboard box, so it tracks the same
+   percentage coordinate space as the ring it sits on. */
+
+.loop__particles {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  /* Backing store is deliberately smaller than CSS size; let the browser
+     smooth it rather than showing hard 1px dust doubled up. */
+  image-rendering: auto;
+}

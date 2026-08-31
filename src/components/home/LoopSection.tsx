@@ -6,6 +6,7 @@
  */
 import { MeolaaEMark } from '../brand/MeolaaEMark'
 import { LOOP_STEPS } from '../../lib/loopPath'
+import { LoopParticles } from './LoopParticles'
 import { ParallaxHeading } from './ParallaxHeading'
 import './LoopSection.css'
 
@@ -162,6 +163,8 @@ export function LoopSection() {
         data-loop-orbit-stage
         style={ORBIT_STYLE}
       >
+        <LoopParticles />
+
         <header className="loop__header section-head">
           <p className="section-head__eyebrow">The Loop</p>
           <ParallaxHeading
