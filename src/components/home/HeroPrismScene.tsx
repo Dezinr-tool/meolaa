@@ -84,12 +84,23 @@ function pyramidCorners(baseSide: number, height?: number) {
 }
 
 /**
- * Square-base pyramid with four equilateral side faces.
- * Apex → each base corner distance equals `baseSide`.
+ * Square-base pyramid with a chamfered arris on every apex→corner edge.
+ *
+ * A sharp edge is the boundary of two flat faces, so its normal jumps
+ * discontinuously and there is nothing for a grazing-angle term to grab —
+ * which is why the fresnel shell measured as a uniform lift (+5.6 edge vs
+ * +4.7 face) rather than a rim. Real cut glass has no mathematically sharp
+ * arris either; the bright line in a photographed prism *is* the chamfer
+ * catching light.
+ *
+ * Each lateral face is inset toward its own centroid by `bevel`, and adjacent
+ * insets are bridged by a narrow strip whose normal bisects the two faces. The
+ * four strips converge on a small cap at the apex. Geometry is non-indexed, so
+ * computeVertexNormals gives per-face normals and each strip keeps its own
+ * bisecting direction.
  */
-function buildSquarePyramid(baseSide: number, height?: number) {
+function buildSquarePyramid(baseSide: number, height?: number, bevel = 0) {
   const { A, B } = pyramidCorners(baseSide, height)
-  const [B0, B1, B2, B3] = B
 
   const positions: number[] = []
   const push = (p: THREE.Vector3) => positions.push(p.x, p.y, p.z)
@@ -98,20 +109,49 @@ function buildSquarePyramid(baseSide: number, height?: number) {
     push(b)
     push(c)
   }
+  const quad = (
+    a: THREE.Vector3,
+    b: THREE.Vector3,
+    c: THREE.Vector3,
+    d: THREE.Vector3,
+  ) => {
+    tri(a, b, c)
+    tri(a, c, d)
+  }
 
-  /* Lateral faces — CCW from outside so normals point outward. */
-  tri(A, B0, B1) // front (+Z)
-  tri(A, B1, B2) // right (+X)
-  tri(A, B2, B3) // back (−Z)
-  tri(A, B3, B0) // left (−X)
-  /*
-   * No base cap. With backside off, the cap is a flat face with nothing behind
-   * it to transmit, so it took the environment as a near-white specular slab
-   * (measured 228,229,232 against 77,108,136 on the sides) and read as a solid
-   * lid rather than glass. Leaving it open lets the eye through to the inner
-   * surfaces of the far faces, which is the glass read. The base outline is
-   * still drawn by the edge pass.
-   */
+  /* Pull a vertex toward its face centroid so the face shrinks in-plane. */
+  const inset = (v: THREE.Vector3, centroid: THREE.Vector3) =>
+    bevel <= 0
+      ? v.clone()
+      : v.clone().addScaledVector(centroid.clone().sub(v).normalize(), bevel)
+
+  /* faces[i] = inset triangle of lateral face i, as [apex, left, right]. */
+  const faces: THREE.Vector3[][] = []
+  for (let i = 0; i < 4; i++) {
+    const b0 = B[i]
+    const b1 = B[(i + 1) % 4]
+    const c = new THREE.Vector3()
+      .add(A)
+      .add(b0)
+      .add(b1)
+      .multiplyScalar(1 / 3)
+    faces.push([inset(A, c), inset(b0, c), inset(b1, c)])
+  }
+
+  /* Lateral faces, CCW from outside. */
+  for (const [a, b0, b1] of faces) tri(a, b0, b1)
+
+  if (bevel > 0) {
+    /* Chamfer strips along the four apex→corner edges. Edge (A, B[i]) is
+       shared by face i-1 (as its right vertex) and face i (as its left). */
+    for (let i = 0; i < 4; i++) {
+      const prev = faces[(i + 3) % 4]
+      const cur = faces[i]
+      quad(prev[0], prev[2], cur[1], cur[0])
+    }
+    /* Cap the small opening the insets leave at the tip. */
+    quad(faces[0][0], faces[1][0], faces[2][0], faces[3][0])
+  }
 
   const geo = new THREE.BufferGeometry()
   geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3))
@@ -163,8 +203,8 @@ function GlassPyramid({
   )
 
   const geo = useMemo(
-    () => buildSquarePyramid(settings.baseSide, settings.height),
-    [settings.baseSide, settings.height],
+    () => buildSquarePyramid(settings.baseSide, settings.height, settings.bevel),
+    [settings.baseSide, settings.height, settings.bevel],
   )
 
   const reducedMotion =

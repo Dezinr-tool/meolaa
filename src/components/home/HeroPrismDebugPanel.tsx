@@ -29,6 +29,7 @@ const SECTIONS: Section[] = [
       { key: 'rotY', label: 'Rot Y', min: -2, max: 2, step: 0.01 },
       { key: 'rotZ', label: 'Rot Z', min: -1.5, max: 1.5, step: 0.01 },
       { key: 'posY', label: 'Pos Y', min: -0.5, max: 0.5, step: 0.01 },
+      { key: 'bevel', label: 'Edge bevel', min: 0, max: 0.15, step: 0.002 },
       { key: 'idleAmount', label: 'Idle amount', min: 0, max: 0.12, step: 0.005 },
     ],
   },

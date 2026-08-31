@@ -7,6 +7,7 @@ export type HeroPrismSettings = {
   rotY: number
   rotZ: number
   posY: number
+  bevel: number
   idleAmount: number
 
   roughness: number
@@ -82,6 +83,8 @@ export const DEFAULT_PRISM_SETTINGS: HeroPrismSettings = {
   rotY: 0.78,
   rotZ: 0.04,
   posY: 0.09,
+  /* Chamfer width on each arris — what the edge highlight rides on. */
+  bevel: 0.035,
   /* No idle drift — the crystal holds still. The sin terms in the frame loop
      multiply through this, so 0 disables the float without removing the
      mechanism from the panel. */
@@ -112,7 +115,7 @@ export const DEFAULT_PRISM_SETTINGS: HeroPrismSettings = {
   clearcoatRoughness: 0.05,
   /* Now the only thing defining the arrises — the drawn line overlays are
      gone, so the rim has to carry the edge read on its own. */
-  fresnel: 0.6,
+  fresnel: 0.4,
   fresnelPower: 3.2,
 
   /*
