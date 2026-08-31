@@ -177,19 +177,19 @@ function GlassPyramid({
           backside={false}
           samples={samples}
           resolution={resolution}
-          transmission={1}
-          roughness={Math.min(settings.roughness, 0.06)}
+          transmission={settings.transmission}
+          roughness={settings.roughness}
           thickness={thickness}
           ior={settings.ior}
           chromaticAberration={settings.chromaticAberration}
-          anisotropicBlur={0}
+          anisotropicBlur={settings.anisotropicBlur}
           anisotropy={0}
-          distortion={0}
-          distortionScale={0}
+          distortion={settings.distortion}
+          distortionScale={settings.distortionScale}
           temporalDistortion={0}
           color="#ffffff"
           attenuationColor="#ffffff"
-          attenuationDistance={40}
+          attenuationDistance={settings.attenuationDistance}
           /*
            * Thin-film iridescence is what paints the spectral sweep across the
            * faces in the reference. Nothing in the transmission/dispersion
@@ -197,10 +197,10 @@ function GlassPyramid({
            * edges, it does not colour the interior.
            */
           iridescence={settings.iridescence}
-          iridescenceIOR={1.32}
+          iridescenceIOR={settings.iridescenceIOR}
           iridescenceThicknessRange={[180, settings.iridescenceThickness]}
-          clearcoat={0.4}
-          clearcoatRoughness={0.05}
+          clearcoat={settings.clearcoat}
+          clearcoatRoughness={settings.clearcoatRoughness}
           metalness={0}
           reflectivity={settings.reflectivity}
           envMapIntensity={settings.envMapIntensity}
@@ -267,7 +267,7 @@ export default function HeroPrismScene() {
         {/* Soft white base so the crystal has body and its arrises catch. */}
         <Lightformer
           form="rect"
-          intensity={1.4}
+          intensity={settings.envBase}
           color="#e8f2f8"
           scale={[24, 24, 1]}
           position={[0, 0, -10]}
@@ -275,7 +275,7 @@ export default function HeroPrismScene() {
         {/* Bright key + fill — the specular streaks along the edges. */}
         <Lightformer
           form="rect"
-          intensity={7}
+          intensity={settings.envKey}
           color="#ffffff"
           scale={[10, 2.2, 1]}
           position={[-4.2, 2.6, 3.4]}
@@ -283,7 +283,7 @@ export default function HeroPrismScene() {
         />
         <Lightformer
           form="rect"
-          intensity={3.5}
+          intensity={settings.envFill}
           color="#ffffff"
           scale={[9, 1.6, 1]}
           position={[4.4, 1.8, 3]}
@@ -297,11 +297,11 @@ export default function HeroPrismScene() {
           produce it. These put the colour into the environment itself, which is
           what paints the sweeps across the interior in the reference.
         */}
-        <Lightformer form="rect" intensity={3.2} color="#ff2f8e" scale={[5, 1.5, 1]} position={[-3.4, -2.4, 1.6]} rotation={[0, 0, 0.7]} />
-        <Lightformer form="rect" intensity={3.0} color="#00e5ff" scale={[5, 1.5, 1]} position={[3.2, -2.2, 1.8]} rotation={[0, 0, -0.7]} />
-        <Lightformer form="rect" intensity={2.8} color="#7c4dff" scale={[4.5, 1.4, 1]} position={[-2.6, 2.8, -1.6]} />
-        <Lightformer form="rect" intensity={2.6} color="#ffb02e" scale={[4.5, 1.4, 1]} position={[2.8, 2.6, -1.8]} />
-        <Lightformer form="rect" intensity={2.4} color="#3dff9e" scale={[4, 1.2, 1]} position={[0, -3.2, -2.2]} />
+        <Lightformer form="rect" intensity={settings.envMagenta} color="#ff2f8e" scale={[5, 1.5, 1]} position={[-3.4, -2.4, 1.6]} rotation={[0, 0, 0.7]} />
+        <Lightformer form="rect" intensity={settings.envCyan} color="#00e5ff" scale={[5, 1.5, 1]} position={[3.2, -2.2, 1.8]} rotation={[0, 0, -0.7]} />
+        <Lightformer form="rect" intensity={settings.envViolet} color="#7c4dff" scale={[4.5, 1.4, 1]} position={[-2.6, 2.8, -1.6]} />
+        <Lightformer form="rect" intensity={settings.envAmber} color="#ffb02e" scale={[4.5, 1.4, 1]} position={[2.8, 2.6, -1.8]} />
+        <Lightformer form="rect" intensity={settings.envGreen} color="#3dff9e" scale={[4, 1.2, 1]} position={[0, -3.2, -2.2]} />
       </Environment>
 
       <GlassPyramid

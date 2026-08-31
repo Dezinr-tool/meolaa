@@ -17,6 +17,25 @@ export type HeroPrismSettings = {
   reflectivity: number
   iridescence: number
   iridescenceThickness: number
+  iridescenceIOR: number
+  transmission: number
+  anisotropicBlur: number
+  distortion: number
+  distortionScale: number
+  attenuationDistance: number
+  clearcoat: number
+  clearcoatRoughness: number
+
+  /* Environment emitters — these are what the glass refracts, so they control
+     the colour and gradient across each face. */
+  envBase: number
+  envKey: number
+  envFill: number
+  envMagenta: number
+  envCyan: number
+  envViolet: number
+  envAmber: number
+  envGreen: number
 
   beamEntryX: number
   beamEntryY: number
@@ -83,6 +102,23 @@ export const DEFAULT_PRISM_SETTINGS: HeroPrismSettings = {
   /* Thin-film sheen across the faces — the spectral sweep in the reference. */
   iridescence: 1,
   iridescenceThickness: 1100,
+  iridescenceIOR: 1.32,
+  transmission: 1,
+  anisotropicBlur: 0,
+  distortion: 0,
+  distortionScale: 0,
+  attenuationDistance: 40,
+  clearcoat: 0.4,
+  clearcoatRoughness: 0.05,
+
+  envBase: 1.4,
+  envKey: 7,
+  envFill: 3.5,
+  envMagenta: 3.2,
+  envCyan: 3.0,
+  envViolet: 2.8,
+  envAmber: 2.6,
+  envGreen: 2.4,
 
   /* Left / right lateral faces at y≈0 (apex→corner mid ~±0.41). */
   beamEntryX: -0.04,

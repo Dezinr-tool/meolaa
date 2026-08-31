@@ -47,6 +47,31 @@ const SECTIONS: Section[] = [
       },
       { key: 'envMapIntensity', label: 'Env intensity', min: 0, max: 3, step: 0.05 },
       { key: 'reflectivity', label: 'Reflectivity', min: 0, max: 1, step: 0.01 },
+      { key: 'transmission', label: 'Transparency', min: 0, max: 1, step: 0.01 },
+      { key: 'anisotropicBlur', label: 'Blur', min: 0, max: 2, step: 0.01 },
+      { key: 'distortion', label: 'Distortion', min: 0, max: 2, step: 0.01 },
+      {
+        key: 'distortionScale',
+        label: 'Distortion scale',
+        min: 0,
+        max: 2,
+        step: 0.01,
+      },
+      {
+        key: 'attenuationDistance',
+        label: 'Attenuation dist.',
+        min: 0.5,
+        max: 60,
+        step: 0.5,
+      },
+      { key: 'clearcoat', label: 'Clearcoat', min: 0, max: 1, step: 0.01 },
+      {
+        key: 'clearcoatRoughness',
+        label: 'Clearcoat rough.',
+        min: 0,
+        max: 1,
+        step: 0.01,
+      },
       { key: 'iridescence', label: 'Iridescence', min: 0, max: 1, step: 0.01 },
       {
         key: 'iridescenceThickness',
@@ -55,6 +80,22 @@ const SECTIONS: Section[] = [
         max: 1600,
         step: 10,
       },
+      { key: 'iridescenceIOR', label: 'Irid. IOR', min: 1, max: 2.4, step: 0.01 },
+    ],
+  },
+  {
+    /* These emitters are what the crystal refracts, so they are the real
+       controls for the colour and gradient on each face. */
+    title: 'Light / gradient per side',
+    fields: [
+      { key: 'envBase', label: 'Base wash', min: 0, max: 6, step: 0.05 },
+      { key: 'envKey', label: 'Key streak', min: 0, max: 14, step: 0.1 },
+      { key: 'envFill', label: 'Fill streak', min: 0, max: 14, step: 0.1 },
+      { key: 'envMagenta', label: 'Magenta (low L)', min: 0, max: 10, step: 0.05 },
+      { key: 'envCyan', label: 'Cyan (low R)', min: 0, max: 10, step: 0.05 },
+      { key: 'envViolet', label: 'Violet (top L)', min: 0, max: 10, step: 0.05 },
+      { key: 'envAmber', label: 'Amber (top R)', min: 0, max: 10, step: 0.05 },
+      { key: 'envGreen', label: 'Green (below)', min: 0, max: 10, step: 0.05 },
     ],
   },
   {
@@ -146,7 +187,15 @@ export function HeroPrismDebugPanel() {
   }
 
   return (
-    <aside className="prism-debug" role="dialog" aria-label="Prism settings">
+    <aside
+      className="prism-debug"
+      role="dialog"
+      aria-label="Prism settings"
+      /* Lenis captures wheel events site-wide, so without this opt-out the
+         wheel scrolled the page instead of the panel. */
+      data-lenis-prevent
+      onWheelCapture={(e) => e.stopPropagation()}
+    >
       <div className="prism-debug__head">
         <div>
           <div className="prism-debug__title">Prism settings</div>

@@ -16,8 +16,10 @@ export function HeroSection() {
       </div>
       {/* Display type behind the prism — the Next.js Conf hero puts its title
           on the same plane so the crystal occludes part of it. */}
+      {/* One word behind the crystal. The prism takes one white beam and throws
+          many colours — which is the company: one system, many brands. */}
       <p className="hero__mark-line" aria-hidden="true">
-        House of brands
+        Spectrum
       </p>
       <HeroPrism />
       {/* The big centre wordmark lives in SiteNav, not here — it's one element

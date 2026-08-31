@@ -5,7 +5,12 @@
   z-index: 9999;
   width: min(320px, calc(100vw - 24px));
   max-height: calc(100vh - 96px);
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  /* Keep the scroll from chaining back to the page at either end. */
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+  scrollbar-width: thin;
   padding: 12px 12px 14px;
   border-radius: 0;
   background: rgba(8, 10, 14, 0.92);
