@@ -1,5 +1,5 @@
 /**
- * Footer — flat primary-ground section with a domed top edge (`.footer-arc`).
+ * Footer — flat primary-ground section, no domed top edge.
  *
  * The pinned blob stage and the clip-path copy wipe were removed: the wipe
  * kept the whole footer clipped to nothing for the entire 280vh stage. The
@@ -23,34 +23,6 @@
 
 .footer-reveal-section--static {
   background: var(--color-primary, #002f3a);
-}
-
-/*
- * Domed top edge. Sits in the gap directly above the footer (bottom: 100%) and
- * is drawn with an elliptical top radius, so its height is the dome depth.
- * scaleY from the bottom keeps the flatten/swell on the compositor.
- */
-.footer-arc {
-  position: absolute;
-  bottom: 100%;
-  left: 0;
-  right: 0;
-  /* Depth matched to the madewithgsap boundary: fitting their arc to a
-     border-radius ellipse gives ~171px of dome over a 1600px width, +10px.
-     The offset sits outside the clamp so it lands at every width, rather than
-     being swallowed at the ends where the clamp is already pinned. */
-  height: calc(clamp(66px, 10.7vw, 172px) + 10px);
-  background: var(--color-primary, #002f3a);
-  border-radius: 50% 50% 0 0 / 100% 100% 0 0;
-  transform: scaleY(1);
-  transform-origin: 50% 100%;
-  will-change: transform;
-  pointer-events: none;
-}
-
-/* Inner pages butt the footer against their own last section — no dome. */
-.app--inner .footer-arc {
-  display: none;
 }
 
 .footer-content {

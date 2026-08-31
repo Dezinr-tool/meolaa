@@ -76,9 +76,14 @@ function buildSquarePyramid(baseSide: number, height?: number) {
   tri(A, B1, B2) // right (+X)
   tri(A, B2, B3) // back (−Z)
   tri(A, B3, B0) // left (−X)
-  /* Square base as two triangles — outward normal −Y. */
-  tri(B0, B2, B1)
-  tri(B0, B3, B2)
+  /*
+   * No base cap. With backside off, the cap is a flat face with nothing behind
+   * it to transmit, so it took the environment as a near-white specular slab
+   * (measured 228,229,232 against 77,108,136 on the sides) and read as a solid
+   * lid rather than glass. Leaving it open lets the eye through to the inner
+   * surfaces of the far faces, which is the glass read. The base outline is
+   * still drawn by the edge pass.
+   */
 
   const geo = new THREE.BufferGeometry()
   geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3))

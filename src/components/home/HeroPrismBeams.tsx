@@ -230,10 +230,11 @@ function WhiteBeam({
     reveal.current.scale.set(grow, 1, 1)
 
     const visible = p > 0.001
-    glowMat.current.opacity = visible ? beamOpacity * 0.75 : 0
+    /* Halo and entry bloom removed — the ray is the crisp core only. */
+    glowMat.current.opacity = 0
     coreMat.current.opacity = visible ? beamOpacity : 0
     /* Dimmer inside the crystal than in open air. */
-    if (hotspotMat.current) hotspotMat.current.opacity = visible ? beamOpacity * 1.15 : 0
+    if (hotspotMat.current) hotspotMat.current.opacity = 0
 
     /* children: 0 glow, 1 hotspot, 2 core — the hotspot sits between them. */
     const glow = reveal.current.children[0] as THREE.Mesh

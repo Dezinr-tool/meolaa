@@ -6,9 +6,8 @@
  * wipe kept the whole footer clipped to nothing for the entire stage, so the
  * content was unreadable on the way down. Removed rather than retimed.
  */
-import { useEffect, useRef, type FormEvent } from 'react'
+import { type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
-import { gsap } from '../../lib/motion'
 import {
   MEOLAA_MARK_VIEWBOX_TIGHT,
   MeolaaLogoMark,
@@ -150,54 +149,13 @@ type SiteFooterProps = {
 }
 
 export function SiteFooter({ simple = false }: SiteFooterProps) {
-  const rootRef = useRef<HTMLElement>(null)
-  const arcRef = useRef<HTMLDivElement>(null)
-
-  /* Swell the dome up as the footer approaches. Reduced motion keeps the
-     shape but skips the scrub — it is a background, so a static arc is fine. */
-  useEffect(() => {
-    const root = rootRef.current
-    const arc = arcRef.current
-    if (!root || !arc) return
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      gsap.set(arc, { scaleY: 1 })
-      return
-    }
-
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        arc,
-        { scaleY: 0 },
-        {
-          scaleY: 1,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: root,
-            /* Run the swell only while the dome is actually on screen: from
-               the footer's top edge touching the viewport bottom until it is
-               40% up. The old range finished at `top top+=85%`, so the arc
-               was already at full depth before it came into view and nothing
-               appeared to animate. Scrub reverses it on the way back up. */
-            start: 'top bottom',
-            end: 'top 40%',
-            scrub: 0.6,
-          },
-        },
-      )
-    }, root)
-
-    return () => ctx.revert()
-  }, [])
-
   return (
     <footer
-      ref={rootRef}
       className="footer-reveal-section footer-reveal-section--static"
       /* Inner pages already carry a #careers target in their own markup. */
       id={simple ? undefined : 'careers'}
       aria-label="Footer"
     >
-      <div ref={arcRef} className="footer-arc" aria-hidden="true" />
       <div className="footer-content site-footer">
         <FooterBody />
       </div>
