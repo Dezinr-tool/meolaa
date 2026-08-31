@@ -36,8 +36,10 @@
   left: 0;
   right: 0;
   /* Depth matched to the madewithgsap boundary: fitting their arc to a
-     border-radius ellipse gives ~171px of dome over a 1600px width. */
-  height: clamp(66px, 10.7vw, 172px);
+     border-radius ellipse gives ~171px of dome over a 1600px width, +10px.
+     The offset sits outside the clamp so it lands at every width, rather than
+     being swallowed at the ends where the clamp is already pinned. */
+  height: calc(clamp(66px, 10.7vw, 172px) + 10px);
   background: var(--color-primary, #002f3a);
   border-radius: 50% 50% 0 0 / 100% 100% 0 0;
   transform: scaleY(1);
