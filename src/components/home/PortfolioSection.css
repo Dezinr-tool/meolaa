@@ -308,26 +308,40 @@
   }
 }
 
-/* Hover: flood the row with joyous yellow and cross-fade the resting line for
-   the scrolling ticker. Text stays black; the hairline keeps its 10% black. */
-.brand-row:hover,
-.brand-row:focus-within {
-  background: var(--color-joyous-yellow, #fdf28c);
+/*
+ * Hover: flood the row with joyous yellow and cross-fade the resting line for
+ * the scrolling ticker. Text stays black; the hairline keeps its 10% black.
+ *
+ * Gated on a real pointer. On touch, :hover sticks after a tap — a tapped row
+ * stayed yellow with the marquee running and the readable line faded out.
+ */
+@media (hover: hover) and (pointer: fine) {
+  .brand-row:hover,
+  .brand-row:focus-within {
+    background: var(--color-joyous-yellow, #fdf28c);
+  }
+
+  .brand-row:hover .brand-row__static,
+  .brand-row:focus-within .brand-row__static {
+    opacity: 0;
+  }
+
+  .brand-row:hover .brand-row__ticker,
+  .brand-row:focus-within .brand-row__ticker {
+    opacity: 1;
+  }
+
+  .brand-row:hover .brand-row__ticker-track,
+  .brand-row:focus-within .brand-row__ticker-track {
+    animation-play-state: running;
+  }
 }
 
-.brand-row:hover .brand-row__static,
-.brand-row:focus-within .brand-row__static {
-  opacity: 0;
-}
-
-.brand-row:hover .brand-row__ticker,
-.brand-row:focus-within .brand-row__ticker {
-  opacity: 1;
-}
-
-.brand-row:hover .brand-row__ticker-track,
-.brand-row:focus-within .brand-row__ticker-track {
-  animation-play-state: running;
+/* Touch devices never paint the ticker layer at all. */
+@media not all and (hover: hover) {
+  .brand-row__ticker {
+    display: none;
+  }
 }
 
 /* ——— Narrow ——— */

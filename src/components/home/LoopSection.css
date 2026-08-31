@@ -284,6 +284,19 @@
     max-height: calc(100svh - 28px);
   }
 
+  /*
+   * The artboard keeps its 1422/1117 aspect, so at phone widths it is only
+   * ~306px tall — the header, absolutely placed at top 4.9% inside it, spilled
+   * straight over the orbit ring. Lift it into the dead space above the
+   * artboard instead. `bottom: 100% + gap` needs no DOM change and leaves the
+   * desktop placement untouched.
+   */
+  .loop__header.section-head {
+    top: auto;
+    bottom: calc(100% + clamp(14px, 3.5vh, 34px));
+    width: min(96%, 520px);
+  }
+
   .loop__copy-body {
     display: none;
   }
