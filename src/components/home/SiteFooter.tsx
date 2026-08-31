@@ -197,9 +197,7 @@ export function SiteFooter({ simple = false }: SiteFooterProps) {
       id={simple ? undefined : 'careers'}
       aria-label="Footer"
     >
-      <div className="footer-arc" aria-hidden="true">
-        <div ref={arcRef} className="footer-arc__dome" />
-      </div>
+      <div ref={arcRef} className="footer-arc" aria-hidden="true" />
       <div className="footer-content site-footer">
         <FooterBody />
       </div>
