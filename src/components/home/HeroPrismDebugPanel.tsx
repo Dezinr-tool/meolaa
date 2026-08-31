@@ -126,13 +126,6 @@ const SECTIONS: Section[] = [
     ],
   },
   {
-    title: 'Edges',
-    fields: [
-      { key: 'edgeCyanOpacity', label: 'Cyan', min: 0, max: 1, step: 0.01 },
-      { key: 'edgeWhiteOpacity', label: 'White', min: 0, max: 1, step: 0.01 },
-    ],
-  },
-  {
     title: 'Camera',
     fields: [
       { key: 'camX', label: 'Cam X', min: -2, max: 2, step: 0.05 },

@@ -119,22 +119,6 @@ function buildSquarePyramid(baseSide: number, height?: number) {
   return geo
 }
 
-function buildPyramidEdges(baseSide: number, height?: number) {
-  const { A, B } = pyramidCorners(baseSide, height)
-  const segs: number[] = []
-  const line = (a: THREE.Vector3, b: THREE.Vector3) =>
-    segs.push(a.x, a.y, a.z, b.x, b.y, b.z)
-
-  for (let i = 0; i < 4; i++) {
-    line(A, B[i])
-    line(B[i], B[(i + 1) % 4])
-  }
-
-  const geo = new THREE.BufferGeometry()
-  geo.setAttribute('position', new THREE.Float32BufferAttribute(segs, 3))
-  return geo
-}
-
 function CameraRig({ settings }: { settings: HeroPrismSettings }) {
   const { camera } = useThree()
   useFrame(() => {
@@ -168,7 +152,6 @@ function GlassPyramid({
   settings: HeroPrismSettings
 }) {
   const group = useRef<THREE.Group>(null)
-  const cyanMat = useRef<THREE.LineBasicMaterial>(null)
   const fresnelMat = useRef<THREE.ShaderMaterial>(null)
   const fresnelUniforms = useMemo(
     () => ({
@@ -178,23 +161,15 @@ function GlassPyramid({
     }),
     [],
   )
-  const whiteMat = useRef<THREE.LineBasicMaterial>(null)
 
   const geo = useMemo(
     () => buildSquarePyramid(settings.baseSide, settings.height),
-    [settings.baseSide, settings.height],
-  )
-  const edges = useMemo(
-    () => buildPyramidEdges(settings.baseSide, settings.height),
     [settings.baseSide, settings.height],
   )
 
   const reducedMotion =
     typeof window !== 'undefined' &&
     window.matchMedia('(prefers-reduced-motion: reduce)').matches
-
-  const showEdges =
-    settings.edgeCyanOpacity > 0.01 || settings.edgeWhiteOpacity > 0.01
 
   useFrame((state) => {
     if (!group.current) return
@@ -208,8 +183,6 @@ function GlassPyramid({
       fresnelUniforms.uIntensity.value = settings.fresnel
       fresnelUniforms.uPower.value = settings.fresnelPower
     }
-    if (cyanMat.current) cyanMat.current.opacity = settings.edgeCyanOpacity
-    if (whiteMat.current) whiteMat.current.opacity = settings.edgeWhiteOpacity
   })
 
   const thickness = settings.thickness
@@ -269,35 +242,6 @@ function GlassPyramid({
         </mesh>
       )}
 
-      {/* Soft rim reinforce — kept faint so edges aren’t wireframe (no Extrude bevel). */}
-      {showEdges && settings.edgeCyanOpacity > 0.01 && (
-        <lineSegments geometry={edges} renderOrder={3}>
-          <lineBasicMaterial
-            ref={cyanMat}
-            color="#7af8ff"
-            transparent
-            opacity={settings.edgeCyanOpacity}
-            depthTest
-            depthWrite={false}
-            blending={THREE.AdditiveBlending}
-            toneMapped={false}
-          />
-        </lineSegments>
-      )}
-      {showEdges && settings.edgeWhiteOpacity > 0.01 && (
-        <lineSegments geometry={edges} scale={1.004} renderOrder={4}>
-          <lineBasicMaterial
-            ref={whiteMat}
-            color="#ffffff"
-            transparent
-            opacity={settings.edgeWhiteOpacity}
-            depthTest
-            depthWrite={false}
-            blending={THREE.AdditiveBlending}
-            toneMapped={false}
-          />
-        </lineSegments>
-      )}
     </group>
   )
 }

@@ -56,8 +56,6 @@ export type HeroPrismSettings = {
   spectrumOpacity: number
   spectrumLayers: number
 
-  edgeCyanOpacity: number
-  edgeWhiteOpacity: number
 
   camX: number
   camY: number
@@ -112,7 +110,9 @@ export const DEFAULT_PRISM_SETTINGS: HeroPrismSettings = {
   attenuationDistance: 40,
   clearcoat: 0.4,
   clearcoatRoughness: 0.05,
-  fresnel: 0.55,
+  /* Now the only thing defining the arrises — the drawn line overlays are
+     gone, so the rim has to carry the edge read on its own. */
+  fresnel: 0.6,
   fresnelPower: 3.2,
 
   /*
@@ -149,10 +149,6 @@ export const DEFAULT_PRISM_SETTINGS: HeroPrismSettings = {
   spectrumOpacity: 1.36,
   spectrumLayers: 10,
 
-  /* Crisp lit edges — the reference crystal is read almost entirely by the
-     bright lines along its arrises. */
-  edgeCyanOpacity: 0.34,
-  edgeWhiteOpacity: 0.52,
 
   camX: 0.2,
   camY: -0.3,
