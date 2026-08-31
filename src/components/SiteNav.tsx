@@ -7,9 +7,9 @@ import {
 
 /* Single row now — logo sits left, every link plus the CTA sits right. */
 const ALL_LINKS = [
-  { to: '/about', label: 'About Us' },
-  { to: '/story', label: 'Our Story' },
-  { to: '/lab', label: 'Brand Lab' },
+  { to: '/about', label: 'About' },
+  { to: '/story', label: 'Story' },
+  { to: '/lab', label: 'Lab' },
   { to: '/press', label: 'Press' },
   { to: '/partners', label: 'Partners' },
   { to: '/careers', label: 'Careers' },

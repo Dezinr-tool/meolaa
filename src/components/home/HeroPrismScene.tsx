@@ -119,12 +119,11 @@ function CameraRig({ settings }: { settings: HeroPrismSettings }) {
 }
 
 /**
- * FBO clear behind the glass — what the crystal refracts. This is sampled from
- * the hero's own painted background (rgb(2,18,20)) rather than an arbitrary
- * grey, so the body reads as the page seen through glass instead of a pasted-in
- * object carrying its own unrelated colour.
+ * FBO clear behind the glass. The reference crystal is a bright, clear solid on
+ * black — its body is lit, not dark — so this is a light clear. A dark clear
+ * gave a transparent-but-dim body, which is the opposite read.
  */
-const TRANSMISSION_BG = new THREE.Color('#0a2c36')
+const TRANSMISSION_BG = new THREE.Color('#4d6b7d')
 
 function GlassPyramid({
   samples,
@@ -189,8 +188,17 @@ function GlassPyramid({
           distortionScale={0}
           temporalDistortion={0}
           color="#ffffff"
-          attenuationColor="#a9d2e2"
-          attenuationDistance={22}
+          attenuationColor="#ffffff"
+          attenuationDistance={40}
+          /*
+           * Thin-film iridescence is what paints the spectral sweep across the
+           * faces in the reference. Nothing in the transmission/dispersion
+           * settings alone produces it — chromatic aberration only fringes
+           * edges, it does not colour the interior.
+           */
+          iridescence={settings.iridescence}
+          iridescenceIOR={1.32}
+          iridescenceThicknessRange={[180, settings.iridescenceThickness]}
           clearcoat={0.4}
           clearcoatRoughness={0.05}
           metalness={0}
@@ -242,8 +250,9 @@ export default function HeroPrismScene() {
       <CameraRig settings={settings} />
 
       {/* Soft fill so transmission has something to sample besides empty black */}
-      <ambientLight intensity={0.18} color="#9fc4d4" />
-      <directionalLight position={[-5, 2.5, 4]} intensity={0.35} color="#ffffff" />
+      <ambientLight intensity={0.3} color="#dbe9f2" />
+      <directionalLight position={[-5, 2.5, 4]} intensity={0.8} color="#ffffff" />
+      <directionalLight position={[4, 2, 3]} intensity={0.5} color="#ffffff" />
 
       {/*
         Environment built from the page's own palette instead of drei's `city`
@@ -255,48 +264,44 @@ export default function HeroPrismScene() {
         streaks are most of what reads as "crystal".
       */}
       <Environment resolution={q.envRes} background={false} environmentIntensity={1}>
-        {/* Hero ground — the dark teal the crystal sits in, wrapping it. */}
-        <Lightformer
-          form="rect"
-          intensity={1.1}
-          color="#12495a"
-          scale={[26, 26, 1]}
-          position={[0, 0, -10]}
-        />
-        {/* Key streak, ray side — lights the entry face and its top arris. */}
-        <Lightformer
-          form="rect"
-          intensity={3.4}
-          color="#ffffff"
-          scale={[9, 1.1, 1]}
-          position={[-4.2, 2.6, 3.4]}
-          rotation={[0, 0, 0.42]}
-        />
-        {/* Low fill along the incoming beam. */}
-        <Lightformer
-          form="rect"
-          intensity={1.7}
-          color="#cfe8ff"
-          scale={[8, 0.9, 1]}
-          position={[-5.2, -0.2, 2.2]}
-        />
-        {/* Exit side picks up the spectrum's warm and cool ends. */}
-        <Lightformer
-          form="rect"
-          intensity={1.5}
-          color="#ff8347"
-          scale={[4.5, 0.8, 1]}
-          position={[4.1, 1.4, 2.4]}
-          rotation={[0, 0, -0.38]}
-        />
+        {/* Soft white base so the crystal has body and its arrises catch. */}
         <Lightformer
           form="rect"
           intensity={1.4}
-          color="#5a7dff"
-          scale={[4.5, 0.8, 1]}
-          position={[4.4, -0.5, 2.4]}
-          rotation={[0, 0, -0.38]}
+          color="#e8f2f8"
+          scale={[24, 24, 1]}
+          position={[0, 0, -10]}
         />
+        {/* Bright key + fill — the specular streaks along the edges. */}
+        <Lightformer
+          form="rect"
+          intensity={7}
+          color="#ffffff"
+          scale={[10, 2.2, 1]}
+          position={[-4.2, 2.6, 3.4]}
+          rotation={[0, 0, 0.42]}
+        />
+        <Lightformer
+          form="rect"
+          intensity={3.5}
+          color="#ffffff"
+          scale={[9, 1.6, 1]}
+          position={[4.4, 1.8, 3]}
+          rotation={[0, 0, -0.4]}
+        />
+
+        {/*
+          Spectral emitters ringing the crystal. Transmission can only show what
+          it refracts, so with an all-white environment there was no rainbow
+          anywhere for the faces to pick up — tuning roughness/IOR could never
+          produce it. These put the colour into the environment itself, which is
+          what paints the sweeps across the interior in the reference.
+        */}
+        <Lightformer form="rect" intensity={3.2} color="#ff2f8e" scale={[5, 1.5, 1]} position={[-3.4, -2.4, 1.6]} rotation={[0, 0, 0.7]} />
+        <Lightformer form="rect" intensity={3.0} color="#00e5ff" scale={[5, 1.5, 1]} position={[3.2, -2.2, 1.8]} rotation={[0, 0, -0.7]} />
+        <Lightformer form="rect" intensity={2.8} color="#7c4dff" scale={[4.5, 1.4, 1]} position={[-2.6, 2.8, -1.6]} />
+        <Lightformer form="rect" intensity={2.6} color="#ffb02e" scale={[4.5, 1.4, 1]} position={[2.8, 2.6, -1.8]} />
+        <Lightformer form="rect" intensity={2.4} color="#3dff9e" scale={[4, 1.2, 1]} position={[0, -3.2, -2.2]} />
       </Environment>
 
       <GlassPyramid

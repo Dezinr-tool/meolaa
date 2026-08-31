@@ -26,13 +26,13 @@ export function HeroSection() {
           would mean cross-fading two marks instead of moving one. */}
       <div className="hero__bottom">
         <ParallaxHeading as="h1" className="hero__headline" align="start">
-          <span>The operating system</span>
-          <span>for consumer brands.</span>
+          <span>The consumer company</span>
+          <span>of the AI era</span>
         </ParallaxHeading>
         <div className="hero__panel">
           <p className="hero__lede">
-            Meolaa is an AI native house of consumer brands reading demand,
-            building products and running go to market as one connected system.
+            We turn signals from how people live into products and brands that
+            earn a place in everyday life
           </p>
           <div className="hero__actions">
             <Link className="hero__btn hero__btn--solid" to="/story">

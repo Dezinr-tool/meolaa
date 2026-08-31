@@ -15,6 +15,8 @@ export type HeroPrismSettings = {
   chromaticAberration: number
   envMapIntensity: number
   reflectivity: number
+  iridescence: number
+  iridescenceThickness: number
 
   beamEntryX: number
   beamEntryY: number
@@ -71,31 +73,34 @@ export const DEFAULT_PRISM_SETTINGS: HeroPrismSettings = {
      its highlights on an otherwise empty stage, so it has to carry. */
   /* Low: rough transmission blur-samples the backbuffer and reads as grain. */
   roughness: 0.05,
-  thickness: 1.05,
+  thickness: 0.55,
   ior: 1.23,
   /* High CA refracted the small bright emitters into blocky colour bands at
      the transmission FBO's resolution — keep the fringe, lose the blocks. */
-  chromaticAberration: 0.22,
-  envMapIntensity: 1.15,
-  reflectivity: 0.55,
+  chromaticAberration: 0.6,
+  envMapIntensity: 1.5,
+  reflectivity: 0.75,
+  /* Thin-film sheen across the faces — the spectral sweep in the reference. */
+  iridescence: 1,
+  iridescenceThickness: 1100,
 
   /* Left / right lateral faces at y≈0 (apex→corner mid ~±0.41). */
-  beamEntryX: -0.49,
-  beamEntryY: 0,
+  beamEntryX: -0.04,
+  beamEntryY: 0.06,
   beamLength: 6.35,
   beamWidth: 0.05,
-  beamOpacity: 0.68,
-  beamAngle: 0,
+  beamOpacity: 1.5,
+  beamAngle: 0.03,
 
-  spectrumExitX: 0.3,
+  spectrumExitX: 0,
   spectrumExitY: 0,
-  spectrumLength: 2.2,
-  spectrumWidth: 0.19,
-  spectrumAngle: 0.48,
-  spectrumSpread: 0.115,
-  spectrumFan: 0.16,
-  spectrumOpacity: 0.9,
-  spectrumLayers: 8,
+  spectrumLength: 2,
+  spectrumWidth: 0.39,
+  spectrumAngle: 0.53,
+  spectrumSpread: 0.118,
+  spectrumFan: 0.1,
+  spectrumOpacity: 1.36,
+  spectrumLayers: 10,
 
   /* Crisp lit edges — the reference crystal is read almost entirely by the
      bright lines along its arrises. */

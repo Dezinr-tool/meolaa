@@ -47,6 +47,14 @@ const SECTIONS: Section[] = [
       },
       { key: 'envMapIntensity', label: 'Env intensity', min: 0, max: 3, step: 0.05 },
       { key: 'reflectivity', label: 'Reflectivity', min: 0, max: 1, step: 0.01 },
+      { key: 'iridescence', label: 'Iridescence', min: 0, max: 1, step: 0.01 },
+      {
+        key: 'iridescenceThickness',
+        label: 'Irid. thickness',
+        min: 100,
+        max: 1600,
+        step: 10,
+      },
     ],
   },
   {
