@@ -33,10 +33,13 @@
 /* Beams fully behind the glass canvas so enter + exit only show where the
    crystal doesn’t cover them (reads as light through the back of the prism). */
 .hero-prism__canvas--beams {
-  /* In front of the glass: behind it, the segment crossing the crystal was
-     covered by the body and the ray appeared to stop at the entry face.
-     Additive blending keeps it reading as light travelling through. */
-  z-index: 2;
+  /*
+   * Behind the glass. In front, the beam painted over the crystal's front
+   * faces and read as a line laid on top of it. Behind, the crystal is
+   * transmissive enough that the crossing segment shows through the body,
+   * which is the beam entering rather than sitting over it.
+   */
+  z-index: 0;
   pointer-events: none;
 }
 
