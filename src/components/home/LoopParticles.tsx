@@ -43,20 +43,45 @@ function gauss() {
   return (Math.random() + Math.random() + Math.random() - 1.5) / 1.5
 }
 
+/**
+ * Density around the ring, 0..1. Layered sines stand in for noise — an evenly
+ * populated band reads as a machined torus; the reference has dense arcs and
+ * near-empty gaps, and that unevenness is most of its character.
+ */
+function ringDensity(angle: number) {
+  const n =
+    0.55 +
+    0.3 * Math.sin(angle * 2.0 + 0.7) +
+    0.22 * Math.sin(angle * 3.7 + 2.1) +
+    0.14 * Math.sin(angle * 6.3 + 4.4)
+  return Math.max(0.06, Math.min(1, n))
+}
+
 function makeParticles(count: number): P[] {
-  const out: P[] = new Array(count)
-  for (let i = 0; i < count; i++) {
-    /* Bias density toward the track and thin it outward. */
-    const dr = gauss() * 34 + gauss() * 14
-    out[i] = {
-      a: Math.random() * Math.PI * 2,
+  const out: P[] = []
+  let guard = 0
+  while (out.length < count && guard < count * 40) {
+    guard++
+    const a = Math.random() * Math.PI * 2
+    /* Rejection-sample against the density curve so the gaps are real gaps. */
+    if (Math.random() > ringDensity(a)) continue
+
+    /* ~8% fling well clear of the band as loose scatter. */
+    const stray = Math.random() < 0.08
+    const dr = stray
+      ? (Math.random() < 0.5 ? -1 : 1) * (48 + Math.random() * 120)
+      : gauss() * 30 + gauss() * 13
+
+    out.push({
+      a,
       dr,
       /* Inner particles orbit slightly faster — reads as depth, not a rigid disc. */
-      va: (0.00028 + Math.random() * 0.0004) * (1 - dr / 900),
-      b: 0.4 + Math.random() * 0.9,
+      va: (0.00022 + Math.random() * 0.00030) * (1 - dr / 900),
+      b: (stray ? 0.18 + Math.random() * 0.3 : 0.4 + Math.random() * 0.9),
       tp: Math.random() * Math.PI * 2,
-      tr: 0.6 + Math.random() * 1.8,
-    }
+      /* Slow: the old 0.6–2.4 range read as flicker rather than shimmer. */
+      tr: 0.1 + Math.random() * 0.26,
+    })
   }
   return out
 }
@@ -131,9 +156,10 @@ export function LoopParticles() {
         const y = (cy + Math.sin(p.a) * rad) | 0
         if (x < 0 || y < 0 || x >= w || y >= h) continue
 
-        const twinkle = reduced ? 1 : 0.55 + 0.45 * Math.sin(t * p.tr + p.tp)
+        /* Shallow + slow — a gentle breath, not a strobe. */
+        const twinkle = reduced ? 1 : 0.82 + 0.18 * Math.sin(t * p.tr + p.tp)
         /* Fade with distance from the track so the band has soft shoulders. */
-        const falloff = Math.max(0, 1 - Math.abs(p.dr) / 68)
+        const falloff = Math.max(0, 1 - Math.abs(p.dr) / 130)
         const a = p.b * twinkle * falloff
         if (a <= 0.01) continue
 

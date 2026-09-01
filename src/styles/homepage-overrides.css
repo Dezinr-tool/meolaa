@@ -917,3 +917,18 @@ body {
 .site-nav--home .site-nav__links--right a {
   color: var(--color-primary, #002f3a) !important;
 }
+
+/* Nav on the white ground.
+ * The mark filled ecru until `.is-scrolled` landed, which was right over the
+ * old dark hero and invisible over this one. Same for the link row. */
+.site-nav__logo-img .meolaa-logo-mark__path,
+.site-nav:not(.is-scrolled) .site-nav__logo-img .meolaa-logo-mark__path,
+.site-nav.is-scrolled .site-nav__logo-img .meolaa-logo-mark__path {
+  fill: var(--color-primary, #002f3a) !important;
+}
+
+.site-nav__links--right a,
+.site-nav:not(.is-scrolled) .site-nav__links--right a,
+.site-nav__toggle {
+  color: var(--color-primary, #002f3a) !important;
+}
