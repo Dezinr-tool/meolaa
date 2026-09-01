@@ -370,7 +370,6 @@ export function HomeAnimations() {
       const press = document.querySelector('[data-section="press"]')
       const reduceMotion = prefersReducedMotion()
 
-
       /* ——— Hero: headline + CTAs settle on load; lede uses word stagger ——— */
       if (hero && !reduceMotion) {
         const headlineSpans = gsap.utils.toArray<Element>(
@@ -385,30 +384,6 @@ export function HomeAnimations() {
           stagger: 0.11,
           ease: REVEAL_EASE,
           delay: 0.2,
-        })
-      }
-
-      /* ——— Hero prism fades as the fold leaves ———
-       * The wordmark used to morph from the middle of this fold into the nav,
-       * and all of the raster/scale machinery here existed to serve that. The
-       * mark is now plain nav furniture sized in CSS (.site-nav__logo-img), so
-       * none of it is needed — and a one-shot JS scale would have gone stale
-       * anyway, since the mark's CSS width changes at the 900px breakpoint. */
-      const heroPrism = document.querySelector(
-        '[data-hero-prism]',
-      ) as HTMLElement | null
-      if (hero && heroPrism && !reduceMotion) {
-        gsap.to(heroPrism, {
-          opacity: 0,
-          y: -12,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: hero,
-            start: 'top top',
-            end: () => `+=${window.innerHeight * DOCK_VH * 0.4}`,
-            scrub: true,
-            invalidateOnRefresh: true,
-          },
         })
       }
 

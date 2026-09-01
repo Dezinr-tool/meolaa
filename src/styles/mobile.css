@@ -220,11 +220,6 @@ html.is-nav-menu-open body {
     min-width: min(100%, 160px);
     justify-content: center;
   }
-
-  .hero-prism {
-    --prism-w: clamp(140px, 36vw, 190px);
-    --prism-h: clamp(118px, 30vw, 160px);
-  }
 }
 
 /* ——— Section heads ——— */
