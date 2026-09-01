@@ -61,6 +61,36 @@ function FooterBody({
   copyRevealRef?: RefObject<HTMLDivElement | null>
   riseGroupRef?: RefObject<HTMLDivElement | null>
 }) {
+  const markWrapRef = useRef<HTMLDivElement>(null)
+
+  /* Cursor-follow reveal on the footer wordmark — mirrors the founding
+   * pixel-cursor pattern's fine-pointer gate. Sets --mx/--my (percentages
+   * within the mark wrap) that the mask-image radial-gradient reads. */
+  useEffect(() => {
+    const wrap = markWrapRef.current
+    if (!wrap) return
+    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return
+
+    const onMove = (e: PointerEvent) => {
+      const rect = wrap.getBoundingClientRect()
+      const x = ((e.clientX - rect.left) / rect.width) * 100
+      const y = ((e.clientY - rect.top) / rect.height) * 100
+      wrap.style.setProperty('--mx', `${x}%`)
+      wrap.style.setProperty('--my', `${y}%`)
+    }
+    const onLeave = () => {
+      wrap.style.setProperty('--mx', '-100%')
+      wrap.style.setProperty('--my', '-100%')
+    }
+
+    wrap.addEventListener('pointermove', onMove)
+    wrap.addEventListener('pointerleave', onLeave)
+    return () => {
+      wrap.removeEventListener('pointermove', onMove)
+      wrap.removeEventListener('pointerleave', onLeave)
+    }
+  }, [])
+
   const body = (
     <>
       <div className="footer-copy-reveal" ref={copyRevealRef}>
@@ -147,12 +177,21 @@ function FooterBody({
         </div>
       </div>
 
-      <div className="site-footer__mark-wrap">
+      <div className="site-footer__mark-wrap" ref={markWrapRef}>
         <MeolaaLogoMark
           className="site-footer__wordmark"
           viewBox={MEOLAA_MARK_VIEWBOX_TIGHT}
           verticalGradient={FOOTER_LOGO_GRADIENT}
           aria-label="Meolaa"
+        />
+        {/* Cursor-follow reveal — a bright solid pass masked to a soft circle
+            that tracks the pointer, same "hover to light it up" feel as
+            heronaiapp.com's footer wordmark. Fine-pointer only; decorative,
+            so aria-hidden and stacked over the real (accessible) mark. */}
+        <MeolaaLogoMark
+          className="site-footer__wordmark site-footer__wordmark-hover"
+          viewBox={MEOLAA_MARK_VIEWBOX_TIGHT}
+          aria-hidden="true"
         />
       </div>
     </>

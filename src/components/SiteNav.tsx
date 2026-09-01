@@ -98,8 +98,17 @@ export function SiteNav({ variant = 'home', navOverDark = false }: SiteNavProps)
         className={`site-nav__drawer${menuOpen ? ' is-open' : ''}`}
         aria-hidden={!menuOpen}
       >
+        <button
+          type="button"
+          className="site-nav__drawer-close"
+          tabIndex={menuOpen ? 0 : -1}
+          onClick={() => setMenuOpen(false)}
+        >
+          Close
+        </button>
+
         <nav className="site-nav__drawer-nav" aria-label="Mobile">
-          {ALL_LINKS.map((l) => (
+          {[{ to: '/', label: 'Home' }, ...ALL_LINKS].map((l, i) => (
             <Link
               key={l.to}
               to={l.to}
@@ -107,10 +116,53 @@ export function SiteNav({ variant = 'home', navOverDark = false }: SiteNavProps)
               tabIndex={menuOpen ? 0 : -1}
               onClick={() => setMenuOpen(false)}
             >
+              <span className="site-nav__drawer-index">
+                {String(i + 1).padStart(2, '0')}
+              </span>
               {l.label}
             </Link>
           ))}
         </nav>
+
+        <div className="site-nav__drawer-feature">
+          <img
+            className="site-nav__drawer-feature-img"
+            src="/assets/portfolio-hira.jpg"
+            alt=""
+            aria-hidden="true"
+          />
+          <p className="site-nav__drawer-feature-copy">
+            We turn signals from how people live into products and brands
+            that earn a place in everyday life.
+          </p>
+        </div>
+
+        <div className="site-nav__drawer-contact">
+          <div className="site-nav__drawer-contact-row">
+            <span className="site-nav__drawer-contact-label">C.</span>
+            <div>
+              <Link
+                to="/contact"
+                tabIndex={menuOpen ? 0 : -1}
+                onClick={() => setMenuOpen(false)}
+              >
+                Contact
+              </Link>
+            </div>
+          </div>
+          <div className="site-nav__drawer-contact-row">
+            <span className="site-nav__drawer-contact-label">S.</span>
+            <div>
+              <a href="#" aria-label="Instagram" tabIndex={menuOpen ? 0 : -1}>
+                Instagram
+              </a>
+              {' / '}
+              <a href="#" aria-label="LinkedIn" tabIndex={menuOpen ? 0 : -1}>
+                LinkedIn
+              </a>
+            </div>
+          </div>
+        </div>
       </div>
 
       {menuOpen ? (

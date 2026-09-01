@@ -327,6 +327,8 @@
 }
 
 .site-footer__mark-wrap {
+  --mx: -100%;
+  --my: -100%;
   position: relative;
   z-index: 0;
   margin-top: clamp(24px, 3vh, 48px);
@@ -372,6 +374,38 @@
   stroke: none;
   opacity: 1;
   paint-order: stroke fill;
+}
+
+/* Cursor-follow reveal pass — bright solid fill, masked to a soft circle
+   that tracks the pointer (--mx/--my set in JS). Off-screen by default so
+   it's invisible until the pointer actually enters the mark. */
+.site-footer__wordmark-hover {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  opacity: 1;
+  mask-image: radial-gradient(
+    circle 180px at var(--mx) var(--my),
+    #000 0%,
+    transparent 100%
+  );
+  -webkit-mask-image: radial-gradient(
+    circle 180px at var(--mx) var(--my),
+    #000 0%,
+    transparent 100%
+  );
+  transition: opacity 0.2s ease;
+}
+
+.site-footer__wordmark-hover .meolaa-logo-mark__path {
+  fill: var(--color-joyous-yellow, #fdf28c);
+  stroke: none;
+}
+
+@media (hover: none), (pointer: coarse) {
+  .site-footer__wordmark-hover {
+    display: none;
+  }
 }
 
 .footer-reveal-section--static .site-footer__mark-wrap {

@@ -124,55 +124,143 @@ html.is-nav-menu-open body {
   .site-nav__drawer {
     display: flex;
     position: fixed;
-    inset: 0 0 0 auto;
+    inset: 0;
     z-index: 60;
-    width: min(320px, 86vw);
+    width: 100%;
     height: 100svh;
-    padding: 96px 28px 40px;
+    padding: 88px 24px 0;
     flex-direction: column;
-    background: var(--color-planet-blue, #002f3a);
-    color: var(--color-ecru, #f8ece4);
-    transform: translateX(105%);
-    transition: transform 0.32s cubic-bezier(0.33, 1, 0.68, 1);
+    background: var(--color-ecru, #f8ece4);
+    color: var(--color-primary, #002f3a);
+    overflow-y: auto;
+    opacity: 0;
+    transform: translateY(-12px);
+    transition: opacity 0.3s cubic-bezier(0.33, 1, 0.68, 1),
+      transform 0.3s cubic-bezier(0.33, 1, 0.68, 1);
     pointer-events: none;
     visibility: hidden;
-    box-shadow: -16px 0 40px rgba(0, 0, 0, 0.28);
   }
 
   .site-nav__drawer.is-open {
-    transform: translateX(0);
+    opacity: 1;
+    transform: translateY(0);
     pointer-events: auto;
     visibility: visible;
+  }
+
+  .site-nav__drawer-close {
+    position: absolute;
+    top: 24px;
+    left: 24px;
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 16px;
+    border: 1px solid var(--color-primary, #002f3a);
+    border-radius: 0;
+    background: transparent;
+    color: var(--color-primary, #002f3a);
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    font-weight: var(--fw-medium, 500);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
   }
 
   .site-nav__drawer-nav {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 2px;
+    margin-top: 48px;
   }
 
   .site-nav__drawer-nav a {
-    display: block;
-    padding: 14px 4px;
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    padding: 10px 0;
     font-family: var(--font-display);
-    font-size: 1.25rem;
+    font-size: clamp(1.6rem, 8vw, 2.2rem);
     font-weight: var(--fw-semibold, 600);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--color-ecru, #f8ece4);
+    letter-spacing: -0.01em;
+    text-transform: none;
+    color: var(--color-primary, #002f3a);
     text-decoration: none;
-    border-bottom: 1px solid rgba(248, 236, 228, 0.12);
-    opacity: 0.7;
+    border-bottom: 0;
+    opacity: 1;
     text-shadow: none;
-    transition: opacity 0.2s ease, color 0.2s ease;
+    transition: color 0.2s ease;
+  }
+
+  .site-nav__drawer-index {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: var(--fw-semibold, 600);
+    color: color-mix(in srgb, var(--color-primary, #002f3a) 45%, transparent);
   }
 
   .site-nav__drawer-nav a:hover,
   .site-nav__drawer-nav a:focus-visible,
   .site-nav__drawer-nav a.is-active {
-    opacity: 1;
-    color: var(--color-joyous-yellow, #fdf28c);
+    color: var(--color-lilac-deep, #5656ad);
     text-decoration: none;
+  }
+
+  .site-nav__drawer-feature {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-top: 40px;
+    padding-bottom: 32px;
+  }
+
+  .site-nav__drawer-feature-img {
+    width: 96px;
+    height: 96px;
+    object-fit: cover;
+    flex: 0 0 auto;
+  }
+
+  .site-nav__drawer-feature-copy {
+    margin: 0;
+    max-width: 30ch;
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    line-height: 1.4;
+    color: color-mix(in srgb, var(--color-primary, #002f3a) 78%, transparent);
+  }
+
+  .site-nav__drawer-contact {
+    margin: auto -24px 0;
+    padding: 20px 24px calc(20px + env(safe-area-inset-bottom, 0px));
+    background: var(--color-primary, #002f3a);
+    color: var(--color-ecru, #f8ece4);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .site-nav__drawer-contact-row {
+    display: flex;
+    gap: 16px;
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+  }
+
+  .site-nav__drawer-contact-label {
+    flex: 0 0 auto;
+    color: color-mix(in srgb, var(--color-ecru, #f8ece4) 55%, transparent);
+  }
+
+  .site-nav__drawer-contact-row a {
+    color: var(--color-ecru, #f8ece4);
+    text-decoration: none;
+  }
+
+  .site-nav__drawer-contact-row a:hover,
+  .site-nav__drawer-contact-row a:focus-visible {
+    text-decoration: underline;
+    text-underline-offset: 3px;
   }
 
   .site-nav__backdrop {
