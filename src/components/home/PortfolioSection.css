@@ -442,6 +442,7 @@
   .brand-row__name,
   .brand-row__cat {
     justify-self: start;
+    text-align: left;
   }
 
   /* Fit each name on one line at this width instead of wrapping — smaller,
