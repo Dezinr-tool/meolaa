@@ -90,14 +90,19 @@ export function VisionSection() {
           <p className="vision__eyebrow section-head__eyebrow">Meolaa</p>
           <div className="vision__headline-stack">
             <h2 className="vision__headline">
-              <span data-vision-line="primary">
-                We find it, build for it, and run it
+              {/* The splitter below rebuilds these lines into per-word and
+                  per-char spans, so styling has to be declared as word indices
+                  it can tag rather than as spans here — anything nested gets
+                  discarded. See splitVisionLines in visionAnimations. */}
+              <span data-vision-line="primary" data-vision-outline="1">
+                From signal to home,
               </span>
               <span
                 className="vision__headline-line--faded"
                 data-vision-line="secondary"
+                data-vision-fill="4,5"
               >
-                faster than anyone else can
+                we create what you&rsquo;ll choose next.
               </span>
             </h2>
           </div>

@@ -5,15 +5,16 @@
  */
 
 .loop {
-  --loop-bg: #0a3038;
+  --loop-bg: #ffffff;
   --loop-track: var(--color-joyous-yellow, #fdf28c);
   --loop-node: var(--color-primary);
-  --loop-fg: #ffffff;
-  --loop-fg-muted: rgba(255, 255, 255, 0.6);
+  --loop-fg: var(--color-primary, #0a3038);
+  --loop-fg-muted: rgba(10, 48, 56, 0.62);
+  --loop-line: rgba(10, 48, 56, 0.35);
   /* Smaller orbit nodes (was 40/4.43vw/63 · 12/1.34vw/19) */
   --loop-dot: clamp(22px, 2.45vw, 35px);
   --loop-dot-inner: clamp(6px, 0.72vw, 10px);
-  --loop-copy-w: clamp(168px, 15.8vw, 225px);
+  --loop-copy-w: clamp(210px, 20vw, 280px);
 
   position: relative;
   z-index: 1;
@@ -30,6 +31,7 @@
 /* Scaled Figma frame */
 .loop__artboard {
   position: relative;
+  z-index: 1;
   width: min(100%, 1422px, calc((100svh - 40px) * 1422 / 1117));
   aspect-ratio: 1422 / 1117;
   max-height: calc(100svh - 40px);
@@ -39,7 +41,7 @@
 
 /* ——— Header — site section-head system; yellow accent on this fold ——— */
 .loop__header.section-head {
-  --sh-accent: var(--loop-track);
+  --sh-accent: var(--color-sustainable-green, #41857a);
   --sh-title: var(--loop-fg);
   --sh-sub: var(--loop-fg-muted);
 
@@ -55,7 +57,74 @@
   pointer-events: none;
 }
 
-/* ——— Full-artboard SVG (ghost track + fill + connectors) ——— */
+/* ——— Title: mixed solid / outline / outline+yellow words ———
+ * Figma reference (node 24:261): Geist Bold, 112px — scaled down here since
+ * that's sized for a much wider artboard than this section gets. */
+.loop__header.section-head .loop__title {
+  font-size: clamp(2rem, 6vw, 5rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  letter-spacing: var(--loop-title-ls, -2px);
+  line-height: var(--loop-title-lh, 0.95);
+}
+
+/* Eyebrow → title gap, tightened from the 24px section-head default —
+   desktop only (mobile repositions the whole header above the artboard). */
+@media (min-width: 901px) {
+  .loop__header.section-head .section-head__eyebrow + .loop__title {
+    margin-top: 4px;
+  }
+}
+
+.loop__title-line {
+  display: block;
+  white-space: nowrap;
+}
+
+.loop__title-word {
+  display: inline;
+}
+
+.loop__title-word--solid {
+  color: var(--loop-fg);
+  font-weight: var(--fw-bold, 700);
+}
+
+/*
+ * Layered text-shadow (8 offset copies unioned) dilates the whole glyph,
+ * which closes up small enclosed counters (B/R/A/D's bowls at bold weight)
+ * into a solid blob instead of a hollow outline. A true centered stroke
+ * only eats half that into the counter, so it stays hollow. `-webkit-text-
+ * stroke` can show a self-intersection artifact at sharp reentrant corners
+ * (L's foot, G's spur) — fine here since none of our outline words use
+ * those letters; re-check by eye if that changes.
+ */
+.loop__title-word--outline {
+  font-weight: var(--fw-bold, 700);
+  color: transparent;
+  -webkit-text-stroke: var(--loop-title-outline-w, 1.75px) var(--loop-fg);
+}
+
+/* Fill only — no outline. */
+.loop__title-word--fill {
+  font-weight: var(--fw-bold, 700);
+  color: var(--color-lilac-deep, #5656ad);
+}
+
+/* E-mark beside "brands" — sized off the title's own font-size so it always
+   matches the text's cap height, however the responsive clamp resolves. */
+.loop__title-mark {
+  display: inline-block;
+  height: 0.78em;
+  width: auto;
+  aspect-ratio: 150 / 220;
+  fill: var(--color-joyous-yellow, #fdf28c);
+  vertical-align: middle;
+  transform: translateY(-0.06em);
+}
+
+/* ——— Full-artboard SVG (fill + connectors) ——— */
 .loop__orbit-svg {
   position: absolute;
   inset: 0;
@@ -67,45 +136,8 @@
   pointer-events: none;
 }
 
-/* Soft single orbit — muted underlay matching yellow stroke width */
-.loop__orbit-ghost {
-  fill: none;
-  stroke: rgba(248, 236, 228, 0.14);
-}
-
-/* Hidden until scrub reveals fill (also avoids FOUC of full yellow ring) */
-.loop__orbit-arc {
-  fill: none;
-  opacity: 0;
-}
-
 .loop__orbit-line {
   opacity: 0;
-}
-
-/* E mark — Figma Vector inset ≈ 41.63% / 43.87% · 179×273 */
-.loop__orbit-mark {
-  position: absolute;
-  left: 41.63%;
-  top: 43.87%;
-  width: 12.59%;
-  height: 24.44%;
-  z-index: 2;
-  display: grid;
-  place-items: center;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.loop.is-loop-ready .loop__orbit-mark {
-  opacity: 1;
-}
-
-.loop__orbit-e {
-  display: block;
-  width: 100%;
-  height: 100%;
-  fill: var(--loop-track);
 }
 
 .loop__step {
@@ -124,8 +156,9 @@
   width: var(--loop-dot);
   height: var(--loop-dot);
   border-radius: 50%;
-  background: var(--loop-node);
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06);
+  box-sizing: border-box;
+  background: transparent;
+  border: 2px solid var(--loop-node);
   transform: translate(-50%, -50%) scale(0.5);
   opacity: 0;
   transition:
@@ -142,12 +175,29 @@
   height: var(--loop-dot-inner);
   margin: calc(var(--loop-dot-inner) / -2) 0 0 calc(var(--loop-dot-inner) / -2);
   border-radius: 50%;
-  background: #fff;
+  background: var(--loop-fg);
 }
 
 .loop__copy {
   position: absolute;
+  box-sizing: border-box;
   width: var(--loop-copy-w);
+  padding: 24px;
+  border-radius: 0;
+  /* Nudges the box up in real px so the label row below (not the box's
+     own top edge) lands level with the connector line drawn at the dot's
+     y — the line is positioned in artboard-space %, this offset is fixed
+     CSS px, matching the fixed padding/label size it's compensating for. */
+  margin-top: -34px;
+  background: color-mix(
+    in srgb,
+    var(--color-sustainable-green, #41857a) 18%,
+    rgba(255, 255, 255, 0.5)
+  );
+  -webkit-backdrop-filter: blur(var(--nav-glass-blur, 16px))
+    saturate(var(--nav-glass-saturate, 180%));
+  backdrop-filter: blur(var(--nav-glass-blur, 16px))
+    saturate(var(--nav-glass-saturate, 180%));
   opacity: 0;
   visibility: hidden;
   transform: translateY(10px);
@@ -159,6 +209,8 @@
 
 .loop__copy-label {
   margin: 0 0 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--loop-line);
   font-family: var(--font-sans);
   font-size: 0.875rem;
   font-weight: var(--fw-medium, 500);
@@ -259,18 +311,9 @@
   transform: translateY(0);
 }
 
-.loop.is-static .loop__orbit-arc {
-  stroke-dashoffset: 0 !important;
-  opacity: 1;
-}
-
 .loop.is-static .loop__orbit-line {
   opacity: 1;
   stroke-dashoffset: 0 !important;
-}
-
-.loop.is-static .loop__orbit-mark {
-  opacity: 1;
 }
 
 @media (max-width: 900px) {
@@ -319,8 +362,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .loop__dot,
-  .loop__copy,
-  .loop__orbit-mark {
+  .loop__copy {
     transition: none;
   }
 }

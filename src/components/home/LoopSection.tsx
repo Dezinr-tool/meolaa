@@ -7,6 +7,7 @@
 import { MeolaaEMark } from '../brand/MeolaaEMark'
 import { LOOP_STEPS } from '../../lib/loopPath'
 import { LoopParticles } from './LoopParticles'
+import { LoopTitleTuner } from './LoopTitleTuner'
 import { ParallaxHeading } from './ParallaxHeading'
 import './LoopSection.css'
 
@@ -18,8 +19,6 @@ const CX = 711
 const CY = 629
 /** Ghost + yellow centerline = Figma ellipse radius (578 / 2). */
 const TRACK_R = 289
-/** Shared stroke width — ghost and yellow sit on the same track. */
-const TRACK_SW = 56
 /** Outer node disc (Figma 63px) — connector stops at its rim. */
 const DOT_OUTER_R = 31.5
 
@@ -38,7 +37,7 @@ const A_BL = Math.atan2(ANGLE_SEED.bl.y - CY, ANGLE_SEED.bl.x - CX)
 const A_TOP = Math.atan2(ANGLE_SEED.top.y - CY, ANGLE_SEED.top.x - CX)
 const A_BR = Math.atan2(ANGLE_SEED.br.y - CY, ANGLE_SEED.br.x - CX)
 
-/** On-track centres — same radius as ORBIT_ARC_D / ghost. */
+/** On-track centres — same radius the yellow track used to sit on. */
 const ON_TRACK = {
   bl: polar(A_BL),
   top: polar(A_TOP),
@@ -73,22 +72,6 @@ const ARC_S = {
   run: SEG_BL_TOP / TWO_PI,
   signal: (SEG_BL_TOP + SEG_TOP_BR) / TWO_PI,
 } as const
-
-/**
- * Polyline circle — identical `d` for ghost + yellow.
- * Increasing atan2: tip leaves Build toward Run (left-up / top).
- */
-function buildOrbitPath(startAngle: number, segments = 96): string {
-  const parts: string[] = []
-  for (let i = 0; i <= segments; i += 1) {
-    const a = startAngle + (i / segments) * TWO_PI
-    const { x, y } = polar(a)
-    parts.push(`${i === 0 ? 'M' : 'L'} ${x.toFixed(2)} ${y.toFixed(2)}`)
-  }
-  return parts.join(' ')
-}
-
-const ORBIT_ARC_D = buildOrbitPath(A_BL)
 
 /**
  * Pin progress when each beat activates.
@@ -158,25 +141,41 @@ export function LoopSection() {
       data-loop-orbit
       aria-labelledby="loop-title"
     >
+      <LoopParticles />
+      <LoopTitleTuner />
+
       <div
         className="loop__artboard"
         data-loop-orbit-stage
         style={ORBIT_STYLE}
       >
-        <LoopParticles />
-
         <header className="loop__header section-head">
           <p className="section-head__eyebrow">The Loop</p>
           <ParallaxHeading
             id="loop-title"
-            className="section-head__title"
+            className="section-head__title loop__title"
           >
-            How we build brands
+            <span className="loop__title-line">
+              <span className="loop__title-word loop__title-word--solid">
+                Turning
+              </span>{' '}
+              <span className="loop__title-word loop__title-word--fill">
+                intelligence
+              </span>
+            </span>
+            <span className="loop__title-line">
+              <span className="loop__title-word loop__title-word--solid">
+                into
+              </span>{' '}
+              <span className="loop__title-word loop__title-word--outline">
+                brands
+              </span>{' '}
+              <MeolaaEMark
+                className="loop__title-mark"
+                aria-hidden="true"
+              />
+            </span>
           </ParallaxHeading>
-          <p className="section-head__sub">
-            Signal feeds Build. Build feeds Run. Run feeds Signal — one continuous
-            system.
-          </p>
         </header>
 
         <svg
@@ -186,25 +185,6 @@ export function LoopSection() {
           xmlns="http://www.w3.org/2000/svg"
           aria-hidden="true"
         >
-          {/* Ghost + yellow: same `d`, same stroke width; yellow paints above */}
-          <path
-            className="loop__orbit-ghost"
-            data-loop-orbit-ghost
-            d={ORBIT_ARC_D}
-            strokeWidth={TRACK_SW}
-            strokeLinecap="round"
-            fill="none"
-          />
-          <path
-            className="loop__orbit-arc"
-            data-loop-orbit-arc
-            d={ORBIT_ARC_D}
-            stroke="var(--loop-track)"
-            strokeWidth={TRACK_SW}
-            strokeLinecap="round"
-            fill="none"
-          />
-
           {ORBIT_STEPS.map((stage) => (
             <line
               key={`line-${stage.slot}`}
@@ -214,15 +194,11 @@ export function LoopSection() {
               y1={stage.line.y1}
               x2={stage.line.x2}
               y2={stage.line.y2}
-              stroke="rgba(255,255,255,0.4)"
+              stroke="var(--loop-line)"
               strokeWidth="1"
             />
           ))}
         </svg>
-
-        <div className="loop__orbit-mark">
-          <MeolaaEMark className="loop__orbit-e" aria-hidden="true" />
-        </div>
 
         {ORBIT_STEPS.map((stage) => (
           <article

@@ -129,14 +129,6 @@ const DEAL_HOLD = 0.45
 /** Fade-out. */
 const DEAL_OUT = 0.3
 
-/** Reading-order pairs: mark word → corner sticker (TL / TR / BL / BR). */
-const STICKER_CHOREO = [
-  { mark: 'asking', badge: 'worldwide', rotate: -8 },
-  { mark: 'demand', badge: 'new', rotate: 14 },
-  { mark: 'brands', badge: 'dreams', rotate: -10 },
-  { mark: 'move', badge: 'happy', rotate: 9 },
-] as const
-
 /**
  * About / founding — near-black ground, small eyebrow, one large centred
  * statement with the key words underlined, and brand photos dealing themselves
@@ -215,11 +207,10 @@ export function FoundingSection() {
     }
   }, [])
 
-  /* Vision-style per-char opacity fill scrubbed across the pin. Mark words
-   * are Joyous Yellow in CSS for the whole fill; corner stickers pop when
-   * each mark word finishes filling. Pin lives here (not HomeAnimations) so
-   * document-order pin creation stays aligned with Lab / Portfolio. Cursor
-   * follower is a separate effect — leave it alone. */
+  /* Vision-style per-char opacity fill scrubbed across the pin. Pin lives
+   * here (not HomeAnimations) so document-order pin creation stays aligned
+   * with Lab / Portfolio. Cursor follower is a separate effect — leave it
+   * alone. */
   useEffect(() => {
     const section = sectionRef.current
     if (!section) return
@@ -232,130 +223,27 @@ export function FoundingSection() {
       statement.querySelectorAll('.founding__char'),
     )
 
-    const pairs = STICKER_CHOREO.map(({ mark, badge, rotate }) => ({
-      word: section.querySelector<HTMLElement>(
-        `[data-founding-mark="${mark}"]`,
-      ),
-      sticker: section.querySelector<HTMLElement>(
-        `[data-founding-sticker="${badge}"]`,
-      ),
-      rotate,
-    })).filter((p) => p.word && p.sticker) as Array<{
-      word: HTMLElement
-      sticker: HTMLElement
-      rotate: number
-    }>
-
-    const CHAR_FILL_DUR = 0.08
-    const CHAR_STAGGER = 0.006
     const fillTweenVars = {
       opacity: 1,
-      duration: CHAR_FILL_DUR,
-      stagger: CHAR_STAGGER,
+      duration: 0.08,
+      stagger: 0.006,
       ease: 'power1.out',
     } as const
-
-    /** Timeline progress when char `i` reaches full opacity. */
-    const charFillEnd = (i: number) => i * CHAR_STAGGER + CHAR_FILL_DUR
-
-    /** Per mark: scrub progress at which that word’s last char finishes. */
-    const stickerGates = pairs.map(({ word, sticker, rotate }) => {
-      const markChars = gsap.utils.toArray<HTMLElement>(
-        word.querySelectorAll('.founding__char'),
-      )
-      const last = markChars[markChars.length - 1]
-      const lastIndex = last ? chars.indexOf(last) : -1
-      return { word, sticker, rotate, lastIndex }
-    })
 
     const reduceMotion = window.matchMedia(
       '(prefers-reduced-motion: reduce)',
     ).matches
 
-    const hideSticker = (sticker: HTMLElement, rotate: number) => {
-      gsap.killTweensOf(sticker)
-      gsap.set(sticker, {
-        autoAlpha: 0,
-        scale: 0.55,
-        rotate,
-        transformOrigin: '50% 50%',
-      })
-    }
-
-    const resetStickers = () => {
-      stickerGates.forEach(({ word, sticker, rotate }) => {
-        word.classList.remove('is-lit')
-        hideSticker(sticker, rotate)
-      })
-    }
-
     if (reduceMotion) {
       gsap.set(chars, { opacity: 1 })
-      pairs.forEach(({ word, sticker, rotate }) => {
-        word.classList.add('is-lit')
-        gsap.set(sticker, {
-          autoAlpha: 1,
-          scale: 1,
-          rotate,
-          transformOrigin: '50% 50%',
-        })
-      })
       return
     }
 
     gsap.set(chars, { opacity: FOUNDING_CHAR_DIM })
-    resetStickers()
-
-    const armed = new Set<HTMLElement>()
-
-    const syncStickers = (progress: number, holdDuration: number) => {
-      const fillSpan =
-        chars.length > 0
-          ? charFillEnd(chars.length - 1)
-          : CHAR_FILL_DUR
-      const total = fillSpan + holdDuration
-      if (total <= 0) return
-
-      stickerGates.forEach(({ word, sticker, rotate, lastIndex }) => {
-        if (lastIndex < 0) return
-        const threshold = charFillEnd(lastIndex) / total
-        if (progress >= threshold) {
-          if (armed.has(word)) return
-          armed.add(word)
-          word.classList.add('is-lit')
-          gsap.killTweensOf(sticker)
-          gsap.fromTo(
-            sticker,
-            {
-              autoAlpha: 0,
-              scale: 0.55,
-              rotate,
-              transformOrigin: '50% 50%',
-            },
-            {
-              autoAlpha: 1,
-              scale: 1,
-              duration: 0.55,
-              ease: 'back.out(1.7)',
-            },
-          )
-        } else if (progress < threshold * 0.92) {
-          if (!armed.has(word)) return
-          armed.delete(word)
-          word.classList.remove('is-lit')
-          hideSticker(sticker, rotate)
-        }
-      })
-    }
-
-    const disarmAll = () => {
-      armed.clear()
-      resetStickers()
-    }
 
     const mm = gsap.matchMedia()
 
-    /* Desktop: pin + scrub fill; stickers arm as each mark word finishes. */
+    /* Desktop: pin + scrub fill. */
     mm.add('(min-width: 901px)', () => {
       const holdDuration = 0.38
       const vtl = gsap.timeline({
@@ -369,19 +257,12 @@ export function FoundingSection() {
           /* No anticipatePin — with Lenis it overshoots and reads as a spring. */
           anticipatePin: 0,
           invalidateOnRefresh: true,
-          onUpdate: (self) => {
-            syncStickers(self.progress, holdDuration)
-          },
           onLeaveBack: () => {
             gsap.set(chars, { opacity: FOUNDING_CHAR_DIM })
-            disarmAll()
           },
           onRefresh: (self) => {
             if (self.progress === 0) {
               gsap.set(chars, { opacity: FOUNDING_CHAR_DIM })
-              disarmAll()
-            } else {
-              syncStickers(self.progress, holdDuration)
             }
           },
         },
@@ -393,7 +274,6 @@ export function FoundingSection() {
         { ...fillTweenVars },
         0,
       )
-      /* Hold fully filled so late stickers can land before the pin releases. */
       vtl.to({}, { duration: holdDuration })
 
       return () => {
@@ -404,19 +284,14 @@ export function FoundingSection() {
 
     /* Mobile: no pin — scrub fill as the fold crosses the viewport. */
     mm.add('(max-width: 900px)', () => {
-      const holdDuration = 0.16
       const vtl = gsap.timeline({
         scrollTrigger: {
           trigger: section,
           start: 'top 72%',
           end: 'top 22%',
           scrub: true,
-          onUpdate: (self) => {
-            syncStickers(self.progress, holdDuration)
-          },
           onLeaveBack: () => {
             gsap.set(chars, { opacity: FOUNDING_CHAR_DIM })
-            disarmAll()
           },
         },
       })
@@ -427,7 +302,7 @@ export function FoundingSection() {
         { ...fillTweenVars },
         0,
       )
-      vtl.to({}, { duration: holdDuration })
+      vtl.to({}, { duration: 0.16 })
 
       return () => {
         vtl.scrollTrigger?.kill()
@@ -439,12 +314,6 @@ export function FoundingSection() {
       mm.revert()
       gsap.killTweensOf(chars)
       gsap.set(chars, { clearProps: 'opacity' })
-      pairs.forEach(({ word, sticker, rotate }) => {
-        word.classList.remove('is-lit')
-        gsap.killTweensOf(sticker)
-        gsap.set(sticker, { clearProps: 'transform,opacity,visibility' })
-        gsap.set(sticker, { rotate, transformOrigin: '50% 50%' })
-      })
       ScrollTrigger.refresh()
     }
   }, [])
@@ -574,54 +443,6 @@ export function FoundingSection() {
       aria-labelledby="founding-title"
     >
       <div className="founding__bg" aria-hidden="true" />
-
-      {/* Corner stickers — margins around the manifesto; decorative only. */}
-      <div className="founding__badges" aria-hidden="true">
-        <img
-          className="founding__badge founding__badge--worldwide"
-          data-founding-sticker="worldwide"
-          src="/story/badges/worldwide.png"
-          alt=""
-          width={140}
-          height={140}
-          loading="eager"
-          decoding="async"
-          draggable={false}
-        />
-        <img
-          className="founding__badge founding__badge--new"
-          data-founding-sticker="new"
-          src="/story/badges/new.png"
-          alt=""
-          width={150}
-          height={100}
-          loading="eager"
-          decoding="async"
-          draggable={false}
-        />
-        <img
-          className="founding__badge founding__badge--dreams"
-          data-founding-sticker="dreams"
-          src="/story/badges/dreams-come-true.png"
-          alt=""
-          width={200}
-          height={140}
-          loading="eager"
-          decoding="async"
-          draggable={false}
-        />
-        <img
-          className="founding__badge founding__badge--happy"
-          data-founding-sticker="happy"
-          src="/story/badges/happy.png"
-          alt=""
-          width={160}
-          height={120}
-          loading="eager"
-          decoding="async"
-          draggable={false}
-        />
-      </div>
 
       <div className="founding__stage" data-founding-reveal>
         <p className="founding__eyebrow">Founding</p>

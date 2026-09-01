@@ -15,9 +15,24 @@ const VISION_PIN_END = '+=140%'
 const VISION_COLLAGE_TIME = 4.25
 
 /** Per-char spans for vision headline scroll highlight (opacity only — no y/blur). */
+/** Parse "4,5" into a Set of word indices. */
+function accentSet(line: Element, attr: string) {
+  const raw = line.getAttribute(attr)
+  if (!raw) return new Set<number>()
+  return new Set(
+    raw
+      .split(',')
+      .map((n) => Number(n.trim()))
+      .filter((n) => Number.isInteger(n)),
+  )
+}
+
 function splitVisionLines(lines: Element[]) {
   lines.forEach((line) => {
     const text = (line.textContent || '').trim()
+    const outline = accentSet(line, 'data-vision-outline')
+    const fill = accentSet(line, 'data-vision-fill')
+    let wordIndex = 0
     line.textContent = ''
     line.setAttribute('aria-label', text)
 
@@ -32,6 +47,9 @@ function splitVisionLines(lines: Element[]) {
 
       const word = document.createElement('span')
       word.className = 'vision__word'
+      if (outline.has(wordIndex)) word.classList.add('vision__word--outline')
+      if (fill.has(wordIndex)) word.classList.add('vision__word--fill')
+      wordIndex++
       ;[...token].forEach((char) => {
         const span = document.createElement('span')
         span.className = 'vision__char'

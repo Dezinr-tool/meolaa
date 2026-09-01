@@ -467,10 +467,6 @@ html {
   text-wrap: nowrap;
 }
 
-.vision__headline>[data-vision-line="secondary"],
-.vision__headline-line--faded {
-  color: rgba(0, 0, 0, 0.32);
-}
 
 .vision__word {
   display: inline-block;
@@ -944,9 +940,23 @@ body {
 .hero--blank .hero__bg {
   background-color: #05070a !important;
   background-image: url('/assets/hero-prism.jpg') !important;
-  background-size: cover;
-  background-position: center 42%;
-  background-repeat: no-repeat;
+  /* !important throughout: an earlier .hero__bg rule sets size/position and was
+     winning, leaving these at `auto` / `0% 0%` and cropping the prism out. */
+  background-size: cover !important;
+  background-position: center 42% !important;
+  background-repeat: no-repeat !important;
+}
+
+/*
+ * Portrait viewports crop a 1501x1048 landscape hard. Scale to width and pin
+ * the prism (roughly 50% across, 49% down in the source) into the upper half,
+ * leaving the lower third for the headline.
+ */
+@media (max-width: 900px) {
+  .hero--blank .hero__bg {
+    background-size: auto 62% !important;
+    background-position: 52% 26% !important;
+  }
 }
 
 /* Readability scrim — the headline sits bottom-left over the image's darkest
@@ -971,4 +981,34 @@ body {
 
 .site-nav--home:not(.is-scrolled) .site-nav__links--right a {
   color: var(--color-ecru, #f8ece4) !important;
+}
+
+/* ——— Vision headline: loop-title word treatment ———
+ * The stroke/colour have to land on `.vision__char`, not the word: the splitter
+ * puts each glyph in its own span, and a stroke on the parent never reaches
+ * them. Uses the same -webkit-text-stroke as .loop__title-word--outline.
+ */
+.vision__word--outline .vision__char {
+  color: transparent;
+  -webkit-text-stroke: var(--loop-title-outline-w, 1.75px)
+    var(--color-black, #000);
+}
+
+.vision__word--fill .vision__char {
+  color: var(--color-lilac-deep, #5656ad);
+}
+
+/* Loop-title weight and tracking. Scale stops at 4vw, not the loop's 6vw:
+   these lines are ~34 characters against the loop's ~20, so 6vw ran 1540px
+   into a 1152px column and broke out of the fold. 4vw is the largest that
+   still fits. */
+.vision__headline > [data-vision-line] {
+  font-size: clamp(1.4rem, 4vw, 3.6rem) !important;
+  font-weight: var(--fw-bold, 700) !important;
+  line-height: var(--loop-title-lh, 0.95) !important;
+  letter-spacing: var(--loop-title-ls, -2px) !important;
+}
+
+.vision__headline .vision__headline-line--faded {
+  opacity: 1;
 }

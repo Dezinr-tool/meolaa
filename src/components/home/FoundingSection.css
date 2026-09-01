@@ -9,9 +9,8 @@
   --founding-cta: var(--color-joyous-yellow, #fdf28c);
   --founding-ink: var(--color-planet-blue, #002f3a);
   --founding-white: var(--color-white, #fff);
-  /* Generous Lilac ground. Uses the brand token rather than the raw hex so it
-     tracks the palette; the swatch (#5556ad) is this token. */
-  --founding-ground: var(--color-lilac-deep, #5656ad);
+  /* White ground, ink type — matches the rest of the site. */
+  --founding-ground: var(--color-white, #fff);
   --founding-pad-x: clamp(24px, 2.8vw, 40px);
   --founding-pad-y: clamp(24px, 4vh, 40px);
 
@@ -23,9 +22,7 @@
   height: 100svh;
   max-height: 100svh;
   overflow: hidden;
-  /* Reference layout: near-black ground, light type. Was white-on-white with a
-     cutout photo stage. */
-  color: var(--founding-white);
+  color: var(--founding-ink);
   background: var(--founding-ground);
   display: flex;
   flex-direction: column;
@@ -193,7 +190,6 @@
   text-transform: uppercase;
   text-wrap: balance;
   max-width: none;
-  text-shadow: 0 1px 18px color-mix(in srgb, #000 35%, transparent);
 }
 
 .founding__sub {
@@ -495,98 +491,6 @@
   background: var(--founding-ground) !important;
 }
 
-/* Corner stickers — float in the margins around the manifesto (reference mock). */
-.founding__badges {
-  position: absolute;
-  inset: 0;
-  z-index: 3;
-  pointer-events: none;
-  overflow: hidden;
-}
-
-.founding__badge {
-  position: absolute;
-  display: block;
-  width: auto;
-  height: auto;
-  max-width: none;
-  object-fit: contain;
-  user-select: none;
-  -webkit-user-drag: none;
-  /* GSAP owns transform (scale + rotate) for the pop-in choreography. */
-  will-change: transform, opacity;
-  visibility: hidden;
-  opacity: 0;
-}
-
-/* WORLDWIDE — upper left of the type block */
-.founding__badge--worldwide {
-  top: clamp(14%, 18vh, 22%);
-  left: clamp(2.5%, 4.5vw, 7%);
-  width: clamp(72px, 8.5vw, 118px);
-}
-
-/* new — upper right */
-.founding__badge--new {
-  top: clamp(8%, 12vh, 16%);
-  right: clamp(3%, 5.5vw, 9%);
-  width: clamp(88px, 11vw, 148px);
-}
-
-/* DREAMS COME TRUE — lower left */
-.founding__badge--dreams {
-  bottom: clamp(10%, 14vh, 18%);
-  left: clamp(3%, 5vw, 8%);
-  width: clamp(110px, 13vw, 188px);
-}
-
-/* HAPPY — lower right, clear of the CTA */
-.founding__badge--happy {
-  bottom: clamp(11%, 15vh, 20%);
-  right: clamp(6%, 10vw, 15%);
-  width: clamp(78px, 9.5vw, 132px);
-}
-
-@media (max-width: 900px) {
-  .founding__badge--worldwide {
-    top: clamp(72px, 10vh, 96px);
-    left: clamp(8px, 3vw, 20px);
-    width: clamp(56px, 14vw, 88px);
-  }
-
-  .founding__badge--new {
-    top: clamp(64px, 9vh, 88px);
-    right: clamp(8px, 3vw, 20px);
-    width: clamp(64px, 16vw, 100px);
-  }
-
-  .founding__badge--dreams {
-    bottom: clamp(20px, 4vh, 40px);
-    left: clamp(10px, 3vw, 24px);
-    width: clamp(88px, 22vw, 140px);
-  }
-
-  .founding__badge--happy {
-    bottom: clamp(24px, 5vh, 48px);
-    right: clamp(12px, 4vw, 28px);
-    width: clamp(64px, 16vw, 104px);
-  }
-}
-
-@media (max-width: 560px) {
-  .founding__badge--worldwide,
-  .founding__badge--new {
-    width: clamp(48px, 15vw, 72px);
-  }
-
-  .founding__badge--dreams {
-    width: clamp(72px, 24vw, 112px);
-  }
-
-  .founding__badge--happy {
-    width: clamp(56px, 17vw, 88px);
-  }
-}
 
 .founding__stage {
   position: relative;
@@ -609,8 +513,8 @@
   font-weight: var(--fw-regular, 400);
   letter-spacing: 0;
   text-transform: none;
-  color: var(--founding-white);
-  opacity: 0.92;
+  color: var(--founding-ink);
+  opacity: 0.72;
 }
 
 /* The statement. Large, tight, centred — the reference sets it well above the
@@ -630,7 +534,7 @@
   /* Caps need looser tracking than lowercase display type — the -0.028em that
      suited mixed case reads as collision once everything is uppercase. */
   letter-spacing: -0.012em;
-  color: var(--founding-white);
+  color: var(--founding-ink);
   text-transform: uppercase;
   text-wrap: balance;
 }
@@ -651,31 +555,30 @@
 }
 
 .founding__mark-word .founding__char {
-  /* Joyous Yellow while opacity scrubs 0.14→1 — not delayed to sticker arm. */
+  /* Secondary — Lilac Deep — while opacity scrubs 0.14→1. */
   color: inherit;
 }
 
-/* Key words are yellow + underline for the whole fill; stickers still pop
-   when each word finishes. `.is-lit` is reserved for hover/deal affordance. */
+/* Key words stay ink-black with an underline for emphasis through the fill. */
 .founding__mark-word {
   cursor: pointer;
-  color: var(--color-joyous-yellow, #fdf28c);
+  color: var(--color-lilac-deep, #5656ad);
   text-decoration: underline;
   text-decoration-thickness: 0.045em;
   text-underline-offset: 0.14em;
-  text-decoration-color: currentColor;
-  transition: color 0.35s ease;
+  text-decoration-color: var(--color-lilac-deep, #5656ad);
+  transition: color 0.35s ease, text-decoration-color 0.35s ease;
 }
 
-/* Hovering a word you're dealing from — brighten to confirm the hit. */
+/* Hovering a word you're dealing from — brighten the underline to confirm the hit. */
 .founding__mark-word:hover {
-  color: var(--color-white, #fff);
+  text-decoration-color: var(--founding-ink);
 }
 
 @media (prefers-reduced-motion: reduce) {
   .founding__mark-word {
-    color: var(--color-joyous-yellow, #fdf28c);
-    text-decoration-color: currentColor;
+    color: var(--color-lilac-deep, #5656ad);
+    text-decoration-color: var(--color-lilac-deep, #5656ad);
   }
 }
 

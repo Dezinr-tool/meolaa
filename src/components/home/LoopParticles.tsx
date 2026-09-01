@@ -1,59 +1,67 @@
 /**
- * Loop orbit dust — a particle ring sitting on the same track as the yellow
- * orbit (artboard centre 711,629, radius 289).
+ * Loop scene — Three.js ring + terrain, ported from the reference
+ * particle-scene prototype (orbiting dust torus + flowing dune terrain,
+ * same particle counts, same noise math, same camera). One shared canvas —
+ * two side-by-side WebGL contexts (ring + terrain each on their own canvas)
+ * blacked out the whole section in testing, so both live in one scene here.
  *
- * Drawn on a 2D canvas rather than a third <Canvas>: the homepage already runs
- * two WebGL contexts for the hero prism, and this is fine dust, so writing
- * pixels directly is cheaper than a GL pipeline and maps 1:1 onto the
- * artboard's coordinate space.
+ * The canvas is full-bleed to the section (not boxed to the orbit artboard)
+ * so the terrain reaches both edges the way the prototype's own
+ * full-viewport wrap did. To keep the ring's pixel size matching the
+ * artboard-scoped yellow track (which didn't move), the camera's vertical
+ * FOV is corrected each resize by the ratio of the full canvas height to
+ * the artboard's height — see `fovForHeight` below.
  *
- * The backing store is capped well under CSS size — dust does not need full
- * resolution, and clearing a full-res buffer every frame is the expensive part.
+ * Scroll progress is read off this section's own position in the page's
+ * normal scroll, since the prototype's own nested `#scroller` doesn't fit
+ * into the site.
  */
 import { useEffect, useRef } from 'react'
+import * as THREE from 'three'
+import { createDustSprite } from './loopDustSprite'
 import './LoopParticles.css'
 
-/** Artboard space — matches LoopSection's AB_W / AB_H / CX / CY / TRACK_R. */
-const AB_W = 1422
-const AB_H = 1117
-const CX = 711
-const CY = 629
-const TRACK_R = 289
-
-/**
- * Backing-store width; height follows the artboard ratio.
- *
- * Deliberately small. At ~1:1 with CSS size every mote resolved as a distinct
- * speck and the band read as noise; drawn small and scaled up, the browser's
- * bilinear filter turns each one into a soft blob and the field reads as mist.
- * The upscale is the blur — no filter pass needed.
- */
-const MAX_W = 420
-const MAX_W_SMALL = 260
-
-type P = {
-  /** Angle on the ring. */
-  a: number
-  /** Signed offset from the track radius — the band's thickness. */
-  dr: number
-  /** Angular velocity. */
-  va: number
-  /** Base brightness 0..1. */
-  b: number
-  /** Twinkle phase + rate. */
-  tp: number
-  tr: number
+function noise2(x: number, y: number) {
+  return (
+    Math.sin(x * 1.0 + y * 0.7) * 0.5 +
+    Math.sin(x * 2.1 - y * 1.3 + 1.7) * 0.25 +
+    Math.sin(x * 3.7 + y * 2.6 + 4.1) * 0.15 +
+    Math.sin(x * 0.5 - y * 0.4 + 2.3) * 0.35
+  )
 }
 
-/** Gaussian-ish via summed uniforms — cheap and tight enough for a dust band. */
-function gauss() {
-  return (Math.random() + Math.random() + Math.random() - 1.5) / 1.5
+const MAIN_R = 150
+const TUBE_R = 26
+const RING_MAX_OPACITY = 0.8
+/* Whole-ring rigid rotation, on top of each mote's own drift below — kept
+   at 0 so the ring doesn't visibly spin as a unit on every scroll/idle tick.
+   The individual per-mote revolve/wobble motion still gives it life. */
+const RING_IDLE_SPIN = 0
+const SCROLL_SPIN_TOTAL = 0
+const BASE_FOV = 45
+
+type RingSeed = {
+  theta: number
+  phi: number
+  rJitter: number
+  revolveSpeed: number
+  speed: number
+  wob: number
+  wobSpeed: number
+  wobAmp: number
+  /** Fixed per-mote scatter direction — hover push flings each mote along
+      its own direction instead of radially from the cursor, which read as
+      the ring's silhouette smoothly deforming ("liquid") rather than dust
+      scattering. */
+  scatterX: number
+  scatterY: number
 }
 
 /**
- * Density around the ring, 0..1. Layered sines stand in for noise — an evenly
- * populated band reads as a machined torus; the reference has dense arcs and
- * near-empty gaps, and that unevenness is most of its character.
+ * Density around the ring, 0..1 — an evenly populated band reads as a
+ * machined torus; layered sines give it dense arcs and thin gaps instead,
+ * so the ring looks like a naturally uneven scatter of dust rather than a
+ * perfect uniform circle.
  */
 function ringDensity(angle: number) {
   const n =
@@ -61,148 +69,471 @@ function ringDensity(angle: number) {
     0.3 * Math.sin(angle * 2.0 + 0.7) +
     0.22 * Math.sin(angle * 3.7 + 2.1) +
     0.14 * Math.sin(angle * 6.3 + 4.4)
-  return Math.max(0.06, Math.min(1, n))
+  return Math.max(0.15, Math.min(1, n))
 }
 
-function makeParticles(count: number): P[] {
-  const out: P[] = []
-  let guard = 0
-  while (out.length < count && guard < count * 40) {
-    guard++
-    const a = Math.random() * Math.PI * 2
-    /* Rejection-sample against the density curve so the gaps are real gaps. */
-    if (Math.random() > ringDensity(a)) continue
+function smoothstep(edge0: number, edge1: number, x: number) {
+  const t = Math.min(1, Math.max(0, (x - edge0) / (edge1 - edge0)))
+  return t * t * (3 - 2 * t)
+}
 
-    /* ~8% fling well clear of the band as loose scatter. */
-    const stray = Math.random() < 0.08
-    const dr = stray
-      ? (Math.random() < 0.5 ? -1 : 1) * (48 + Math.random() * 120)
-      : gauss() * 40 + gauss() * 18
-
-    out.push({
-      a,
-      dr,
-      /* Inner particles orbit slightly faster — reads as depth, not a rigid disc. */
-      va: (0.00022 + Math.random() * 0.00030) * (1 - dr / 900),
-      b: (stray ? 0.02 + Math.random() * 0.04 : 0.035 + Math.random() * 0.085),
-      tp: Math.random() * Math.PI * 2,
-      /* Slow: the old 0.6–2.4 range read as flicker rather than shimmer. */
-      tr: 0.1 + Math.random() * 0.26,
-    })
-  }
-  return out
+/** Vertical FOV that keeps a fixed-depth object's pixel size constant as canvas height changes from `baseH`. */
+function fovForHeight(canvasH: number, baseH: number) {
+  if (baseH <= 0) return BASE_FOV
+  const halfBase = (BASE_FOV * Math.PI) / 360
+  const halfNew = Math.atan(Math.tan(halfBase) * (canvasH / baseH))
+  return (halfNew * 360) / Math.PI
 }
 
 export function LoopParticles() {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const hostRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-    const host = canvas.parentElement
+    const host = hostRef.current
     if (!host) return
 
-    const ctx = canvas.getContext('2d', { alpha: true })
-    if (!ctx) return
+    const section = host.closest('[data-section="loop"]') as HTMLElement | null
+    const artboard = section?.querySelector('.loop__artboard') as HTMLElement | null
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const small = window.matchMedia('(max-width: 900px)').matches
+    const RING_COUNT = small ? 6000 : 13000
+    const GRID_X = small ? 200 : 320
+    const GRID_Z = small ? 92 : 156
+    const SPACING = 6.36
 
-    const w = small ? MAX_W_SMALL : MAX_W
-    const h = Math.round((w * AB_H) / AB_W)
-    canvas.width = w
-    canvas.height = h
+    let W = host.clientWidth
+    let H = host.clientHeight
 
-    /* Artboard units → backing-store pixels. */
-    const s = w / AB_W
-    const cx = CX * s
-    const cy = CY * s
-    const r = TRACK_R * s
+    const scene = new THREE.Scene()
+    scene.fog = new THREE.FogExp2(0xffffff, 0.0011)
 
-    const particles = makeParticles(small ? 14000 : 42000)
-    const img = ctx.createImageData(w, h)
-    const data = img.data
+    const camera = new THREE.PerspectiveCamera(BASE_FOV, W / H, 1, 4000)
+    camera.position.set(0, 40, 720)
+    camera.lookAt(0, 60, 0)
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false })
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+    renderer.setSize(W, H)
+    renderer.setClearColor(0xffffff, 1)
+    host.appendChild(renderer.domElement)
+
+    const sprite = createDustSprite()
+
+    /* ================= RING ================= */
+    const ringGroup = new THREE.Group()
+    ringGroup.position.set(0, -10, -40)
+    scene.add(ringGroup)
+
+    const ringGeo = new THREE.BufferGeometry()
+    const ringPos = new Float32Array(RING_COUNT * 3)
+    const ringData: RingSeed[] = []
+
+    {
+      let guard = 0
+      while (ringData.length < RING_COUNT && guard < RING_COUNT * 40) {
+        guard++
+        const theta = Math.random() * Math.PI * 2
+        /* Rejection-sample against the density curve so the gaps are real gaps. */
+        if (Math.random() > ringDensity(theta)) continue
+
+        const phi = Math.random() * Math.PI * 2
+        const rJitter = TUBE_R * (0.55 + Math.random() * 0.5)
+        const scatterAngle = Math.random() * Math.PI * 2
+        ringData.push({
+          theta,
+          phi,
+          rJitter,
+          revolveSpeed: 0.12 + Math.random() * 0.04,
+          speed: 0.15 + Math.random() * 0.25,
+          wob: Math.random() * Math.PI * 2,
+          wobSpeed: 0.4 + Math.random() * 0.6,
+          wobAmp: 1.5 + Math.random() * 3.5,
+          scatterX: Math.cos(scatterAngle),
+          scatterY: Math.sin(scatterAngle),
+        })
+      }
+      /* Rejection sampling can fall a little short of RING_COUNT — pad with
+         uniform fallbacks so the buffer sizes below stay exact. */
+      while (ringData.length < RING_COUNT) {
+        const theta = Math.random() * Math.PI * 2
+        const phi = Math.random() * Math.PI * 2
+        const scatterAngle = Math.random() * Math.PI * 2
+        ringData.push({
+          theta,
+          phi,
+          rJitter: TUBE_R * (0.55 + Math.random() * 0.5),
+          revolveSpeed: 0.12 + Math.random() * 0.04,
+          speed: 0.15 + Math.random() * 0.25,
+          wob: Math.random() * Math.PI * 2,
+          wobSpeed: 0.4 + Math.random() * 0.6,
+          wobAmp: 1.5 + Math.random() * 3.5,
+          scatterX: Math.cos(scatterAngle),
+          scatterY: Math.sin(scatterAngle),
+        })
+      }
+    }
+
+    /* Single color — black — brightness jittered per-particle so the ring
+       keeps dust-like depth. */
+    const RING_BASE_COLOR = new THREE.Color(0x000000)
+    const ringColors = new Float32Array(RING_COUNT * 3)
+    for (let i = 0; i < RING_COUNT; i++) {
+      const b = 0.55 + Math.random() * 0.45
+      ringColors[i * 3] = RING_BASE_COLOR.r * b
+      ringColors[i * 3 + 1] = RING_BASE_COLOR.g * b
+      ringColors[i * 3 + 2] = RING_BASE_COLOR.b * b
+    }
+
+    ringGeo.setAttribute('position', new THREE.BufferAttribute(ringPos, 3))
+    ringGeo.setAttribute('color', new THREE.BufferAttribute(ringColors, 3))
+
+    const ringMat = new THREE.PointsMaterial({
+      size: 3.0,
+      map: sprite,
+      vertexColors: true,
+      transparent: true,
+      opacity: 0,
+      depthWrite: false,
+      blending: THREE.NormalBlending,
+      sizeAttenuation: true,
+    })
+
+    const ringPoints = new THREE.Points(ringGeo, ringMat)
+    ringGroup.add(ringPoints)
+
+    /* Hover — motes near the cursor scatter outward (no color change, or the
+       dense motes near the cursor read as invisible against the ground).
+       Radius/push are in the same local units as MAIN_R/TUBE_R (ring) and
+       grid spacing (terrain), not pixels. */
+    const RING_HOVER_R = 130
+    const RING_HOVER_PUSH = 85
+    const ringBaseColor = new THREE.Color()
+
+    function updateRing(
+      t: number,
+      scrollProgress: number,
+      hover: THREE.Vector3 | null,
+    ) {
+      const pos = ringGeo.attributes.position.array as Float32Array
+      const col = ringGeo.attributes.color.array as Float32Array
+      const spin = -(t * RING_IDLE_SPIN + scrollProgress * SCROLL_SPIN_TOTAL)
+      for (let i = 0; i < RING_COUNT; i++) {
+        const d = ringData[i]
+        const theta = d.theta - t * d.revolveSpeed
+        const phi = d.phi + t * d.speed
+        const wobble = Math.sin(t * d.wobSpeed + d.wob) * d.wobAmp
+        const tubeR = d.rJitter + wobble
+        const rad = MAIN_R + tubeR * Math.cos(phi)
+
+        let x = rad * Math.cos(theta)
+        let y = rad * Math.sin(theta)
+        const z = tubeR * Math.sin(phi)
+
+        const c = i * 3
+        ringBaseColor.setRGB(ringColors[c], ringColors[c + 1], ringColors[c + 2])
+
+        if (hover) {
+          /* `hover` already arrives in the ring's local (pre-spin) frame —
+             see `ringGroup.worldToLocal` at the call site — so it compares
+             directly against these particle coordinates.
+             Each mote flings along its OWN fixed scatter direction (not
+             radially away from the cursor) — a radial push smoothly bulges
+             the ring's silhouette outward, which read as the shape
+             deforming ("liquid") rather than dust scattering apart. */
+          const dx = x - hover.x
+          const dy = y - hover.y
+          const dz = z - hover.z
+          const dist = Math.sqrt(dx * dx + dy * dy + dz * dz)
+          if (dist < RING_HOVER_R) {
+            const f = 1 - dist / RING_HOVER_R
+            const push = f * f * RING_HOVER_PUSH
+            x += d.scatterX * push
+            y += d.scatterY * push
+          }
+        }
+
+        pos[i * 3] = x
+        pos[i * 3 + 1] = y
+        pos[i * 3 + 2] = z
+        col[c] = ringBaseColor.r
+        col[c + 1] = ringBaseColor.g
+        col[c + 2] = ringBaseColor.b
+      }
+      ringGeo.attributes.position.needsUpdate = true
+      ringGeo.attributes.color.needsUpdate = true
+      ringGroup.rotation.z = spin
+    }
+
+    /* Small bright accent particle above the ring. */
+    const dotGeo = new THREE.BufferGeometry()
+    dotGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array([0, 0, 0]), 3))
+    const dotMat = new THREE.PointsMaterial({
+      size: 6,
+      map: sprite,
+      color: 0x000000,
+      transparent: true,
+      opacity: 1,
+      depthWrite: false,
+      blending: THREE.NormalBlending,
+    })
+    const dot = new THREE.Points(dotGeo, dotMat)
+    dot.position.set(0, 160, -40)
+    scene.add(dot)
+
+    /* ================= TERRAIN ================= */
+    const terrainCount = GRID_X * GRID_Z
+    const terrainGeo = new THREE.BufferGeometry()
+    const terrainPos = new Float32Array(terrainCount * 3)
+    const terrainColor = new Float32Array(terrainCount * 3)
+    const basePos: [number, number][] = []
+
+    /* Single brand color (Secondary — Ecru Deep #f0d5cc) — distinct from
+       the black ring so the two fields don't merge visually. */
+    const TERRAIN_BASE_COLOR = new THREE.Color(0xf0d5cc)
+
+    let idx = 0
+    for (let ix = 0; ix < GRID_X; ix++) {
+      for (let iz = 0; iz < GRID_Z; iz++) {
+        const x = (ix - GRID_X / 2) * SPACING + (Math.random() - 0.5) * SPACING * 0.6
+        const z = iz * SPACING + (Math.random() - 0.5) * SPACING * 0.6
+        basePos.push([x, z])
+        terrainPos[idx * 3] = x
+        terrainPos[idx * 3 + 1] = 0
+        terrainPos[idx * 3 + 2] = z
+        idx++
+      }
+    }
+
+    terrainGeo.setAttribute('position', new THREE.BufferAttribute(terrainPos, 3))
+    terrainGeo.setAttribute('color', new THREE.BufferAttribute(terrainColor, 3))
+
+    const terrainMat = new THREE.PointsMaterial({
+      size: 4.4,
+      map: sprite,
+      vertexColors: true,
+      transparent: true,
+      opacity: 0.9,
+      depthWrite: false,
+      blending: THREE.NormalBlending,
+      sizeAttenuation: true,
+    })
+
+    const terrainPoints = new THREE.Points(terrainGeo, terrainMat)
+    terrainPoints.position.set(0, -150, -260)
+    scene.add(terrainPoints)
+
+    /* Highlight cap stays a pale neutral, not pure white — noise peaks get
+       lit without turning the field into white space. */
+    const cHi = new THREE.Color(0xf8ece4)
+    const TERRAIN_DARK_MUL = 0.32
+
+    const terrainDark = new THREE.Color()
+    const terrainMixed = new THREE.Color()
+    const terrainWithHi = new THREE.Color()
+
+    /* No hover interaction here on purpose — the ring's hover scatter and
+       the terrain's own flowing noise fought each other and read as an odd,
+       inconsistent effect. Hover stays on the ring only. */
+    function updateTerrain(t: number) {
+      const pos = terrainGeo.attributes.position.array as Float32Array
+      const col = terrainGeo.attributes.color.array as Float32Array
+      for (let i = 0; i < terrainCount; i++) {
+        const [bx, bz] = basePos[i]
+        const n = noise2(bx * 0.012 + t * 0.22, bz * 0.02 - t * 0.13)
+        const hgt = n * 26 + Math.sin(bz * 0.05 + t * 0.4) * 4
+
+        const shade = (n + 1) / 2
+
+        pos[i * 3] = bx
+        pos[i * 3 + 1] = hgt
+        pos[i * 3 + 2] = bz
+
+        terrainDark.copy(TERRAIN_BASE_COLOR).multiplyScalar(TERRAIN_DARK_MUL)
+        terrainMixed.copy(terrainDark).lerp(TERRAIN_BASE_COLOR, Math.min(1, shade * 1.3))
+        terrainWithHi.copy(terrainMixed).lerp(cHi, Math.max(0, shade - 0.75) * 2.5)
+
+        col[i * 3] = terrainWithHi.r
+        col[i * 3 + 1] = terrainWithHi.g
+        col[i * 3 + 2] = terrainWithHi.b
+      }
+      terrainGeo.attributes.position.needsUpdate = true
+      terrainGeo.attributes.color.needsUpdate = true
+    }
+
+    /* ================= SCROLL PROGRESS ================= */
+    let scrollProgress = 0
+
+    const readScrollProgress = () => {
+      if (!section) return
+      const rect = section.getBoundingClientRect()
+      const span = rect.height + window.innerHeight
+      const raw = (window.innerHeight - rect.top) / span
+      scrollProgress = Math.min(1, Math.max(0, raw))
+    }
+    readScrollProgress()
+
+    let scrollTicking = false
+    const onScroll = () => {
+      if (scrollTicking) return
+      scrollTicking = true
+      requestAnimationFrame(() => {
+        readScrollProgress()
+        scrollTicking = false
+      })
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
 
     /*
-     * Planet blue. The band was ecru, which read on the old dark fold but
-     * washed out completely once the section went white. Accumulation still
-     * works with a dark colour: RGB stays near the target while alpha builds,
-     * so overlapping motes deepen rather than brighten.
+     * ================= POINTER HOVER =================
+     * `host` is `pointer-events: none` on purpose — the canvas sits full-bleed
+     * over the section and must never block clicks on real content above it.
+     * That also means it never receives pointer events itself, so this
+     * listens on the window instead and does its own bounds check against
+     * the host's rect (a host-scoped listener would just never fire).
      */
-    const COL = { r: 0, g: 47, b: 58 }
+    const pointerNDC = new THREE.Vector2()
+    let pointerActive = false
+    const coarsePointer = window.matchMedia('(pointer: coarse)').matches
 
+    const onPointerMove = (e: PointerEvent) => {
+      const rect = host.getBoundingClientRect()
+      const inside =
+        e.clientX >= rect.left &&
+        e.clientX <= rect.right &&
+        e.clientY >= rect.top &&
+        e.clientY <= rect.bottom
+      if (!inside) {
+        pointerActive = false
+        return
+      }
+      pointerNDC.x = ((e.clientX - rect.left) / rect.width) * 2 - 1
+      pointerNDC.y = -((e.clientY - rect.top) / rect.height) * 2 + 1
+      pointerActive = true
+    }
+    if (!coarsePointer && !reduced) {
+      window.addEventListener('pointermove', onPointerMove, { passive: true })
+    }
+
+    const unprojectVec = new THREE.Vector3()
+    const rayDir = new THREE.Vector3()
+    /** World-space point where the cursor ray crosses the plane z = targetZ. */
+    function pointerWorldAt(targetZ: number): THREE.Vector3 | null {
+      if (!pointerActive) return null
+      unprojectVec.set(pointerNDC.x, pointerNDC.y, 0.5).unproject(camera)
+      rayDir.copy(unprojectVec).sub(camera.position).normalize()
+      if (Math.abs(rayDir.z) < 1e-6) return null
+      const dist = (targetZ - camera.position.z) / rayDir.z
+      if (dist <= 0) return null
+      return camera.position.clone().addScaledVector(rayDir, dist)
+    }
+
+    const ringHoverLocal = new THREE.Vector3()
+
+    /* ================= ANIMATE ================= */
+    const RING_REVEAL_END = 0.3
+
+    const clock = new THREE.Clock()
     let raf = 0
     let running = false
-    let t = 0
 
-    const draw = () => {
-      t += 1 / 60
-      data.fill(0)
+    /*
+     * A resize (canvas.width/height write) clears the GL buffer. If the rAF
+     * loop is paused at that moment — e.g. the IntersectionObserver dropped
+     * this host briefly during the pin's own layout churn — nothing repaints
+     * the clear, leaving the canvas blank until the next scroll/visibility
+     * event. Every caller of a size/state change should follow it with one
+     * of these so the canvas is never left showing a bare clear.
+     */
+    const renderFrame = () => {
+      const t = reduced ? 0 : clock.getElapsedTime()
 
-      for (let i = 0; i < particles.length; i++) {
-        const p = particles[i]
-        if (!reduced) p.a += p.va
-        const rad = r + p.dr * s
-        const x = (cx + Math.cos(p.a) * rad) | 0
-        const y = (cy + Math.sin(p.a) * rad) | 0
-        if (x < 0 || y < 0 || x >= w || y >= h) continue
+      const ringWorldHover = pointerWorldAt(ringGroup.position.z)
+      const ringHover = ringWorldHover
+        ? ringGroup.worldToLocal(ringHoverLocal.copy(ringWorldHover))
+        : null
 
-        /* Shallow + slow — a gentle breath, not a strobe. */
-        const twinkle = reduced ? 1 : 0.82 + 0.18 * Math.sin(t * p.tr + p.tp)
-        /* Fade with distance from the track so the band has soft shoulders. */
-        const falloff = Math.max(0, 1 - Math.abs(p.dr) / 130)
-        const a = p.b * twinkle * falloff
-        if (a <= 0.01) continue
+      updateRing(t, scrollProgress, ringHover)
+      updateTerrain(t)
 
-        /*
-         * One pixel, low alpha. Individually almost nothing; it is the
-         * accumulation of many overlapping motes that forms the band, which is
-         * what keeps it reading as a cloud instead of a scatter of dots.
-         */
-        const o = (y * w + x) * 4
-        data[o] = Math.min(255, data[o] + COL.r * a)
-        data[o + 1] = Math.min(255, data[o + 1] + COL.g * a)
-        data[o + 2] = Math.min(255, data[o + 2] + COL.b * a)
-        data[o + 3] = Math.min(255, data[o + 3] + 255 * a)
-      }
+      const ringReveal = smoothstep(0, RING_REVEAL_END, scrollProgress)
+      ringMat.opacity = ringReveal * RING_MAX_OPACITY
+      dot.material.opacity = ringReveal * (0.6 + Math.sin(t * 1.6) * 0.35)
+      dot.position.y = 160 + Math.sin(t * 0.5) * 6
 
-      ctx.putImageData(img, 0, 0)
-      if (running) raf = requestAnimationFrame(draw)
+      renderer.render(scene, camera)
+    }
+
+    const animate = () => {
+      raf = requestAnimationFrame(animate)
+      renderFrame()
     }
 
     const start = () => {
       if (running) return
       running = true
-      raf = requestAnimationFrame(draw)
+      clock.start()
+      raf = requestAnimationFrame(animate)
     }
     const stop = () => {
       running = false
       cancelAnimationFrame(raf)
     }
 
-    /* Only burn frames while the fold is on screen. */
     const io = new IntersectionObserver(
       ([entry]) => (entry.isIntersecting ? start() : stop()),
       { rootMargin: '10% 0px' },
     )
     io.observe(host)
 
-    /* Reduced motion still paints one static frame. */
-    if (reduced) {
-      draw()
-      io.disconnect()
-      return () => {}
-    }
-
     const onVisibility = () => (document.hidden ? stop() : start())
     document.addEventListener('visibilitychange', onVisibility)
+
+    const onResize = () => {
+      W = host.clientWidth
+      H = host.clientHeight
+      camera.aspect = W / H
+      camera.fov = fovForHeight(H, artboard?.clientHeight ?? H)
+      camera.updateProjectionMatrix()
+      renderer.setSize(W, H)
+      renderFrame()
+    }
+    onResize()
+    window.addEventListener('resize', onResize)
+
+    /*
+     * GSAP's pin/unpin doesn't fire a window `resize` event, but it does
+     * change this host's own box (e.g. once the pin-spacer collapses at the
+     * end of the scroll range) — catch that directly instead of relying on
+     * window resize alone, or the canvas can end up cleared-but-unpainted.
+     */
+    const ro = new ResizeObserver(() => onResize())
+    ro.observe(host)
+
+    /* Re-render on context restore — a lost context also clears the buffer. */
+    const onContextRestored = () => renderFrame()
+    renderer.domElement.addEventListener('webglcontextrestored', onContextRestored)
 
     return () => {
       io.disconnect()
       document.removeEventListener('visibilitychange', onVisibility)
-      stop()
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onResize)
+      window.removeEventListener('pointermove', onPointerMove)
+      ro.disconnect()
+      renderer.domElement.removeEventListener('webglcontextrestored', onContextRestored)
+      cancelAnimationFrame(raf)
+      renderer.dispose()
+      ringGeo.dispose()
+      ringMat.dispose()
+      dotGeo.dispose()
+      dotMat.dispose()
+      terrainGeo.dispose()
+      terrainMat.dispose()
+      sprite.dispose()
+      host.removeChild(renderer.domElement)
     }
   }, [])
 
-  return <canvas ref={canvasRef} className="loop__particles" aria-hidden="true" />
+  return <div ref={hostRef} className="loop__particles" aria-hidden="true" />
 }
