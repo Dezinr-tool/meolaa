@@ -119,7 +119,7 @@
   height: 0.78em;
   width: auto;
   aspect-ratio: 150 / 220;
-  fill: var(--color-joyous-yellow, #fdf28c);
+  fill: var(--color-lilac, #a8a3e3);
   vertical-align: middle;
   transform: translateY(-0.06em);
 }
@@ -157,8 +157,8 @@
   height: var(--loop-dot);
   border-radius: 50%;
   box-sizing: border-box;
-  background: transparent;
-  border: 2px solid var(--loop-node);
+  background: var(--color-white, #fff);
+  border: 2px solid var(--color-black, #000);
   transform: translate(-50%, -50%) scale(0.5);
   opacity: 0;
   transition:
@@ -175,7 +175,7 @@
   height: var(--loop-dot-inner);
   margin: calc(var(--loop-dot-inner) / -2) 0 0 calc(var(--loop-dot-inner) / -2);
   border-radius: 50%;
-  background: var(--loop-fg);
+  background: var(--color-black, #000);
 }
 
 .loop__copy {
@@ -189,15 +189,9 @@
      y — the line is positioned in artboard-space %, this offset is fixed
      CSS px, matching the fixed padding/label size it's compensating for. */
   margin-top: -34px;
-  background: color-mix(
-    in srgb,
-    var(--color-sustainable-green, #41857a) 18%,
-    rgba(255, 255, 255, 0.5)
-  );
-  -webkit-backdrop-filter: blur(var(--nav-glass-blur, 16px))
-    saturate(var(--nav-glass-saturate, 180%));
-  backdrop-filter: blur(var(--nav-glass-blur, 16px))
-    saturate(var(--nav-glass-saturate, 180%));
+  /* Design gives each stage its own flat brand colour — the uniform sage
+     wash with a glass blur behind it was reading as one repeated card. */
+  background: var(--loop-card-bg, var(--color-lilac, #a8a3e3));
   opacity: 0;
   visibility: hidden;
   transform: translateY(10px);
@@ -216,18 +210,19 @@
   font-weight: var(--fw-medium, 500);
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--loop-fg);
+  color: var(--color-black, #000);
   line-height: 1.2;
 }
 
 .loop__copy-title {
   margin: 0 0 8px;
   font-family: var(--font-display);
-  font-size: clamp(1.15rem, 1.7vw, 1.5rem);
-  font-weight: var(--fw-medium, 500);
-  line-height: 1;
-  color: var(--loop-fg);
-  max-width: 12ch;
+  font-size: clamp(1.05rem, 1.5vw, 1.35rem);
+  font-weight: var(--fw-bold, 700);
+  line-height: 1.1;
+  text-transform: uppercase;
+  color: var(--color-black, #000);
+  max-width: 14ch;
 }
 
 .loop__copy-body {
@@ -247,6 +242,18 @@
  * keep free of translateY so reveal animation can own `transform`.
  */
 /* ——— Run (top) ——— */
+.loop__step--orbit-top .loop__copy {
+  --loop-card-bg: var(--color-lilac, #a8a3e3);
+}
+
+.loop__step--orbit-bl .loop__copy {
+  --loop-card-bg: var(--color-joyous-yellow, #fdf28c);
+}
+
+.loop__step--orbit-br .loop__copy {
+  --loop-card-bg: var(--color-ecru-deep, #f0d5cc);
+}
+
 .loop__step--orbit-top .loop__dot {
   left: var(--loop-dot-top-x);
   top: var(--loop-dot-top-y);
