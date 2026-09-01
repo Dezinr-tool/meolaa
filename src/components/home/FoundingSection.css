@@ -543,13 +543,13 @@
 /* One "differently" fills solid yellow, the other reads as an outline —
    same word-treatment language as Loop / Vision / Hero / Lab headlines. */
 .founding__mark-word--fill {
-  color: var(--color-joyous-yellow, #fdf28c) !important;
+  color: var(--color-title-accent, #f2c9bd) !important;
   -webkit-text-stroke: 0 !important;
 }
 
 .founding__mark-word--outline {
-  color: transparent !important;
-  -webkit-text-stroke: 1.5px var(--founding-ink);
+  color: var(--color-title-accent, #f2c9bd) !important;
+  -webkit-text-stroke: 0 !important;
 }
 
 /* Vision-style per-char scrub fill — opacity only; mark-word wrappers stay. */

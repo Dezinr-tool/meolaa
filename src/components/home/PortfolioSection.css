@@ -59,9 +59,9 @@
   color: var(--color-planet-blue, #002f3a) !important;
 }
 
-/* Word treatment matches Loop's title — one word solid ink, one yellow-fill. */
+/* Word treatment matches Loop's title — one word solid ink, one brand-green fill. */
 .portfolio-title__word--fill {
-  color: var(--color-joyous-yellow, #fdf28c) !important;
+  color: var(--color-title-accent, #f2c9bd) !important;
 }
 
 /* Figma subcopy: 18px/1.3, 60% opacity, 518px measure. */

@@ -102,14 +102,14 @@
  */
 .loop__title-word--outline {
   font-weight: var(--fw-bold, 700);
-  color: transparent;
-  -webkit-text-stroke: var(--loop-title-outline-w, 1.75px) var(--loop-fg);
+  color: var(--color-title-accent, #f2c9bd);
+  -webkit-text-stroke: 0;
 }
 
 /* Fill only — no outline. */
 .loop__title-word--fill {
   font-weight: var(--fw-bold, 700);
-  color: var(--color-joyous-yellow, #fdf28c);
+  color: var(--color-title-accent, #f2c9bd);
 }
 
 /* E-mark beside "brands" — sized off the title's own font-size so it always

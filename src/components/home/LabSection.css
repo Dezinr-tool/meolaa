@@ -121,13 +121,13 @@
    outline word (dilation-based text-shadow closes up small counters at
    this weight; a real stroke doesn't). */
 .meola-lab__headline-word--outline {
-  color: transparent;
-  -webkit-text-stroke: 1.5px var(--color-planet-blue, #002f3a);
+  color: var(--color-title-accent, #f2c9bd);
+  -webkit-text-stroke: 0;
 }
 
 /* "Scale." — solid fill. */
 .meola-lab__headline-word--fill {
-  color: var(--color-joyous-yellow, #fdf28c);
+  color: var(--color-title-accent, #f2c9bd);
 }
 
 .meola-lab__sub {

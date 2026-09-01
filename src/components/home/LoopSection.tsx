@@ -4,7 +4,6 @@
  * Pin + scrub: yellow fill travels BL → top → BR → BL
  * (Build → Run → Signal). Increasing atan2 in SVG Y-down.
  */
-import { MeolaaEMark } from '../brand/MeolaaEMark'
 import { LOOP_STEPS } from '../../lib/loopPath'
 import { LoopParticles } from './LoopParticles'
 import { LoopTitleTuner } from './LoopTitleTuner'
@@ -184,11 +183,7 @@ export function LoopSection() {
               </span>{' '}
               <span className="loop__title-word loop__title-word--outline">
                 brands
-              </span>{' '}
-              <MeolaaEMark
-                className="loop__title-mark"
-                aria-hidden="true"
-              />
+              </span>
             </span>
           </ParallaxHeading>
         </header>

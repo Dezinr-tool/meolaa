@@ -47,7 +47,7 @@ export function LabParticles({ activeIndex }: { activeIndex: number }) {
   const toIdxRef = useRef(activeIndex)
   const tRef = useRef(1)
   const activeIndexRef = useRef(activeIndex)
-  const rafRef = useRef<number>()
+  const rafRef = useRef<number | undefined>(undefined)
   const sizeRef = useRef(360)
 
   useEffect(() => {

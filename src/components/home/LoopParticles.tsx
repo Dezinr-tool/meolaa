@@ -547,7 +547,6 @@ export function LoopParticles() {
     const ringHoverLocal = new THREE.Vector3()
 
     /* ================= ANIMATE ================= */
-    const RING_REVEAL_END = 0.3
 
     const clock = new THREE.Clock()
     let raf = 0
@@ -572,7 +571,11 @@ export function LoopParticles() {
       updateRing(t, scrollProgress, ringHover)
       updateTerrain(t)
 
-      const ringReveal = smoothstep(0, RING_REVEAL_END, scrollProgress)
+      /* Ring is fully visible from the moment this section lands — only the
+         inner bright band's density still grows with scroll (handled in
+         updateRing). This used to fade the whole ring in from 0 over the
+         first 30% of the pin, so it read as "missing" on landing. */
+      const ringReveal = 1
       ringMat.opacity = ringReveal * RING_MAX_OPACITY
       dot.material.opacity = ringReveal * (0.6 + Math.sin(t * 1.6) * 0.35)
       dot.position.y = 160 + Math.sin(t * 0.5) * 6

@@ -36,6 +36,9 @@
   --color-lilac-deep: #5656ad; /* Generous Lilac */
   --color-ecru-deep: #f0d5cc;
   --color-sustainable-green: #41857a;
+  /* Dusty rose — the title word-fill/outline accent, replacing yellow/green
+     in headline treatments (Loop/Vision/Lab/Founding/Portfolio titles). */
+  --color-title-accent: #f2c9bd;
 
   /* Neutrals / utilities */
   --color-black: #000000;
