@@ -3,6 +3,8 @@ import { initLoop } from '../loopAnimations'
 import {
   ROADMAP_END_TIP_HIDE,
   ROADMAP_STEPS,
+  VIEW_MIN_X,
+  VIEW_W,
   roadmapBulletsVisible,
   roadmapDrawProgress,
   roadmapRingVisible,
@@ -38,6 +40,8 @@ export function initAboutRoadmap(): () => void {
   const drawn = root.querySelector<SVGPathElement>('[data-au-roadmap-drawn]')
   const tipEl = root.querySelector<SVGCircleElement>('[data-au-roadmap-tip]')
   const track = root.querySelector<HTMLElement>('[data-au-roadmap-track]')
+  const camera = root.querySelector<HTMLElement>('[data-au-roadmap-camera]')
+  const viewport = root.querySelector<HTMLElement>('[data-au-roadmap-viewport]')
   const steps = Array.from(
     root.querySelectorAll<HTMLElement>('[data-au-roadmap-step]'),
   )
@@ -91,9 +95,37 @@ export function initAboutRoadmap(): () => void {
     }
   }
 
+  /**
+   * Camera pan — the Figma frames show the viewport tracking along a path
+   * far wider than the frame, so the drawing tip stays on screen while the
+   * rest of the curve scrolls past. Pans by the tip's own x rather than
+   * linearly with progress: the path doubles back on itself twice, so a
+   * linear pan would run ahead of the tip through the loops.
+   */
+  function syncCamera(progress: number) {
+    if (!camera || !viewport) return
+    if (isNarrow()) {
+      camera.style.transform = ''
+      return
+    }
+    const tip = samplePathTipLocal(drawn!, progress)
+    if (!tip) return
+
+    const camW = camera.scrollWidth || camera.getBoundingClientRect().width
+    const viewW = viewport.clientWidth
+    if (camW <= 0 || viewW <= 0) return
+
+    /* Path units → camera px. */
+    const tipPx = ((tip.x - VIEW_MIN_X) / VIEW_W) * camW
+    const maxPan = Math.max(0, camW - viewW)
+    const pan = Math.min(maxPan, Math.max(0, tipPx - viewW / 2))
+    camera.style.transform = `translate3d(${-pan}px, 0, 0)`
+  }
+
   function sync(progress: number, immediate = false) {
     const pathLen = drawn!.getTotalLength()
     syncTipGraphics(progress, pathLen)
+    syncCamera(progress)
     const stage = activeIndex(progress)
     applyStepFocus(stage, progress)
     root!.classList.add('is-roadmap-ready')

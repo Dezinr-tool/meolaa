@@ -11,6 +11,8 @@ import {
   PATH_TRANSFORM,
   VIEW_H,
   VIEW_W,
+  VIEW_MIN_X,
+  VIEW_MIN_Y,
   artboardToContainerFraction,
   pathLength,
   sampleRoadmapStepPoints,
@@ -18,16 +20,20 @@ import {
 } from '../../lib/aboutRoadmapPath'
 import './AboutRoadmapSection.css'
 
-const FALLBACK_POINTS: RoadmapScreenPoint[] = ROADMAP_STEPS.map((step) => ({
+type StepPoint = RoadmapScreenPoint & { dxPx: number; dyPx: number }
+
+const FALLBACK_POINTS: StepPoint[] = ROADMAP_STEPS.map((step) => ({
   s: step.s,
-  x: step.x / VIEW_W,
-  y: step.y / VIEW_H,
+  x: (step.x - VIEW_MIN_X) / VIEW_W,
+  y: (step.y - VIEW_MIN_Y) / VIEW_H,
+  dxPx: 0,
+  dyPx: 0,
 }))
 
 export function AboutRoadmapSection() {
   const svgRef = useRef<SVGSVGElement>(null)
   const pathRef = useRef<SVGPathElement>(null)
-  const [points, setPoints] = useState<RoadmapScreenPoint[]>(FALLBACK_POINTS)
+  const [points, setPoints] = useState<StepPoint[]>(FALLBACK_POINTS)
 
   useLayoutEffect(() => {
     const path = pathRef.current
@@ -37,10 +43,21 @@ export function AboutRoadmapSection() {
     const syncLayout = () => {
       pathLength(path)
       const artboardPts = sampleRoadmapStepPoints(path)
+      /* Path units → px, so the per-step copy offsets scale with the camera
+         instead of resolving against the (zero-width) step element. */
+      const rect = svg.getBoundingClientRect()
+      const unitPx = rect.width > 0 ? rect.width / VIEW_W : 0
       setPoints(
-        artboardPts.map((pt) => {
+        artboardPts.map((pt, i) => {
           const frac = artboardToContainerFraction(svg, pt.x, pt.y)
-          return { s: pt.s, x: frac.x, y: frac.y }
+          const step = ROADMAP_STEPS[i]
+          return {
+            s: pt.s,
+            x: frac.x,
+            y: frac.y,
+            dxPx: (step?.dx ?? 0) * unitPx,
+            dyPx: (step?.dy ?? 0) * unitPx,
+          }
         }),
       )
     }
@@ -81,7 +98,7 @@ export function AboutRoadmapSection() {
                 <svg
                   ref={svgRef}
                   className="au-roadmap__svg"
-                  viewBox={`0 0 ${VIEW_W} ${VIEW_H}`}
+                  viewBox={`${VIEW_MIN_X} ${VIEW_MIN_Y} ${VIEW_W} ${VIEW_H}`}
                   fill="none"
                   aria-hidden="true"
                   overflow="visible"
@@ -120,6 +137,8 @@ export function AboutRoadmapSection() {
                         style={{
                           left: `${pt.x * 100}%`,
                           top: `${pt.y * 100}%`,
+                          ['--au-rm-copy-dx' as string]: `${pt.dxPx}px`,
+                          ['--au-rm-copy-dy' as string]: `${pt.dyPx}px`,
                         }}
                       >
                         <span className="au-roadmap__marker" aria-hidden="true">

@@ -8,7 +8,10 @@
   --au-rm-card: var(--color-white, #fff);
   --au-rm-fg: var(--color-primary, #002f3a);
   --au-rm-fg-muted: color-mix(in srgb, var(--color-primary, #002f3a) 62%, transparent);
-  --au-rm-track: var(--color-joyous-yellow, #fdf28c);
+  /* Figma runs a high-contrast stroke against its ground (white path on the
+     dark frame). This card is white, so Primary is the equivalent — Joyous
+     Yellow on white read as almost invisible. */
+  --au-rm-track: var(--color-primary, #002f3a);
   --au-rm-tip: var(--color-primary, #002f3a);
   --au-rm-pill-inactive: var(--color-ecru, #f8ece4);
   --au-rm-pill-active: var(--color-primary, #002f3a);
@@ -112,19 +115,28 @@
   justify-content: center;
 }
 
+/* Window onto the path. Its aspect matches the Figma frame's visible slice
+   (1422 × 1000 path units) so the camera below — which is the full path
+   bounds (2660u) wide — renders the curve at exactly the design's scale
+   with no letterboxing. Must stay in step with VIEW_W/VIEW_H. */
 .au-roadmap__viewport {
   position: relative;
   width: 100%;
-  min-height: 220px;
-  height: clamp(220px, 28vh, 320px);
+  aspect-ratio: 1422 / 1000;
+  height: auto;
+  min-height: 0;
   overflow: hidden;
 }
 
+/* Wider than the viewport by the ratio of the full path bounds (2660u) to
+   the Figma frame window (1422u) — that surplus is exactly what the camera
+   pans across as the path draws. */
 .au-roadmap__camera {
   position: absolute;
-  inset: 0;
-  width: 100%;
+  inset: 0 auto 0 0;
+  width: calc(100% * (2660 / 1422));
   height: 100%;
+  will-change: transform;
 }
 
 .au-roadmap__svg {
@@ -143,11 +155,14 @@
   opacity: 0;
 }
 
+/* No ghost/underlay path — only the drawn stroke exists, so nothing shows
+   ahead of the tip (explicitly requested). */
 .au-roadmap__drawn {
   fill: none;
   stroke: var(--au-rm-track);
   stroke-linecap: round;
   stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
 }
 
 .au-roadmap__tip {
@@ -204,37 +219,34 @@
   border-color: var(--au-rm-tip);
 }
 
-/* ——— Loop-style connector + card ———
- * Same visual language as the homepage Loop section's orbit cards: a thin
- * line from the dot up to a flat-colour card with label/title/body. Cards
- * alternate up/down per step so four of them along one horizontal line
- * don't collide. */
+/* Figma draws no connector between the marker and its copy — the dot sits
+   on the path and the text block hangs below it. Kept in the DOM (harmless)
+   but not rendered, so the markup stays stable. */
 .au-roadmap__connector {
-  position: absolute;
-  left: 50%;
-  bottom: calc(var(--au-rm-diamond) / 2);
-  width: 1px;
-  height: 56px;
-  background: color-mix(in srgb, var(--au-rm-fg) 30%, transparent);
-  opacity: 0;
-  transition: opacity 0.4s cubic-bezier(0.33, 1, 0.68, 1);
+  display: none;
 }
 
-.au-roadmap__step.is-copy-visible .au-roadmap__connector {
-  opacity: 1;
-}
-
+/* Copy block: left edge aligned to the marker, hanging below it — matching
+   the Figma frames (marker x=110/y=387 → text x=110/y=455). Left-aligned
+   rather than centred also keeps it clear of the curve it labels. */
 .au-roadmap__copy {
   position: absolute;
-  bottom: calc(var(--au-rm-diamond) / 2 + 56px);
-  left: 50%;
-  transform: translate(-50%, 10px);
+  top: calc(var(--au-rm-diamond) / 2 + 26px);
+  bottom: auto;
+  left: 0;
+  /* Per-step nudge (px, set from JS in path-unit space) keeps each block off
+     the stroke where the curve doubles back. */
+  margin-left: var(--au-rm-copy-dx, 0px);
+  margin-top: var(--au-rm-copy-dy, 0px);
+  transform: translate(0, 10px);
   z-index: 2;
   box-sizing: border-box;
   width: clamp(200px, 20vw, 260px);
-  padding: 20px;
+  /* Figma sets the milestone copy as plain text on the frame — no filled
+     card behind it — so the path stays the graphic element. */
+  padding: 0;
   border-radius: 0;
-  background: var(--au-rm-card-bg, var(--color-lilac, #a8a3e3));
+  background: transparent;
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
@@ -248,56 +260,12 @@
 .au-roadmap__step.is-copy-visible .au-roadmap__copy {
   opacity: 1;
   visibility: visible;
-  transform: translate(-50%, 0);
+  transform: translate(0, 0);
   pointer-events: auto;
   transition:
     opacity 0.4s cubic-bezier(0.33, 1, 0.68, 1),
     transform 0.4s cubic-bezier(0.33, 1, 0.68, 1),
     visibility 0s linear 0s;
-}
-
-.au-roadmap__step[data-au-roadmap-index='0'] {
-  --au-rm-card-bg: var(--color-lilac, #a8a3e3);
-}
-
-.au-roadmap__step[data-au-roadmap-index='1'] {
-  --au-rm-card-bg: var(--color-joyous-yellow, #fdf28c);
-}
-
-.au-roadmap__step[data-au-roadmap-index='2'] {
-  --au-rm-card-bg: var(--color-ecru-deep, #f0d5cc);
-}
-
-.au-roadmap__step[data-au-roadmap-index='3'] {
-  --au-rm-card-bg: var(--color-sustainable-green, #41857a);
-}
-
-.au-roadmap__step[data-au-roadmap-index='3'] .au-roadmap__copy-label,
-.au-roadmap__step[data-au-roadmap-index='3'] .au-roadmap__copy-title {
-  color: var(--color-white, #fff);
-}
-
-.au-roadmap__step[data-au-roadmap-index='3'] .au-roadmap__copy-body {
-  color: color-mix(in srgb, var(--color-white, #fff) 78%, transparent);
-}
-
-/* Alternate up/down so four cards along one straight line don't collide. */
-.au-roadmap__step[data-au-roadmap-index='1'] .au-roadmap__connector,
-.au-roadmap__step[data-au-roadmap-index='3'] .au-roadmap__connector {
-  bottom: auto;
-  top: calc(var(--au-rm-diamond) / 2);
-}
-
-.au-roadmap__step[data-au-roadmap-index='1'] .au-roadmap__copy,
-.au-roadmap__step[data-au-roadmap-index='3'] .au-roadmap__copy {
-  bottom: auto;
-  top: calc(var(--au-rm-diamond) / 2 + 56px);
-  transform: translate(-50%, -10px);
-}
-
-.au-roadmap__step[data-au-roadmap-index='1'].is-copy-visible .au-roadmap__copy,
-.au-roadmap__step[data-au-roadmap-index='3'].is-copy-visible .au-roadmap__copy {
-  transform: translate(-50%, 0);
 }
 
 .au-roadmap__copy-label {
@@ -350,11 +318,10 @@
   border-color: var(--au-rm-tip);
 }
 
-.au-roadmap.is-static .au-roadmap__step .au-roadmap__connector,
 .au-roadmap.is-static .au-roadmap__step .au-roadmap__copy {
   opacity: 1;
   visibility: visible;
-  transform: translate(-50%, 0);
+  transform: translate(0, 0);
 }
 
 @media (max-width: 900px) {
