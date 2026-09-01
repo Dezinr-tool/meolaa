@@ -458,11 +458,23 @@ export function FoundingSection() {
             Type comes from .founding__statement, which is later in the
             stylesheet and so wins at equal specificity. */}
         <h2 id="founding-title" className="founding__title founding__statement">
-          People start living
+          People start{' '}
+          <span
+            className="founding__mark-word founding__mark-word--fill"
+            data-founding-mark="living"
+          >
+            living
+          </span>
           <br />
           differently before they
           <br />
-          buy differently.
+          <span
+            className="founding__mark-word founding__mark-word--outline"
+            data-founding-mark="buy"
+          >
+            buy
+          </span>{' '}
+          differently.
         </h2>
 
         <div className="founding__actions">

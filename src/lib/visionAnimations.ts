@@ -379,7 +379,9 @@ export function initVision(options: InitVisionOptions = {}): () => void {
       vtl.to({}, { duration: 0.06 })
     }
 
-    vtl.to({}, { duration: 0.08 })
+    /* Extra breathing room after the text finishes highlighting, before the
+       video starts scaling up — was too abrupt straight off the char fill. */
+    vtl.to({}, { duration: 0.28 })
     vtl.fromTo(
       videoBox,
       {

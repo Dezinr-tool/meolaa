@@ -64,14 +64,10 @@ export function PortfolioSection() {
       aria-labelledby="portfolio-heading"
     >
       <header className="portfolio-title section-head section-head--on-light">
-        <p className="section-head__eyebrow">Brands</p>
+        <p className="section-head__eyebrow">Portfolio</p>
         <ParallaxHeading className="section-head__title" id="portfolio-heading">
           Our <span className="portfolio-title__word--fill">Portfolio</span>
         </ParallaxHeading>
-        <p className="section-head__sub">
-          One live brand and a pipeline behind it — each read from demand,
-          built by the same system, and run end to end.
-        </p>
       </header>
 
       <div className="brands__list">

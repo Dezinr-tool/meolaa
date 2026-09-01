@@ -196,6 +196,11 @@
 
 .metrics__head .section-head__title {
   color: var(--sh-title);
+  /* Exact match to the Loop / Vision / Lab / Founding / Portfolio title scale. */
+  font-size: clamp(2rem, 6vw, 5rem) !important;
+  font-weight: var(--fw-bold, 700) !important;
+  line-height: var(--loop-title-lh, 0.95) !important;
+  letter-spacing: var(--loop-title-ls, -2px) !important;
 }
 
 .metrics__head .section-head__sub {
@@ -261,6 +266,15 @@
 /* Press: split header needs full content measure; type from .section-head__*. */
 .press-feed__head.section-head {
   max-width: 100%;
+}
+
+.press-feed__head .section-head__title {
+  /* Exact match to the Loop / Vision / Lab / Founding / Portfolio / Metrics
+     title scale — font only, no colour change. */
+  font-size: clamp(2rem, 6vw, 5rem) !important;
+  font-weight: var(--fw-bold, 700) !important;
+  line-height: var(--loop-title-lh, 0.95) !important;
+  letter-spacing: var(--loop-title-ls, -2px) !important;
 }
 
 /* Loop header ink/accent owned by LoopSection.css (yellow eyebrow / ecru). */

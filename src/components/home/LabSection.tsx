@@ -54,7 +54,12 @@ const LAB_PIN_VH = 3.6
 const LAB_SCRUB = true
 /** Timeline units: hold each panel, then scrub the hop to the next. */
 const HOLD = 0.42
-const TRANS = 0.9
+/* Short relative to HOLD — this used to eat ~60% of the pin's scroll
+   distance in a long, visibly-overlapping crossfade that read as the
+   scroll "getting stuck" between cards. Shrunk so a transition completes
+   within a small fraction of one scroll gesture instead of dragging on
+   for most of a viewport height. */
+const TRANS = 0.18
 
 /**
  * Scroll progress → panel index (inclusive holds).

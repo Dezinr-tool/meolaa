@@ -236,7 +236,7 @@ html {
    the reliable way to beat both without chasing a third override later. */
 .hero__headline-word--fill {
   display: inline !important;
-  color: var(--color-joyous-yellow, #fdf28c);
+  color: var(--color-lilac, #a8a3e3);
 }
 
 /* "AI era" — outline only, true stroke (dilation-based text-shadow closes
@@ -995,12 +995,12 @@ body {
  * half as much into the counter for the same width, which keeps them
  * open — same fix already used for the Loop title's own outline word. */
 .vision__word--outline .vision__char {
-  color: var(--color-title-accent, #f2c9bd);
-  -webkit-text-stroke: 0;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--color-primary, #002f3a);
 }
 
 .vision__word--fill .vision__char {
-  color: var(--color-title-accent, #f2c9bd);
+  color: var(--color-lilac-deep, #5656ad);
 }
 
 /* Exact match to the Loop title — same clamp, weight, line-height,

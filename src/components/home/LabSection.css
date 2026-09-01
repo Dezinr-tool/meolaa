@@ -117,17 +117,16 @@
   opacity: 1;
 }
 
-/* "Signal" — outline only, same true-stroke technique as the Loop title's
-   outline word (dilation-based text-shadow closes up small counters at
-   this weight; a real stroke doesn't). */
+/* "Signal" — solid purple fill. */
 .meola-lab__headline-word--outline {
-  color: var(--color-title-accent, #f2c9bd);
+  color: var(--color-lilac-deep, #5656ad);
   -webkit-text-stroke: 0;
 }
 
-/* "Scale." — solid fill. */
+/* "Scale." — true outline (primary stroke). */
 .meola-lab__headline-word--fill {
-  color: var(--color-title-accent, #f2c9bd);
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--color-primary, #002f3a);
 }
 
 .meola-lab__sub {
