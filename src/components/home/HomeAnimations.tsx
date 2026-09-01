@@ -585,25 +585,48 @@ export function HomeAnimations() {
         })
       }
 
-      /* Bento tiles: staggered opacity + y lift + soft scale (no blur — cleaner on photos). */
+      /* HIRA hero tile: staggered opacity + y lift + soft scale (no blur — cleaner on photos). */
       if (portfolio && !reduceMotion) {
-        const brandTiles = gsap.utils.toArray<Element>(
-          portfolio.querySelectorAll('.brand-hero, .brand-row'),
-        )
-        if (brandTiles.length) {
-          revealOnEnter(brandTiles, portfolio, {
+        const heroTile = portfolio.querySelector('.brand-hero')
+        if (heroTile) {
+          revealOnEnter([heroTile], portfolio, {
             start: 'top 82%',
             y: 28,
             blur: 0,
             scale: 0.97,
             duration: 0.8,
-            stagger: 0.08,
             ease: 'power2.out',
           })
+        }
+
+        /* "Coming soon" rows: slide in horizontally, same language as the
+           Lab panel entrance — not the vertical lift used elsewhere on this
+           page, per explicit request. */
+        const brandRows = gsap.utils.toArray<Element>(
+          portfolio.querySelectorAll('.brand-row'),
+        )
+        if (brandRows.length) {
+          gsap.fromTo(
+            brandRows,
+            { x: () => window.innerWidth * 0.4, autoAlpha: 0 },
+            {
+              x: 0,
+              autoAlpha: 1,
+              duration: 0.55,
+              stagger: 0.07,
+              ease: 'power3.out',
+              scrollTrigger: {
+                trigger: portfolio,
+                start: 'top 70%',
+                toggleActions: 'play none none reverse',
+              },
+            },
+          )
         }
       } else if (portfolio && reduceMotion) {
         gsap.set(portfolio.querySelectorAll('.brand-hero, .brand-row'), {
           autoAlpha: 1,
+          x: 0,
           y: 0,
           scale: 1,
         })

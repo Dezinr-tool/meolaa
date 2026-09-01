@@ -296,7 +296,7 @@ export function LoopParticles() {
        default and fills in on scroll, matching the reference: a loose
        outer halo that's always there, and a denser bright inner ring
        that builds up as you scroll. */
-    const REVEAL_START_INNER = 0.12
+    const REVEAL_START_INNER = 0
     const REVEAL_END_INNER = 1
 
     function updateRing(

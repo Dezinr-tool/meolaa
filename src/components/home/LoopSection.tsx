@@ -52,7 +52,7 @@ const ON_TRACK_RAW = {
  */
 const ON_TRACK = {
   ...ON_TRACK_RAW,
-  top: { x: ON_TRACK_RAW.top.x, y: ON_TRACK_RAW.top.y + 156 },
+  top: { x: ON_TRACK_RAW.top.x, y: ON_TRACK_RAW.top.y + 128 },
 } as const
 
 function pctX(x: number) {
@@ -139,7 +139,7 @@ const ORBIT_STYLE = {
   /* Shifted further left than the Figma seed value — the wider copy card
      (widened separately for readability) was overlapping the Build dot
      at this artboard scale otherwise. */
-  ['--loop-copy-bl-x' as string]: pctX(45),
+  ['--loop-copy-bl-x' as string]: pctX(-20),
   ['--loop-copy-bl-y' as string]: pctY(ON_TRACK.bl.y),
   ['--loop-copy-br-x' as string]: pctX(1092),
   ['--loop-copy-br-y' as string]: pctY(ON_TRACK.br.y),

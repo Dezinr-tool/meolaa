@@ -44,7 +44,7 @@
   width: 100%;
   max-width: min(64rem, 94vw);
   margin-inline: auto;
-  padding: clamp(56px, 7svh, 80px) clamp(20px, 3vw, 48px) clamp(24px, 3.4vw, 44px) !important;
+  padding: clamp(56px, 7svh, 80px) clamp(20px, 3vw, 48px) clamp(96px, 12svh, 140px) !important;
   background: transparent !important;
   color: var(--pf-ink) !important;
   box-sizing: border-box;

@@ -605,7 +605,11 @@ section.investors,
   position: relative;
   /* Overlap metrics join by 1px so compositor hairlines don't read full-bleed. */
   margin-top: -1px;
-  padding: clamp(16px, 2.5vh, 28px) clamp(24px, 4vw, 64px) !important;
+  /* Extra bottom padding is breathing room before Press — stays inside this
+     section's own white background, unlike a margin on Press itself, which
+     would sit outside .press-feed's box and expose the dark app shell. */
+  padding: clamp(16px, 2.5vh, 28px) clamp(24px, 4vw, 64px)
+    calc(clamp(16px, 2.5vh, 28px) + 100px) !important;
   gap: 0 !important;
 }
 
@@ -660,8 +664,6 @@ section.investors,
   --press-pad-x: clamp(24px, 4vw, 64px);
   position: relative;
   z-index: 2;
-  /* Breathing room from the section above it. */
-  margin-top: 100px;
   height: 100vh;
   height: 100svh;
   min-height: 100svh;

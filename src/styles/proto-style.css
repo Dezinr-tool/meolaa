@@ -914,8 +914,10 @@ img { display: block; max-width: 100%; }
      alone wouldn't move them in). */
   --metrics-pad: clamp(28px, 4.5vw, 64px);
   padding-inline: var(--metrics-pad);
-  /* Breathing room from Portfolio above it. */
-  margin-top: 150px;
+  /* Breathing room from Portfolio above it — padding, not margin, so it
+     stays inside this section's own white background instead of exposing
+     the dark app shell behind it. */
+  padding-top: 150px;
 }
 
 .metric {
