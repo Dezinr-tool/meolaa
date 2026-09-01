@@ -458,9 +458,11 @@ export function FoundingSection() {
             Type comes from .founding__statement, which is later in the
             stylesheet and so wins at equal specificity. */}
         <h2 id="founding-title" className="founding__title founding__statement">
-          It started with a question no one else was asking. We turn emerging
-          demand into a system that launches brands faster than traditional
-          FMCG can move
+          People start living
+          <br />
+          differently before they
+          <br />
+          buy differently.
         </h2>
 
         <div className="founding__actions">

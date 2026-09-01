@@ -133,8 +133,8 @@ export { PortfolioSection } from './PortfolioSection'
 /** Stair washes from Figma 8i9eIHImFGm2Mrf9haxErD / 10:2 — soft pastel blobs. */
 const METRIC_STAIRS = [
   {
-    value: '$10M',
-    label: 'Raised across rounds',
+    value: '—',
+    label: 'Tech-forward numbers (model calibrations)',
     hPct: '50%',
     wash: '/assets/metrics/bar-1.svg',
   },
@@ -151,8 +151,8 @@ const METRIC_STAIRS = [
     wash: '/assets/metrics/bar-3.svg',
   },
   {
-    value: '—',
-    label: 'Tech-forward numbers (model calibrations)',
+    value: '$10M',
+    label: 'Raised across rounds',
     hPct: '100%',
     wash: '/assets/metrics/bar-4.svg',
   },
