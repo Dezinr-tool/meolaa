@@ -353,18 +353,27 @@
     display: none;
   }
 
+  /* Explicit top overrides — desktop's tuned Figma-space Y values for the
+     "top" (Run/Signal) dot sit close to the "bl" (Build) dot at this
+     narrower aspect ratio, which put their cards on top of each other.
+     Forcing three clearly separated vertical bands here (independent of
+     the desktop --loop-copy-*-y vars) fixes that without touching the
+     desktop positions those vars still drive. */
   .loop__step--orbit-top .loop__copy {
     left: 4%;
+    top: 8% !important;
     width: min(140px, 38vw);
   }
 
   .loop__step--orbit-bl .loop__copy {
     left: 2%;
+    top: 62% !important;
   }
 
   .loop__step--orbit-br .loop__copy {
     left: auto;
     right: 2%;
+    top: 82% !important;
     width: min(140px, 38vw);
   }
 }
