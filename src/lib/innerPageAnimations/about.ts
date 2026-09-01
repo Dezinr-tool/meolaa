@@ -18,8 +18,8 @@ import {
 } from './shared'
 
 const SCRUB = 0.55
-const PIN_VH_DESKTOP = 2.2
-const PIN_VH_MOBILE = 1.6
+const PIN_VH_DESKTOP = 3.2
+const PIN_VH_MOBILE = 2.3
 const STEP_ARRIVE_BIAS = 0.015
 
 /** Homepage Loop fold on About — scroll-pinned path draw + camera. */
