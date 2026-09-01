@@ -21,9 +21,10 @@ type SmoothScrollProps = {
  * Frame-rate–independent damp (Lenis v1). Lower = silkier; floor ~0.06 so
  * ScrollTrigger pins stay glued instead of lagging behind the scroller.
  */
-const LENIS_LERP = 0.068
-/** Slight boost so low lerp still feels responsive on trackpads. */
-const LENIS_WHEEL_MULTIPLIER = 1.05
+const LENIS_LERP = 0.055
+/** Below 1 so the page covers less distance per wheel tick — slower, more
+ *  deliberate feel alongside the lower lerp. */
+const LENIS_WHEEL_MULTIPLIER = 0.85
 const REDUCED_MQ = '(prefers-reduced-motion: reduce)'
 
 export function SmoothScroll({ children }: SmoothScrollProps) {
