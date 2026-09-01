@@ -386,16 +386,21 @@
   inset: 0;
   z-index: 2;
   opacity: 1;
+  /* Near-hard edge (98%->100%) — the reveal has to read as "the real
+     letterform, solid, wherever the circle sits", not a soft glowing blob
+     whose blurry boundary cuts across the glyph independent of its shape
+     (which is what made it look like a second, mismatched shape spilling
+     outside the outline). */
   mask-image: radial-gradient(
-    circle 280px at var(--mx) var(--my),
+    circle 220px at var(--mx) var(--my),
     #000 0%,
-    color-mix(in srgb, #000 55%, transparent) 45%,
+    #000 98%,
     transparent 100%
   );
   -webkit-mask-image: radial-gradient(
-    circle 280px at var(--mx) var(--my),
+    circle 220px at var(--mx) var(--my),
     #000 0%,
-    color-mix(in srgb, #000 55%, transparent) 45%,
+    #000 98%,
     transparent 100%
   );
   transition: opacity 0.2s ease;
