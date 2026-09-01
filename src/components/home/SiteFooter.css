@@ -151,7 +151,6 @@
   flex-direction: column;
   gap: 0;
   margin: 0 0 clamp(24px, 3vw, 36px);
-  border-top: 1px solid color-mix(in srgb, var(--color-ecru, #f8ece4) 8%, transparent);
 }
 
 .site-footer__jump {
@@ -187,10 +186,12 @@
   flex: 0 1 auto;
   max-width: min(42%, 420px);
   font-family: var(--font-sans);
-  font-size: clamp(12px, 0.95vw, 14px);
-  font-weight: 400;
+  /* Matches the sitewide subtext style (Portfolio's .brand-row__cat) —
+     16px/medium, full opacity. */
+  font-size: 16px;
+  font-weight: var(--fw-medium, 500);
   line-height: 1.4;
-  color: color-mix(in srgb, var(--color-ecru, #f8ece4) 48%, transparent);
+  color: var(--color-ecru, #f8ece4);
   text-align: right;
   transition: color 0.25s ease;
 }
@@ -221,11 +222,14 @@
 
 .site-footer__tagline {
   margin: 0;
-  font-size: 13px;
+  /* Matches the sitewide subtext style (Portfolio's .brand-row__cat) —
+     16px/medium, full opacity. */
+  font-size: 16px;
+  font-weight: var(--fw-medium, 500);
   line-height: 1.45;
   max-width: 200px;
   opacity: 1;
-  color: color-mix(in srgb, var(--color-ecru, #f8ece4) 72%, transparent);
+  color: var(--color-ecru, #f8ece4);
 }
 
 .site-footer__grid>div,

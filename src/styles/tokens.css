@@ -109,8 +109,11 @@
   /* Slightly open tracking for ALL-CAPS section titles. */
   --section-head-title-tracking: -0.01em;
   --section-head-title-lh: 1.02;
+  /* Matches Portfolio's .brand-row__cat subtext exactly — one subtext
+     style sitewide, full opacity (not the dimmed/muted look this used
+     to have). */
   --section-head-sub-size: 1rem; /* 16 — section subtext, desktop + mobile */
-  --section-head-sub-weight: var(--fw-regular);
+  --section-head-sub-weight: var(--fw-medium);
   --section-head-sub-lh: 1.55;
   /* Narrower than title → inverted-pyramid stack. */
   --section-head-sub-max: 42ch;
@@ -121,20 +124,12 @@
   /* On-light (white / ecru / cream / yellow grounds) */
   --section-head-on-light-ink: var(--color-black, #000000);
   --section-head-on-light-accent: var(--section-head-accent);
-  --section-head-on-light-muted: color-mix(
-    in srgb,
-    var(--color-black, #000000) 58%,
-    transparent
-  );
+  --section-head-on-light-muted: var(--color-black, #000000);
 
   /* On-dark (planet blue / teal / photo grounds) — white family only */
   --section-head-on-dark-ink: var(--color-white, #ffffff);
   --section-head-on-dark-accent: var(--section-head-accent);
-  --section-head-on-dark-muted: color-mix(
-    in srgb,
-    var(--color-white, #ffffff) 70%,
-    transparent
-  );
+  --section-head-on-dark-muted: var(--color-white, #ffffff);
 
   /* ——— Space / layout ——— */
   --pad-x: clamp(24px, 5vw, 72px);
