@@ -383,7 +383,23 @@
    it's invisible until the pointer actually enters the mark. */
 .site-footer__wordmark-hover {
   position: absolute;
-  inset: 0;
+  /* Inset to the wrapper's CONTENT box, not its padding box. `inset: 0` on an
+     absolutely-positioned child resolves against the padding box, so this
+     layer was ignoring .site-footer__mark-wrap's --footer-gutter padding —
+     it rendered ~64px wider and 32px further left than the base outline
+     layer (which is a normal in-flow child and does respect that padding),
+     so the fill never lined up with the outline it was supposed to fill. */
+  left: var(--footer-gutter);
+  right: var(--footer-gutter);
+  top: 0;
+  bottom: auto;
+  /* `width`/`height` must be auto so the left/right (and the aspect-ratio)
+     actually drive the box — the shared .site-footer__wordmark class sets
+     `width: 100%`, which otherwise wins and stretches this layer back out
+     to the full padding box. */
+  width: auto;
+  height: auto;
+  aspect-ratio: 1065.3 / 213.8;
   z-index: 2;
   opacity: 1;
   /* Near-hard edge (98%->100%) — the reveal has to read as "the real
