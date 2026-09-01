@@ -52,7 +52,7 @@ const ON_TRACK_RAW = {
  */
 const ON_TRACK = {
   ...ON_TRACK_RAW,
-  top: { x: ON_TRACK_RAW.top.x, y: ON_TRACK_RAW.top.y + 100 },
+  top: { x: ON_TRACK_RAW.top.x, y: ON_TRACK_RAW.top.y + 120 },
 } as const
 
 function pctX(x: number) {

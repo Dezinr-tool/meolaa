@@ -207,7 +207,9 @@
 .site-footer__grid a {
   color: color-mix(in srgb, var(--color-ecru, #f8ece4) 92%, transparent);
   text-decoration: none;
-  font-size: 14px;
+  /* Matches the sitewide subtext style (Portfolio's .brand-row__cat). */
+  font-size: 16px;
+  font-weight: var(--fw-medium, 500);
   line-height: 1.3;
   display: block;
   margin-top: 10px;
@@ -238,10 +240,13 @@
 }
 
 .site-footer__label {
+  /* Matches the sitewide eyebrow style exactly (.section-head__eyebrow). */
   font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.1em;
+  font-size: var(--section-head-eyebrow-size, 0.75rem);
+  font-weight: var(--section-head-eyebrow-weight, var(--fw-semibold, 600));
+  letter-spacing: var(--section-head-eyebrow-tracking, 0.18em);
   text-transform: uppercase;
+  line-height: 1.2;
   color: color-mix(in srgb, var(--color-ecru, #f8ece4) 42%, transparent);
   margin-bottom: 2px;
 }
@@ -281,7 +286,7 @@
 
 .site-footer__socials a {
   margin-top: 0;
-  font-size: 13px;
+  font-size: 16px;
 }
 
 .site-footer__bottom {

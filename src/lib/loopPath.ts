@@ -92,9 +92,9 @@ export const LOOP_STEPS: LoopStepDef[] = [
     copyAnchor: 'below-left',
   },
   {
-    label: 'Run',
-    title: 'The system keeps it running.',
-    body: 'Distribution, content and operations kept alive by the same engine that built it.',
+    label: 'Signal',
+    title: 'Decode what people need.',
+    body: 'We translate signals across behaviour, culture, social, sales, reviews, and more, into new products and propositions.',
     s: 0.4412,
     x: 594,
     y: 304,
