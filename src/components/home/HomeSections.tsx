@@ -49,6 +49,34 @@ export function HeroSection() {
           </div>
         </div>
       </div>
+      <div className="hero__scroll-cue" aria-hidden="true">
+        <svg
+          className="hero__scroll-cue-svg"
+          width="26"
+          height="42"
+          viewBox="0 0 26 42"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <rect
+            x="1.5"
+            y="1.5"
+            width="23"
+            height="39"
+            rx="11.5"
+            stroke="currentColor"
+            strokeWidth="1.5"
+          />
+          <circle
+            className="hero__scroll-cue-dot"
+            cx="13"
+            cy="12"
+            r="3"
+            fill="currentColor"
+          />
+        </svg>
+      </div>
+
       <VideoModal
         open={isFilmOpen}
         onClose={() => setFilmOpen(false)}

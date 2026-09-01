@@ -368,10 +368,12 @@
   border-radius: 0;
 }
 
+/* Base mark reads as a hollow line-art outline — the cursor-follow layer
+   below is what fills it solid on hover/move. */
 .site-footer__wordmark .meolaa-logo-mark__path {
-  fill: #fff;
-  fill: url(#footer-meolaa-fill);
-  stroke: none;
+  fill: none;
+  stroke: color-mix(in srgb, var(--color-ecru, #f8ece4) 70%, transparent);
+  stroke-width: 1.5;
   opacity: 1;
   paint-order: stroke fill;
 }
@@ -385,20 +387,26 @@
   z-index: 2;
   opacity: 1;
   mask-image: radial-gradient(
-    circle 180px at var(--mx) var(--my),
+    circle 280px at var(--mx) var(--my),
     #000 0%,
+    color-mix(in srgb, #000 55%, transparent) 45%,
     transparent 100%
   );
   -webkit-mask-image: radial-gradient(
-    circle 180px at var(--mx) var(--my),
+    circle 280px at var(--mx) var(--my),
     #000 0%,
+    color-mix(in srgb, #000 55%, transparent) 45%,
     transparent 100%
   );
   transition: opacity 0.2s ease;
 }
 
 .site-footer__wordmark-hover .meolaa-logo-mark__path {
-  fill: var(--color-joyous-yellow, #fdf28c);
+  /* Overrides the hollow-outline base rule above — this selector and that
+     one are equal specificity (one class + descendant each), so without
+     an explicit fill here the later-declared `fill: none` from the base
+     rule wins regardless of which element actually needs it. */
+  fill: url(#footer-meolaa-fill-hover);
   stroke: none;
 }
 

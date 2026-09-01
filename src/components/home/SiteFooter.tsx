@@ -22,9 +22,10 @@ import './SiteFooter.css'
 
 const REDUCED_MQ = '(prefers-reduced-motion: reduce)'
 
-/** Mostly white → soft fade so MEOLAA stays readable on the navy footer. */
-const FOOTER_LOGO_GRADIENT = {
-  id: 'footer-meolaa-fill',
+/** Mostly white → soft fade — used by the cursor-reveal fill copy only;
+ *  the base mark is a hollow outline (see SiteFooter.css) with no gradient. */
+const FOOTER_LOGO_GRADIENT_HOVER = {
+  id: 'footer-meolaa-fill-hover',
   top: '#ffffff',
   bottom: 'rgba(255, 255, 255, 0.55)',
 } as const
@@ -65,22 +66,50 @@ function FooterBody({
 
   /* Cursor-follow reveal on the footer wordmark — mirrors the founding
    * pixel-cursor pattern's fine-pointer gate. Sets --mx/--my (percentages
-   * within the mark wrap) that the mask-image radial-gradient reads. */
+   * within the mark wrap) that the mask-image radial-gradient reads.
+   * Lerped via rAF rather than snapping straight to the pointer each move —
+   * a raw 1:1 follow reads as a glitchy jump-cut when the mouse moves fast,
+   * especially over a wide element like this wordmark. */
   useEffect(() => {
     const wrap = markWrapRef.current
     if (!wrap) return
     if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return
 
+    let targetX = -100
+    let targetY = -100
+    let curX = -100
+    let curY = -100
+    let raf = 0
+    let active = false
+
+    const tick = () => {
+      curX += (targetX - curX) * 0.18
+      curY += (targetY - curY) * 0.18
+      wrap.style.setProperty('--mx', `${curX}%`)
+      wrap.style.setProperty('--my', `${curY}%`)
+      if (active || Math.abs(targetX - curX) > 0.1 || Math.abs(targetY - curY) > 0.1) {
+        raf = requestAnimationFrame(tick)
+      } else {
+        raf = 0
+      }
+    }
+
+    const ensureLoop = () => {
+      if (!raf) raf = requestAnimationFrame(tick)
+    }
+
     const onMove = (e: PointerEvent) => {
       const rect = wrap.getBoundingClientRect()
-      const x = ((e.clientX - rect.left) / rect.width) * 100
-      const y = ((e.clientY - rect.top) / rect.height) * 100
-      wrap.style.setProperty('--mx', `${x}%`)
-      wrap.style.setProperty('--my', `${y}%`)
+      targetX = ((e.clientX - rect.left) / rect.width) * 100
+      targetY = ((e.clientY - rect.top) / rect.height) * 100
+      active = true
+      ensureLoop()
     }
     const onLeave = () => {
-      wrap.style.setProperty('--mx', '-100%')
-      wrap.style.setProperty('--my', '-100%')
+      targetX = -100
+      targetY = -100
+      active = false
+      ensureLoop()
     }
 
     wrap.addEventListener('pointermove', onMove)
@@ -88,6 +117,7 @@ function FooterBody({
     return () => {
       wrap.removeEventListener('pointermove', onMove)
       wrap.removeEventListener('pointerleave', onLeave)
+      if (raf) cancelAnimationFrame(raf)
     }
   }, [])
 
@@ -178,19 +208,21 @@ function FooterBody({
       </div>
 
       <div className="site-footer__mark-wrap" ref={markWrapRef}>
+        {/* Base mark — hollow line-art outline (see .site-footer__wordmark
+            .meolaa-logo-mark__path). No gradient fill needed. */}
         <MeolaaLogoMark
           className="site-footer__wordmark"
           viewBox={MEOLAA_MARK_VIEWBOX_TIGHT}
-          verticalGradient={FOOTER_LOGO_GRADIENT}
           aria-label="Meolaa"
         />
-        {/* Cursor-follow reveal — a bright solid pass masked to a soft circle
-            that tracks the pointer, same "hover to light it up" feel as
-            heronaiapp.com's footer wordmark. Fine-pointer only; decorative,
-            so aria-hidden and stacked over the real (accessible) mark. */}
+        {/* Cursor-follow reveal — the same mark solid-filled, masked to a
+            soft circle that tracks the pointer, so hovering/moving over it
+            "fills in" the outline. Fine-pointer only; decorative, so
+            aria-hidden and stacked over the real (accessible) mark. */}
         <MeolaaLogoMark
           className="site-footer__wordmark site-footer__wordmark-hover"
           viewBox={MEOLAA_MARK_VIEWBOX_TIGHT}
+          verticalGradient={FOOTER_LOGO_GRADIENT_HOVER}
           aria-hidden="true"
         />
       </div>
