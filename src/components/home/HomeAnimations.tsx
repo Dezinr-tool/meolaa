@@ -611,14 +611,17 @@ export function HomeAnimations() {
           portfolio.querySelectorAll('.brand-row'),
         )
         if (brandRows.length) {
+          /* Same interaction as the Lab panel entrance (x: innerWidth*0.4,
+             duration 0.55, stagger 0.07, power3.out) — vertical instead of
+             horizontal, per explicit request. */
           gsap.fromTo(
             brandRows,
-            { y: 60, autoAlpha: 0 },
+            { y: () => window.innerHeight * 0.4, autoAlpha: 0 },
             {
               y: 0,
               autoAlpha: 1,
-              duration: 0.6,
-              stagger: 0.09,
+              duration: 0.55,
+              stagger: 0.07,
               ease: 'power3.out',
               scrollTrigger: {
                 trigger: brandRowList || brandRows[0] || portfolio,
