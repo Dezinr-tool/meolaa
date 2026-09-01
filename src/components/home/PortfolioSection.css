@@ -424,6 +424,14 @@
   .brand-row__ticker-track {
     animation-duration: 14s;
   }
+
+  /* One reading edge on small screens — the desktop right-aligned
+     description reads as inconsistent next to the left-aligned status and
+     name once the row narrows. Applies across the whole tablet+phone band,
+     not just the <600px stacked layout. */
+  .brand-row__cat {
+    text-align: left;
+  }
 }
 
 @media (max-width: 600px) {

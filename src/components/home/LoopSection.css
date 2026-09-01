@@ -361,13 +361,13 @@
      desktop positions those vars still drive. */
   .loop__step--orbit-top .loop__copy {
     left: 4%;
-    top: 8% !important;
+    top: 4% !important;
     width: min(140px, 38vw);
   }
 
   .loop__step--orbit-bl .loop__copy {
     left: 2%;
-    top: 62% !important;
+    top: 68% !important;
   }
 
   .loop__step--orbit-br .loop__copy {
