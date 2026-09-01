@@ -932,3 +932,43 @@ body {
 .site-nav__toggle {
   color: var(--color-primary, #002f3a) !important;
 }
+
+/* ——— Hero background image ———
+ * Drops in as soon as /assets/hero-prism.jpg exists; until then the hero just
+ * shows the white ground and nothing here has any effect.
+ *
+ * The rest of the site is white with ink type, but this image is dark — so the
+ * hero (and the nav while it is over the hero) flip back to light type. The nav
+ * already switches to ink on `.is-scrolled`, which lands once the hero is past.
+ */
+.hero--blank .hero__bg {
+  background-color: #05070a !important;
+  background-image: url('/assets/hero-prism.jpg') !important;
+  background-size: cover;
+  background-position: center 42%;
+  background-repeat: no-repeat;
+}
+
+/* Readability scrim — the headline sits bottom-left over the image's darkest
+   corner, so this only needs to lift the very bottom. */
+.hero--blank .hero__shade {
+  display: block !important;
+  background: linear-gradient(
+    180deg,
+    rgba(5, 7, 10, 0) 45%,
+    rgba(5, 7, 10, 0.55) 100%
+  ) !important;
+}
+
+.fold.hero .hero__headline,
+.fold.hero .hero__lede {
+  color: var(--color-ecru, #f8ece4) !important;
+}
+
+.site-nav--home:not(.is-scrolled) .site-nav__logo-img .meolaa-logo-mark__path {
+  fill: var(--color-ecru, #f8ece4) !important;
+}
+
+.site-nav--home:not(.is-scrolled) .site-nav__links--right a {
+  color: var(--color-ecru, #f8ece4) !important;
+}
