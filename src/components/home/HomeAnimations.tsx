@@ -65,80 +65,6 @@ function formatMetricDisplay(parsed: ParsedMetric, n: number): string {
   return `${parsed.prefix}${formatMetricValue(n, parsed.decimals)}${parsed.suffix}`
 }
 
-type RevealOpts = {
-  start?: string
-  end?: string
-  y?: number
-  blur?: number
-  duration?: number
-  stagger?: number
-  delay?: number
-  /** Starting scale; animates to 1. Omit / pass 1 for no scale. */
-  scale?: number
-  scrub?: boolean | number
-  toggleActions?: string
-  ease?: string
-}
-
-/** Fade-up / optional scale+blur reveal on scroll enter — skipped when prefers-reduced-motion. */
-function revealOnEnter(
-  targets: gsap.TweenTarget,
-  trigger: Element | string,
-  opts: RevealOpts = {},
-) {
-  if (!targets || (Array.isArray(targets) && targets.length === 0)) return
-
-  if (prefersReducedMotion()) {
-    gsap.set(targets, { autoAlpha: 1, y: 0, scale: 1, filter: 'blur(0px)' })
-    return
-  }
-
-  const {
-    start = 'top 84%',
-    end = 'top 48%',
-    y = 28,
-    blur = 6,
-    duration = 0.85,
-    stagger = 0.09,
-    delay = 0,
-    scale = 1,
-    scrub = false,
-    toggleActions = 'play none none reverse',
-    ease = REVEAL_EASE,
-  } = opts
-
-  const from: gsap.TweenVars = {
-    autoAlpha: 0,
-    y,
-    filter: blur > 0 ? `blur(${blur}px)` : 'blur(0px)',
-  }
-  if (scale !== 1) from.scale = scale
-
-  const to: gsap.TweenVars = {
-    autoAlpha: 1,
-    y: 0,
-    scale: 1,
-    filter: 'blur(0px)',
-    duration,
-    ease,
-    stagger,
-    delay,
-  }
-
-  if (scrub) {
-    gsap.fromTo(targets, from, {
-      ...to,
-      ease: 'none',
-      scrollTrigger: { trigger, start, end, scrub },
-    })
-  } else {
-    gsap.fromTo(targets, from, {
-      ...to,
-      scrollTrigger: { trigger, start, toggleActions },
-    })
-  }
-}
-
 /**
  * Same load as the hero headline: from fully hidden (0) → 100% opacity,
  * blur(8px) → sharp, y 32 → 0. Never settles at a partial opacity.
@@ -585,18 +511,27 @@ export function HomeAnimations() {
         })
       }
 
-      /* HIRA hero tile: staggered opacity + y lift + soft scale (no blur — cleaner on photos). */
+      /* HIRA hero tile: same rise-from-bottom treatment as the rows below it,
+         triggered off its own position (not the whole section — same fix
+         as the rows). */
       if (portfolio && !reduceMotion) {
         const heroTile = portfolio.querySelector('.brand-hero')
         if (heroTile) {
-          revealOnEnter([heroTile], portfolio, {
-            start: 'top 82%',
-            y: 28,
-            blur: 0,
-            scale: 0.97,
-            duration: 0.8,
-            ease: 'power2.out',
-          })
+          gsap.fromTo(
+            heroTile,
+            { y: 90, autoAlpha: 0 },
+            {
+              y: 0,
+              autoAlpha: 1,
+              duration: 1.0,
+              ease: 'power3.out',
+              scrollTrigger: {
+                trigger: heroTile,
+                start: 'top 92%',
+                toggleActions: 'play none none reverse',
+              },
+            },
+          )
         }
 
         /* "Coming soon" rows: rise in from below, one at a time, stacking as
