@@ -599,21 +599,20 @@ export function HomeAnimations() {
           })
         }
 
-        /* "Coming soon" rows: slide in horizontally, same language as the
-           Lab panel entrance — not the vertical lift used elsewhere on this
-           page, per explicit request. */
+        /* "Coming soon" rows: rise in from below, same language as the Lab
+           card entrance, per explicit request. */
         const brandRows = gsap.utils.toArray<Element>(
           portfolio.querySelectorAll('.brand-row'),
         )
         if (brandRows.length) {
           gsap.fromTo(
             brandRows,
-            { x: () => window.innerWidth * 0.4, autoAlpha: 0 },
+            { y: 60, autoAlpha: 0 },
             {
-              x: 0,
+              y: 0,
               autoAlpha: 1,
-              duration: 0.55,
-              stagger: 0.07,
+              duration: 0.6,
+              stagger: 0.09,
               ease: 'power3.out',
               scrollTrigger: {
                 trigger: portfolio,
