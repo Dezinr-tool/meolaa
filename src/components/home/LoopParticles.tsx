@@ -20,9 +20,16 @@ const CX = 711
 const CY = 629
 const TRACK_R = 289
 
-/** Backing-store width; height follows the artboard ratio. */
-const MAX_W = 1100
-const MAX_W_SMALL = 620
+/**
+ * Backing-store width; height follows the artboard ratio.
+ *
+ * Deliberately small. At ~1:1 with CSS size every mote resolved as a distinct
+ * speck and the band read as noise; drawn small and scaled up, the browser's
+ * bilinear filter turns each one into a soft blob and the field reads as mist.
+ * The upscale is the blur — no filter pass needed.
+ */
+const MAX_W = 420
+const MAX_W_SMALL = 260
 
 type P = {
   /** Angle on the ring. */
@@ -70,14 +77,14 @@ function makeParticles(count: number): P[] {
     const stray = Math.random() < 0.08
     const dr = stray
       ? (Math.random() < 0.5 ? -1 : 1) * (48 + Math.random() * 120)
-      : gauss() * 30 + gauss() * 13
+      : gauss() * 40 + gauss() * 18
 
     out.push({
       a,
       dr,
       /* Inner particles orbit slightly faster — reads as depth, not a rigid disc. */
       va: (0.00022 + Math.random() * 0.00030) * (1 - dr / 900),
-      b: (stray ? 0.18 + Math.random() * 0.3 : 0.4 + Math.random() * 0.9),
+      b: (stray ? 0.02 + Math.random() * 0.04 : 0.035 + Math.random() * 0.085),
       tp: Math.random() * Math.PI * 2,
       /* Slow: the old 0.6–2.4 range read as flicker rather than shimmer. */
       tr: 0.1 + Math.random() * 0.26,
@@ -112,7 +119,7 @@ export function LoopParticles() {
     const cy = CY * s
     const r = TRACK_R * s
 
-    const particles = makeParticles(small ? 6000 : 18000)
+    const particles = makeParticles(small ? 14000 : 42000)
     const img = ctx.createImageData(w, h)
     const data = img.data
 
@@ -123,22 +130,6 @@ export function LoopParticles() {
      * so overlapping motes deepen rather than brighten.
      */
     const COL = { r: 0, g: 47, b: 58 }
-
-    const splat = (x: number, y: number, a: number) => {
-      const add = (px: number, py: number, k: number) => {
-        if (px < 0 || py < 0 || px >= w || py >= h) return
-        const o = (py * w + px) * 4
-        data[o] = Math.min(255, data[o] + COL.r * k)
-        data[o + 1] = Math.min(255, data[o + 1] + COL.g * k)
-        data[o + 2] = Math.min(255, data[o + 2] + COL.b * k)
-        data[o + 3] = Math.min(255, data[o + 3] + 255 * k)
-      }
-      add(x, y, a)
-      add(x + 1, y, a * 0.5)
-      add(x - 1, y, a * 0.5)
-      add(x, y + 1, a * 0.5)
-      add(x, y - 1, a * 0.5)
-    }
 
     let raf = 0
     let running = false
@@ -164,11 +155,15 @@ export function LoopParticles() {
         if (a <= 0.01) continue
 
         /*
-         * Splat a small kernel rather than one pixel. A single pixel at ~1:1
-         * backing scale is invisible against the dark ground; this gives each
-         * mote a core plus dim neighbours, and overlapping motes accumulate.
+         * One pixel, low alpha. Individually almost nothing; it is the
+         * accumulation of many overlapping motes that forms the band, which is
+         * what keeps it reading as a cloud instead of a scatter of dots.
          */
-        splat(x, y, a)
+        const o = (y * w + x) * 4
+        data[o] = Math.min(255, data[o] + COL.r * a)
+        data[o + 1] = Math.min(255, data[o + 1] + COL.g * a)
+        data[o + 2] = Math.min(255, data[o + 2] + COL.b * a)
+        data[o + 3] = Math.min(255, data[o + 3] + 255 * a)
       }
 
       ctx.putImageData(img, 0, 0)
