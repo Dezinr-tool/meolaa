@@ -914,6 +914,8 @@ img { display: block; max-width: 100%; }
      alone wouldn't move them in). */
   --metrics-pad: clamp(28px, 4.5vw, 64px);
   padding-inline: var(--metrics-pad);
+  /* Breathing room from Portfolio above it. */
+  margin-top: 150px;
 }
 
 .metric {

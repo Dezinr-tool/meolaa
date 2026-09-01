@@ -260,7 +260,7 @@
   text-transform: uppercase;
   white-space: nowrap;
   justify-self: start;
-  align-self: start;
+  align-self: center;
 }
 
 /* Sentence-length copy — no longer a short uppercase tag, so it wraps and

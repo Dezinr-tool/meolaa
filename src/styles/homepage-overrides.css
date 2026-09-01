@@ -660,6 +660,8 @@ section.investors,
   --press-pad-x: clamp(24px, 4vw, 64px);
   position: relative;
   z-index: 2;
+  /* Breathing room from the section above it. */
+  margin-top: 100px;
   height: 100vh;
   height: 100svh;
   min-height: 100svh;
