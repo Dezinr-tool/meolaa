@@ -600,7 +600,13 @@ export function HomeAnimations() {
         }
 
         /* "Coming soon" rows: rise in from below, same language as the Lab
-           card entrance, per explicit request. */
+           card entrance, per explicit request. Triggered off the row LIST,
+           not the whole (tall) portfolio section — using the section as
+           trigger meant "top 70%" fired the moment the section's top (up at
+           HIRA) crossed that line, long before the rows themselves had
+           scrolled into view, so the animation had already finished
+           off-screen and never visibly played. */
+        const brandRowList = portfolio.querySelector('.brands__list')
         const brandRows = gsap.utils.toArray<Element>(
           portfolio.querySelectorAll('.brand-row'),
         )
@@ -615,8 +621,8 @@ export function HomeAnimations() {
               stagger: 0.09,
               ease: 'power3.out',
               scrollTrigger: {
-                trigger: portfolio,
-                start: 'top 70%',
+                trigger: brandRowList || brandRows[0] || portfolio,
+                start: 'top 85%',
                 toggleActions: 'play none none reverse',
               },
             },
