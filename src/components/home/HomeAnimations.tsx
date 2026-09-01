@@ -377,6 +377,7 @@ export function HomeAnimations() {
 
     ctx = gsap.context(() => {
       const vision = document.querySelector('[data-section="vision"]')
+      const loop = document.querySelector('[data-section="loop"]')
       const lab = document.querySelector('[data-section="lab"]')
       const founding = document.querySelector('[data-section="founding"]')
       const portfolio = document.querySelector('[data-section="brands"]')
@@ -407,6 +408,31 @@ export function HomeAnimations() {
 
       /* ——— The Loop: pin + path draw + camera zoom (Build → Run → Signal) ——— */
       initLoop()
+
+      /* ——— Loop fades out as it hands over to Lab ———
+       * Same treatment as Lab → Founding below: un-scrubbed (fires once the
+       * scroll crosses the trigger point and plays out on its own clock, not
+       * welded to the scrollbar), reverses on the way back up. Targets the
+       * artboard (title/orbit/copy) and the particle canvas host, not the
+       * section itself — `.loop`'s white ground stays put so the dissolve
+       * doesn't expose whatever's behind it. */
+      if (loop) {
+        const loopLayers = gsap.utils.toArray<Element>(
+          loop.querySelectorAll('.loop__artboard, .loop__particles'),
+        )
+        if (loopLayers.length && !reduceMotion) {
+          gsap.to(loopLayers, {
+            opacity: 0,
+            duration: LAB_FADE_OUT,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: loop,
+              start: 'bottom 85%',
+              toggleActions: 'play none none reverse',
+            },
+          })
+        }
+      }
 
       /* ——— Lab: intro — title like hero; sub/desc via word stagger ——— */
       if (lab) {
