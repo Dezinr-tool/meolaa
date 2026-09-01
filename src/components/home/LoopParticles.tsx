@@ -91,8 +91,13 @@ export function LoopParticles() {
     const img = ctx.createImageData(w, h)
     const data = img.data
 
-    /* Ecru core with a joyous-yellow lean — the orbit's own palette. */
-    const COL = { r: 253, g: 246, b: 205 }
+    /*
+     * Planet blue. The band was ecru, which read on the old dark fold but
+     * washed out completely once the section went white. Accumulation still
+     * works with a dark colour: RGB stays near the target while alpha builds,
+     * so overlapping motes deepen rather than brighten.
+     */
+    const COL = { r: 0, g: 47, b: 58 }
 
     const splat = (x: number, y: number, a: number) => {
       const add = (px: number, py: number, k: number) => {

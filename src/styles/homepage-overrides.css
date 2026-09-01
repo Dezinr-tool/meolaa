@@ -814,3 +814,106 @@ section.investors,
 .brands {
   --pf-radius: 0;
 }
+
+/* ——— White ground ———
+ * Every section renders on white. The dark folds (hero, loop, footer) carried
+ * light type, so their foregrounds are flipped to ink here — background alone
+ * would have made that copy invisible rather than merely restyled.
+ */
+.app--home,
+.app--inner,
+body {
+  background: #ffffff;
+}
+
+.fold.hero,
+.hero--blank .hero__bg,
+.fold.vision,
+.vision,
+.fold.loop,
+.loop,
+.meola-lab,
+.founding,
+.brands,
+.metrics,
+.investors,
+.press-feed,
+.footer-reveal-section,
+.footer-reveal-section--static {
+  background: #ffffff !important;
+  background-image: none !important;
+}
+
+/* The hero's black scrim only existed to hold light type off a dark ground. */
+.hero--blank .hero__shade {
+  display: none !important;
+}
+
+/* Hero type → ink. */
+.fold.hero .hero__headline,
+.fold.hero .hero__lede {
+  color: var(--color-primary, #002f3a) !important;
+}
+
+/* Loop was #0a3038 with white type. */
+/* LoopSection.css is imported from the component, so it lands after this file
+   in the cascade — these need !important to win at equal specificity. */
+.loop {
+  --loop-fg: var(--color-primary, #002f3a) !important;
+  --loop-fg-muted: color-mix(in srgb, var(--color-primary, #002f3a) 62%, transparent) !important;
+  color: var(--color-primary, #002f3a) !important;
+}
+
+.loop .section-head__sub,
+.loop__copy-body {
+  color: color-mix(in srgb, var(--color-primary, #002f3a) 62%, transparent) !important;
+}
+
+.loop .section-head__title,
+.loop__copy-title,
+.loop__copy-label {
+  color: var(--color-primary, #002f3a) !important;
+}
+
+/* Footer was planet blue with ecru type. */
+.footer-reveal-section,
+.site-footer,
+.site-footer__jump-title,
+.site-footer__tagline,
+.site-footer__copy {
+  color: var(--color-primary, #002f3a) !important;
+}
+
+.site-footer__grid a,
+.site-footer__legal a,
+.site-footer__socials a,
+.site-footer__jump-desc,
+.site-footer__label {
+  color: color-mix(in srgb, var(--color-primary, #002f3a) 72%, transparent) !important;
+}
+
+/* The mark band carries its own background-color, so it stayed a dark slab
+   under the white footer. */
+.site-footer__mark-wrap,
+.footer-content,
+.footer-copy-reveal {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+/* Wordmark is a white-to-transparent gradient — it vanished on white. */
+.site-footer__wordmark .meolaa-logo-mark__path {
+  fill: color-mix(in srgb, var(--color-primary, #002f3a) 14%, transparent) !important;
+}
+
+/* Newsletter field needs a visible edge on white. */
+.site-footer__newsletter input {
+  border-color: color-mix(in srgb, var(--color-primary, #002f3a) 22%, transparent) !important;
+  color: var(--color-primary, #002f3a) !important;
+}
+
+/* Nav sits on light now. */
+.site-nav--home .site-nav__logo,
+.site-nav--home .site-nav__links--right a {
+  color: var(--color-primary, #002f3a) !important;
+}
