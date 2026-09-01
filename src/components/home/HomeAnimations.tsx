@@ -599,38 +599,35 @@ export function HomeAnimations() {
           })
         }
 
-        /* "Coming soon" rows: rise in from below, same language as the Lab
-           card entrance, per explicit request. Triggered off the row LIST,
-           not the whole (tall) portfolio section — using the section as
-           trigger meant "top 70%" fired the moment the section's top (up at
-           HIRA) crossed that line, long before the rows themselves had
-           scrolled into view, so the animation had already finished
-           off-screen and never visibly played. */
-        const brandRowList = portfolio.querySelector('.brands__list')
+        /* "Coming soon" rows: rise in from below, one at a time, stacking as
+           each individually scrolls into view — a single group trigger
+           (whether on the section or the row list) fires the instant that
+           trigger element's own top crosses the line, which sits well
+           above the lower rows, so the animation finished off-screen
+           before they were visible on a normal scroll down. Each row now
+           gets its own ScrollTrigger keyed to its own position, and the
+           reveal is slower so it actually reads while scrolling instead of
+           snapping in. */
         const brandRows = gsap.utils.toArray<Element>(
           portfolio.querySelectorAll('.brand-row'),
         )
-        if (brandRows.length) {
-          /* Same interaction as the Lab panel entrance (x: innerWidth*0.4,
-             duration 0.55, stagger 0.07, power3.out) — vertical instead of
-             horizontal, per explicit request. */
+        brandRows.forEach((rowEl) => {
           gsap.fromTo(
-            brandRows,
-            { y: () => window.innerHeight * 0.4, autoAlpha: 0 },
+            rowEl,
+            { y: 90, autoAlpha: 0 },
             {
               y: 0,
               autoAlpha: 1,
-              duration: 0.55,
-              stagger: 0.07,
+              duration: 1.0,
               ease: 'power3.out',
               scrollTrigger: {
-                trigger: brandRowList || brandRows[0] || portfolio,
-                start: 'top 85%',
+                trigger: rowEl,
+                start: 'top 92%',
                 toggleActions: 'play none none reverse',
               },
             },
           )
-        }
+        })
       } else if (portfolio && reduceMotion) {
         gsap.set(portfolio.querySelectorAll('.brand-hero, .brand-row'), {
           autoAlpha: 1,
