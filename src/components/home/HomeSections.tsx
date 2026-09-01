@@ -21,8 +21,14 @@ export function HeroSection() {
           would mean cross-fading two marks instead of moving one. */}
       <div className="hero__bottom">
         <ParallaxHeading as="h1" className="hero__headline" align="start">
-          <span>The consumer company</span>
-          <span>of the AI era</span>
+          <span>
+            The{' '}
+            <span className="hero__headline-word--fill">consumer</span>
+          </span>
+          <span>company of the</span>
+          <span>
+            <span className="hero__headline-word--outline">AI era</span>
+          </span>
         </ParallaxHeading>
         <div className="hero__panel">
           <p className="hero__lede">
@@ -97,12 +103,15 @@ export function VisionSection() {
               <span data-vision-line="primary" data-vision-outline="1">
                 From signal to home,
               </span>
+              <span data-vision-line="secondary">
+                we create what you&rsquo;ll
+              </span>
               <span
                 className="vision__headline-line--faded"
-                data-vision-line="secondary"
-                data-vision-fill="4,5"
+                data-vision-line="tertiary"
+                data-vision-fill="0,1"
               >
-                we create what you&rsquo;ll choose next.
+                choose next.
               </span>
             </h2>
           </div>
@@ -124,26 +133,26 @@ export { PortfolioSection } from './PortfolioSection'
 /** Stair washes from Figma 8i9eIHImFGm2Mrf9haxErD / 10:2 — soft pastel blobs. */
 const METRIC_STAIRS = [
   {
-    value: '$6M',
-    label: 'Raised across seed rounds',
+    value: '$10M',
+    label: 'Raised across rounds',
     hPct: '50%',
     wash: '/assets/metrics/bar-1.svg',
   },
   {
-    value: '120+',
-    label: 'Categories mapped',
+    value: '5',
+    label: 'Tech institutional investors',
     hPct: '64%',
     wash: '/assets/metrics/bar-2.svg',
   },
   {
-    value: '1',
-    label: 'Brand live',
+    value: '18',
+    label: 'Months since launch',
     hPct: '80%',
     wash: '/assets/metrics/bar-3.svg',
   },
   {
-    value: '3',
-    label: 'Market Served',
+    value: '—',
+    label: 'Tech-forward numbers (model calibrations)',
     hPct: '100%',
     wash: '/assets/metrics/bar-4.svg',
   },
@@ -160,7 +169,7 @@ export function MetricsSection() {
       <header className="metrics__head section-head section-head--on-light">
         <p className="section-head__eyebrow">By the numbers</p>
         <ParallaxHeading id="metrics-title" className="section-head__title">
-          Proof, not promises.
+          Proof, not <span className="portfolio-title__word--fill">promises.</span>
         </ParallaxHeading>
         <p className="section-head__sub">
           Where the system stands today, capital raised, categories mapped,

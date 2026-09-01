@@ -25,32 +25,32 @@ type Brand = {
 const BRANDS: readonly Brand[] = [
   {
     num: '2',
-    name: 'Brand 02',
-    cat: 'Fragrance',
+    name: 'Beauty at the Speed of Scroll',
+    cat: "Turning the world's fastest-moving beauty signals into products people want now.",
     previews: ['/assets/portfolio/preview-01.jpg', '/assets/portfolio/preview-02.jpg'],
   },
   {
     num: '3',
-    name: 'Brand 03',
-    cat: 'Health Care',
+    name: 'Body Care 2.0',
+    cat: 'Obsessively engineered formats that make body care radically easier.',
     previews: ['/assets/portfolio/preview-01.jpg', '/assets/portfolio/preview-02.jpg'],
   },
   {
     num: '4',
-    name: 'Brand 04',
-    cat: 'Kitchen Essentials',
+    name: 'Beauty You Can Eat',
+    cat: 'Reimagining beauty through formats, flavours and rituals people want to make part of everyday life.',
     previews: ['/assets/portfolio/preview-02.jpg', '/assets/portfolio/preview-01.jpg'],
   },
   {
     num: '5',
-    name: 'Brand 05',
-    cat: 'Beauty & Personal Care',
+    name: 'Your Face, Decoded by AI',
+    cat: 'Turning facial intelligence into a makeup experience designed uniquely for you.',
     previews: ['/assets/portfolio/preview-01.jpg', '/assets/portfolio/preview-02.jpg'],
   },
   {
     num: '6',
-    name: 'Brand 06',
-    cat: 'Kitchen Essentials',
+    name: 'The Self-Distributing Brand',
+    cat: 'Turning creators, community and culture into the engine that drives growth.',
     previews: ['/assets/portfolio/preview-02.jpg', '/assets/portfolio/preview-01.jpg'],
   },
 ]
@@ -66,7 +66,7 @@ export function PortfolioSection() {
       <header className="portfolio-title section-head section-head--on-light">
         <p className="section-head__eyebrow">Brands</p>
         <ParallaxHeading className="section-head__title" id="portfolio-heading">
-          The portfolio
+          Our <span className="portfolio-title__word--fill">Portfolio</span>
         </ParallaxHeading>
         <p className="section-head__sub">
           One live brand and a pipeline behind it — each read from demand,
@@ -92,8 +92,8 @@ export function PortfolioSection() {
               HIRA
             </h3>
             <p className="brand-hero__desc">
-              Beauty &amp; Personal Care — Meolaa&rsquo;s first brand, live and
-              shipping.
+              Meolaa&rsquo;s proof point: beauty and personal care, built
+              end-to-end on the platform and proving the model works.
             </p>
             <a className="brand-hero__cta" href="#story">
               Explore now

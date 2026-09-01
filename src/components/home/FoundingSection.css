@@ -506,17 +506,6 @@
   box-sizing: border-box;
 }
 
-.founding .founding__eyebrow {
-  margin: 0;
-  font-family: var(--font-sans);
-  font-size: var(--text-sm, 0.875rem);
-  font-weight: var(--fw-regular, 400);
-  letter-spacing: 0;
-  text-transform: none;
-  color: var(--founding-ink);
-  opacity: 0.72;
-}
-
 /* The statement. Large, tight, centred — the reference sets it well above the
    shared section-title scale, so this deliberately does NOT use
    --section-head-title-size. */
@@ -528,15 +517,39 @@
      screens once the font clamps up. */
   max-width: min(36ch, 100%);
   font-family: var(--font-display);
-  font-size: clamp(1.9rem, 4.6vw, 4.15rem);
-  font-weight: var(--fw-semibold, 600);
-  line-height: 1.06;
-  /* Caps need looser tracking than lowercase display type — the -0.028em that
-     suited mixed case reads as collision once everything is uppercase. */
-  letter-spacing: -0.012em;
+  /* Matches the Loop / Vision / Hero / Lab title scale exactly. */
+  font-size: clamp(2rem, 6vw, 5rem);
+  font-weight: var(--fw-bold, 700);
+  line-height: 0.95;
+  letter-spacing: -2px;
   color: var(--founding-ink);
   text-transform: uppercase;
   text-wrap: balance;
+}
+
+/* Subtext under the statement — Ishita's founder note. */
+.founding__subtext {
+  margin: 0;
+  max-width: min(70ch, 100%);
+  font-family: var(--font-sans);
+  font-size: clamp(0.95rem, 1.3vw, 1.15rem);
+  font-weight: var(--fw-medium, 500);
+  line-height: 1.5;
+  letter-spacing: 0;
+  text-transform: none;
+  color: color-mix(in srgb, var(--founding-ink) 72%, transparent);
+}
+
+/* One "differently" fills solid yellow, the other reads as an outline —
+   same word-treatment language as Loop / Vision / Hero / Lab headlines. */
+.founding__mark-word--fill {
+  color: var(--color-joyous-yellow, #fdf28c) !important;
+  -webkit-text-stroke: 0 !important;
+}
+
+.founding__mark-word--outline {
+  color: transparent !important;
+  -webkit-text-stroke: 1.5px var(--founding-ink);
 }
 
 /* Vision-style per-char scrub fill — opacity only; mark-word wrappers stay. */
@@ -563,22 +576,12 @@
 .founding__mark-word {
   cursor: pointer;
   color: var(--color-lilac-deep, #5656ad);
-  text-decoration: underline;
-  text-decoration-thickness: 0.045em;
-  text-underline-offset: 0.14em;
-  text-decoration-color: var(--color-lilac-deep, #5656ad);
-  transition: color 0.35s ease, text-decoration-color 0.35s ease;
-}
-
-/* Hovering a word you're dealing from — brighten the underline to confirm the hit. */
-.founding__mark-word:hover {
-  text-decoration-color: var(--founding-ink);
+  transition: color 0.35s ease;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .founding__mark-word {
     color: var(--color-lilac-deep, #5656ad);
-    text-decoration-color: var(--color-lilac-deep, #5656ad);
   }
 }
 
@@ -610,7 +613,7 @@
 @media (max-width: 900px) {
   .founding .founding__statement {
     max-width: 100%;
-    font-size: clamp(1.6rem, 7vw, 2.4rem);
+    font-size: clamp(1.3rem, 8.4vw, 3rem);
   }
 
   .founding__card {

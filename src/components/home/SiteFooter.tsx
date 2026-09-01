@@ -1,20 +1,28 @@
 /**
  * Site footer — jump rows → column grid → legal → MEOLAA wordmark.
  *
- * Renders flat, with no pin/scrub reveal. The previous version expanded a
- * black blob across a 280vh pinned stage while clip-wiping the copy in; the
- * wipe kept the whole footer clipped to nothing for the entire stage, so the
- * content was unreadable on the way down. Removed rather than retimed.
+ * Homepage: circle-reveal scrub as the footer enters from Press — a disc grows
+ * from bottom-center over a 180vh trigger while the footer stays sticky in one
+ * viewport. Inner pages render flat (`simple`).
  */
-import { type FormEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent, type RefObject } from 'react'
 import { Link } from 'react-router-dom'
 import {
   MEOLAA_MARK_VIEWBOX_TIGHT,
   MeolaaLogoMark,
 } from '../brand/MeolaaLogoMark'
+import { gsap } from '../../lib/motion'
+import { refreshScrollAndLenis } from '../../lib/lenisInstance'
+import {
+  FOOTER_CIRCLE_CLIP_START,
+  footerCircleClipEnd,
+  footerCircleMinHeightPx,
+} from '../../lib/footerCircleReveal'
 import './SiteFooter.css'
 
-/** Mostly white → soft fade so MEOLAA stays readable on the black footer. */
+const REDUCED_MQ = '(prefers-reduced-motion: reduce)'
+
+/** Mostly white → soft fade so MEOLAA stays readable on the navy footer. */
 const FOOTER_LOGO_GRADIENT = {
   id: 'footer-meolaa-fill',
   top: '#ffffff',
@@ -43,11 +51,19 @@ function onNewsletterSubmit(e: FormEvent<HTMLFormElement>) {
   e.preventDefault()
 }
 
-function FooterBody() {
-  return (
+const FOOTER_CONTENT_RISE_Y = 48
+const FOOTER_RISE_START = 0.5
+
+function FooterBody({
+  copyRevealRef,
+  riseGroupRef,
+}: {
+  copyRevealRef?: RefObject<HTMLDivElement | null>
+  riseGroupRef?: RefObject<HTMLDivElement | null>
+}) {
+  const body = (
     <>
-      {/* Mask wipe targets copy only — mark keeps its own reveal clip. */}
-      <div className="footer-copy-reveal">
+      <div className="footer-copy-reveal" ref={copyRevealRef}>
         <nav
           className="site-footer__jumps"
           id="about"
@@ -141,23 +157,195 @@ function FooterBody() {
       </div>
     </>
   )
+
+  if (riseGroupRef) {
+    return (
+      <div className="footer-rise-group" ref={riseGroupRef}>
+        {body}
+      </div>
+    )
+  }
+
+  return body
 }
 
 type SiteFooterProps = {
-  /** Inner pages render the same footer without the homepage's #careers id. */
+  /** Inner pages render the same footer without the homepage circle reveal. */
   simple?: boolean
 }
 
 export function SiteFooter({ simple = false }: SiteFooterProps) {
+  const rootRef = useRef<HTMLElement>(null)
+  const triggerRef = useRef<HTMLDivElement>(null)
+  const footerRef = useRef<HTMLDivElement>(null)
+  const copyRevealRef = useRef<HTMLDivElement>(null)
+  const riseGroupRef = useRef<HTMLDivElement>(null)
+  const [reducedMotion, setReducedMotion] = useState(() =>
+    typeof window !== 'undefined'
+      ? window.matchMedia(REDUCED_MQ).matches
+      : false,
+  )
+
+  const animated = !simple && !reducedMotion
+
+  useEffect(() => {
+    const mq = window.matchMedia(REDUCED_MQ)
+    const onChange = () => setReducedMotion(mq.matches)
+    onChange()
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
+  }, [])
+
+  useEffect(() => {
+    if (!animated) return
+
+    const root = rootRef.current
+    const trigger = triggerRef.current
+    const footer = footerRef.current
+    const riseGroup = riseGroupRef.current
+    if (!root || !trigger || !footer) return
+
+    const ctx = gsap.context(() => {
+      const syncCircleStageHeight = () => {
+        footer.style.minHeight = `${footerCircleMinHeightPx()}px`
+      }
+      syncCircleStageHeight()
+
+      gsap.set(footer, { clipPath: FOOTER_CIRCLE_CLIP_START })
+      if (riseGroup) {
+        gsap.set(riseGroup, {
+          y: FOOTER_CONTENT_RISE_Y,
+          autoAlpha: 0,
+          force3D: true,
+        })
+      }
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          id: 'footer-circle-reveal',
+          trigger,
+          start: 'top bottom',
+          end: 'bottom bottom',
+          scrub: true,
+          invalidateOnRefresh: true,
+        },
+      })
+
+      tl.to(
+        footer,
+        {
+          clipPath: () => footerCircleClipEnd(),
+          ease: 'none',
+          duration: 1,
+        },
+        0,
+      )
+
+      if (riseGroup) {
+        tl.to(
+          riseGroup,
+          {
+            y: 0,
+            autoAlpha: 1,
+            ease: 'power2.out',
+            duration: 0.55,
+            force3D: true,
+          },
+          FOOTER_RISE_START,
+        )
+      }
+
+      let resizeTimer = 0
+      const onResize = () => {
+        window.clearTimeout(resizeTimer)
+        resizeTimer = window.setTimeout(() => {
+          syncCircleStageHeight()
+          refreshScrollAndLenis()
+        }, 150)
+      }
+      window.addEventListener('resize', onResize)
+      requestAnimationFrame(() => refreshScrollAndLenis())
+
+      return () => {
+        window.removeEventListener('resize', onResize)
+        window.clearTimeout(resizeTimer)
+      }
+    }, root)
+
+    return () => {
+      ctx.revert()
+    }
+  }, [animated])
+
+  useEffect(() => {
+    if (!simple || reducedMotion) return
+
+    const root = rootRef.current
+    const riseGroup = riseGroupRef.current
+    if (!root || !riseGroup) return
+
+    const ctx = gsap.context(() => {
+      gsap.set(riseGroup, { y: FOOTER_CONTENT_RISE_Y, autoAlpha: 0, force3D: true })
+      gsap.to(riseGroup, {
+        y: 0,
+        autoAlpha: 1,
+        duration: 0.85,
+        ease: 'power2.out',
+        force3D: true,
+        scrollTrigger: {
+          trigger: root,
+          start: 'top 88%',
+          toggleActions: 'play none none reverse',
+        },
+      })
+    }, root)
+
+    return () => ctx.revert()
+  }, [simple, reducedMotion])
+
+  const content = (
+    <FooterBody copyRevealRef={copyRevealRef} riseGroupRef={riseGroupRef} />
+  )
+
+  if (simple) {
+    return (
+      <footer
+        ref={rootRef}
+        className="footer-reveal-section footer-reveal-section--static"
+        aria-label="Footer"
+      >
+        <div className="footer-content site-footer">{content}</div>
+      </footer>
+    )
+  }
+
+  if (!animated) {
+    return (
+      <footer
+        ref={rootRef}
+        className="footer-reveal-section footer-reveal-section--static"
+        id="careers"
+        aria-label="Footer"
+      >
+        <div className="footer-content site-footer">{content}</div>
+      </footer>
+    )
+  }
+
   return (
     <footer
-      className="footer-reveal-section footer-reveal-section--static"
-      /* Inner pages already carry a #careers target in their own markup. */
-      id={simple ? undefined : 'careers'}
+      ref={rootRef}
+      className="footer-reveal-section footer-reveal-section--animated"
+      id="careers"
       aria-label="Footer"
     >
-      <div className="footer-content site-footer">
-        <FooterBody />
+      <div ref={triggerRef} className="footer-trigger">
+        <div className="footer-reveal-shell">
+          <div className="footer-reveal-ground" aria-hidden="true" />
+          <div ref={footerRef} className="footer-content site-footer">
+            {content}
+          </div>
+        </div>
       </div>
     </footer>
   )

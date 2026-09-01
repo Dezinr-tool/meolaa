@@ -1,35 +1,106 @@
 /**
- * Footer — flat primary-ground section, no domed top edge.
+ * Footer — flat inner pages + homepage circle-reveal stage.
  *
- * The pinned blob stage and the clip-path copy wipe were removed: the wipe
- * kept the whole footer clipped to nothing for the entire 280vh stage. The
- * arc is a background shape only, so it cannot hide the copy.
+ * Animated home: Press (white) hands off to a 180vh trigger; a sticky 100vh
+ * shell clips a navy disc that grows from bottom-center (GSAP in SiteFooter.tsx).
  */
 
 /* ——— Shell ——— */
 
 .footer-reveal-section {
   position: relative;
-  /* Above Press (z-index 2) so the arc can swell into it. */
   z-index: 3;
   width: 100%;
   overflow: visible;
-  background: var(--color-primary, #002f3a);
-  /* Reset any global `footer {}` leftovers */
   padding: 0;
   text-align: left;
   color: color-mix(in srgb, var(--color-ecru, #f8ece4) 55%, transparent);
 }
 
-.footer-reveal-section--static {
-  background: var(--color-primary, #002f3a);
+/* Scroll stage only — no fill; contrast for the circle lives on a sibling
+   behind `.footer-content`, not on ancestors of the clip-path element. */
+.footer-reveal-section--animated {
+  background: transparent;
 }
+
+.footer-reveal-section--static {
+  background: var(--color-primary, #0f2530);
+}
+
+/* ——— Circle-reveal stage (homepage) ——— */
+
+.footer-trigger {
+  position: relative;
+  width: 100%;
+  height: 180vh;
+  background: transparent;
+}
+
+.footer-reveal-shell {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  width: 100%;
+  height: 100vh;
+  overflow: visible;
+  pointer-events: none;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+/* Press-white ground behind the clipped `.footer-content` — a sibling, not an
+   ancestor, so the growing navy circle has contrast without painting the
+   scroll wrappers opaque. */
+.footer-reveal-ground {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: var(--color-white, #fff);
+  pointer-events: none;
+}
+
+.footer-reveal-section--animated .footer-content.site-footer {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  flex: 0 0 auto;
+  /* Tall enough for the full end radius (set in px via JS) — 100vh clipped the
+     circle flat at the top once the radius exceeded the box height. */
+  min-height: 100vh;
+  height: auto;
+  overflow: hidden;
+  background: #0f2530;
+  clip-path: circle(0.5% at 50% 100%);
+  will-change: clip-path;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+  pointer-events: auto;
+  /*
+   * Bottom-anchored stack: the circle origin sits on the wordmark first,
+   * then expands upward through grid / jump rows.
+   */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.footer-rise-group {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ——— Content shell ——— */
 
 .footer-content {
   position: relative;
   z-index: 2;
   width: 100%;
-  /* Shrink-wrap — footer ends flush at the wordmark bottom edge. */
   flex: 0 0 auto;
   display: flex;
   flex-direction: column;
@@ -37,14 +108,10 @@
   pointer-events: auto;
 }
 
-/* Animated home: give the pin fold room before content settles. */
-
-/* Copy (jumps / grid / legal) — upward clip wipe, not opacity fade. */
 .footer-copy-reveal {
   position: relative;
   z-index: 3;
   flex: 0 0 auto;
-  /* Gutters shared with .site-footer__mark-wrap below. */
   padding-left: var(--footer-gutter);
   padding-right: var(--footer-gutter);
   padding-bottom: 0;
@@ -56,10 +123,8 @@
   will-change: auto;
 }
 
-/* Circle supplies fill — no second opaque slab (avoids gray bar mid-scrub) */
-
 .footer-reveal-section--static .footer-content.site-footer {
-  background: transparent;
+  background: var(--color-primary, #0f2530);
 }
 
 /* ——— Content layout ——— */
@@ -67,23 +132,13 @@
 .site-footer {
   --footer-gutter: clamp(24px, 4vw, 72px);
   color: color-mix(in srgb, var(--color-ecru, #f8ece4) 55%, transparent);
-  /*
-   * No horizontal padding on this shell — gutters live on .footer-copy-reveal
-   * and .site-footer__mark-wrap so copy and wordmark share one column.
-   */
   padding: 40px 0 0;
   padding-bottom: 0;
-  background: var(--color-primary, #002f3a);
+  background: var(--color-primary, #0f2530);
   box-sizing: border-box;
   overflow: visible;
 }
 
-/* Safe top under sticky nav so jump rows aren’t clipped at pin start. */
-
-/*
- * Footer copy always above the brand mark image.
- * Mark sits in mark-wrap (lower z-index); copy stays above.
- */
 .site-footer__jumps,
 .site-footer__grid,
 .site-footer__bottom {
@@ -194,19 +249,21 @@
 .site-footer__newsletter input {
   width: 100%;
   background: transparent;
-  border: 1px solid color-mix(in srgb, var(--color-ecru, #f8ece4) 24%, transparent);
+  border: 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-ecru, #f8ece4) 24%, transparent);
   color: var(--color-ecru, #f8ece4);
-  padding: 10px 12px;
+  padding: 10px 0;
   font-family: var(--font-sans);
   font-size: 13px;
   border-radius: 0;
   margin-top: 8px;
   margin-bottom: 12px;
   outline: none;
+  transition: border-color 0.2s ease;
 }
 
 .site-footer__newsletter input:focus {
-  border-color: color-mix(in srgb, var(--color-ecru, #f8ece4) 48%, transparent);
+  border-bottom-color: color-mix(in srgb, var(--color-ecru, #f8ece4) 60%, transparent);
 }
 
 .site-footer__newsletter input::placeholder {
@@ -260,10 +317,6 @@
   opacity: 0.7;
 }
 
-/*
- * Mark band — MEOLAA wordmark on black footer base.
- * Same horizontal gutters as .footer-copy-reveal; height hugs the SVG.
- */
 .site-footer__mark-wrap {
   position: relative;
   z-index: 0;
@@ -278,14 +331,18 @@
   padding-top: 0;
   padding-bottom: 0;
   overflow: visible;
-  background-color: var(--color-primary, #002f3a);
+  /* background-color: var(--color-primary, #0f2530); */
   border-radius: 0;
   box-sizing: border-box;
+  will-change: transform, opacity;
 }
 
-/*
- * MEOLAA wordmark — full content width, natural block height (no dead band).
- */
+.footer-reveal-section--animated .site-footer__wordmark {
+  opacity: 1;
+  /* MEOLAA_MARK_VIEWBOX_TIGHT — reserve height before SVG paints. */
+  aspect-ratio: 1065.3 / 213.8;
+}
+
 .site-footer__wordmark {
   position: relative;
   z-index: 1;
@@ -300,7 +357,6 @@
   border-radius: 0;
 }
 
-/* White fill (soft baseline fade). Solid white fallback if paint server fails. */
 .site-footer__wordmark .meolaa-logo-mark__path {
   fill: #fff;
   fill: url(#footer-meolaa-fill);
@@ -309,7 +365,6 @@
   paint-order: stroke fill;
 }
 
-/* Lock after clip reveal — CSS inset(100%) must not re-hide the mark. */
 .footer-reveal-section--static .site-footer__mark-wrap {
   clip-path: none !important;
   will-change: auto;
@@ -365,6 +420,11 @@
 @media (prefers-reduced-motion: reduce) {
 
   .footer-copy-reveal {
+    clip-path: none !important;
+    will-change: auto;
+  }
+
+  .footer-reveal-section--animated .footer-content.site-footer {
     clip-path: none !important;
     will-change: auto;
   }

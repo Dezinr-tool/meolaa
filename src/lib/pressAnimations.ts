@@ -139,20 +139,30 @@ export function initPress(): () => void {
     gsap.set(track, { x: 0 })
     enableBrowsing()
   } else {
-    gsap.set(track, { x: entryOffset(slider) })
+    /* Track itself stays put — cards reveal one at a time (rise + fade),
+       not the whole row sliding in from off-screen as one rigid block. */
+    gsap.set(track, { x: 0 })
+    gsap.set(cards, { y: 36, autoAlpha: 0 })
 
     entranceTrigger = ScrollTrigger.create({
       trigger: press,
       start: 'top 80%',
-      once: true,
+      /* Replays each time the section is re-entered (scroll past it, back
+         up, back down again) — was `once: true`, so it only ever played
+         on the very first arrival. */
+      toggleActions: 'play none none reverse',
       onEnter: () => {
-        entranceTween = gsap.to(track, {
-          x: 0,
-          duration: 1.6,
-          delay: 0.3,
+        entranceTween = gsap.to(cards, {
+          y: 0,
+          autoAlpha: 1,
+          duration: 0.85,
+          stagger: 0.18,
           ease: 'power3.out',
           onComplete: enableBrowsing,
         })
+      },
+      onLeaveBack: () => {
+        gsap.set(cards, { y: 36, autoAlpha: 0 })
       },
     })
   }

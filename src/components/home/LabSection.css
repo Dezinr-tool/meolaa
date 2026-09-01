@@ -52,7 +52,6 @@
   position: relative;
   z-index: 2;
   box-sizing: border-box;
-  border-right: 1px solid var(--meola-lab-rule);
 }
 
 .meola-lab__intro > .meola-lab__eyebrow {
@@ -67,7 +66,9 @@
   align-items: center;
   justify-content: flex-start;
   min-height: 0;
-  width: min(100%, 14rem);
+  /* Wider than the old E-mark's box — the particle icon reads too small
+     otherwise (asked for repeatedly, several times). */
+  width: min(100%, 26rem);
   margin: 0;
   overflow: hidden;
 }
@@ -82,13 +83,31 @@
   fill: var(--color-joyous-yellow, #fdf28c);
 }
 
+.meola-lab__particles {
+  display: block;
+  /* Width-only + aspect-ratio, NOT an independent height clamp — the host
+     (.meola-lab__mark) has no fixed height of its own (flex-stretched),
+     so a separate height clamp could resolve to a different value than
+     what the width implies and stretch the square canvas non-uniformly.
+     Letting aspect-ratio derive height from width is what actually keeps
+     it square. */
+  width: 100%;
+  max-width: 100%;
+  aspect-ratio: 1 / 1;
+}
+
 .meola-lab__headline {
-  /* Shared --section-head-title-size (tokens.css) — same as every section. */
+  /* Matches the Loop title exactly — same clamp, weight, line-height,
+     tracking. */
   max-width: none;
   text-wrap: wrap;
   text-transform: uppercase;
   color: var(--color-planet-blue, #002f3a) !important;
   opacity: 1 !important;
+  font-size: clamp(2rem, 6vw, 5rem) !important;
+  font-weight: var(--fw-bold, 700) !important;
+  line-height: var(--loop-title-lh, 0.95) !important;
+  letter-spacing: var(--loop-title-ls, -2px) !important;
 }
 
 .meola-lab__headline-line {
@@ -98,6 +117,19 @@
   opacity: 1;
 }
 
+/* "Signal" — outline only, same true-stroke technique as the Loop title's
+   outline word (dilation-based text-shadow closes up small counters at
+   this weight; a real stroke doesn't). */
+.meola-lab__headline-word--outline {
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--color-planet-blue, #002f3a);
+}
+
+/* "Scale." — solid fill. */
+.meola-lab__headline-word--fill {
+  color: var(--color-joyous-yellow, #fdf28c);
+}
+
 .meola-lab__sub {
   /* Title → sub = 12px */
   margin: 0;
@@ -105,9 +137,11 @@
   max-width: min(var(--section-head-sub-max, 42ch), 100%);
 }
 
-/* Headline + sub stay at the bottom; mark flex zone above absorbs vertical space. */
+/* Headline + sub stay at the bottom of the intro column. Used to rely on
+   the now-removed .meola-lab__mark flex zone above to absorb the space;
+   margin-top: auto does the same job directly. */
 .meola-lab__intro > .parallax-heading {
-  margin-top: 0;
+  margin-top: auto;
   flex-shrink: 0;
 }
 
@@ -142,13 +176,14 @@
   margin: 0;
   padding: 0;
   border: 0;
-  border-right: 1px solid var(--meola-lab-rule);
-  background: var(--meola-lab-strip);
-  color: var(--meola-lab-strip-ink);
-  /* Content/strip ink follows each step’s strip tokens (expanded + collapsed). */
-  --meola-lab-ink: var(--meola-lab-strip-ink);
-  --meola-lab-muted: var(--meola-lab-strip-muted);
-  --meola-lab-body: var(--meola-lab-strip-muted);
+  /* 30% opacity on the strip color itself, not the photo. */
+  background: color-mix(in srgb, var(--meola-lab-strip) 30%, white);
+  color: var(--color-primary, #002f3a);
+  /* All panel content — title, desc, numerals — reads in Primary regardless
+     of strip color, per explicit request. */
+  --meola-lab-ink: var(--color-primary, #002f3a);
+  --meola-lab-muted: color-mix(in srgb, var(--color-primary, #002f3a) 55%, transparent);
+  --meola-lab-body: color-mix(in srgb, var(--color-primary, #002f3a) 72%, transparent);
   cursor: default;
   overflow: hidden;
   outline: none;
@@ -157,45 +192,21 @@
 /* 01 Reading demand — lilac-deep. */
 .meola-lab__panel[data-lab-index='0'] {
   --meola-lab-strip: var(--color-lilac-deep, #5656ad);
-  --meola-lab-strip-ink: var(--color-white, #fff);
-  --meola-lab-strip-muted: color-mix(
-    in srgb,
-    var(--color-white, #fff) 72%,
-    transparent
-  );
 }
 
 /* 02 Product & brand — Ecru Deep (secondary only, no Primary strips here). */
 .meola-lab__panel[data-lab-index='1'] {
   --meola-lab-strip: var(--color-ecru-deep, #f0d5cc);
-  --meola-lab-strip-ink: var(--color-planet-blue, #002f3a);
-  --meola-lab-strip-muted: color-mix(
-    in srgb,
-    var(--color-planet-blue, #002f3a) 55%,
-    transparent
-  );
 }
 
 /* 03 Go to market — Sustainable Green (secondary only, no Primary strips here). */
 .meola-lab__panel[data-lab-index='2'] {
   --meola-lab-strip: var(--color-sustainable-green, #41857a);
-  --meola-lab-strip-ink: var(--color-white, #fff);
-  --meola-lab-strip-muted: color-mix(
-    in srgb,
-    var(--color-white, #fff) 72%,
-    transparent
-  );
 }
 
 /* 04 Distribution & ops — lilac (lighter than 01 lilac-deep for step contrast). */
 .meola-lab__panel[data-lab-index='3'] {
   --meola-lab-strip: var(--color-lilac, #a8a3e3);
-  --meola-lab-strip-ink: var(--color-planet-blue, #002f3a);
-  --meola-lab-strip-muted: color-mix(
-    in srgb,
-    var(--color-planet-blue, #002f3a) 55%,
-    transparent
-  );
 }
 
 /* Expand only — no white flash, tint swap, scale, shadow, or glow. */
@@ -212,10 +223,6 @@
 .meola-lab--pinned .meola-lab__panel.is-active,
 .meola-lab--snap .meola-lab__panel.is-active {
   cursor: default;
-}
-
-.meola-lab__panel:last-child {
-  border-right: 0;
 }
 
 .meola-lab__panel:focus-visible {
@@ -264,19 +271,28 @@
   max-width: 14ch;
 }
 
-.meola-lab__bottom {
-  margin-top: auto;
+/* Title (left) + subtext (right), side by side instead of subtext sitting
+   under the image — frees the vertical space below for the media block. */
+.meola-lab__head {
+  flex: 0 0 auto;
   display: flex;
-  flex-direction: column;
-  gap: 18px;
-  min-height: 0;
-  flex: 1 1 auto;
-  padding-top: 28px;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
 }
 
+.meola-lab__head-title {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+/* Media now fills whatever height .meola-lab__head doesn't use, so the
+   image keeps the same left/right/bottom breathing room as before. */
 .meola-lab__media {
   position: relative;
   flex: 1 1 auto;
+  margin-top: 28px;
   /* Full content width — L/R inset comes only from .meola-lab__content padding. */
   width: 100%;
   max-width: 100%;
@@ -295,14 +311,15 @@
 .meola-lab__desc {
   position: relative;
   z-index: 2;
+  flex: 0 1 min(var(--section-head-sub-max, 42ch), 30ch);
   margin: 0;
   font-family: var(--font-sans);
   /* Site subtext — 16px / regular; color follows strip contrast. */
   font-size: var(--section-head-sub-size, 1rem);
   font-weight: var(--section-head-sub-weight, var(--fw-regular, 400));
   line-height: var(--section-head-sub-lh, 1.55);
-  color: var(--meola-lab-body);
-  max-width: min(var(--section-head-sub-max, 42ch), 36ch);
+  color: var(--color-primary, #002f3a);
+  text-align: left;
   text-wrap: balance;
   box-sizing: border-box;
 }
@@ -334,8 +351,8 @@
   transform: rotate(180deg);
   white-space: nowrap;
   font-family: var(--font-display);
-  /* Strip number + label share one size (14px). */
-  font-size: 14px;
+  /* Strip number + label share one size (16px). */
+  font-size: 16px;
   font-weight: var(--fw-semibold, 600);
   line-height: 1.1;
   letter-spacing: var(--tracking-display, -0.02em);
@@ -454,12 +471,22 @@
     max-width: none;
   }
 
-  .meola-lab__bottom {
-    padding-top: 20px;
-    gap: 14px;
+  /* Title + subtext stack instead of sitting side by side — no room for a
+     row at phone widths. */
+  .meola-lab__head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .meola-lab__desc {
+    flex-basis: auto;
+    max-width: none;
+    text-align: left;
   }
 
   .meola-lab__media {
+    margin-top: 20px;
     min-height: 160px;
   }
 }

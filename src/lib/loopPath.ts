@@ -84,8 +84,8 @@ export type LoopStepDef = {
 export const LOOP_STEPS: LoopStepDef[] = [
   {
     label: 'Build',
-    title: 'AI does the heavy lifting.',
-    body: 'Product, brand and go to market assembled by a small team, not a large one.',
+    title: 'Turn opportunity into brands at speed.',
+    body: 'Our AI-powered memory, reasoning and execution platform help brand teams move from opportunity to market faster.',
     s: 0.3642,
     x: 127,
     y: 404,
@@ -101,9 +101,9 @@ export const LOOP_STEPS: LoopStepDef[] = [
     copyAnchor: 'below-left',
   },
   {
-    label: 'Signal',
-    title: 'We read the market before it moves.',
-    body: 'Consumer behaviour, demand and whitespace, sorted into a single opportunity score.',
+    label: 'Learn',
+    title: 'Compound with every launch.',
+    body: 'Every launch builds product love, brand equity and training data — making the platform smarter and the next brand stronger.',
     s: 0.5597,
     x: 1133,
     y: 385,

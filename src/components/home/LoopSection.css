@@ -109,7 +109,7 @@
 /* Fill only — no outline. */
 .loop__title-word--fill {
   font-weight: var(--fw-bold, 700);
-  color: var(--color-lilac-deep, #5656ad);
+  color: var(--color-joyous-yellow, #fdf28c);
 }
 
 /* E-mark beside "brands" — sized off the title's own font-size so it always
@@ -161,9 +161,12 @@
   border: 2px solid var(--color-black, #000);
   transform: translate(-50%, -50%) scale(0.5);
   opacity: 0;
+  /* "Back ease out" — overshoots past scale(1) before settling, so the
+     pointer visibly pops in as its stage is reached instead of just
+     fading/growing smoothly into place. */
   transition:
-    opacity 0.4s cubic-bezier(0.33, 1, 0.68, 1),
-    transform 0.5s cubic-bezier(0.33, 1, 0.68, 1);
+    opacity 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+    transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .loop__dot::after {
@@ -203,8 +206,6 @@
 
 .loop__copy-label {
   margin: 0 0 16px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--loop-line);
   font-family: var(--font-sans);
   font-size: 0.875rem;
   font-weight: var(--fw-medium, 500);

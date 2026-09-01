@@ -8,8 +8,10 @@
   --pf-line: color-mix(in srgb, var(--color-black, #000) 10%, transparent);
   --pf-green: var(--color-sustainable-green, #41857a);
 
-  /* Rows run edge to edge; labels sit 73px in from the frame edge. */
-  --pf-inset: clamp(20px, 5.13vw, 73px);
+  /* Was a 73px inset for when rows ran full-bleed to the viewport edge —
+     `.brands` now has its own frame padding, so this would double the
+     inset and misalign rows against the hero image above them. */
+  --pf-inset: 0px;
   /* Hero copy keeps the tighter 43px gutter. */
   --pf-gutter: clamp(20px, 3.02vw, 43px);
   /* Figma 56px display size for hero + row names. */
@@ -31,6 +33,8 @@
   color: var(--pf-ink);
   height: auto;
   max-height: none;
+  /* Framed like Brand Lab — no longer full-bleed. */
+  padding: clamp(28px, 4.5vw, 64px);
   padding-bottom: 0;
 }
 
@@ -53,6 +57,11 @@
   filter: none !important;
   /* Figma #0a3038 — the planet-blue family, not the shared on-light black. */
   color: var(--color-planet-blue, #002f3a) !important;
+}
+
+/* Word treatment matches Loop's title — one word solid ink, one yellow-fill. */
+.portfolio-title__word--fill {
+  color: var(--color-joyous-yellow, #fdf28c) !important;
 }
 
 /* Figma subcopy: 18px/1.3, 60% opacity, 518px measure. */
@@ -82,10 +91,13 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  justify-content: center;
+  /* Top-aligned with the row's own top divider instead of centered
+     against the much-taller image beside it, which read as a huge
+     vertical gap above the copy. */
+  justify-content: flex-start;
   gap: clamp(10px, 1.1vw, 16px);
-  padding: clamp(24px, 3vw, 40px) clamp(16px, 2vw, 32px) clamp(24px, 3vw, 40px)
-    var(--pf-gutter);
+  padding: clamp(24px, 3vw, 40px) clamp(16px, 2vw, 32px) clamp(24px, 3vw, 40px) 0;
+  margin-left: 0;
 }
 
 /* LIVE NOW pill — 112x34, 40px radius, 10% black hairline (Figma 193:437). */
@@ -153,26 +165,22 @@
   min-height: 58px;
   margin-top: clamp(6px, 0.9vw, 12px);
   padding-inline: clamp(16px, 1.6vw, 24px);
-  border: 1px solid rgb(0 0 0 / 0.1);
-  background: var(--color-white, #fff);
+  border: 1px solid var(--color-secondary, #fdf28c);
+  background: var(--color-secondary, #fdf28c);
   font-size: var(--pf-label);
-  font-weight: 500;
+  font-weight: var(--fw-semibold, 600);
   line-height: 1.2;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   text-decoration: none;
-  color: var(--color-black, #000);
+  color: var(--color-planet-blue, #002f3a);
   transition:
-    background-color 0.28s ease,
-    color 0.28s ease,
-    border-color 0.28s ease;
+    opacity 0.28s ease;
 }
 
 .brand-hero__cta:hover,
 .brand-hero__cta:focus-visible {
-  background: var(--color-black, #000);
-  border-color: var(--color-black, #000);
-  color: var(--color-white, #fff);
+  opacity: 0.92;
 }
 
 .brand-hero__media {
@@ -200,23 +208,49 @@
   border-bottom: 1px solid var(--pf-line);
   background: transparent;
   color: var(--color-black, #000);
-  overflow: hidden;
+  overflow: visible;
   transition: background-color 0.4s ease;
 }
 
-/* Resting layer — also what defines the row's height. */
+/* Hover fill bleeds out to the viewport edge instead of stopping at the
+   row's own (now inset) box — filling only the inset width read as an
+   odd half-measure block. A ::before, not new markup, so it doesn't
+   need a JSX change. */
+.brand-row::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  left: calc(-1 * clamp(20px, 4.5vw, 64px));
+  right: calc(-1 * clamp(20px, 4.5vw, 64px));
+  background: var(--color-primary, #002f3a);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+  z-index: 0;
+}
+
+.brand-row__static,
+.brand-row__ticker {
+  position: relative;
+  z-index: 1;
+}
+
+/* Resting layer — also what defines the row's height. Sentence-length copy
+   in .brand-row__cat means this can no longer be a fixed one-line height —
+   let it grow, with the fixed height as a floor. */
 .brand-row__static {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
+  gap: clamp(12px, 2vw, 32px);
   min-height: var(--pf-row-h);
+  padding-block: clamp(14px, 2vh, 22px);
   padding-inline: var(--pf-inset);
   opacity: 1;
   transition: opacity 0.28s ease;
 }
 
-.brand-row__status,
-.brand-row__cat {
+.brand-row__status {
   margin: 0;
   font-size: var(--pf-label);
   font-weight: 500;
@@ -224,24 +258,37 @@
   letter-spacing: 0.04em;
   text-transform: uppercase;
   white-space: nowrap;
-}
-
-.brand-row__status {
   justify-self: start;
+  align-self: start;
 }
 
+/* Sentence-length copy — no longer a short uppercase tag, so it wraps and
+   reads as a normal-case line instead of forcing the row wide/overlapping
+   the name. */
 .brand-row__cat {
+  margin: 0;
+  max-width: 32ch;
+  font-size: var(--pf-label);
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: 0;
+  text-transform: none;
+  white-space: normal;
+  text-align: right;
   justify-self: end;
+  align-self: center;
 }
 
 .brand-row__name {
   margin: 0;
+  max-width: 22ch;
   justify-self: center;
-  font-size: var(--pf-display);
+  text-align: center;
+  font-size: clamp(1.1rem, 2.6vw, var(--pf-display));
   font-weight: 500;
-  line-height: 1;
+  line-height: 1.05;
   text-transform: uppercase;
-  white-space: nowrap;
+  white-space: normal;
 }
 
 /* ——— Hover ticker ——— */
@@ -309,16 +356,24 @@
 }
 
 /*
- * Hover: flood the row with joyous yellow and cross-fade the resting line for
- * the scrolling ticker. Text stays black; the hairline keeps its 10% black.
+ * Hover: flood the row with Primary navy (full-bleed via the ::before
+ * above, not just the row's own inset box) and cross-fade the resting
+ * line for the scrolling ticker, whose text turns Joyous Yellow — more
+ * prominent against navy than the previous yellow-fill/black-text
+ * pairing.
  *
  * Gated on a real pointer. On touch, :hover sticks after a tap — a tapped row
- * stayed yellow with the marquee running and the readable line faded out.
+ * stayed filled with the marquee running and the readable line faded out.
  */
 @media (hover: hover) and (pointer: fine) {
-  .brand-row:hover,
-  .brand-row:focus-within {
-    background: var(--color-joyous-yellow, #fdf28c);
+  .brand-row:hover::before,
+  .brand-row:focus-within::before {
+    opacity: 1;
+  }
+
+  .brand-row:hover .brand-row__ticker-word,
+  .brand-row:focus-within .brand-row__ticker-word {
+    color: var(--color-joyous-yellow, #fdf28c);
   }
 
   .brand-row:hover .brand-row__static,

@@ -38,10 +38,22 @@ const A_TOP = Math.atan2(ANGLE_SEED.top.y - CY, ANGLE_SEED.top.x - CX)
 const A_BR = Math.atan2(ANGLE_SEED.br.y - CY, ANGLE_SEED.br.x - CX)
 
 /** On-track centres — same radius the yellow track used to sit on. */
-const ON_TRACK = {
+const ON_TRACK_RAW = {
   bl: polar(A_BL),
   top: polar(A_TOP),
   br: polar(A_BR),
+} as const
+
+/**
+ * The Three.js ring's world position has been retuned several times since
+ * this polar geometry was set up, so the "top" dot has drifted off the
+ * ring's actual on-screen top edge. Nudging it down here (Figma-space
+ * units) re-lands it on the ring without touching bl/br, which are still
+ * correctly aligned.
+ */
+const ON_TRACK = {
+  ...ON_TRACK_RAW,
+  top: { x: ON_TRACK_RAW.top.x, y: ON_TRACK_RAW.top.y + 156 },
 } as const
 
 function pctX(x: number) {
@@ -125,7 +137,10 @@ const ORBIT_STYLE = {
   ['--loop-dot-br-y' as string]: pctY(ON_TRACK.br.y),
   ['--loop-dot-top-x' as string]: pctX(ON_TRACK.top.x),
   ['--loop-dot-top-y' as string]: pctY(ON_TRACK.top.y),
-  ['--loop-copy-bl-x' as string]: pctX(202),
+  /* Shifted further left than the Figma seed value — the wider copy card
+     (widened separately for readability) was overlapping the Build dot
+     at this artboard scale otherwise. */
+  ['--loop-copy-bl-x' as string]: pctX(45),
   ['--loop-copy-bl-y' as string]: pctY(ON_TRACK.bl.y),
   ['--loop-copy-br-x' as string]: pctX(1092),
   ['--loop-copy-br-y' as string]: pctY(ON_TRACK.br.y),

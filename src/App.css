@@ -2,5 +2,6 @@
 
 .app--home {
   min-height: 100svh;
-  background: #000;
+  /* Behind Press/footer — gaps in the scroll handoff read navy, not white. */
+  background: #0f2530;
 }

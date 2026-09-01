@@ -30,6 +30,14 @@ export function HomePage() {
         <main>
           <HeroSection />
           <VisionSection />
+          {/* Own DOM node, not part of either pinned section — a plain
+              margin/padding here gets fought by GSAP's inline pin styles
+              on the sections themselves, and any gap it leaves exposes
+              the page background instead of staying white. */}
+          <div
+            aria-hidden="true"
+            style={{ height: 100, background: '#fff' }}
+          />
           <LoopSection />
           <LabSection />
           <FoundingSection />

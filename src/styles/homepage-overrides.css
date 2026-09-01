@@ -88,6 +88,8 @@ html {
   border-radius: 0;
   line-height: 1;
   white-space: nowrap;
+  text-transform: uppercase;
+  font-weight: var(--fw-semibold, 600);
   transition: background 0.2s ease, color 0.2s ease;
 }
 
@@ -211,15 +213,39 @@ html {
 .hero--blank .hero__headline {
   color: var(--color-ecru, #f8ece4);
   font-family: var(--font-display);
-  /* Up from --text-display-sm (36–64). The vw step is capped by what fits
-     beside the panel on the same row — see .hero--blank .hero__panel. */
-  font-size: var(--section-head-title-size, 3.5rem);
-  font-weight: var(--section-head-title-weight, var(--fw-semibold));
-  line-height: var(--lh-display);
-  letter-spacing: var(--tracking-display);
+  /* Matches the Loop/Vision/Lab title exactly — same clamp, weight,
+     line-height, tracking. */
+  font-size: clamp(2rem, 6vw, 5rem);
+  font-weight: var(--fw-bold, 700);
+  line-height: var(--loop-title-lh, 0.95);
+  letter-spacing: var(--loop-title-ls, -2px);
   max-width: min(1100px, 72vw);
   font-variation-settings: normal;
   text-transform: uppercase;
+}
+
+/* "Consumer" — solid yellow fill.
+   ".hero__headline span { display: block }" below is a descendant
+   selector, so it also matches these nested word spans and was turning
+   them into their own block — breaking "consumer"/"AI era" onto their
+   own line instead of sitting inline with the rest of the line. Explicit
+   `display: inline` overrides that. */
+/* Specificity note: there are TWO rules targeting any span under
+   .hero__headline with display:block — ".hero__headline span" AND the
+   even more specific ".hero--blank .hero__headline span". !important is
+   the reliable way to beat both without chasing a third override later. */
+.hero__headline-word--fill {
+  display: inline !important;
+  color: var(--color-joyous-yellow, #fdf28c);
+}
+
+/* "AI era" — outline only, true stroke (dilation-based text-shadow closes
+   up small counters at this weight; a real stroke doesn't — same fix as
+   the Loop title's own outline word). */
+.hero__headline-word--outline {
+  display: inline !important;
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--color-ecru, #f8ece4);
 }
 
 .hero--blank .hero__headline span {
@@ -228,9 +254,11 @@ html {
   /* each span = one line on desktop */
 }
 
-/* Trimmed from 424/36vw to buy the bigger headline room on the same row. */
+/* Trimmed from 424/36vw to buy the bigger headline room on the same row.
+   Widened again to fit the two CTAs (wider padding-inline now) on one line
+   without overflowing the viewport edge. */
 .hero--blank .hero__panel {
-  max-width: min(380px, 32vw);
+  max-width: min(460px, 36vw);
 }
 
 .hero--blank .hero__lede {
@@ -243,10 +271,11 @@ html {
   }
 }
 
-/* The fixed two-line break stops fitting once the type is this big. */
+/* Keep the fixed two-line break at every width — shrink the type instead
+   of letting it wrap into 4-5 lines. */
 @media (max-width: 640px) {
-  .hero--blank .hero__headline span {
-    white-space: normal;
+  .hero--blank .hero__headline {
+    font-size: clamp(1.3rem, 8.4vw, 3rem);
   }
 }
 
@@ -455,7 +484,8 @@ html {
 .vision__headline>[data-vision-line] {
   display: block;
   font-family: var(--font-display);
-  font-size: var(--section-head-title-size, 3.5rem);
+  /* Exact match to the Loop title's font-size (LoopSection.css). */
+  font-size: clamp(2rem, 6vw, 5rem);
   font-weight: var(--section-head-title-weight, var(--fw-semibold));
   line-height: 1.06;
   letter-spacing: var(--section-head-title-tracking, -0.01em);
@@ -619,7 +649,7 @@ section.investors,
 [data-section='investors'] .investor-logos__item img {
   /* Dark marks on white — muted grayscale, always visible (no reveal tween). */
   filter: grayscale(1) !important;
-  opacity: 0.55;
+  opacity: 0.85;
 }
 
 .investor-logos {
@@ -871,42 +901,11 @@ body {
   color: var(--color-primary, #002f3a) !important;
 }
 
-/* Footer was planet blue with ecru type. */
-.footer-reveal-section,
-.site-footer,
-.site-footer__jump-title,
-.site-footer__tagline,
-.site-footer__copy {
-  color: var(--color-primary, #002f3a) !important;
-}
-
-.site-footer__grid a,
-.site-footer__legal a,
-.site-footer__socials a,
-.site-footer__jump-desc,
-.site-footer__label {
-  color: color-mix(in srgb, var(--color-primary, #002f3a) 72%, transparent) !important;
-}
-
-/* The mark band carries its own background-color, so it stayed a dark slab
-   under the white footer. */
-.site-footer__mark-wrap,
-.footer-content,
-.footer-copy-reveal {
-  background: transparent !important;
-  background-color: transparent !important;
-}
-
-/* Wordmark is a white-to-transparent gradient — it vanished on white. */
-.site-footer__wordmark .meolaa-logo-mark__path {
-  fill: color-mix(in srgb, var(--color-primary, #002f3a) 14%, transparent) !important;
-}
-
-/* Newsletter field needs a visible edge on white. */
-.site-footer__newsletter input {
-  border-color: color-mix(in srgb, var(--color-primary, #002f3a) 22%, transparent) !important;
-  color: var(--color-primary, #002f3a) !important;
-}
+/* Stale — the footer redesign (SiteFooter.css) now owns its own navy
+   background + ecru type in both the animated and static variants. This
+   block was written for an older "footer went white" layout and fought the
+   new one with !important, leaving the static (inner-page) footer
+   transparent over the white page background. */
 
 /* Nav sits on light now. */
 .site-nav--home .site-nav__logo,
@@ -986,24 +985,29 @@ body {
 /* ——— Vision headline: loop-title word treatment ———
  * The stroke/colour have to land on `.vision__char`, not the word: the splitter
  * puts each glyph in its own span, and a stroke on the parent never reaches
- * them. Uses the same -webkit-text-stroke as .loop__title-word--outline.
- */
+ * them.
+ *
+ * Layered text-shadow dilation (tried here first) doesn't work at this
+ * weight regardless of how thin: SIGNAL's counters (G's bowl, A's
+ * triangle) are already tight at fw-bold, so even a sub-1px dilate closes
+ * them and the whole word reads as a solid block — confirmed with a
+ * canvas replica at 260px, same result. A true stroke only erodes about
+ * half as much into the counter for the same width, which keeps them
+ * open — same fix already used for the Loop title's own outline word. */
 .vision__word--outline .vision__char {
   color: transparent;
-  -webkit-text-stroke: var(--loop-title-outline-w, 1.75px)
-    var(--color-black, #000);
+  -webkit-text-stroke: 1px var(--color-black, #000);
 }
 
 .vision__word--fill .vision__char {
-  color: var(--color-lilac-deep, #5656ad);
+  color: var(--color-joyous-yellow, #fdf28c);
 }
 
-/* Loop-title weight and tracking. Scale stops at 4vw, not the loop's 6vw:
-   these lines are ~34 characters against the loop's ~20, so 6vw ran 1540px
-   into a 1152px column and broke out of the fold. 4vw is the largest that
-   still fits. */
+/* Exact match to the Loop title — same clamp, weight, line-height,
+   tracking. Now split across three lines (was two) specifically so this
+   larger size has room without breaking out of the fold. */
 .vision__headline > [data-vision-line] {
-  font-size: clamp(1.4rem, 4vw, 3.6rem) !important;
+  font-size: clamp(2rem, 6vw, 5rem) !important;
   font-weight: var(--fw-bold, 700) !important;
   line-height: var(--loop-title-lh, 0.95) !important;
   letter-spacing: var(--loop-title-ls, -2px) !important;

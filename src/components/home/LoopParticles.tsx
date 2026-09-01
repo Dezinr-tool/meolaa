@@ -55,6 +55,16 @@ type RingSeed = {
       scattering. */
   scatterX: number
   scatterY: number
+  /** This mote's threshold in the scroll-driven reveal (0..1) — only
+      consulted for inner-band motes (see isInner); outer motes ignore it
+      and stay always visible. */
+  revealAt: number
+  /** True for the tight, bright band riding the ring's INNER edge — this
+      is the layer that's sparse by default and fills in on scroll (see
+      reference: a loose outer scatter that's always there, and a denser
+      bright inner rim that builds up). Outer motes are unaffected by
+      reveal and stay visible always. */
+  isInner: boolean
 }
 
 /**
@@ -129,9 +139,36 @@ export function LoopParticles() {
     const ringPos = new Float32Array(RING_COUNT * 3)
     const ringData: RingSeed[] = []
 
+    /* Two populations sharing the RING_COUNT budget, matching the
+       reference: a loose OUTER scatter (always fully visible) and a
+       tight, bright INNER rim that's sparse by default and fills in on
+       scroll. */
+    const INNER_COUNT = Math.round(RING_COUNT * 0.42)
+    const OUTER_COUNT = RING_COUNT - INNER_COUNT
+
+    /* Sweep starts at "point one" (Build, bottom-left dot) rather than an
+       arbitrary theta=0. Derived from the live DOM: the Build/Run/Signal
+       dots' on-screen angles were measured (circumcenter fit) and mapped
+       through this scene's screen↔theta relationship — screenAngle ≈ -theta
+       (perspective camera looks near-straight-on along Z, so world Y-up
+       flips to screen Y-down and world/screen X match). Build measured at
+       ~154.9° on screen ⇒ theta ≈ 360 - 154.9 ≈ 205°. */
+    const SWEEP_START_ANGLE = (205 * Math.PI) / 180
+
+    function makeRevealAt(theta: number) {
+      /* Ordered by angular position, starting from SWEEP_START_ANGLE (with
+         a little jitter so it isn't a perfectly mechanical sweep) instead
+         of pure random — motes fill in going around the ring starting at
+         Build, reading as a connected flow building up from point one. */
+      const rel =
+        ((SWEEP_START_ANGLE - theta + Math.PI * 2) % (Math.PI * 2)) /
+        (Math.PI * 2)
+      return Math.max(0, Math.min(1, rel + (Math.random() - 0.5) * 0.06))
+    }
+
     {
       let guard = 0
-      while (ringData.length < RING_COUNT && guard < RING_COUNT * 40) {
+      while (ringData.length < OUTER_COUNT && guard < OUTER_COUNT * 40) {
         guard++
         const theta = Math.random() * Math.PI * 2
         /* Rejection-sample against the density curve so the gaps are real gaps. */
@@ -144,18 +181,24 @@ export function LoopParticles() {
           theta,
           phi,
           rJitter,
-          revolveSpeed: 0.12 + Math.random() * 0.04,
+          /* Was 0.12–0.16 rad/s — every mote slowly orbiting independently
+             still reads as "the ring is spinning" even with the whole-ring
+             RING_IDLE_SPIN at 0. Zeroed so the ring is genuinely static
+             apart from wobble/hover/reveal. */
+          revolveSpeed: 0,
           speed: 0.15 + Math.random() * 0.25,
           wob: Math.random() * Math.PI * 2,
           wobSpeed: 0.4 + Math.random() * 0.6,
           wobAmp: 1.5 + Math.random() * 3.5,
           scatterX: Math.cos(scatterAngle),
           scatterY: Math.sin(scatterAngle),
+          revealAt: makeRevealAt(theta),
+          isInner: false,
         })
       }
-      /* Rejection sampling can fall a little short of RING_COUNT — pad with
-         uniform fallbacks so the buffer sizes below stay exact. */
-      while (ringData.length < RING_COUNT) {
+      /* Rejection sampling can fall a little short of OUTER_COUNT — pad
+         with uniform fallbacks so the buffer sizes below stay exact. */
+      while (ringData.length < OUTER_COUNT) {
         const theta = Math.random() * Math.PI * 2
         const phi = Math.random() * Math.PI * 2
         const scatterAngle = Math.random() * Math.PI * 2
@@ -163,13 +206,41 @@ export function LoopParticles() {
           theta,
           phi,
           rJitter: TUBE_R * (0.55 + Math.random() * 0.5),
-          revolveSpeed: 0.12 + Math.random() * 0.04,
+          revolveSpeed: 0,
           speed: 0.15 + Math.random() * 0.25,
           wob: Math.random() * Math.PI * 2,
           wobSpeed: 0.4 + Math.random() * 0.6,
           wobAmp: 1.5 + Math.random() * 3.5,
           scatterX: Math.cos(scatterAngle),
           scatterY: Math.sin(scatterAngle),
+          revealAt: makeRevealAt(theta),
+          isInner: false,
+        })
+      }
+
+      /* Inner rim — tight radius (rJitter kept small so it hugs the
+         torus's own inner edge instead of spreading across the tube),
+         sparse by default (see REVEAL_START_INNER below), builds up on
+         scroll. */
+      while (ringData.length < RING_COUNT) {
+        const theta = Math.random() * Math.PI * 2
+        if (Math.random() > ringDensity(theta)) continue
+        const phi = Math.PI + (Math.random() - 0.5) * 0.5 // hugs the inner wall (cos(phi) ≈ -1)
+        const rJitter = TUBE_R * (0.08 + Math.random() * 0.14)
+        const scatterAngle = Math.random() * Math.PI * 2
+        ringData.push({
+          theta,
+          phi,
+          rJitter,
+          revolveSpeed: 0,
+          speed: 0.15 + Math.random() * 0.25,
+          wob: Math.random() * Math.PI * 2,
+          wobSpeed: 0.4 + Math.random() * 0.6,
+          wobAmp: 0.6 + Math.random() * 1.2,
+          scatterX: Math.cos(scatterAngle),
+          scatterY: Math.sin(scatterAngle),
+          revealAt: makeRevealAt(theta),
+          isInner: true,
         })
       }
     }
@@ -179,7 +250,11 @@ export function LoopParticles() {
     const RING_BASE_COLOR = new THREE.Color(0x000000)
     const ringColors = new Float32Array(RING_COUNT * 3)
     for (let i = 0; i < RING_COUNT; i++) {
-      const b = 0.55 + Math.random() * 0.45
+      /* Inner-rim motes read darker/more saturated (denser, more prominent
+         per the reference) than the loose outer scatter. */
+      const b = ringData[i].isInner
+        ? 0.82 + Math.random() * 0.18
+        : 0.4 + Math.random() * 0.4
       ringColors[i * 3] = RING_BASE_COLOR.r * b
       ringColors[i * 3 + 1] = RING_BASE_COLOR.g * b
       ringColors[i * 3 + 2] = RING_BASE_COLOR.b * b
@@ -210,6 +285,20 @@ export function LoopParticles() {
     const RING_HOVER_PUSH = 85
     const ringBaseColor = new THREE.Color()
 
+    /* Scroll-driven fill — sparse by default, then fills in clockwise as
+       you scroll through the pin (ordered by angle — see revealAt above),
+       so it reads as connectivity establishing itself around the ring
+       rather than the full count just being there or particles randomly
+       blinking on. */
+    /* Outer scatter (isInner: false) is always fully visible — hiding a
+       chunk of it by default killed the section's whole feel ("poora zero
+       kar diya"). Only the tight inner rim (isInner: true) is sparse by
+       default and fills in on scroll, matching the reference: a loose
+       outer halo that's always there, and a denser bright inner ring
+       that builds up as you scroll. */
+    const REVEAL_START_INNER = 0.12
+    const REVEAL_END_INNER = 1
+
     function updateRing(
       t: number,
       scrollProgress: number,
@@ -218,8 +307,18 @@ export function LoopParticles() {
       const pos = ringGeo.attributes.position.array as Float32Array
       const col = ringGeo.attributes.color.array as Float32Array
       const spin = -(t * RING_IDLE_SPIN + scrollProgress * SCROLL_SPIN_TOTAL)
+      const innerRevealFrac =
+        REVEAL_START_INNER +
+        (REVEAL_END_INNER - REVEAL_START_INNER) * smoothstep(0, 1, scrollProgress)
       for (let i = 0; i < RING_COUNT; i++) {
         const d = ringData[i]
+        if (d.isInner && d.revealAt > innerRevealFrac) {
+          const c = i * 3
+          pos[c] = 1e6
+          pos[c + 1] = 1e6
+          pos[c + 2] = 1e6
+          continue
+        }
         const theta = d.theta - t * d.revolveSpeed
         const phi = d.phi + t * d.speed
         const wobble = Math.sin(t * d.wobSpeed + d.wob) * d.wobAmp
@@ -364,8 +463,25 @@ export function LoopParticles() {
     /* ================= SCROLL PROGRESS ================= */
     let scrollProgress = 0
 
+    /* While the section is pinned, its own getBoundingClientRect().top sits
+       at ~0 for the entire pin duration (that's what pinning means), so a
+       progress read off the SECTION never moves during the pin — which is
+       most of the scroll range the ring reveal/step activation happens
+       across. Read it off the GSAP pin-spacer instead: its extra height
+       *is* the pin's scroll distance, so how far we've scrolled through it
+       gives the true 0..1 pin progress regardless of the section being
+       visually fixed. */
     const readScrollProgress = () => {
       if (!section) return
+      const spacer = section.closest('.pin-spacer') as HTMLElement | null
+      if (spacer) {
+        const spacerRect = spacer.getBoundingClientRect()
+        const total = spacerRect.height - window.innerHeight
+        if (total > 0) {
+          scrollProgress = Math.min(1, Math.max(0, -spacerRect.top / total))
+          return
+        }
+      }
       const rect = section.getBoundingClientRect()
       const span = rect.height + window.innerHeight
       const raw = (window.innerHeight - rect.top) / span

@@ -88,7 +88,11 @@
   letter-spacing: var(--section-head-eyebrow-tracking);
   text-transform: uppercase;
   line-height: 1.2;
-  color: var(--sh-accent);
+  /* Fallback for elements carrying this class without a `.section-head`
+     ancestor to define --sh-accent (e.g. .vision__eyebrow) — otherwise
+     the custom property is invalid at compute time and the browser falls
+     back to the inherited (black) text color instead of the brand accent. */
+  color: var(--sh-accent, var(--section-head-accent, var(--color-sustainable-green, #41857a)));
 }
 
 .section-head .section-head__title,

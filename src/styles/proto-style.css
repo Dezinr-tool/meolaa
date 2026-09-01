@@ -111,6 +111,7 @@ img { display: block; max-width: 100%; }
 }
 
 .hero__lede {
+  max-width: 34ch;
   font-size: var(--text-body);
   line-height: 1.55;
   color: color-mix(in srgb, var(--color-ecru, #f8ece4) 75%, transparent);
@@ -119,19 +120,23 @@ img { display: block; max-width: 100%; }
 
 .hero__actions {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 16px;
 }
 
+/* Standardized to the Portfolio "Explore Now" CTA's size — same
+   min-height/padding/font-size everywhere a button like this appears. */
 .hero__btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  min-height: 58px;
   font-family: var(--font-sans);
-  font-size: 14.5px;
-  font-weight: 500;
+  font-size: var(--pf-label, 14px);
+  font-weight: var(--fw-semibold, 600);
+  text-transform: uppercase;
   line-height: 1;
-  padding: 15px 26px;
+  padding-inline: clamp(24px, 2.6vw, 40px);
   border-radius: 0;
   text-decoration: none;
   border: 1px solid transparent;
@@ -902,14 +907,21 @@ img { display: block; max-width: 100%; }
   background: #ffffff;
   overflow: hidden;
   box-sizing: border-box;
+  /* Framed like the other sections — no longer full-bleed. Bars below are
+     absolutely positioned percentages, so the inset has to be baked into
+     their left/width math (percentages for absolutely positioned children
+     resolve against the padding box, not the content box, so padding
+     alone wouldn't move them in). */
+  --metrics-pad: clamp(28px, 4.5vw, 64px);
+  padding-inline: var(--metrics-pad);
 }
 
 .metric {
   position: absolute;
-  left: calc(var(--i, 0) * 25%);
+  left: calc(var(--metrics-pad) + var(--i, 0) * (100% - 2 * var(--metrics-pad)) / 4);
   bottom: 0;
   top: auto;
-  width: 25%;
+  width: calc((100% - 2 * var(--metrics-pad)) / 4);
   /* Physical stair heights — Figma 10:2 proportions (351 / 450 / 564 / 703). */
   height: var(--h-pct, 40%);
   background: #ffffff;

@@ -201,9 +201,8 @@ html.is-nav-menu-open body {
     max-width: 100%;
   }
 
-  .hero--blank .hero__headline span {
-    white-space: normal;
-  }
+  /* Fixed two-line break stays nowrap at every width — see
+     homepage-overrides.css for the matching font-size shrink. */
 
   .hero--blank .hero__panel {
     max-width: 100%;

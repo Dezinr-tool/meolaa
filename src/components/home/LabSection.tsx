@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { MeolaaEMark } from '../brand/MeolaaEMark'
 import { gsap, ScrollTrigger } from '../../lib/motion'
 import { getLenisInstance } from '../../lib/lenisInstance'
 import { ParallaxHeading } from './ParallaxHeading'
@@ -17,29 +16,29 @@ const LAB_STEPS: LabStep[] = [
   {
     id: 'reading-demand',
     num: '01',
-    title: 'Reading demand',
-    desc: 'Consumer signals, whitespace and demand patterns scored into a single opportunity read.',
+    title: 'Demand',
+    desc: 'We go beyond conventional research to uncover the signals, spaces and possibilities that can shape the next generation of brands.',
     image: '/assets/lab-reading-demand.png',
   },
   {
     id: 'product-brand',
     num: '02',
-    title: 'Product & brand',
-    desc: 'Formulation, packaging, identity and launch assets assembled by the build system.',
+    title: 'Product development',
+    desc: 'We combine intelligence, creativity and technology to turn opportunity into effective products and brands.',
     image: '/assets/lab-product-brand.png',
   },
   {
     id: 'go-to-market',
     num: '03',
-    title: 'Go to market',
-    desc: 'Content, channels and campaigns orchestrated from one operating layer.',
+    title: 'Go-to-market',
+    desc: 'We accelerate brands from idea to market impact through integrated brand, performance, creator and channel strategy, powered by intelligent execution.',
     image: '/assets/lab-go-to-market.png',
   },
   {
     id: 'distribution-ops',
     num: '04',
-    title: 'Distribution & ops',
-    desc: 'Inventory, fulfilment and performance loops kept running after launch.',
+    title: 'Supply chain & distribution',
+    desc: 'We connect distribution, fulfilment and performance to create the operational muscle required to grow.',
     image: '/assets/lab-distribution-ops.png',
   },
 ]
@@ -172,6 +171,42 @@ export function LabSection() {
       })
       activeRef.current = 0
       setActive(0)
+
+      /* Entrance — panels travel in from off the right edge, ONE AT A TIME
+         — a tight stagger (small ms gap per card), not each one taking a
+         full second-plus to settle before the next starts (tried that —
+         way too slow, read as the UI being broken). Quick and close
+         together, essentially "all arrive within one short beat".
+         Separate, un-scrubbed ScrollTrigger that fires once, only once
+         the section is FULLY in view ('top top' — the same instant the
+         pin below engages), not the moment it starts peeking in — the
+         pin's own scroll-driven accordion timeline only starts once this
+         has actually finished (enableEntranceHold below), so scrubbing
+         can't fight the entrance mid-flight.
+         Reverses on the way back up so re-entering from below replays it.
+         A FIXED pixel offset (not xPercent) — panel 0 is ~4x wider than
+         the collapsed strips (ACTIVE_GROW vs IDLE_GROW), so an xPercent
+         offset moved it hundreds of px further than its neighbours, and
+         that long travel swept it visually across/behind the narrower
+         strips mid-flight, reading as their colours bleeding together.
+         A small uniform offset keeps every panel's travel within its own
+         lane. */
+      gsap.fromTo(
+        panels,
+        { x: () => window.innerWidth * 0.4, autoAlpha: 0 },
+        {
+          x: 0,
+          autoAlpha: 1,
+          duration: 0.55,
+          stagger: 0.07,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: section,
+            start: 'top top',
+            toggleActions: 'play none none reverse',
+          },
+        },
+      )
 
       const tl = gsap.timeline({
         defaults: { ease: 'none' },
@@ -418,21 +453,18 @@ export function LabSection() {
     >
       <div className="meola-lab__intro" data-lab-arrow-slot>
         <p className="meola-lab__eyebrow">Brand Lab</p>
-        <div className="meola-lab__mark" aria-hidden="true">
-          <MeolaaEMark />
-        </div>
         <ParallaxHeading
           as="p"
           className="meola-lab__headline"
           align="start"
         >
-          <span className="meola-lab__headline-line">One system.</span>
-          <span className="meola-lab__headline-line">Four capabilities.</span>
+          <span className="meola-lab__headline-line">One pioneering platform.</span>
+          <span className="meola-lab__headline-line">
+            <span className="meola-lab__headline-word--outline">Signal</span>{' '}
+            to{' '}
+            <span className="meola-lab__headline-word--fill">scale.</span>
+          </span>
         </ParallaxHeading>
-        <p className="meola-lab__sub">
-          Four capabilities on one operating system, each one compounding the
-          rest.
-        </p>
       </div>
 
       <div
@@ -471,18 +503,20 @@ export function LabSection() {
               }}
             >
               <div className="meola-lab__content">
-                <p className="meola-lab__num">{step.num}</p>
-                <h3 className="meola-lab__title">{step.title}</h3>
-                <div className="meola-lab__bottom">
-                  <div className="meola-lab__media">
-                    <img
-                      className="meola-lab__img"
-                      src={step.image}
-                      alt=""
-                      draggable={false}
-                    />
+                <div className="meola-lab__head">
+                  <div className="meola-lab__head-title">
+                    <p className="meola-lab__num">{step.num}</p>
+                    <h3 className="meola-lab__title">{step.title}</h3>
                   </div>
                   <p className="meola-lab__desc">{step.desc}</p>
+                </div>
+                <div className="meola-lab__media">
+                  <img
+                    className="meola-lab__img"
+                    src={step.image}
+                    alt=""
+                    draggable={false}
+                  />
                 </div>
               </div>
 

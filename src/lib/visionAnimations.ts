@@ -403,6 +403,28 @@ export function initVision(options: InitVisionOptions = {}): () => void {
       '+=0.02',
     )
 
+    /* Deliberate hold at full-bleed — gives the video a moment to actually
+       read as full-bleed before anything else moves, instead of scaling
+       straight back down the instant it arrives. */
+    vtl.to({}, { duration: 1.1 })
+
+    /* Scale back down from full-bleed as the final scrub beat — no fade,
+       stays visible and tracks scroll directly (scrub:true). transform
+       Origin pinned to center so it shrinks evenly, not off one edge
+       (which read as the collage "stacking"/sliding rather than a clean
+       scale). `ease: 'none'` — with scrub:true the playhead is already
+       1:1 with scroll, so an eased curve here just fights that linear
+       mapping and reads as uneven/jumpy; linear is what feels smooth
+       under direct scroll control. This is the timeline's last tween, so
+       it necessarily runs right up to the pin's release — no post-shrink
+       hold. */
+    vtl.to(videoBox, {
+      scale: 0.62,
+      transformOrigin: '50% 50%',
+      duration: 0.7,
+      ease: 'none',
+    })
+
     refreshScrollTriggers()
   }
 

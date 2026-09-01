@@ -445,7 +445,9 @@ export function FoundingSection() {
       <div className="founding__bg" aria-hidden="true" />
 
       <div className="founding__stage" data-founding-reveal>
-        <p className="founding__eyebrow">Founding</p>
+        <p className="founding__eyebrow section-head__eyebrow">
+          Why Meolaa is inevitable
+        </p>
 
         {/* One flowing statement, reference-style. Underlined words are set in
             markup here (not tagged at runtime) because this paragraph is not in
@@ -456,27 +458,13 @@ export function FoundingSection() {
             Type comes from .founding__statement, which is later in the
             stylesheet and so wins at equal specificity. */}
         <h2 id="founding-title" className="founding__title founding__statement">
-          It started with a question no one else was{' '}
-          <span className="founding__mark-word" data-founding-mark="asking">
-            asking
-          </span>
-          . We turn emerging{' '}
-          <span className="founding__mark-word" data-founding-mark="demand">
-            demand
-          </span>{' '}
-          into a system that launches{' '}
-          <span className="founding__mark-word" data-founding-mark="brands">
-            brands
-          </span>{' '}
-          faster than traditional FMCG can{' '}
-          <span className="founding__mark-word" data-founding-mark="move">
-            move
-          </span>
-          .
+          It started with a question no one else was asking. We turn emerging
+          demand into a system that launches brands faster than traditional
+          FMCG can move
         </h2>
 
         <div className="founding__actions">
-          <Link className="hero__btn founding__cta" to="/story">
+          <Link className="hero__btn founding__cta founding__cta--wide" to="/story">
             Read Our Story →
           </Link>
         </div>

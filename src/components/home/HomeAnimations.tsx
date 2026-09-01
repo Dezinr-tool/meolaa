@@ -287,6 +287,12 @@ export function HomeAnimations() {
       /* When the hero dock ScrollTrigger exists it owns `.is-scrolled` (logo
        * color + glass). scrollY thresholds alone fire too early under pin. */
       let dockOwnsScrolled = false
+      /* Cumulative upward distance since the last downward tick — the bar
+         only reappears once this clears NAV_REAPPEAR_DELTA, instead of on
+         the very first upward pixel. Was popping back in instantly on any
+         upward wobble, which read as no delay at all. */
+      let upAccum = 0
+      const NAV_REAPPEAR_DELTA = 120
 
       const syncNav = (y: number, direction: 1 | -1 | 0) => {
         if (!siteNav) return
@@ -298,6 +304,7 @@ export function HomeAnimations() {
 
         if (y <= NAV_TOP_Y) {
           siteNav.classList.remove('is-hidden')
+          upAccum = 0
           lastY = y
           return
         }
@@ -311,8 +318,14 @@ export function HomeAnimations() {
           : NAV_HIDE_Y
         if (dir === 1 && y > hideFloor) {
           siteNav.classList.add('is-hidden')
+          upAccum = 0
         } else if (dir === -1) {
-          siteNav.classList.remove('is-hidden')
+          upAccum += lastY - y
+          if (upAccum >= NAV_REAPPEAR_DELTA) {
+            siteNav.classList.remove('is-hidden')
+          }
+        } else {
+          upAccum = 0
         }
         lastY = y
       }

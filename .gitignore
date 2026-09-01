@@ -58,3 +58,9 @@ tmp-*
 *.tsbuildinfo
 .claude/
 .cursor/
+.env*
+.loop-backup/
+.footer-*.png
+.investors-verify.png
+.metrics-*.png
+scripts/_*.mjs
