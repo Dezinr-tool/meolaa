@@ -18,6 +18,11 @@ export const ROADMAP_TIP_RADIUS = 5
 export type RoadmapStepDef = {
   capsule: string
   bullets: readonly string[]
+  /** Loop-style card copy — label/title/body, same language as the
+   *  homepage Loop section's orbit cards. */
+  label: string
+  title: string
+  body: string
   /** Normalised position along the path (0–1). */
   s: number
   /** Fallback dot centre in artboard px. */
@@ -33,6 +38,9 @@ export const ROADMAP_STEPS: RoadmapStepDef[] = [
       'Pre-seed from Ranjan Pai',
       'House of brands thesis begins',
     ],
+    label: '2022 · Founded',
+    title: 'Meolaa incorporated.',
+    body: 'Pre-seed from Ranjan Pai — the house of brands thesis begins.',
     s: 0,
     x: 72,
     y: 88,
@@ -44,6 +52,9 @@ export const ROADMAP_STEPS: RoadmapStepDef[] = [
       'Colossa Ventures, General Catalyst, Turbostart',
       'Capital to scale the model',
     ],
+    label: '2022 · Seed',
+    title: '$6M seed raised.',
+    body: 'Colossa Ventures, General Catalyst and Turbostart back the capital to scale the model.',
     s: 0.333,
     x: 357,
     y: 88,
@@ -55,6 +66,9 @@ export const ROADMAP_STEPS: RoadmapStepDef[] = [
       'First brand built end-to-end on the platform',
       'Proof from insight to shelf',
     ],
+    label: '2024 · HIRA',
+    title: 'HIRA launches.',
+    body: 'The first brand built end-to-end on the platform — proof from insight to shelf.',
     s: 0.666,
     x: 642,
     y: 88,
@@ -66,6 +80,9 @@ export const ROADMAP_STEPS: RoadmapStepDef[] = [
       'CMI and Brand Co-pilot unified',
       'One operating system for the house',
     ],
+    label: '2025 · Platform',
+    title: 'Platform v2 ships.',
+    body: 'CMI and Brand Co-pilot unified into one operating system for the house.',
     s: 1,
     x: 928,
     y: 88,

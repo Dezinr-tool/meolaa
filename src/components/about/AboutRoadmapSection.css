@@ -174,38 +174,6 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-.au-roadmap__capsule {
-  position: absolute;
-  bottom: calc(18px + var(--au-rm-diamond) / 2);
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 2;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 34px;
-  padding: 0 16px;
-  border: 1px solid color-mix(in srgb, var(--au-rm-fg) 12%, transparent);
-  border-radius: 0;
-  background: var(--au-rm-pill-inactive);
-  color: var(--au-rm-fg);
-  font-family: var(--font-sans);
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.02em;
-  white-space: nowrap;
-  transition:
-    background 0.35s cubic-bezier(0.33, 1, 0.68, 1),
-    color 0.35s cubic-bezier(0.33, 1, 0.68, 1),
-    border-color 0.35s cubic-bezier(0.33, 1, 0.68, 1);
-}
-
-.au-roadmap__step.is-reached .au-roadmap__capsule {
-  background: var(--au-rm-pill-active);
-  border-color: var(--au-rm-pill-active);
-  color: var(--au-rm-pill-active-ink);
-}
-
 .au-roadmap__marker {
   position: absolute;
   left: 50%;
@@ -236,51 +204,130 @@
   border-color: var(--au-rm-tip);
 }
 
-.au-roadmap__bullets {
-  list-style: none;
+/* ——— Loop-style connector + card ———
+ * Same visual language as the homepage Loop section's orbit cards: a thin
+ * line from the dot up to a flat-colour card with label/title/body. Cards
+ * alternate up/down per step so four of them along one horizontal line
+ * don't collide. */
+.au-roadmap__connector {
   position: absolute;
-  top: calc(var(--au-rm-diamond) / 2 + 20px);
   left: 50%;
-  transform: translateX(-50%);
-  margin: 0;
-  padding: 0;
-  width: max-content;
-  max-width: min(200px, 22vw);
-  text-align: left;
+  bottom: calc(var(--au-rm-diamond) / 2);
+  width: 1px;
+  height: 56px;
+  background: color-mix(in srgb, var(--au-rm-fg) 30%, transparent);
+  opacity: 0;
+  transition: opacity 0.4s cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+.au-roadmap__step.is-copy-visible .au-roadmap__connector {
+  opacity: 1;
+}
+
+.au-roadmap__copy {
+  position: absolute;
+  bottom: calc(var(--au-rm-diamond) / 2 + 56px);
+  left: 50%;
+  transform: translate(-50%, 10px);
+  z-index: 2;
+  box-sizing: border-box;
+  width: clamp(200px, 20vw, 260px);
+  padding: 20px;
+  border-radius: 0;
+  background: var(--au-rm-card-bg, var(--color-lilac, #a8a3e3));
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
+  text-align: left;
   transition:
     opacity 0.4s cubic-bezier(0.33, 1, 0.68, 1),
+    transform 0.4s cubic-bezier(0.33, 1, 0.68, 1),
     visibility 0s linear 0.4s;
 }
 
-.au-roadmap__step.is-copy-visible .au-roadmap__bullets {
+.au-roadmap__step.is-copy-visible .au-roadmap__copy {
   opacity: 1;
   visibility: visible;
+  transform: translate(-50%, 0);
   pointer-events: auto;
   transition:
     opacity 0.4s cubic-bezier(0.33, 1, 0.68, 1),
+    transform 0.4s cubic-bezier(0.33, 1, 0.68, 1),
     visibility 0s linear 0s;
 }
 
-.au-roadmap__bullets li {
-  position: relative;
-  margin: 0 0 8px;
-  padding-left: 14px;
-  font-family: var(--font-sans);
-  font-size: 13px;
-  font-weight: 400;
-  line-height: 1.4;
-  color: var(--au-rm-fg-muted);
+.au-roadmap__step[data-au-roadmap-index='0'] {
+  --au-rm-card-bg: var(--color-lilac, #a8a3e3);
 }
 
-.au-roadmap__bullets li::before {
-  content: "–";
-  position: absolute;
-  left: 0;
-  top: 0;
-  color: var(--au-rm-fg-muted);
+.au-roadmap__step[data-au-roadmap-index='1'] {
+  --au-rm-card-bg: var(--color-joyous-yellow, #fdf28c);
+}
+
+.au-roadmap__step[data-au-roadmap-index='2'] {
+  --au-rm-card-bg: var(--color-ecru-deep, #f0d5cc);
+}
+
+.au-roadmap__step[data-au-roadmap-index='3'] {
+  --au-rm-card-bg: var(--color-sustainable-green, #41857a);
+}
+
+.au-roadmap__step[data-au-roadmap-index='3'] .au-roadmap__copy-label,
+.au-roadmap__step[data-au-roadmap-index='3'] .au-roadmap__copy-title {
+  color: var(--color-white, #fff);
+}
+
+.au-roadmap__step[data-au-roadmap-index='3'] .au-roadmap__copy-body {
+  color: color-mix(in srgb, var(--color-white, #fff) 78%, transparent);
+}
+
+/* Alternate up/down so four cards along one straight line don't collide. */
+.au-roadmap__step[data-au-roadmap-index='1'] .au-roadmap__connector,
+.au-roadmap__step[data-au-roadmap-index='3'] .au-roadmap__connector {
+  bottom: auto;
+  top: calc(var(--au-rm-diamond) / 2);
+}
+
+.au-roadmap__step[data-au-roadmap-index='1'] .au-roadmap__copy,
+.au-roadmap__step[data-au-roadmap-index='3'] .au-roadmap__copy {
+  bottom: auto;
+  top: calc(var(--au-rm-diamond) / 2 + 56px);
+  transform: translate(-50%, -10px);
+}
+
+.au-roadmap__step[data-au-roadmap-index='1'].is-copy-visible .au-roadmap__copy,
+.au-roadmap__step[data-au-roadmap-index='3'].is-copy-visible .au-roadmap__copy {
+  transform: translate(-50%, 0);
+}
+
+.au-roadmap__copy-label {
+  margin: 0 0 12px;
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: var(--fw-medium, 500);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-black, #000);
+  line-height: 1.2;
+}
+
+.au-roadmap__copy-title {
+  margin: 0 0 8px;
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 1.3vw, 1.2rem);
+  font-weight: var(--fw-bold, 700);
+  line-height: 1.15;
+  text-transform: uppercase;
+  color: var(--color-black, #000);
+}
+
+.au-roadmap__copy-body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  font-weight: var(--fw-regular, 400);
+  line-height: 1.3;
+  color: color-mix(in srgb, var(--color-black, #000) 68%, transparent);
 }
 
 /* Static / reduced-motion */
@@ -297,25 +344,17 @@
   stroke-dashoffset: 0 !important;
 }
 
-.au-roadmap.is-static .au-roadmap__step .au-roadmap__capsule,
 .au-roadmap.is-static .au-roadmap__step .au-roadmap__diamond {
   opacity: 1;
-}
-
-.au-roadmap.is-static .au-roadmap__step .au-roadmap__capsule {
-  background: var(--au-rm-pill-active);
-  border-color: var(--au-rm-pill-active);
-  color: var(--au-rm-pill-active-ink);
-}
-
-.au-roadmap.is-static .au-roadmap__step .au-roadmap__diamond {
   background: var(--au-rm-tip);
   border-color: var(--au-rm-tip);
 }
 
-.au-roadmap.is-static .au-roadmap__step:last-child .au-roadmap__bullets {
+.au-roadmap.is-static .au-roadmap__step .au-roadmap__connector,
+.au-roadmap.is-static .au-roadmap__step .au-roadmap__copy {
   opacity: 1;
   visibility: visible;
+  transform: translate(-50%, 0);
 }
 
 @media (max-width: 900px) {
@@ -378,15 +417,15 @@
     scroll-snap-align: center;
   }
 
-  .au-roadmap__bullets {
-    max-width: 220px;
+  .au-roadmap__copy {
+    width: clamp(180px, 60vw, 220px);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .au-roadmap__capsule,
   .au-roadmap__diamond,
-  .au-roadmap__bullets,
+  .au-roadmap__connector,
+  .au-roadmap__copy,
   .au-roadmap__tip {
     transition: none !important;
   }

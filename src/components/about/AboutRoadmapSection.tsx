@@ -114,6 +114,7 @@ export function AboutRoadmapSection() {
                         key={step.capsule}
                         className="au-roadmap__step"
                         data-au-roadmap-step
+                        data-au-roadmap-index={i}
                         data-s={step.s}
                         role="listitem"
                         style={{
@@ -121,15 +122,17 @@ export function AboutRoadmapSection() {
                           top: `${pt.y * 100}%`,
                         }}
                       >
-                        <span className="au-roadmap__capsule">{step.capsule}</span>
                         <span className="au-roadmap__marker" aria-hidden="true">
                           <span className="au-roadmap__diamond" data-au-roadmap-diamond />
                         </span>
-                        <ul className="au-roadmap__bullets">
-                          {step.bullets.map((bullet) => (
-                            <li key={bullet}>{bullet}</li>
-                          ))}
-                        </ul>
+                        {/* Loop-style connector line + card — same language as
+                            the homepage Loop section's orbit cards. */}
+                        <span className="au-roadmap__connector" aria-hidden="true" />
+                        <div className="au-roadmap__copy">
+                          <p className="au-roadmap__copy-label">{step.label}</p>
+                          <h3 className="au-roadmap__copy-title">{step.title}</h3>
+                          <p className="au-roadmap__copy-body">{step.body}</p>
+                        </div>
                       </article>
                     )
                   })}
