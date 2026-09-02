@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom'
 import { AboutRoadmapSection } from '../components/about/AboutRoadmapSection'
-import { LoopSection } from '../components/home/LoopSection'
 import { PageLayout } from '../components/layout/PageLayout'
 import { WhereNextSection } from '../components/layout/WhereNextSection'
 
@@ -107,8 +106,6 @@ export function AboutPage() {
           </figure>
         </div>
       </section>
-
-      <LoopSection />
 
       <section
         className="au2-mv"
