@@ -402,16 +402,7 @@
   }
 }
 
-/* Whatever section follows the roadmap must fully cover its pinned remnants
-   once it unpins — was targeting .fold.pillars back when pillars came right
-   after the roadmap; the roadmap now sits after pillars instead, so
-   lead-grid (leadership) is the one directly downstream. */
-.page-editorial .lead-grid {
-  position: relative;
-  z-index: 1;
-  isolation: isolate;
-}
-
+/* Pillars must fully cover anything underneath after roadmap unpins */
 .page-editorial .fold.pillars {
   position: relative;
   z-index: 1;
