@@ -6,7 +6,6 @@
  */
 import { LOOP_STEPS } from '../../lib/loopPath'
 import { LoopParticles } from './LoopParticles'
-import { LoopTitleTuner } from './LoopTitleTuner'
 import { ParallaxHeading } from './ParallaxHeading'
 import './LoopSection.css'
 
@@ -156,7 +155,6 @@ export function LoopSection() {
       aria-labelledby="loop-title"
     >
       <LoopParticles />
-      <LoopTitleTuner />
 
       <div
         className="loop__artboard"

@@ -368,15 +368,17 @@ export function initVision(options: InitVisionOptions = {}): () => void {
       0,
     )
 
+    /* Hold the fully highlighted headline before it fades — was +=0.06 and
+       read as the text vanishing the instant SIGNAL finished filling in. */
     if (visionCopy) {
       vtl.fromTo(
         visionCopy,
         { opacity: 1, y: 0 },
         { opacity: 0, y: -28, duration: 0.18, ease: 'power1.in' },
-        '+=0.06',
+        '+=0.45',
       )
     } else {
-      vtl.to({}, { duration: 0.06 })
+      vtl.to({}, { duration: 0.45 })
     }
 
     /* Extra breathing room after the text finishes highlighting, before the

@@ -327,13 +327,13 @@
 
 @media (max-width: 900px) {
   .loop {
-    padding: 12px 10px;
-    --loop-copy-w: min(132px, 34vw);
+    padding: clamp(16px, 3vw, 24px) 10px clamp(20px, 4vw, 32px);
+    --loop-copy-w: min(128px, 36vw);
   }
 
   .loop__artboard {
-    width: min(100%, calc((100svh - 28px) * 1422 / 1117));
-    max-height: calc(100svh - 28px);
+    width: min(100%, calc((100svh - 24px) * 1422 / 1117));
+    max-height: calc(100svh - 24px);
   }
 
   /*
@@ -345,36 +345,74 @@
    */
   .loop__header.section-head {
     top: auto;
-    bottom: calc(100% + clamp(14px, 3.5vh, 34px));
+    bottom: calc(100% + clamp(10px, 2.5vh, 22px));
+    left: 50%;
+    transform: translateX(-50%);
     width: min(96%, 520px);
+    text-align: center;
+  }
+
+  .loop__header.section-head .loop__title {
+    font-size: clamp(1.5rem, 5vw, 2.75rem);
+  }
+
+  .loop__title-line {
+    white-space: normal;
+    text-wrap: balance;
+  }
+
+  .loop__copy {
+    padding: 10px 11px;
+    margin-top: -20px;
+    box-sizing: border-box;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .loop__copy-label {
+    margin: 0 0 4px;
+    font-size: 0.625rem;
+    letter-spacing: 0.05em;
+    line-height: 1.15;
+  }
+
+  .loop__copy-title {
+    max-width: none;
+    width: 100%;
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.12;
+    overflow-wrap: normal;
+    word-break: normal;
+    hyphens: none;
   }
 
   .loop__copy-body {
     display: none;
   }
 
-  /* Explicit top overrides — desktop's tuned Figma-space Y values for the
-     "top" (Run/Signal) dot sit close to the "bl" (Build) dot at this
-     narrower aspect ratio, which put their cards on top of each other.
-     Forcing three clearly separated vertical bands here (independent of
-     the desktop --loop-copy-*-y vars) fixes that without touching the
-     desktop positions those vars still drive. */
+  /*
+   * Staggered orbit cards — Signal top-left, Build mid-left, Learn bottom-right.
+   * Percent tops are artboard-local; tuned for ~390px phones so cards never
+   * stack on the left when all three are visible (reduced motion / end state).
+   */
   .loop__step--orbit-top .loop__copy {
-    left: 4%;
-    top: 4% !important;
-    width: min(140px, 38vw);
+    left: 8%;
+    top: 25% !important;
+    width: min(128px, 36vw);
   }
 
   .loop__step--orbit-bl .loop__copy {
-    left: 2%;
-    top: 68% !important;
+    left: 5%;
+    top: 80% !important;
+    width: min(128px, 36vw);
   }
 
   .loop__step--orbit-br .loop__copy {
     left: auto;
-    right: 2%;
-    top: 82% !important;
-    width: min(140px, 38vw);
+    right: 6%;
+    top: 54% !important;
+    width: min(128px, 36vw);
   }
 }
 

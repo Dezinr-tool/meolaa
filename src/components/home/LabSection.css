@@ -215,12 +215,14 @@
 
 /* Click remains for a11y jump-to-step; scroll is primary activation. */
 .meola-lab--pinned .meola-lab__panel,
-.meola-lab--snap .meola-lab__panel {
+.meola-lab--snap .meola-lab__panel,
+.meola-lab--mobile-pin .meola-lab__panel {
   cursor: pointer;
 }
 
 .meola-lab--pinned .meola-lab__panel.is-active,
-.meola-lab--snap .meola-lab__panel.is-active {
+.meola-lab--snap .meola-lab__panel.is-active,
+.meola-lab--mobile-pin .meola-lab__panel.is-active {
   cursor: default;
 }
 
@@ -487,6 +489,50 @@
   .meola-lab__media {
     margin-top: 20px;
     min-height: 160px;
+  }
+
+  /* Pinned mobile sequence — intro + one expanded panel fit in one viewport. */
+  .meola-lab--mobile-pin {
+    height: 100svh;
+    max-height: 100svh;
+    min-height: 100svh;
+    overflow: hidden;
+    padding: 0;
+  }
+
+  .meola-lab--mobile-pin .meola-lab__intro {
+    padding: clamp(20px, 4vw, 28px) var(--pad-x, 24px) clamp(12px, 2.5vw, 16px);
+  }
+
+  .meola-lab--mobile-pin .meola-lab__headline {
+    font-size: clamp(1.5rem, 5.5vw, 2.25rem) !important;
+    margin-top: 8px;
+  }
+
+  .meola-lab--mobile-pin .meola-lab__panels {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .meola-lab--mobile-pin .meola-lab__panel {
+    min-height: 3rem !important;
+    border-bottom: 0;
+    flex: 1 1 0%;
+    transition: none;
+  }
+
+  .meola-lab--mobile-pin .meola-lab__panel.is-active {
+    min-height: 0 !important;
+  }
+
+  .meola-lab--mobile-pin .meola-lab__content {
+    padding: clamp(16px, 3vw, 24px) var(--pad-x, 24px);
+    overflow-y: auto;
+  }
+
+  .meola-lab--mobile-pin .meola-lab__media {
+    min-height: clamp(100px, 22svh, 160px);
   }
 }
 

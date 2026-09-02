@@ -1,6 +1,6 @@
 /**
- * Press feed — one-time slide-in from the right (back.out overshoot), then
- * drag / flick browsing with Draggable + InertiaPlugin. No pin, no autoplay loop.
+ * Press feed — scroll-triggered rise-from-bottom entrance, then drag / flick
+ * browsing with Draggable + InertiaPlugin. No pin, no autoplay loop.
  */
 import { Draggable, gsap, ScrollTrigger } from './motion'
 import { prefersReducedMotion } from './innerPageAnimations/shared'
@@ -67,11 +67,19 @@ export function initPress(): () => void {
   )
   if (!cards.length) return () => {}
 
+  const headBits = gsap.utils.toArray<HTMLElement>(
+    press.querySelectorAll(
+      '.press-feed__head .section-head__eyebrow, .press-feed__head .section-head__title, .press-feed__head .section-head__sub, .press-feed__head-actions',
+    ),
+  )
+
   const reduceMotion = prefersReducedMotion()
-  press.classList.remove('press-feed--static')
+  press.classList.remove('press-feed--static', 'press-feed--await-motion')
+  press.classList.add('press-feed--motion')
 
   /* Clear any leftover per-card entrance transforms from older press motion. */
   gsap.set(cards, { clearProps: 'x,y,yPercent,transform' })
+  gsap.set(headBits, { clearProps: 'y,opacity,visibility,transform' })
   cards.forEach((card) => {
     const content = card.querySelector('.press-card__content')
     if (content) gsap.set(content, { clearProps: 'y,yPercent,opacity,transform' })
@@ -132,37 +140,56 @@ export function initPress(): () => void {
   /* Hold drag until the entrance settles so browsing doesn't fight the tween. */
   draggable.disable()
 
-  let entranceTween: gsap.core.Tween | null = null
+  let entranceTween: gsap.core.Timeline | null = null
   let entranceTrigger: ScrollTrigger | null = null
+
+  const ENTRANCE_Y = 72
 
   if (reduceMotion) {
     gsap.set(track, { x: 0 })
+    gsap.set([headBits, cards], { y: 0, autoAlpha: 1 })
     enableBrowsing()
   } else {
-    /* Track itself stays put — cards reveal one at a time (rise + fade),
-       not the whole row sliding in from off-screen as one rigid block. */
+    /* Track stays put — header + cards rise in from below (portfolio pattern). */
     gsap.set(track, { x: 0 })
-    gsap.set(cards, { y: 36, autoAlpha: 0 })
+    gsap.set(headBits, { y: ENTRANCE_Y, autoAlpha: 0 })
+    gsap.set(cards, { y: ENTRANCE_Y, autoAlpha: 0 })
 
     entranceTrigger = ScrollTrigger.create({
       trigger: press,
-      start: 'top 80%',
+      start: 'top 82%',
       /* Replays each time the section is re-entered (scroll past it, back
          up, back down again) — was `once: true`, so it only ever played
          on the very first arrival. */
       toggleActions: 'play none none reverse',
       onEnter: () => {
-        entranceTween = gsap.to(cards, {
+        entranceTween?.kill()
+        entranceTween = gsap.timeline({ onComplete: enableBrowsing })
+        entranceTween.to(headBits, {
           y: 0,
           autoAlpha: 1,
           duration: 0.85,
-          stagger: 0.18,
+          stagger: 0.08,
           ease: 'power3.out',
-          onComplete: enableBrowsing,
         })
+        entranceTween.to(
+          cards,
+          {
+            y: 0,
+            autoAlpha: 1,
+            duration: 1,
+            stagger: 0.14,
+            ease: 'power3.out',
+          },
+          '-=0.4',
+        )
       },
       onLeaveBack: () => {
-        gsap.set(cards, { y: 36, autoAlpha: 0 })
+        entranceTween?.kill()
+        entered = false
+        draggable.disable()
+        gsap.set(headBits, { y: ENTRANCE_Y, autoAlpha: 0 })
+        gsap.set(cards, { y: ENTRANCE_Y, autoAlpha: 0 })
       },
     })
   }
@@ -246,6 +273,7 @@ export function initPress(): () => void {
     })
     entranceTrigger?.kill()
     entranceTween?.kill()
+    press.classList.remove('press-feed--motion')
     gsap.killTweensOf(track)
     draggable.kill()
     gsap.set(track, { clearProps: 'x,transform' })

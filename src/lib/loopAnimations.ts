@@ -250,6 +250,9 @@ export function initLoop(options: InitLoopOptions = {}): () => void {
     const syncOrbit = (progress: number) => {
       const p = Math.max(0, Math.min(1, progress))
       const fill = pinToFill(p)
+      const activeBeat = beats.reduce((idx, beat, i) => {
+        return p >= beat.pinS - STEP_ARRIVE_BIAS ? i : idx
+      }, -1)
 
       if (orbitArc && arcLen > 0) {
         if (fill <= 0) {
@@ -294,11 +297,7 @@ export function initLoop(options: InitLoopOptions = {}): () => void {
       })
 
       loopSection.classList.add('is-loop-ready')
-      loopSection.dataset.loopStage = String(
-        beats.reduce((idx, beat, i) => {
-          return p >= beat.pinS - STEP_ARRIVE_BIAS ? i : idx
-        }, -1),
-      )
+      loopSection.dataset.loopStage = String(activeBeat)
     }
 
     /** ~3vh of scroll — room for fill + three beats + close before unpin. */

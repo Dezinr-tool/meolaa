@@ -277,8 +277,25 @@ export function SiteFooter({ simple = false }: SiteFooterProps) {
     if (!root || !trigger || !footer) return
 
     const ctx = gsap.context(() => {
+      const isMobileFooter = () =>
+        window.matchMedia('(max-width: 900px)').matches
+
       const syncCircleStageHeight = () => {
+        if (isMobileFooter()) {
+          /* Fill at least one viewport so the sticky shell never shows the
+             white reveal ground beneath the navy panel. */
+          footer.style.minHeight = `${Math.max(
+            window.innerHeight,
+            footer.scrollHeight,
+          )}px`
+          footer.style.height = 'auto'
+          const runway = Math.max(0, footer.scrollHeight - window.innerHeight)
+          root.style.setProperty('--footer-scroll-runway', `${runway}px`)
+          return
+        }
+        root.style.removeProperty('--footer-scroll-runway')
         footer.style.minHeight = `${footerCircleMinHeightPx()}px`
+        footer.style.height = ''
       }
       syncCircleStageHeight()
 
@@ -335,7 +352,13 @@ export function SiteFooter({ simple = false }: SiteFooterProps) {
         }, 150)
       }
       window.addEventListener('resize', onResize)
-      requestAnimationFrame(() => refreshScrollAndLenis())
+      requestAnimationFrame(() => {
+        syncCircleStageHeight()
+        refreshScrollAndLenis()
+      })
+      requestAnimationFrame(() => {
+        syncCircleStageHeight()
+      })
 
       return () => {
         window.removeEventListener('resize', onResize)
