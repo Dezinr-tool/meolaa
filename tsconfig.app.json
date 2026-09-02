@@ -7,6 +7,10 @@
     "types": ["vite/client"],
     "allowArbitraryExtensions": true,
     "skipLibCheck": true,
+    /* PrismHero (src/components/Scene.jsx etc.) is ported verbatim as .jsx —
+       allowJs lets .tsx import it without "cannot find module" errors; those
+       files are still untyped, not typechecked. */
+    "allowJs": true,
 
     /* Bundler mode */
     "moduleResolution": "bundler",
