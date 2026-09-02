@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { AboutRoadmapSection } from '../components/about/AboutRoadmapSection'
 import '../components/about/AboutMissionReveal.css'
+import { AboutWhyExistSection } from '../components/about/AboutWhyExistSection'
 import { PageLayout } from '../components/layout/PageLayout'
 
 const PILLARS = [
@@ -150,7 +151,7 @@ export function AboutPage() {
         </div>
       </section>
 
-      <AboutRoadmapSection />
+      <AboutWhyExistSection />
 
       <section className="fold pillars" data-section="pillars" aria-label="How we build brands">
         <h2 className="pillars__title">HOW WE BUILD BRANDS</h2>
@@ -169,6 +170,8 @@ export function AboutPage() {
           ))}
         </div>
       </section>
+
+      <AboutRoadmapSection />
 
       <section className="lead-grid" id="leadership">
         <div className="lead-grid__cell lead-grid__cell--intro">
