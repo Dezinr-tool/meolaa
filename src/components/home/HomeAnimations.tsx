@@ -213,6 +213,39 @@ export function HomeAnimations() {
       /* When the hero dock ScrollTrigger exists it owns `.is-scrolled` (logo
        * color + glass). scrollY thresholds alone fire too early under pin. */
       let dockOwnsScrolled = false
+
+      /* The Prism scene (Scene.jsx) pins [data-section="hero"] for its own
+       * beam-reveal timeline — total scroll the hero consumes is now its own
+       * height plus that pin's extra distance, not a fixed handful of
+       * pixels. NAV_GLASS_Y alone flipped `.is-scrolled` (and so the nav's
+       * ink colour) within the first 40px of scroll, while the hero — still
+       * fully in view, dark, mid-pin — sat there for hundreds more: the nav
+       * read as flipping over its own dark background. Read the pin-spacer
+       * GSAP inserts for the hero (its height *is* that total scroll span)
+       * so the threshold tracks the pin instead of guessing a constant.
+       * Polled briefly since the spacer is created by a different
+       * component's effect and may not exist on the very first tick. */
+      let heroSpanPx = 0
+      const measureHeroSpan = () => {
+        if (!hero) return
+        const spacer = hero.closest('.pin-spacer') as HTMLElement | null
+        heroSpanPx = spacer ? spacer.offsetHeight : (hero as HTMLElement).offsetHeight
+      }
+      measureHeroSpan()
+      let heroSpanPollId = 0
+      if (hero) {
+        let tries = 0
+        heroSpanPollId = window.setInterval(() => {
+          tries += 1
+          measureHeroSpan()
+          if (heroSpanPx > window.innerHeight || tries > 40) {
+            window.clearInterval(heroSpanPollId)
+            heroSpanPollId = 0
+          }
+        }, 100)
+      }
+      const onHeroResize = () => measureHeroSpan()
+      window.addEventListener('resize', onHeroResize)
       /* Cumulative upward distance since the last downward tick — the bar
          only reappears once this clears NAV_REAPPEAR_DELTA, instead of on
          the very first upward pixel. Was popping back in instantly on any
@@ -224,8 +257,13 @@ export function HomeAnimations() {
         if (!siteNav) return
         if (!dockOwnsScrolled) {
           /* No hero: Vision (ecru) is the first fold — keep dark-on-light
-           * nav from y=0 so ecru type never sits on ecru. */
-          siteNav.classList.toggle('is-scrolled', !hero || y > NAV_GLASS_Y)
+           * nav from y=0 so ecru type never sits on ecru. With a hero,
+           * stay in the "over dark" (not-scrolled) state for its entire
+           * pinned span, not just the first NAV_GLASS_Y px — the ink
+           * should only flip once the hero has actually scrolled away and
+           * the next (light) fold is what's really behind the nav. */
+          const glassThreshold = hero ? Math.max(NAV_GLASS_Y, heroSpanPx) : NAV_GLASS_Y
+          siteNav.classList.toggle('is-scrolled', !hero || y > glassThreshold)
         }
 
         if (y <= NAV_TOP_Y) {
@@ -236,11 +274,12 @@ export function HomeAnimations() {
         }
 
         const dir = direction !== 0 ? direction : y > lastY ? 1 : y < lastY ? -1 : 0
-        /* Hold the bar open until the wordmark has finished docking into it —
-         * the mark rides the nav's transform, so hiding early would drag it
-         * off screen mid-flight. Without a hero there is no dock span. */
+        /* Hold the bar open for the hero's whole pinned span — same
+         * reasoning as glassThreshold above; auto-hiding it mid-pin would
+         * make it vanish and reappear while the (still fully visible, not
+         * actually scrolled past) hero sat behind it. */
         const hideFloor = hero
-          ? Math.max(NAV_HIDE_Y, window.innerHeight * DOCK_VH)
+          ? Math.max(NAV_HIDE_Y, window.innerHeight * DOCK_VH, heroSpanPx)
           : NAV_HIDE_Y
         if (dir === 1 && y > hideFloor) {
           siteNav.classList.add('is-hidden')
@@ -294,6 +333,8 @@ export function HomeAnimations() {
 
       cleanupNav = () => {
         if (navPollId) window.clearInterval(navPollId)
+        if (heroSpanPollId) window.clearInterval(heroSpanPollId)
+        window.removeEventListener('resize', onHeroResize)
         unsubLenis?.()
         if (usingWindowScroll) {
           window.removeEventListener('scroll', onWindowScroll)
