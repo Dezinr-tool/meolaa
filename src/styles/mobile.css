@@ -75,12 +75,11 @@ html.is-nav-menu-open body {
     width: 44px;
     height: 44px;
     padding: 0;
-    border: 1px solid color-mix(in srgb, currentColor 32%, transparent);
+    border: 0;
     border-radius: 0;
-    /* Frosted light chip — readable on dark heroes */
-    background: color-mix(in srgb, #fff 18%, transparent);
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
+    background: transparent;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
     cursor: pointer;
     /* Parent .site-nav is pointer-events: none */
     pointer-events: auto;
@@ -89,9 +88,9 @@ html.is-nav-menu-open body {
   }
 
   .site-nav.is-scrolled .site-nav__toggle {
-    background: color-mix(in srgb, #fff 82%, transparent);
+    background: transparent;
     color: var(--color-planet-blue, #002f3a);
-    border-color: color-mix(in srgb, var(--color-planet-blue, #002f3a) 18%, transparent);
+    border: 0;
   }
 
   .site-nav.is-menu-open {
@@ -102,9 +101,9 @@ html.is-nav-menu-open body {
 
   .site-nav.is-menu-open .site-nav__toggle {
     z-index: 211;
-    background: color-mix(in srgb, var(--color-primary, #002f3a) 6%, transparent);
+    background: transparent;
     color: var(--color-primary, #002f3a);
-    border-color: color-mix(in srgb, var(--color-primary, #002f3a) 18%, transparent);
+    border: 0;
   }
 
   .site-nav.is-menu-open .site-nav__logo {
@@ -447,31 +446,19 @@ html.is-nav-menu-open body {
     grid-template-columns: 1fr;
   }
 
-  /* Metrics / Proof — stacked full-bleed bands */
+  /* Metrics / Proof — 2×2 grid + head spacing (chart layout in proto-style.css). */
   .metrics {
-    gap: clamp(24px, 5vw, 32px);
-    padding-bottom: clamp(24px, 4vh, 40px);
+    --metrics-pad-y: 24px;
+    gap: clamp(20px, 4vw, 28px);
+    padding: 24px clamp(16px, 4vw, 24px) clamp(24px, 4vh, 40px);
   }
 
   .metrics__head.section-head {
-    padding-inline: clamp(16px, 4vw, 24px);
+    padding: 0;
   }
 
   .metrics__head .section-head__sub {
     max-width: 34ch;
-  }
-
-  .metrics__chart {
-    grid-template-columns: 1fr;
-  }
-
-  .metrics__chart .metric {
-    min-height: clamp(132px, 36vw, 156px);
-    padding: clamp(28px, 6vw, 40px) clamp(16px, 4vw, 24px);
-    border: none;
-    box-shadow: none;
-    justify-content: center;
-    align-items: center;
   }
 }
 

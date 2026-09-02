@@ -1012,20 +1012,19 @@ body {
 }
 
 @media (max-width: 900px) {
-  /* Light bars + frosted chip — homepage-overrides was forcing ink on the
-     toggle over the dark hero video, which made the hamburger disappear. */
+  /* Lines only — no chip/box over the hero. */
   .site-nav--home:not(.is-scrolled) .site-nav__toggle {
     color: var(--color-ecru, #f8ece4) !important;
-    background: color-mix(in srgb, #fff 18%, transparent) !important;
-    border: 1px solid color-mix(in srgb, var(--color-ecru, #f8ece4) 38%, transparent);
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
+    background: transparent !important;
+    border: 0 !important;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
   }
 
   .site-nav--home:not(.is-scrolled).is-menu-open .site-nav__toggle {
     color: var(--color-primary, #002f3a) !important;
-    background: color-mix(in srgb, var(--color-primary, #002f3a) 6%, transparent) !important;
-    border-color: color-mix(in srgb, var(--color-primary, #002f3a) 18%, transparent);
+    background: transparent !important;
+    border: 0 !important;
   }
 
   .site-nav--home:not(.is-scrolled).is-menu-open .site-nav__logo-img .meolaa-logo-mark__path {

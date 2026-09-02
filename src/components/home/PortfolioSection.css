@@ -406,13 +406,32 @@
 /* ——— Narrow ——— */
 
 @media (max-width: 900px) {
+  .brands {
+    padding-block: 0;
+    padding-inline: clamp(16px, 4vw, 24px);
+  }
+
+  .portfolio-title.section-head {
+    padding: 24px var(--pad-x, 24px) !important;
+  }
+
   .brand-hero {
     grid-template-columns: minmax(0, 1fr);
     gap: 0;
   }
 
   .brand-hero__body {
-    padding-block: clamp(20px, 5vw, 32px);
+    padding-block: clamp(16px, 4vw, 24px);
+    padding-inline: 0;
+    gap: 10px;
+  }
+
+  .brand-hero__cta {
+    margin-top: 4px;
+    min-width: 0;
+    min-height: 48px;
+    width: 100%;
+    max-width: 220px;
   }
 
   .brand-hero__media {

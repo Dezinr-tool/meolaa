@@ -254,15 +254,6 @@
   margin-block: 0;
 }
 
-@media (max-width: 900px) {
-  .metrics__chart {
-    display: grid;
-    grid-template-columns: 1fr;
-    height: auto;
-    min-height: 0;
-  }
-}
-
 /* Press: split header needs full content measure; type from .section-head__*. */
 .press-feed__head.section-head {
   max-width: 100%;

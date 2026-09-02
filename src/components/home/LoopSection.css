@@ -411,7 +411,7 @@
   .loop__step--orbit-br .loop__copy {
     left: auto;
     right: 6%;
-    top: 54% !important;
+    top: 45% !important;
     width: min(128px, 36vw);
   }
 }

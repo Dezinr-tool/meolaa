@@ -394,7 +394,7 @@
     width: 100%;
     padding: 40px var(--pad-x, 24px) 28px;
     border-right: 0;
-    border-bottom: 1px solid var(--meola-lab-rule);
+    border-bottom: 0;
   }
 
   .meola-lab__mark {
@@ -416,6 +416,7 @@
   .meola-lab__panels {
     flex-direction: column;
     gap: 0;
+    margin-top: 24px;
   }
 
   /* Window-level snap: align expanded panels as they enter the viewport. */

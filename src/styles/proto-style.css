@@ -1281,10 +1281,10 @@ section.investors,
     min-height: 100svh;
   }
 
-  /* Single-column stack — full-bleed pastel bands (mweb). */
+  /* 2×2 grid — pastel metric tiles (mweb). */
   .metrics__chart {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     height: auto;
     min-height: 0;
   }
@@ -1299,6 +1299,7 @@ section.investors,
     box-shadow: none;
     border: none;
     justify-content: center;
+    align-items: center;
   }
 
   .metric__wash {
@@ -1318,9 +1319,10 @@ section.investors,
     );
   }
 
+  /* Half-width tiles — wash scaled 2× so bands fill each column. */
   .metric__wash-img {
     top: 50%;
-    width: 180%;
+    width: 360%;
     height: 220%;
     transform: translate(-50%, -50%) rotate(0deg);
   }
