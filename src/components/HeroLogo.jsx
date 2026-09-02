@@ -1,4 +1,4 @@
-import { forwardRef, Suspense, useCallback, useMemo, useRef } from 'react'
+import { forwardRef, Suspense, useCallback, useEffect, useMemo, useRef } from 'react'
 import { useFrame, useLoader } from '@react-three/fiber'
 import { SVGLoader } from 'three/addons/loaders/SVGLoader.js'
 import * as THREE from 'three'
@@ -34,8 +34,22 @@ function LogoMeshes({ material }) {
     const cy = (box.max.y + box.min.y) / 2
     const norm = BASE_WIDTH / width
 
-    // Center on the origin and normalise so scale=1 → BASE_WIDTH wide (proportion kept).
-    for (const geo of raw) geo.translate(-cx, -cy, 0)
+    // Shared gradient bounds (SVG space, after re-centring). The group flips Y,
+    // so the *smallest* local y is the visual top → grad = 1 (white) there.
+    const minY = box.min.y - cy
+    const maxY = box.max.y - cy
+    const span = maxY - minY || 1
+
+    for (const geo of raw) {
+      geo.translate(-cx, -cy, 0)
+      const pos = geo.attributes.position
+      const grad = new Float32Array(pos.count)
+      for (let i = 0; i < pos.count; i++) {
+        grad[i] = (maxY - pos.getY(i)) / span
+      }
+      geo.setAttribute('aGrad', new THREE.BufferAttribute(grad, 1))
+    }
+
     return { list: raw, norm }
   }, [data])
 
@@ -50,30 +64,56 @@ function LogoMeshes({ material }) {
 }
 
 /**
- * Meolaa wordmark behind the prism (replaces the old "FUTURE" text).
- * The scene animates `ref.position.x` (slide in) and
- * `ref.userData.material.opacity` (fade in) on scroll — so this group takes
- * NO `position` prop (React would fight GSAP for it).
- *
- * It faces the camera 1:1 (matches the camera's orientation) so the flat
- * wordmark reads perfectly straight — no perspective keystone, no tilt. The
- * camera never moves, so this never spins; rotating the prism doesn't touch it.
+ * Meolaa wordmark behind the prism.
+ * - Faces the camera 1:1 → reads straight, no keystone / tilt / spin.
+ * - Vertical linear gradient: pure white at the top, easing into the scene
+ *   background colour at the bottom for a rich fade-out.
+ * - The scene animates `ref.position.x` (slide-in) and
+ *   `ref.userData.material.opacity` (fade-in), so this group takes NO
+ *   `position` prop and keeps a native `.opacity`.
  */
-const HeroLogo = forwardRef(function HeroLogo({ scale = 1, color = '#ffffff' }, ref) {
+const HeroLogo = forwardRef(function HeroLogo(
+  { scale = 1, bg = '#000000', top = '#ffffff' },
+  ref,
+) {
   const groupRef = useRef(null)
+  const bgRef = useRef(bg)
+  bgRef.current = bg
 
-  const material = useMemo(
-    () =>
-      new THREE.MeshBasicMaterial({
-        color,
-        toneMapped: false,
-        transparent: true,
-        opacity: 0,
-        side: THREE.DoubleSide,
-        depthWrite: true,
-      }),
-    [color],
-  )
+  const material = useMemo(() => {
+    const mat = new THREE.MeshBasicMaterial({
+      toneMapped: false,
+      transparent: true,
+      opacity: 0,
+      side: THREE.DoubleSide,
+      depthWrite: true,
+    })
+    mat.onBeforeCompile = (shader) => {
+      shader.uniforms.uTop = { value: new THREE.Color(top) }
+      shader.uniforms.uBottom = { value: new THREE.Color(bgRef.current) }
+      shader.vertexShader =
+        'attribute float aGrad;\nvarying float vGrad;\n' +
+        shader.vertexShader.replace(
+          '#include <begin_vertex>',
+          '#include <begin_vertex>\n  vGrad = aGrad;',
+        )
+      shader.fragmentShader =
+        'uniform vec3 uTop;\nuniform vec3 uBottom;\nvarying float vGrad;\n' +
+        shader.fragmentShader.replace(
+          'vec4 diffuseColor = vec4( diffuse, opacity );',
+          'float g = clamp( vGrad, 0.0, 1.0 );\n' +
+            'vec4 diffuseColor = vec4( mix( uBottom, uTop, g ), opacity * g );',
+        )
+      mat.userData.shader = shader
+    }
+    return mat
+  }, [top])
+
+  // Keep the gradient's bottom stop in sync with the scene background.
+  useEffect(() => {
+    const s = material.userData.shader
+    if (s) s.uniforms.uBottom.value.set(bg)
+  }, [material, bg])
 
   const setRefs = useCallback(
     (node) => {

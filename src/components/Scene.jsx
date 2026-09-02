@@ -352,8 +352,8 @@ export default function Scene() {
 
   return (
     <>
-      <color attach="background" args={['#000000']} />
-      <Backdrop />
+      <color attach="background" args={[settings.bgColor]} />
+      <Backdrop center={settings.bgGlow} edge={settings.bgColor} />
 
       <PerspectiveCamera
         makeDefault
@@ -381,7 +381,7 @@ export default function Scene() {
 
       <group position={[0, 0, 0]}>
         <group position={logoPosition}>
-          <HeroLogo ref={attachHeroLogo} scale={textScale} />
+          <HeroLogo ref={attachHeroLogo} scale={textScale} bg={settings.bgColor} />
         </group>
         <Prism
           key={prismKey}
