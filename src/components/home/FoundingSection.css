@@ -621,7 +621,11 @@
 @media (max-width: 900px) {
   .founding .founding__statement {
     max-width: 100%;
-    font-size: clamp(1.3rem, 8.4vw, 3rem);
+    font-size: clamp(2rem, 5vw, 2.75rem) !important;
+  }
+
+  .founding__eyebrow {
+    font-size: 1rem;
   }
 
   .founding__card {

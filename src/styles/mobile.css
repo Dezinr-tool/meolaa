@@ -403,6 +403,7 @@ html.is-nav-menu-open body {
 
 /* ——— Inner pages ——— */
 @media (max-width: 900px) {
+
   .inner-hero__inner,
   .app--inner .pg-pad,
   .app--inner .page-editorial {
@@ -464,7 +465,7 @@ html.is-nav-menu-open body {
   }
 
   .metrics__head.section-head {
-    padding: 0;
+    padding: 48px var(--pad-x, 24px) !important;
   }
 
   .metrics__head .section-head__sub {

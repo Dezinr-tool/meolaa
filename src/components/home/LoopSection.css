@@ -72,7 +72,7 @@
 /* Eyebrow → title gap, tightened from the 24px section-head default —
    desktop only (mobile repositions the whole header above the artboard). */
 @media (min-width: 901px) {
-  .loop__header.section-head .section-head__eyebrow + .loop__title {
+  .loop__header.section-head .section-head__eyebrow+.loop__title {
     margin-top: 4px;
   }
 }
@@ -103,8 +103,7 @@
 .loop__title-word--outline {
   font-weight: var(--fw-bold, 700);
   color: transparent;
-  -webkit-text-stroke: var(--loop-title-outline-w, 1.75px)
-    var(--color-primary, #002f3a);
+  -webkit-text-stroke: var(--loop-title-outline-w, 1.75px) var(--color-primary, #002f3a);
 }
 
 /* Fill only — no outline. */
@@ -327,8 +326,13 @@
 
 @media (max-width: 900px) {
   .loop {
-    padding: clamp(16px, 3vw, 24px) 10px clamp(20px, 4vw, 32px);
-    --loop-copy-w: min(128px, 36vw);
+    /* Tight top pad — header is lifted above the artboard into this space.
+       No bottom pad so the terrain can full-bleed the fold edge. */
+    padding: clamp(16px, 2.5vh, 28px) 10px 0;
+    --loop-copy-w: min(148px, 42vw);
+    align-items: center;
+    /* Let the lifted header sit above the artboard without being clipped. */
+    overflow: visible;
   }
 
   .loop__artboard {
@@ -337,15 +341,12 @@
   }
 
   /*
-   * The artboard keeps its 1422/1117 aspect, so at phone widths it is only
-   * ~306px tall — the header, absolutely placed at top 4.9% inside it, spilled
-   * straight over the orbit ring. Lift it into the dead space above the
-   * artboard instead. `bottom: 100% + gap` needs no DOM change and leaves the
-   * desktop placement untouched.
+   * Lift the header further above the artboard (toward the fold top).
+   * Larger bottom offset = higher on screen.
    */
   .loop__header.section-head {
     top: auto;
-    bottom: calc(100% + clamp(10px, 2.5vh, 22px));
+    bottom: calc(100% + clamp(52px, 8vh, 76px));
     left: 50%;
     transform: translateX(-50%);
     width: min(96%, 520px);
@@ -353,7 +354,7 @@
   }
 
   .loop__header.section-head .loop__title {
-    font-size: clamp(1.5rem, 5vw, 2.75rem);
+    font-size: clamp(2rem, 5vw, 2.75rem);
   }
 
   .loop__title-line {
@@ -362,26 +363,34 @@
   }
 
   .loop__copy {
-    padding: 10px 11px;
-    margin-top: -20px;
+    z-index: 5;
+    padding: 12px 14px;
+    /* Negative margin was clipping the label under overflow:hidden. */
+    margin-top: 0;
     box-sizing: border-box;
     max-width: 100%;
-    overflow: hidden;
+    overflow: visible;
   }
 
   .loop__copy-label {
-    margin: 0 0 4px;
-    font-size: 0.625rem;
-    letter-spacing: 0.05em;
+    margin: 0 0 6px;
+    font-size: 0.8125rem;
+    /* 13px — was 10px and hard to read */
+    font-weight: var(--fw-semibold, 600);
+    letter-spacing: 0.06em;
     line-height: 1.15;
+    color: #000 !important;
+    opacity: 1;
   }
 
   .loop__copy-title {
     max-width: none;
     width: 100%;
     margin: 0;
-    font-size: 14px;
-    line-height: 1.12;
+    font-size: 0.9375rem;
+    /* 15px */
+    line-height: 1.08;
+    color: #000 !important;
     overflow-wrap: normal;
     word-break: normal;
     hyphens: none;
@@ -391,32 +400,106 @@
     display: none;
   }
 
+  /* Desktop SVG connectors use Figma desktop endpoints — replace with CSS
+     spokes aimed at the orbit hooks (image-2 mobile structure). */
+  .loop__orbit-line {
+    opacity: 0 !important;
+  }
+
+  .loop__dot {
+    z-index: 6;
+    width: clamp(18px, 5vw, 24px);
+    height: clamp(18px, 5vw, 24px);
+  }
+
+  .loop__step.is-reached .loop__dot,
+  .loop.is-static .loop__step .loop__dot {
+    opacity: 1;
+  }
+
   /*
-   * Staggered orbit cards — Signal top-left, Build mid-left, Learn bottom-right.
-   * Percent tops are artboard-local; tuned for ~390px phones so cards never
-   * stack on the left when all three are visible (reduced motion / end state).
+   * Mobile structure (reference):
+   *   SIGNAL  — centered above the ring, vertical hook to top node
+   *   BUILD   — outside bottom-left, diagonal hook from top-right → BL node
+   *   LEARN   — outside bottom-right, diagonal hook from top-left → BR node
+   * Cards stay clear of the particle ring; hooks sit on the circumference.
    */
+
+  /* SIGNAL — fully above the top node */
   .loop__step--orbit-top .loop__copy {
-    left: 8%;
-    top: 25% !important;
-    width: min(128px, 36vw);
+    left: 50%;
+    right: auto;
+    top: auto !important;
+    bottom: calc(100% - var(--loop-dot-top-y) + 64px) !important;
+    width: min(168px, 52vw);
+    margin-left: calc(min(168px, 52vw) / -2);
+  }
+
+  .loop__step--orbit-top .loop__copy::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 100%;
+    width: 1px;
+    height: 56px;
+    transform: translateX(-50%);
+    background: var(--loop-line, rgba(10, 48, 56, 0.4));
+    pointer-events: none;
+  }
+
+  .loop__step--orbit-top .loop__dot {
+    top: 114px
+  }
+
+  /* BUILD + LEARN — same horizontal band, parked outside BL / BR nodes */
+  .loop__step--orbit-bl .loop__copy,
+  .loop__step--orbit-br .loop__copy {
+    top: calc(var(--loop-dot-bl-y) + 16%) !important;
+    bottom: auto;
+    width: min(160px, 34vw);
+    margin-left: 0;
   }
 
   .loop__step--orbit-bl .loop__copy {
-    left: 5%;
-    top: 80% !important;
-    width: min(128px, 36vw);
+    left: 1%;
+    right: auto;
   }
 
   .loop__step--orbit-br .loop__copy {
     left: auto;
-    right: 6%;
-    top: 45% !important;
-    width: min(128px, 36vw);
+    right: 1%;
+  }
+
+  /* Diagonal spokes: BL card top-right → ring, BR card top-left → ring */
+  .loop__step--orbit-bl .loop__copy::after,
+  .loop__step--orbit-br .loop__copy::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 80px;
+    height: 1px;
+    background: var(--loop-line, rgba(10, 48, 56, 0.4));
+    pointer-events: none;
+  }
+
+  .loop__step--orbit-bl .loop__copy::after {
+    left: 50%;
+    transform-origin: left center;
+    transform: rotate(320deg);
+    top: 0;
+    width: 80px;
+  }
+
+  .loop__step--orbit-br .loop__copy::after {
+    right: 50%;
+    left: auto;
+    transform-origin: right center;
+    transform: rotate(38deg);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   .loop__dot,
   .loop__copy {
     transition: none;

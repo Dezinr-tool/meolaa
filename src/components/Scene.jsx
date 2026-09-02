@@ -163,6 +163,19 @@ export default function Scene() {
   } = settings
 
   const gl = useThree((s) => s.gl)
+  const viewW = useThree((s) => s.size.width)
+
+  /* Phone/tablet: shrink prism + bg logo (beams follow via raytrace on the
+     scaled mesh) so the composition fits the narrower hero fold. */
+  const mobileFit = useMemo(() => {
+    if (viewW <= 480) return 0.5
+    if (viewW <= 700) return 0.58
+    if (viewW <= 900) return 0.7
+    return 1
+  }, [viewW])
+  const fitScale = scale * mobileFit
+  const fitTextScale = textScale * mobileFit
+  const fitPosY = posY * mobileFit + (viewW <= 900 ? 0.35 : 0)
 
   const prismRef = useRef(null)
   const entryBeamRef = useRef(null)
@@ -250,9 +263,9 @@ export default function Scene() {
     // Anchor the incoming beam to the prism's *base* pose only — a live drag
     // rotation must not swing the beam, only bend the refraction.
     const basePose = makeBasePose(
-      [0, posY, 0],
+      [0, fitPosY, 0],
       new THREE.Euler(THREE.MathUtils.degToRad(pitchDeg), THREE.MathUtils.degToRad(yawDeg), 0),
-      scale,
+      fitScale,
     )
     const setup = setupHeroBeam(mesh, { angleDeg: entryAngleDeg, basePose })
     const result = tracePrismDispersion(mesh, setup.origin, setup.direction)
@@ -264,10 +277,10 @@ export default function Scene() {
     }
   }, [
     prismKey,
-    scale,
+    fitScale,
     yawDeg,
     pitchDeg,
-    posY,
+    fitPosY,
     baseHalf,
     height,
     entryAngleDeg,
@@ -384,14 +397,14 @@ export default function Scene() {
 
       <group position={[0, 0, 0]}>
         <group position={logoPosition}>
-          <HeroLogo ref={attachHeroLogo} scale={textScale} bg={settings.bgColor} />
+          <HeroLogo ref={attachHeroLogo} scale={fitTextScale} bg={settings.bgColor} />
         </group>
         <Prism
           key={prismKey}
           ref={prismRef}
-          position={[0, posY, 0]}
+          position={[0, fitPosY, 0]}
           rotation={prismRotation}
-          scale={scale}
+          scale={fitScale}
           baseHalf={baseHalf}
           height={height}
           roughness={settings.roughness}
@@ -415,7 +428,7 @@ export default function Scene() {
             start={beam.origin}
             direction={beam.direction}
             length={entryLength}
-            radius={settings.beamThickness}
+            radius={settings.beamThickness * mobileFit}
             color={settings.beamColor}
             opacity={settings.beamOpacity}
             coreOpacity={settings.beamCoreOpacity}
@@ -424,7 +437,7 @@ export default function Scene() {
           <Flare
             ref={entryFlareRef}
             position={trace.entryPoint}
-            size={0.45}
+            size={0.45 * mobileFit}
             color={settings.entryFlareColor}
             intensity={settings.entryFlareIntensity}
           />
@@ -437,7 +450,7 @@ export default function Scene() {
           start={internalBeam.start}
           direction={internalBeam.direction}
           length={internalBeam.length}
-          radius={0.016}
+          radius={0.016 * mobileFit}
           color={settings.internalBeamColor}
           opacity={settings.internalBeamOpacity}
           coreOpacity={0.45}
@@ -452,7 +465,7 @@ export default function Scene() {
           <Flare
             ref={exitFlareRef}
             position={fan.start}
-            size={1.5}
+            size={1.5 * mobileFit}
             color={settings.exitFlareColor}
             intensity={settings.exitFlareIntensity}
             streak={0}
@@ -462,8 +475,8 @@ export default function Scene() {
             ref={ribbonRef}
             start={fan.start}
             direction={fan.direction}
-            length={settings.ribbonLength}
-            width={settings.ribbonWidth}
+            length={settings.ribbonLength * mobileFit}
+            width={settings.ribbonWidth * mobileFit}
             startWidthRatio={0.045}
             widenPower={settings.ribbonWidenPower}
             intensity={settings.ribbonIntensity}

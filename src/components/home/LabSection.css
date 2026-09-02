@@ -8,11 +8,9 @@
   /* Default strip (overridden per panel via data-lab-index). */
   --meola-lab-strip: var(--color-lilac-deep, #5656ad);
   --meola-lab-strip-ink: var(--color-white, #fff);
-  --meola-lab-strip-muted: color-mix(
-    in srgb,
-    var(--color-white, #fff) 72%,
-    transparent
-  );
+  --meola-lab-strip-muted: color-mix(in srgb,
+      var(--color-white, #fff) 72%,
+      transparent);
   --meola-lab-ink: var(--color-planet-blue, #002f3a);
   --meola-lab-muted: color-mix(in srgb, var(--color-planet-blue, #002f3a) 55%, transparent);
   --meola-lab-body: color-mix(in srgb, var(--color-planet-blue, #002f3a) 72%, transparent);
@@ -54,7 +52,7 @@
   box-sizing: border-box;
 }
 
-.meola-lab__intro > .meola-lab__eyebrow {
+.meola-lab__intro>.meola-lab__eyebrow {
   flex-shrink: 0;
 }
 
@@ -139,12 +137,12 @@
 /* Headline + sub stay at the bottom of the intro column. Used to rely on
    the now-removed .meola-lab__mark flex zone above to absorb the space;
    margin-top: auto does the same job directly. */
-.meola-lab__intro > .parallax-heading {
+.meola-lab__intro>.parallax-heading {
   margin-top: auto;
   flex-shrink: 0;
 }
 
-.meola-lab__intro > .meola-lab__sub {
+.meola-lab__intro>.meola-lab__sub {
   flex-shrink: 0;
 }
 
@@ -342,7 +340,7 @@
   opacity: 0;
 }
 
-.meola-lab__small-title > p {
+.meola-lab__small-title>p {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -411,6 +409,11 @@
 
   .meola-lab__headline {
     margin-top: 12px;
+    font-size: clamp(2rem, 5vw, 2.75rem) !important;
+  }
+
+  .meola-lab__eyebrow {
+    font-size: 1rem;
   }
 
   .meola-lab__panels {
@@ -456,7 +459,7 @@
     padding-inline: var(--pad-x, 24px);
   }
 
-  .meola-lab__small-title > p {
+  .meola-lab__small-title>p {
     writing-mode: horizontal-tb;
     transform: none;
     flex-direction: row;
@@ -502,7 +505,7 @@
   }
 
   .meola-lab--mobile-pin .meola-lab__intro {
-    padding: clamp(20px, 4vw, 28px) var(--pad-x, 24px) clamp(12px, 2.5vw, 16px);
+    padding: clamp(64px, 4vw, 28px) var(--pad-x, 24px) clamp(12px, 2.5vw, 16px);
   }
 
   .meola-lab--mobile-pin .meola-lab__headline {
@@ -538,6 +541,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   .meola-lab__content,
   .meola-lab__small-title {
     will-change: auto;

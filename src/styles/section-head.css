@@ -68,7 +68,7 @@
   gap: 0;
 }
 
-.section-head--split > :not(.section-head__stack) {
+.section-head--split> :not(.section-head__stack) {
   flex: 0 0 auto;
 }
 
@@ -95,6 +95,12 @@
   color: var(--sh-accent, var(--section-head-accent, var(--color-sustainable-green, #41857a)));
 }
 
+@media (max-width: 900px) {
+  .section-head__eyebrow {
+    font-size: 1rem;
+  }
+}
+
 .section-head .section-head__title,
 .section-head .parallax-heading {
   margin: 0;
@@ -112,10 +118,10 @@
 }
 
 /* Eyebrow → title = 24px */
-.section-head__eyebrow + .section-head__title,
-.section-head__eyebrow + .parallax-heading,
-.section-head__stack .section-head__eyebrow + .section-head__title,
-.section-head__stack .section-head__eyebrow + .parallax-heading {
+.section-head__eyebrow+.section-head__title,
+.section-head__eyebrow+.parallax-heading,
+.section-head__stack .section-head__eyebrow+.section-head__title,
+.section-head__stack .section-head__eyebrow+.parallax-heading {
   margin-top: var(--section-head-eyebrow-title-gap, 24px);
 }
 
@@ -133,20 +139,17 @@
 }
 
 /* Title → sub = 12px — keep adjacent rules so later sheets cannot widen it */
-.section-head__title + .section-head__sub,
-.parallax-heading + .section-head__sub,
-.section-head__stack .section-head__title + .section-head__sub,
-.section-head__stack .parallax-heading + .section-head__sub,
-.section-head > .section-head__sub,
-.section-head__stack > .section-head__sub {
+.section-head__title+.section-head__sub,
+.parallax-heading+.section-head__sub,
+.section-head__stack .section-head__title+.section-head__sub,
+.section-head__stack .parallax-heading+.section-head__sub,
+.section-head>.section-head__sub,
+.section-head__stack>.section-head__sub {
   margin-top: var(--section-head-title-sub-gap, 12px);
 }
 
 /* Extra children after the trio (ghost CTA, filter row) stay centred. */
-.section-head:not(.section-head--split)
-  > :not(.section-head__eyebrow):not(.section-head__title):not(
-    .section-head__sub
-  ):not(.parallax-heading) {
+.section-head:not(.section-head--split)> :not(.section-head__eyebrow):not(.section-head__title):not(.section-head__sub):not(.parallax-heading) {
   margin-top: clamp(8px, 1.2vh, 16px);
 }
 
@@ -188,6 +191,7 @@
   --sh-title: var(--section-head-on-light-ink);
   --sh-sub: var(--section-head-on-light-muted);
   flex: 0 0 auto;
+  padding: clamp(140px, 7svh, 80px) 0 clamp(80px, 7svh, 80px) !important;
 }
 
 .metrics__head .section-head__eyebrow {
@@ -324,6 +328,33 @@
   color: var(--section-head-on-light-muted);
   max-width: var(--section-head-sub-max);
   text-wrap: balance;
+}
+
+/*
+ * Mobile type standard — matches Loop's mobile eyebrow + title
+ * (eyebrow 1rem · title clamp(2rem, 5vw, 2.75rem)).
+ * Scoped to Brand Lab, Founding ("Why Meolaa is inevitable"), Portfolio,
+ * Metrics ("By the numbers"), and Media — desktop clamps stay untouched.
+ */
+@media (max-width: 900px) {
+
+  .meola-lab__eyebrow,
+  .founding__eyebrow,
+  .portfolio-title .section-head__eyebrow,
+  .metrics__head .section-head__eyebrow,
+  .press-feed__head .section-head__eyebrow {
+    font-size: 1rem;
+  }
+
+  .meola-lab__headline,
+  .founding .founding__statement,
+  .founding__title,
+  .portfolio-title .section-head__title,
+  .portfolio-title h2.section-head__title,
+  .metrics__head .section-head__title,
+  .press-feed__head .section-head__title {
+    font-size: clamp(2rem, 5vw, 2.75rem) !important;
+  }
 }
 
 /* Founding title type owned by FoundingSection.css */

@@ -44,7 +44,7 @@
   width: 100%;
   max-width: min(64rem, 94vw);
   margin-inline: auto;
-  padding: clamp(56px, 7svh, 80px) clamp(20px, 3vw, 48px) clamp(96px, 12svh, 140px) !important;
+  padding: clamp(56px, 7svh, 80px) clamp(20px, 3vw, 48px) clamp(140px, 12svh, 140px) !important;
   background: transparent !important;
   color: var(--pf-ink) !important;
   box-sizing: border-box;
@@ -128,10 +128,12 @@
 
 /* Softer than an on/off blink — reads as a live signal, not a warning. */
 @keyframes brand-live-blink {
+
   0%,
   100% {
     opacity: 1;
   }
+
   50% {
     opacity: 0.2;
   }
@@ -354,6 +356,7 @@
   from {
     transform: translate3d(0, 0, 0);
   }
+
   to {
     transform: translate3d(-50%, 0, 0);
   }
@@ -370,6 +373,7 @@
  * stayed filled with the marquee running and the readable line faded out.
  */
 @media (hover: hover) and (pointer: fine) {
+
   .brand-row:hover::before,
   .brand-row:focus-within::before {
     opacity: 1;
@@ -412,7 +416,16 @@
   }
 
   .portfolio-title.section-head {
-    padding: 24px var(--pad-x, 24px) !important;
+    padding: 48px var(--pad-x, 24px) !important;
+  }
+
+  .portfolio-title .section-head__eyebrow {
+    font-size: 1rem;
+  }
+
+  .portfolio-title .section-head__title,
+  .portfolio-title h2.section-head__title {
+    font-size: clamp(2rem, 5vw, 2.75rem) !important;
   }
 
   .brand-hero {
@@ -482,6 +495,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   .brand-row,
   .brand-row__static,
   .brand-row__ticker,

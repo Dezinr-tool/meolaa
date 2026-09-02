@@ -6,7 +6,7 @@ import { DEFAULT_SETTINGS } from './schema'
  * separate reconciler that does not forward context, so both the DOM drawer and
  * the in-canvas scene subscribe here.
  */
-const STORAGE_KEY = 'prism.settings.v11'
+const STORAGE_KEY = 'prism.settings.v13'
 
 function loadStored() {
   try {
