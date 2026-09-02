@@ -10,6 +10,15 @@ export function HeroSection() {
   return (
     <section className="fold hero hero--blank" data-section="hero">
       <div className="hero__stage" aria-hidden="true">
+        <video
+          className="hero__bg-video"
+          src="/videos/hero-loop.mp4"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+        />
         <div className="hero__bg" />
         <div className="hero__shade" />
       </div>
