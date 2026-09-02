@@ -119,11 +119,14 @@ function buildHeroTimeline({
   // Reveal itself finishes at label time 0.9; this dummy tween stretches the
   // timeline well past that so a real, visible pause holds the completed
   // frame before the pin releases — "animation should fully finish, with a
-  // beat of delay, before the next fold arrives" (see the pin/scrub setup
-  // below: reveal ends at 0.9/1.5 ≈ 60% into the pinned scroll, hold fills
-  // the remaining 40%).
+  // beat of delay, before the next fold arrives". Reveal now lands at
+  // 0.9/2.1 ≈ 43% into the pinned scroll, hold fills the remaining 57% — a
+  // longer pause than before scrolling is allowed to carry through to the
+  // next fold. HomeAnimations.tsx's REVEAL_COMPLETE_FRACTION mirrors this
+  // 0.9/2.1 ratio (it hides the nav once the reveal's done, not only once
+  // the whole pin releases) — keep the two in sync if this changes.
   tl.addLabel('hold', 0.9)
-  tl.to({}, { duration: 0.6 }, 'hold')
+  tl.to({}, { duration: 1.2 }, 'hold')
 
   return tl
 }

@@ -226,11 +226,20 @@ export function HomeAnimations() {
        * Polled briefly since the spacer is created by a different
        * component's effect and may not exist on the very first tick. */
       let heroSpanPx = 0
+      let heroNaturalPx = 0
       const measureHeroSpan = () => {
         if (!hero) return
+        heroNaturalPx = (hero as HTMLElement).offsetHeight
         const spacer = hero.closest('.pin-spacer') as HTMLElement | null
-        heroSpanPx = spacer ? spacer.offsetHeight : (hero as HTMLElement).offsetHeight
+        heroSpanPx = spacer ? spacer.offsetHeight : heroNaturalPx
       }
+      /* Scene.jsx's reveal timeline finishes at label time 0.9 of a 2.1-long
+       * timeline (0.9 + a 1.2 hold) — keep this ratio in sync with that
+       * file. Used below to hide the nav (not flip its colour — it's still
+       * over the same dark hero) once the reveal is actually done and the
+       * user keeps scrolling through the hold, rather than making them
+       * scroll all the way to the pin's release first. */
+      const REVEAL_COMPLETE_FRACTION = 0.9 / 2.1
       measureHeroSpan()
       let heroSpanPollId = 0
       if (hero) {
@@ -274,12 +283,15 @@ export function HomeAnimations() {
         }
 
         const dir = direction !== 0 ? direction : y > lastY ? 1 : y < lastY ? -1 : 0
-        /* Hold the bar open for the hero's whole pinned span — same
-         * reasoning as glassThreshold above; auto-hiding it mid-pin would
-         * make it vanish and reappear while the (still fully visible, not
-         * actually scrolled past) hero sat behind it. */
+        /* Hold the bar open until the Prism reveal itself has actually
+         * finished (not the whole pin, which keeps going through the hold
+         * for a beat afterwards) — once the user scrolls past that point
+         * the nav tucks away, rather than staying pinned on screen for the
+         * entire hold too. */
+        const heroRevealDonePx =
+          heroNaturalPx + (heroSpanPx - heroNaturalPx) * REVEAL_COMPLETE_FRACTION
         const hideFloor = hero
-          ? Math.max(NAV_HIDE_Y, window.innerHeight * DOCK_VH, heroSpanPx)
+          ? Math.max(NAV_HIDE_Y, window.innerHeight * DOCK_VH, heroRevealDonePx)
           : NAV_HIDE_Y
         if (dir === 1 && y > hideFloor) {
           siteNav.classList.add('is-hidden')
