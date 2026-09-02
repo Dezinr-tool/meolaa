@@ -76,7 +76,7 @@ const WHERE_NEXT = [
 
 export function AboutPage() {
   return (
-    <PageLayout pageClass="page-editorial">
+    <PageLayout pageClass="page-editorial" footerSimple={false}>
       <section className="au-fold1" aria-label="About Us">
         <div className="au-fold1__pin">
           <header className="au-fold1__head">
