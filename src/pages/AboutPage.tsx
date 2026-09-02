@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom'
 import { AboutRoadmapSection } from '../components/about/AboutRoadmapSection'
 import { PageLayout } from '../components/layout/PageLayout'
-import { WhereNextSection } from '../components/layout/WhereNextSection'
 
 const PILLARS = [
   {
@@ -66,12 +65,6 @@ const LEADERS = [
   { name: 'Head of Intelligence', role: 'Intelligence', img: '/assets/team/team-02.jpg' },
   { name: 'Head of Brand', role: 'Brand build', img: '/assets/team/team-03.jpg' },
   { name: 'Head of Growth', role: 'Growth & ops', img: '/assets/team/team-04.jpg' },
-] as const
-
-const WHERE_NEXT = [
-  { num: '03', to: '/story', title: 'Our Story', desc: 'How Meolaa actually got built. →' },
-  { num: '04', to: '/lab', title: 'Meolaa Lab', desc: 'Inside the system that runs it all. →' },
-  { num: '07', to: '/careers', title: 'Careers', desc: 'Build with a small team, real ownership. →' },
 ] as const
 
 export function AboutPage() {
@@ -259,7 +252,6 @@ export function AboutPage() {
         </div>
       </section>
 
-      <WhereNextSection links={WHERE_NEXT} />
     </PageLayout>
   )
 }
