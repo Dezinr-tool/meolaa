@@ -326,7 +326,7 @@
 }
 
 .app--inner .au-fold1__video-box {
-  border-radius: var(--radius-card);
+  border-radius: 0;
   box-shadow: 0 24px 80px color-mix(in srgb, var(--color-planet-blue) 18%, transparent);
 }
 
@@ -349,12 +349,9 @@
 }
 
 .app--inner .au-roadmap {
-  --au-rm-bg: var(--color-secondary);
+  --au-rm-bg: var(--color-white);
 }
 
-.app--inner .au-roadmap__card {
-  border: 1px solid color-mix(in srgb, var(--color-planet-blue) 8%, transparent);
-}
 
 /* ——— Pillars — planet blue band like homepage investors ——— */
 

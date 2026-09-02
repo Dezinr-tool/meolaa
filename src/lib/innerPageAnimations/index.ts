@@ -1,4 +1,5 @@
 export {
+  initAboutFold1Intro,
   initAboutLoop,
   initAboutRoadmap,
   initMissionVision,
@@ -9,7 +10,13 @@ export { initLabPlatform } from './lab'
 export { initCareersLifeFlow } from './careers'
 export { waitForScroller, refreshScrollTriggers } from './shared'
 
-import { initAboutLoop, initAboutRoadmap, initMissionVision, initPillars } from './about'
+import {
+  initAboutFold1Intro,
+  initAboutLoop,
+  initAboutRoadmap,
+  initMissionVision,
+  initPillars,
+} from './about'
 import { initCareersLifeFlow } from './careers'
 import { initLabPlatform } from './lab'
 import { initStoryHero, initStoryRail } from './story'
@@ -28,6 +35,7 @@ function safeInit(name: string, init: () => () => void): () => void {
 export function initInnerPageAnimations(): () => void {
   const disposers: (() => void)[] = []
 
+  disposers.push(safeInit('aboutFold1Intro', initAboutFold1Intro))
   disposers.push(safeInit('aboutLoop', initAboutLoop))
   disposers.push(safeInit('aboutRoadmap', initAboutRoadmap))
   disposers.push(safeInit('missionVision', initMissionVision))
@@ -42,6 +50,24 @@ export function initInnerPageAnimations(): () => void {
   } catch (err) {
     console.warn('[inner-pages] ScrollTrigger refresh failed:', err)
   }
+
+  // Images loading in after the first refresh grow the page (and shift every
+  // pinned trigger's start/end below them) without re-measuring on their
+  // own — one more refresh once everything is actually in fixes triggers
+  // that were computed against a still-short page.
+  const onWindowLoad = () => {
+    try {
+      refreshScrollTriggers()
+    } catch (err) {
+      console.warn('[inner-pages] post-load ScrollTrigger refresh failed:', err)
+    }
+  }
+  if (document.readyState === 'complete') {
+    onWindowLoad()
+  } else {
+    window.addEventListener('load', onWindowLoad, { once: true })
+  }
+  disposers.push(() => window.removeEventListener('load', onWindowLoad))
 
   return () => {
     disposers.forEach((dispose) => {

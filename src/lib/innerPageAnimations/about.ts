@@ -270,261 +270,162 @@ export function initAboutRoadmap(): () => void {
   }
 }
 
-const MV_MQ = '(max-width: 900px)'
-const START_SCALE = 0.42
-const START_Y_VH = 0.78
-const SCRUB_VH = 1.65
-const GROW_DUR = 0.85
-
-export function initMissionVision(): () => void {
-  const root = document.querySelector<HTMLElement>('[data-mv-scroll], .au2-mv')
+/**
+ * About — fold 1 opener. zoox.com/about's TitleBlock plays a simple
+ * staggered load-in (eyebrow → title → ctas, then the media card) rather
+ * than anything scroll-driven — the pin/clip-mask reveal is fold 2 only.
+ */
+export function initAboutFold1Intro(): () => void {
+  const root = document.querySelector<HTMLElement>('.au-fold1')
   if (!root) return () => {}
 
-  /* Inner pages use stacked static panels (inner-pages.css) — skip pin/scrub. */
-  if (document.querySelector('.app--inner')) {
-    root.classList.add('is-static')
-    return () => {
-      root.classList.remove('is-static')
-    }
-  }
+  const eyebrow = root.querySelector<HTMLElement>('.au-fold1 .section-head__eyebrow')
+  const title = root.querySelector<HTMLElement>('.au-fold1__title')
+  const ctas = root.querySelector<HTMLElement>('.au-fold1__ctas')
+  const media = root.querySelector<HTMLElement>('.au-fold1__video-box')
+  const targets = [eyebrow, title, ctas, media].filter(Boolean) as HTMLElement[]
+  if (!targets.length) return () => {}
 
-  const pin = root.querySelector<HTMLElement>('[data-mv-pin]')
-  const frame = root.querySelector<HTMLElement>('[data-mv-frame]')
-  const thesis = root.querySelector<HTMLElement>('[data-mv-thesis]')
-  const imgMission = root.querySelector<HTMLElement>('[data-mv-img="mission"]')
-  const imgVision = root.querySelector<HTMLElement>('[data-mv-img="vision"]')
-  const panelMission = root.querySelector<HTMLElement>('[data-mv-panel="mission"]')
-  const panelVision = root.querySelector<HTMLElement>('[data-mv-panel="vision"]')
-  if (!pin || !frame) return () => {}
+  if (prefersReducedMotion()) return () => {}
 
-  const missionFades = panelMission
-    ? Array.from(panelMission.querySelectorAll<HTMLElement>('[data-mv-fade]'))
-    : []
-  const visionFades = panelVision
-    ? Array.from(panelVision.querySelectorAll<HTMLElement>('[data-mv-fade]'))
-    : []
-
-  let mode: 'desktop' | 'mobile' | 'reduced' | null = null
-  let tween: gsap.core.Timeline | null = null
-  let mobileObserver: IntersectionObserver | null = null
-  const triggers: ST[] = []
-  const cleanups: (() => void)[] = []
-
-  function isMobile() {
-    return window.matchMedia(MV_MQ).matches
-  }
-
-  function startY() {
-    return Math.round(window.innerHeight * START_Y_VH)
-  }
-
-  function layoutMetrics() {
-    const w = window.innerWidth
-    const h = window.innerHeight
-    const left = w * 0.02
-    const width = w * 0.46
-    const sideLeft = w - left - width
-    return {
-      top: h * 0.04,
-      left,
-      width,
-      height: h * 0.92,
-      sideX: sideLeft - left,
-    }
-  }
-
-  function killDesktop() {
-    if (tween) {
-      tween.kill()
-      tween = null
-    }
-    triggers.forEach((t) => t.kill())
-    triggers.length = 0
-    const clearTargets = [
-      frame,
-      thesis,
-      imgMission,
-      imgVision,
-      panelMission,
-      panelVision,
-      ...missionFades,
-      ...visionFades,
-    ].filter(Boolean) as gsap.TweenTarget[]
-    gsap.set(clearTargets, { clearProps: 'all' })
-    imgMission?.classList.add('is-active')
-    imgVision?.classList.remove('is-active')
-    root!.classList.remove('is-ready', 'is-static')
-  }
-
-  function killMobile() {
-    mobileObserver?.disconnect()
-    mobileObserver = null
-    root!.querySelectorAll('.au2-mv__panel.is-in').forEach((el) => {
-      el.classList.remove('is-in')
-    })
-  }
-
-  function applyReduced() {
-    killDesktop()
-    killMobile()
-    root!.classList.add('is-reduced')
-    root!.classList.remove('is-ready')
-    imgVision?.classList.add('is-active')
-    imgMission?.classList.remove('is-active')
-  }
-
-  function setupMobile() {
-    killDesktop()
-    root!.classList.remove('is-ready', 'is-static', 'is-reduced')
-    const panels = root!.querySelectorAll('.au2-mv__panel')
-    mobileObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('is-in')
-            mobileObserver?.unobserve(entry.target)
-          }
-        })
-      },
-      { threshold: 0.28, rootMargin: '0px 0px -8% 0px' },
-    )
-    panels.forEach((p) => mobileObserver!.observe(p))
-  }
-
-  function setupDesktop() {
-    killDesktop()
-    killMobile()
-    root!.classList.remove('is-reduced', 'is-static')
-
-    const box = layoutMetrics()
-    gsap.set(frame, {
-      top: box.top,
-      left: box.left,
-      width: box.width,
-      height: box.height,
-      x: 0,
-      y: startY(),
-      scale: START_SCALE,
-      transformOrigin: 'center bottom',
-      borderRadius: 0,
-      force3D: true,
-    })
-    if (thesis) gsap.set(thesis, { opacity: 1, y: 0, scale: 1 })
-    gsap.set(missionFades, { opacity: 0, y: 48, x: 0 })
-    gsap.set(visionFades, { opacity: 0, x: -56, y: 0 })
-    gsap.set(imgMission, {
+  const ctx = gsap.context(() => {
+    gsap.set(targets, { opacity: 0, y: 24 })
+    gsap.to(targets, {
       opacity: 1,
-      scale: 1.12,
-      transformOrigin: 'center bottom',
+      y: 0,
+      duration: 0.7,
+      ease: 'power2.out',
+      stagger: 0.1,
+      delay: 0.1,
     })
-    gsap.set(imgVision, {
-      opacity: 0,
-      scale: 1.12,
-      transformOrigin: 'center bottom',
-    })
-    imgMission?.classList.add('is-active')
-    imgVision?.classList.remove('is-active')
-    root!.classList.add('is-ready')
+  }, root)
 
-    const tl = gsap.timeline({
+  return () => ctx.revert()
+}
+
+const REVEAL_MQ = '(max-width: 900px)'
+const REVEAL_SCRUB_VH = 1.5
+
+/**
+ * About — "The Model" fold. zoox.com/about-style pinned clip-mask reveal:
+ * a single image's clip window grows open on scroll-scrub while the copy
+ * crossfades Mission → Vision over it. Sharp corners throughout (no
+ * rounded clip — site-wide rule), and the image itself never swaps.
+ */
+export function initMissionVision(): () => void {
+  const root = document.querySelector<HTMLElement>('.au-reveal')
+  if (!root) return () => {}
+
+  const pin = root.querySelector<HTMLElement>('[data-reveal-pin]')
+  const img = root.querySelector<HTMLElement>('.au-reveal__img')
+  const copyMission = root.querySelector<HTMLElement>('[data-reveal-copy="mission"]')
+  const copyVision = root.querySelector<HTMLElement>('[data-reveal-copy="vision"]')
+  if (!pin || !img) return () => {}
+
+  let tl: gsap.core.Timeline | null = null
+  let trigger: ST | null = null
+  let mode: 'motion' | 'static' | null = null
+
+  function isStatic() {
+    return prefersReducedMotion() || window.matchMedia(REVEAL_MQ).matches
+  }
+
+  function kill() {
+    tl?.kill()
+    tl = null
+    trigger?.kill()
+    trigger = null
+    gsap.set([img, copyMission, copyVision].filter(Boolean) as gsap.TweenTarget[], {
+      clearProps: 'all',
+    })
+  }
+
+  function setupStatic() {
+    kill()
+    root!.classList.add('is-static')
+  }
+
+  function setupMotion() {
+    kill()
+    root!.classList.remove('is-static')
+
+    gsap.set(img, { clipPath: 'inset(58% 4% 4% 4% round 0)' })
+    if (copyMission) gsap.set(copyMission, { opacity: 1, visibility: 'visible', y: 0 })
+    if (copyVision) gsap.set(copyVision, { opacity: 0, visibility: 'hidden', y: 12 })
+
+    const timeline = gsap.timeline({
       defaults: { ease: 'none' },
       scrollTrigger: {
-        trigger: root,
+        trigger: pin,
         start: 'top top',
-        end: () => `+=${Math.round(window.innerHeight * SCRUB_VH)}`,
+        end: () => `+=${Math.round(window.innerHeight * REVEAL_SCRUB_VH)}`,
         pin,
         pinSpacing: true,
-        pinType: 'transform',
+        pinType: editorialPinType(),
         scrub: true,
         anticipatePin: 0,
         invalidateOnRefresh: true,
       },
     })
 
-    if (thesis) {
-      tl.to(
-        thesis,
-        {
-          opacity: 0,
-          y: () => -Math.round(window.innerHeight * 0.32),
-          scale: 0.94,
-          duration: GROW_DUR,
-        },
-        0,
-      )
+    // 0 → 0.55: the clip window grows from a centred inset to full bleed.
+    timeline.to(img, { clipPath: 'inset(0% 0% 0% 0% round 0)', duration: 0.55 })
+
+    // Hold the fully-revealed frame briefly before swapping copy. Both
+    // visibility toggles are plain GSAP .set() calls (not a one-shot
+    // onComplete callback) so they apply/unapply correctly when the user
+    // scrubs backward through this point, not just moving forward.
+    if (copyMission) {
+      timeline.to(copyMission, { opacity: 0, y: -10, duration: 0.12 }, 0.62)
+      timeline.set(copyMission, { visibility: 'hidden' }, 0.74)
     }
-    tl.to(frame, { y: 0, scale: 1, duration: GROW_DUR }, 0)
-    tl.to(imgMission, { scale: 1, duration: GROW_DUR }, 0)
-    if (imgVision) tl.to(imgVision, { scale: 1, duration: GROW_DUR }, 0)
-
-    missionFades.forEach((el, i) => {
-      tl.to(el, { opacity: 1, y: 0, duration: 0.5 }, GROW_DUR * 0.55 + i * 0.06)
-    })
-    tl.to({}, { duration: 0.18 }, GROW_DUR + 0.25)
-
-    const slideAt = GROW_DUR + 0.45
-    tl.to(frame, { x: () => layoutMetrics().sideX, duration: 0.9 }, slideAt)
-    missionFades.forEach((el, i) => {
-      tl.to(el, { opacity: 0, y: -8, duration: 0.4 }, slideAt + 0.06 + i * 0.035)
-    })
-    visionFades.forEach((el, i) => {
-      tl.to(el, { opacity: 1, x: 0, duration: 0.5 }, slideAt + 0.22 + i * 0.06)
-    })
-    if (imgMission && imgVision) {
-      tl.to(imgMission, { opacity: 0, duration: 0.5 }, slideAt + 0.15)
-      tl.to(imgVision, { opacity: 1, scale: 1, duration: 0.5 }, slideAt + 0.15)
+    if (copyVision) {
+      timeline.set(copyVision, { visibility: 'visible' }, 0.62)
+      timeline.to(copyVision, { opacity: 1, y: 0, duration: 0.18 }, 0.68)
     }
-    tl.to({}, { duration: 0.2 })
+    timeline.to({}, { duration: 0.14 })
 
-    tween = tl
-    if (tl.scrollTrigger) triggers.push(tl.scrollTrigger)
+    tl = timeline
+    trigger = timeline.scrollTrigger ?? null
     refreshScrollTriggers()
-  }
 
-  function syncMode(force = false) {
-    const next = prefersReducedMotion()
-      ? 'reduced'
-      : isMobile()
-        ? 'mobile'
-        : 'desktop'
-    if (!force && next === mode) {
-      if (next === 'desktop') ScrollTrigger.refresh()
-      return
+    // The pin/scrub start-end is measured off live layout at refresh time —
+    // if the mission photo hasn't finished loading yet, the page is still
+    // shorter than its final height, so the trigger's start/end land stale
+    // (progress then reads wrong for the rest of the session). Re-refresh
+    // once it's actually in.
+    const imgEl = img as HTMLImageElement
+    if (!imgEl.complete) {
+      imgEl.addEventListener('load', () => refreshScrollTriggers(), { once: true })
     }
-    mode = next
-    if (next === 'reduced') applyReduced()
-    else if (next === 'mobile') setupMobile()
-    else setupDesktop()
   }
 
-  syncMode(true)
+  function sync(force = false) {
+    const next = isStatic() ? 'static' : 'motion'
+    if (!force && next === mode) return
+    mode = next
+    if (next === 'static') setupStatic()
+    else setupMotion()
+  }
+
+  sync(true)
 
   let resizeTimer: ReturnType<typeof setTimeout>
   const onResize = () => {
     clearTimeout(resizeTimer)
-    resizeTimer = setTimeout(() => {
-      const next = prefersReducedMotion()
-        ? 'reduced'
-        : isMobile()
-          ? 'mobile'
-          : 'desktop'
-      if (next !== mode) syncMode(true)
-      else if (mode === 'desktop') setupDesktop()
-    }, 160)
+    resizeTimer = setTimeout(() => sync(), 160)
   }
   window.addEventListener('resize', onResize)
-  cleanups.push(() => window.removeEventListener('resize', onResize))
 
   const reduceMq = window.matchMedia('(prefers-reduced-motion: reduce)')
-  const onReduceChange = () => syncMode(true)
+  const onReduceChange = () => sync(true)
   reduceMq.addEventListener('change', onReduceChange)
-  cleanups.push(() => reduceMq.removeEventListener('change', onReduceChange))
 
   return () => {
-    cleanups.forEach((fn) => fn())
-    killDesktop()
-    killMobile()
-    root.classList.remove('is-ready', 'is-static', 'is-reduced')
+    window.removeEventListener('resize', onResize)
+    reduceMq.removeEventListener('change', onReduceChange)
+    kill()
+    root.classList.remove('is-static')
   }
 }
 

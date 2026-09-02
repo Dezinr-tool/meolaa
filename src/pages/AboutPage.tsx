@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { AboutRoadmapSection } from '../components/about/AboutRoadmapSection'
+import '../components/about/AboutMissionReveal.css'
 import { PageLayout } from '../components/layout/PageLayout'
 
 const PILLARS = [
@@ -100,88 +101,51 @@ export function AboutPage() {
         </div>
       </section>
 
-      <section
-        className="au2-mv"
-        id="mission"
-        data-mv-scroll
-        aria-label="Mission and Vision"
-      >
-        <div className="au2-mv__pin" data-mv-pin>
-          <div className="au2-mv__thesis" data-mv-thesis aria-label="The Model">
-            <div className="au-fold2__inner">
-              <p className="section-head__eyebrow">The Model</p>
-              <p className="au-fold2__lede">
-                <span>AI-native, digitally-native,</span>{' '}
-                <span>and built to move at the speed of demand.</span>
-              </p>
-              <p className="pg-body au-fold2__body">
-                Every function — insight, product, brand, distribution — is
-                designed around the same data layer, so a small team can do what
-                used to take a large one.
-              </p>
+      <section className="au-reveal" id="mission" aria-label="The Model">
+        <div className="au-reveal__intro">
+          <p className="section-head__eyebrow">The Model</p>
+          <p className="au-fold2__lede">
+            <span>AI-native, digitally-native,</span>{' '}
+            <span>and built to move at the speed of demand.</span>
+          </p>
+          <p className="pg-body au-fold2__body">
+            Every function — insight, product, brand, distribution — is
+            designed around the same data layer, so a small team can do what
+            used to take a large one.
+          </p>
+        </div>
+
+        <div className="au-reveal__pin" data-reveal-pin>
+          <div className="au-reveal__stage">
+            {/* Single image throughout — only the clip window grows/holds as
+                you scroll; it never swaps to a second photo. */}
+            <div className="au-reveal__media" data-reveal-media>
+              <img
+                className="au-reveal__img"
+                src="/assets/pages/about-mission.jpg"
+                alt="Meolaa team collaborating in the office"
+              />
             </div>
-          </div>
-          <div className="au2-mv__frame" data-mv-frame aria-hidden="true">
-            <img
-              className="au2-mv__img is-active"
-              data-mv-img="mission"
-              src="/assets/pages/about-mission.jpg"
-              alt=""
-            />
-            <img
-              className="au2-mv__img"
-              data-mv-img="vision"
-              src="/assets/pages/about-vision-team.jpg"
-              alt=""
-            />
-          </div>
-          <div className="au2-mv__strip" data-mv-strip>
-            <article className="au2-mv__panel" data-mv-panel="mission">
-              <div className="au2-mv__panel-media" aria-hidden="true">
-                <img
-                  src="/assets/pages/about-mission.jpg"
-                  alt="Meolaa team collaborating in the office"
-                />
-              </div>
-              <div className="au2-mv__panel-text">
-                <p className="pg-eyebrow pg-eyebrow--dark" data-mv-fade>
-                  Mission
-                </p>
-                <h2 className="pg-display" data-mv-fade>
-                  Our Mission
-                </h2>
-                <p className="pg-body" data-mv-fade>
-                  Compress the distance from insight to shelf.
-                </p>
-                <p className="pg-body au2-mv__support" data-mv-fade>
+            <div className="au-reveal__copy-stack">
+              <div className="au-reveal__copy" data-reveal-copy="mission">
+                <p className="pg-eyebrow pg-eyebrow--dark">Mission</p>
+                <h2 className="pg-display">Our Mission</h2>
+                <p className="pg-body">Compress the distance from insight to shelf.</p>
+                <p className="pg-body au-reveal__support">
                   Meolaa is an AI-native house of consumer brands, built to read
                   demand and launch faster than any traditional FMCG company can
                   move.
                 </p>
-                <Link className="au2-mv__link" data-mv-fade to="/story">
+                <Link className="au-reveal__link" to="/story">
                   Our story →
                 </Link>
               </div>
-            </article>
-            <article className="au2-mv__panel" data-mv-panel="vision">
-              <div className="au2-mv__panel-media" aria-hidden="true">
-                <img
-                  src="/assets/pages/about-vision-team.jpg"
-                  alt="Meolaa leadership team in a strategy meeting"
-                />
+              <div className="au-reveal__copy" data-reveal-copy="vision">
+                <p className="pg-eyebrow pg-eyebrow--dark">Vision</p>
+                <h2 className="pg-display">Our Vision</h2>
+                <p className="pg-body">A category for every validated signal.</p>
               </div>
-              <div className="au2-mv__panel-text">
-                <p className="pg-eyebrow pg-eyebrow--dark" data-mv-fade>
-                  Vision
-                </p>
-                <h2 className="pg-display" data-mv-fade>
-                  Our Vision
-                </h2>
-                <p className="pg-body" data-mv-fade>
-                  A category for every validated signal.
-                </p>
-              </div>
-            </article>
+            </div>
           </div>
         </div>
       </section>

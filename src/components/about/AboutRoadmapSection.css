@@ -35,7 +35,7 @@
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
-  padding: clamp(72px, 10vh, 100px) clamp(16px, 3vw, 40px) clamp(40px, 6vh, 64px);
+  padding: clamp(72px, 10vh, 100px) 0 clamp(40px, 6vh, 64px);
   background: var(--au-rm-bg);
 }
 
@@ -43,14 +43,16 @@
   will-change: transform;
 }
 
+/* Full-bleed — fills the fold edge to edge like every section around it,
+   instead of floating as an inset card. */
 .au-roadmap__card {
-  width: min(1120px, 100%);
+  width: 100%;
   min-height: min(560px, calc(100vh - 140px));
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   gap: clamp(36px, 6vh, 64px);
-  padding: clamp(28px, 4vw, 48px) clamp(24px, 4vw, 56px) clamp(32px, 5vh, 48px);
+  padding: clamp(28px, 4vw, 48px) clamp(24px, 4vw, 64px) clamp(32px, 5vh, 48px);
   border: none;
   border-radius: 0;
   background: var(--au-rm-card);
@@ -58,10 +60,13 @@
 }
 
 .au-roadmap__header {
-  display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
-  gap: clamp(24px, 4vw, 64px);
-  align-items: start;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(16px, 2.5vw, 24px);
+  max-width: 720px;
+  margin: 0 auto;
+  text-align: center;
 }
 
 .au-roadmap__caption {
@@ -98,7 +103,6 @@
 .au-roadmap__desc {
   margin: 0;
   max-width: 36em;
-  justify-self: end;
   font-family: var(--font-sans);
   font-size: var(--text-body);
   font-weight: var(--fw-regular);
