@@ -50,6 +50,8 @@ const IDLE_GROW = 0.68
 
 /** Pin travel — ~1 viewport segment per panel (4 steps). */
 const LAB_PIN_VH = 3.6
+/** Mobile stack — enough runway for all 4 panel holds. */
+const LAB_PIN_VH_MOBILE = 3.8
 /** Direct scrub (no lag) — numeric scrub + Lenis felt springy on pin enter. */
 const LAB_SCRUB = true
 /** Timeline units: hold each panel, then scrub the hop to the next. */
@@ -60,6 +62,8 @@ const HOLD = 0.42
    within a small fraction of one scroll gesture instead of dragging on
    for most of a viewport height. */
 const TRANS = 0.18
+/** Mobile stack — slightly longer crossfade than desktop row slides. */
+const TRANS_MOBILE = 0.26
 
 /**
  * Scroll progress → panel index (inclusive holds).
@@ -70,17 +74,21 @@ const TRANS = 0.18
  *   progress ~0.50 – ~0.75 → 03
  *   progress ~0.75 – 1.00 → 04
  */
-function panelFromTimelineProgress(p: number, stepCount: number): number {
+function panelFromTimelineProgress(
+  p: number,
+  stepCount: number,
+  trans: number = TRANS,
+): number {
   const transitions = Math.max(0, stepCount - 1)
-  const total = stepCount * HOLD + transitions * TRANS
+  const total = stepCount * HOLD + transitions * trans
   if (total <= 0) return 0
   let t = gsap.utils.clamp(0, 1, p) * total
   for (let i = 0; i < stepCount; i += 1) {
     if (t <= HOLD) return i
     t -= HOLD
     if (i < transitions) {
-      if (t <= TRANS) return t / TRANS < 0.5 ? i : i + 1
-      t -= TRANS
+      if (t <= trans) return t / trans < 0.5 ? i : i + 1
+      t -= trans
     }
   }
   return stepCount - 1
@@ -103,7 +111,7 @@ function usePrefersReducedMotion() {
 /**
  * Brand Lab — Tutorial 109–style two-way accordion, scroll-scrubbed.
  * Desktop: pin the fold; progress advances 01 → 04 with directional content slides.
- * Mobile: vertical scroll-snap stack (no pin).
+ * Mobile: pin + scroll-scrubbed panel holds (vertical stack).
  * prefers-reduced-motion: static first panel, no scrub.
  */
 export function LabSection() {
@@ -146,6 +154,101 @@ export function LabSection() {
       root.querySelectorAll('[data-lab-panel]'),
     )
     if (!panels.length) return
+
+    const addPanelTransition = (
+      tl: gsap.core.Timeline,
+      from: number,
+      to: number,
+      vertical: boolean,
+    ) => {
+      const direction = to > from ? 1 : -1
+      const trans = vertical ? TRANS_MOBILE : TRANS
+      const leaving = panels[from]
+      const entering = panels[to]
+      if (!leaving || !entering) return
+
+      const leaveContent =
+        leaving.querySelector<HTMLElement>('.meola-lab__content')
+      const leaveTitle =
+        leaving.querySelector<HTMLElement>('.meola-lab__small-title')
+      const enterContent =
+        entering.querySelector<HTMLElement>('.meola-lab__content')
+      const enterTitle =
+        entering.querySelector<HTMLElement>('.meola-lab__small-title')
+
+      const at = tl.duration()
+
+      panels.forEach((panel, i) => {
+        const isOpen = i === to
+        tl.to(
+          panel,
+          {
+            flexGrow: isOpen ? ACTIVE_GROW : IDLE_GROW,
+            duration: trans,
+            ease: 'power2.inOut',
+          },
+          at,
+        )
+        if (i !== from && i !== to) {
+          const content =
+            panel.querySelector<HTMLElement>('.meola-lab__content')
+          const title =
+            panel.querySelector<HTMLElement>('.meola-lab__small-title')
+          if (content) tl.set(content, { autoAlpha: 0, xPercent: 0, yPercent: 0 }, at)
+          if (title) tl.to(title, { autoAlpha: 1, duration: trans * 0.35 }, at)
+        }
+      })
+
+      if (leaveContent) {
+        tl.to(
+          leaveContent,
+          vertical
+            ? {
+                yPercent: -8 * direction,
+                autoAlpha: 0,
+                duration: trans * 0.55,
+                ease: 'power2.in',
+              }
+            : {
+                xPercent: -100 * direction,
+                autoAlpha: 0,
+                duration: trans * 0.5,
+                ease: 'power2.in',
+              },
+          at,
+        )
+      }
+      if (leaveTitle) {
+        tl.to(
+          leaveTitle,
+          { autoAlpha: 1, duration: trans * 0.45, ease: 'power1.out' },
+          at + trans * 0.28,
+        )
+      }
+      if (enterTitle) {
+        tl.to(
+          enterTitle,
+          { autoAlpha: 0, duration: trans * 0.28, ease: 'power1.in' },
+          at,
+        )
+      }
+      if (enterContent) {
+        tl.fromTo(
+          enterContent,
+          vertical
+            ? { yPercent: 10 * direction, autoAlpha: 0, xPercent: 0 }
+            : { xPercent: 100 * direction, autoAlpha: 0, yPercent: 0 },
+          {
+            xPercent: 0,
+            yPercent: 0,
+            autoAlpha: 1,
+            duration: trans * 0.72,
+            ease: 'power2.out',
+          },
+          at + trans * 0.18,
+        )
+      }
+    }
 
     if (reduceMotion) {
       section.classList.add('meola-lab--static')
@@ -249,89 +352,10 @@ export function LabSection() {
       pinStRef.current =
         (tl.scrollTrigger as ScrollTrigger | undefined) ?? null
 
-      const addTransition = (from: number, to: number) => {
-        const direction = to > from ? 1 : -1
-        const leaving = panels[from]
-        const entering = panels[to]
-        if (!leaving || !entering) return
-
-        const leaveContent =
-          leaving.querySelector<HTMLElement>('.meola-lab__content')
-        const leaveTitle =
-          leaving.querySelector<HTMLElement>('.meola-lab__small-title')
-        const enterContent =
-          entering.querySelector<HTMLElement>('.meola-lab__content')
-        const enterTitle =
-          entering.querySelector<HTMLElement>('.meola-lab__small-title')
-
-        const at = tl.duration()
-
-        panels.forEach((panel, i) => {
-          const isOpen = i === to
-          tl.to(
-            panel,
-            {
-              flexGrow: isOpen ? ACTIVE_GROW : IDLE_GROW,
-              duration: TRANS,
-              ease: 'power2.inOut',
-            },
-            at,
-          )
-          if (i !== from && i !== to) {
-            const content =
-              panel.querySelector<HTMLElement>('.meola-lab__content')
-            const title =
-              panel.querySelector<HTMLElement>('.meola-lab__small-title')
-            if (content) tl.set(content, { autoAlpha: 0, xPercent: 0 }, at)
-            if (title) tl.to(title, { autoAlpha: 1, duration: TRANS * 0.3 }, at)
-          }
-        })
-
-        if (leaveContent) {
-          tl.to(
-            leaveContent,
-            {
-              xPercent: -100 * direction,
-              autoAlpha: 0,
-              duration: TRANS * 0.5,
-              ease: 'power2.in',
-            },
-            at,
-          )
-        }
-        if (leaveTitle) {
-          tl.to(
-            leaveTitle,
-            { autoAlpha: 1, duration: TRANS * 0.45, ease: 'power1.out' },
-            at + TRANS * 0.28,
-          )
-        }
-        if (enterTitle) {
-          tl.to(
-            enterTitle,
-            { autoAlpha: 0, duration: TRANS * 0.28, ease: 'power1.in' },
-            at,
-          )
-        }
-        if (enterContent) {
-          tl.fromTo(
-            enterContent,
-            { xPercent: 100 * direction, autoAlpha: 0 },
-            {
-              xPercent: 0,
-              autoAlpha: 1,
-              duration: TRANS * 0.72,
-              ease: 'power2.out',
-            },
-            at + TRANS * 0.22,
-          )
-        }
-      }
-
       /* Hold panel 0, then scrub 01→02→03→04. */
       tl.to({}, { duration: HOLD })
       for (let i = 0; i < LAB_STEPS.length - 1; i += 1) {
-        addTransition(i, i + 1)
+        addPanelTransition(tl, i, i + 1, false)
         tl.to({}, { duration: HOLD })
       }
 
@@ -351,46 +375,82 @@ export function LabSection() {
     })
 
     mm.add('(max-width: 900px)', () => {
-      section.classList.add('meola-lab--snap')
-      section.classList.remove('meola-lab--pinned')
-      applyInstant(0)
+      section.classList.add('meola-lab--pinned', 'meola-lab--mobile-pin')
+      section.classList.remove('meola-lab--snap')
 
-      const observers: IntersectionObserver[] = []
-      const ratios = new Map<number, number>()
-
-      const pickActive = () => {
-        let best = 0
-        let bestRatio = -1
-        ratios.forEach((ratio, index) => {
-          if (ratio > bestRatio) {
-            bestRatio = ratio
-            best = index
-          }
-        })
-        if (best !== activeRef.current) {
-          applyInstant(best)
-        }
-      }
-
-      panels.forEach((panel, index) => {
-        const io = new IntersectionObserver(
-          ([entry]) => {
-            ratios.set(index, entry?.intersectionRatio ?? 0)
-            pickActive()
-          },
-          {
-            root: null,
-            threshold: [0, 0.25, 0.5, 0.75, 1],
-            rootMargin: '-20% 0px -35% 0px',
-          },
+      panels.forEach((panel, i) => {
+        const isOpen = i === 0
+        const content = panel.querySelector<HTMLElement>('.meola-lab__content')
+        const smallTitle = panel.querySelector<HTMLElement>(
+          '.meola-lab__small-title',
         )
-        io.observe(panel)
-        observers.push(io)
+        gsap.set(panel, { flexGrow: isOpen ? ACTIVE_GROW : IDLE_GROW })
+        if (content) {
+          gsap.set(content, { autoAlpha: isOpen ? 1 : 0, xPercent: 0 })
+        }
+        if (smallTitle) gsap.set(smallTitle, { autoAlpha: isOpen ? 0 : 1 })
+        panel.classList.toggle('is-active', isOpen)
+      })
+      activeRef.current = 0
+      setActive(0)
+
+      const tl = gsap.timeline({
+        defaults: { ease: 'none' },
+        scrollTrigger: {
+          trigger: section,
+          start: 'top top',
+          end: () =>
+            `+=${Math.round(window.innerHeight * LAB_PIN_VH_MOBILE)}`,
+          pin: true,
+          scrub: LAB_SCRUB,
+          anticipatePin: 0,
+          invalidateOnRefresh: true,
+          onUpdate: (self) => {
+            const idx = panelFromTimelineProgress(
+              self.progress,
+              LAB_STEPS.length,
+              TRANS_MOBILE,
+            )
+            if (idx !== activeRef.current) {
+              activeRef.current = idx
+              setActive(idx)
+            }
+          },
+          onRefresh: (self) => {
+            pinStRef.current = self
+            const idx = panelFromTimelineProgress(
+              self.progress,
+              LAB_STEPS.length,
+              TRANS_MOBILE,
+            )
+            activeRef.current = idx
+            setActive(idx)
+          },
+        },
       })
 
+      pinStRef.current =
+        (tl.scrollTrigger as ScrollTrigger | undefined) ?? null
+
+      /* Hold each panel — scrubbed flex + vertical crossfade. */
+      tl.to({}, { duration: HOLD })
+      for (let i = 0; i < LAB_STEPS.length - 1; i += 1) {
+        addPanelTransition(tl, i, i + 1, true)
+        tl.to({}, { duration: HOLD })
+      }
+
       return () => {
-        section.classList.remove('meola-lab--snap')
-        observers.forEach((io) => io.disconnect())
+        section.classList.remove('meola-lab--pinned', 'meola-lab--mobile-pin')
+        pinStRef.current = null
+        gsap.set(panels, { clearProps: 'flexGrow' })
+        panels.forEach((panel) => {
+          const content =
+            panel.querySelector<HTMLElement>('.meola-lab__content')
+          const title =
+            panel.querySelector<HTMLElement>('.meola-lab__small-title')
+          if (content) gsap.set(content, { clearProps: 'transform,opacity,visibility' })
+          if (title) gsap.set(title, { clearProps: 'opacity,visibility' })
+        })
       }
     })
 
@@ -413,11 +473,8 @@ export function LabSection() {
       }
 
       const st = pinStRef.current
-      const narrow =
-        typeof window !== 'undefined' &&
-        window.matchMedia('(max-width: 900px)').matches
 
-      if (narrow || !st) {
+      if (!st) {
         const panel = panelsRef.current?.querySelectorAll('[data-lab-panel]')[
           next
         ] as HTMLElement | undefined
@@ -432,12 +489,16 @@ export function LabSection() {
       }
 
       const transitions = LAB_STEPS.length - 1
-      const total =
-        LAB_STEPS.length * HOLD + transitions * TRANS
+      const trans =
+        typeof window !== 'undefined' &&
+        window.matchMedia('(max-width: 900px)').matches
+          ? TRANS_MOBILE
+          : TRANS
+      const total = LAB_STEPS.length * HOLD + transitions * trans
       /* Land mid-hold for the target panel. */
       let targetTime = 0
       for (let i = 0; i < next; i += 1) {
-        targetTime += HOLD + TRANS
+        targetTime += HOLD + trans
       }
       targetTime += HOLD * 0.5
       const progress = gsap.utils.clamp(0, 1, targetTime / total)
@@ -445,6 +506,8 @@ export function LabSection() {
       const lenis = getLenisInstance()
       if (lenis) lenis.scrollTo(y, { immediate: false })
       else window.scrollTo({ top: y, behavior: 'smooth' })
+      activeRef.current = next
+      setActive(next)
     },
     [applyInstant, reduceMotion],
   )

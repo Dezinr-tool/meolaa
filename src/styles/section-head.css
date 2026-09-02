@@ -257,7 +257,7 @@
 @media (max-width: 900px) {
   .metrics__chart {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     height: auto;
     min-height: 0;
   }
@@ -275,6 +275,14 @@
   font-weight: var(--fw-bold, 700) !important;
   line-height: var(--loop-title-lh, 0.95) !important;
   letter-spacing: var(--loop-title-ls, -2px) !important;
+}
+
+@media (max-width: 900px) {
+  .press-feed__head.section-head--split {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--section-head-gap, 24px);
+  }
 }
 
 /* Loop header ink/accent owned by LoopSection.css (yellow eyebrow / ecru). */

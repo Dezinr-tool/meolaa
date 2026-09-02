@@ -98,68 +98,58 @@ export function SiteNav({ variant = 'home', navOverDark = false }: SiteNavProps)
         className={`site-nav__drawer${menuOpen ? ' is-open' : ''}`}
         aria-hidden={!menuOpen}
       >
-        <button
-          type="button"
-          className="site-nav__drawer-close"
-          tabIndex={menuOpen ? 0 : -1}
-          onClick={() => setMenuOpen(false)}
-        >
-          Close
-        </button>
+        <div className="site-nav__drawer-inner">
+          <nav className="site-nav__drawer-nav" aria-label="Mobile">
+            {[{ to: '/', label: 'Home' }, ...ALL_LINKS].map((l, i) => (
+              <Link
+                key={l.to}
+                to={l.to}
+                className={linkClass(l.to)}
+                tabIndex={menuOpen ? 0 : -1}
+                onClick={() => setMenuOpen(false)}
+              >
+                <span className="site-nav__drawer-index">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <span className="site-nav__drawer-label">{l.label}</span>
+              </Link>
+            ))}
+          </nav>
 
-        <nav className="site-nav__drawer-nav" aria-label="Mobile">
-          {[{ to: '/', label: 'Home' }, ...ALL_LINKS].map((l, i) => (
-            <Link
-              key={l.to}
-              to={l.to}
-              className={linkClass(l.to)}
-              tabIndex={menuOpen ? 0 : -1}
-              onClick={() => setMenuOpen(false)}
-            >
-              <span className="site-nav__drawer-index">
-                {String(i + 1).padStart(2, '0')}
-              </span>
-              {l.label}
-            </Link>
-          ))}
-        </nav>
+          <div className="site-nav__drawer-footer">
+            <div className="site-nav__drawer-feature">
+              <img
+                className="site-nav__drawer-feature-img"
+                src="/assets/portfolio-hira.jpg"
+                alt=""
+                aria-hidden="true"
+              />
+              <p className="site-nav__drawer-feature-copy">
+                We turn signals from how people live into products and brands
+                that earn a place in everyday life.
+              </p>
+            </div>
 
-        <div className="site-nav__drawer-feature">
-          <img
-            className="site-nav__drawer-feature-img"
-            src="/assets/portfolio-hira.jpg"
-            alt=""
-            aria-hidden="true"
-          />
-          <p className="site-nav__drawer-feature-copy">
-            We turn signals from how people live into products and brands
-            that earn a place in everyday life.
-          </p>
-        </div>
-
-        <div className="site-nav__drawer-contact">
-          <div className="site-nav__drawer-contact-row">
-            <span className="site-nav__drawer-contact-label">C.</span>
-            <div>
+            <div className="site-nav__drawer-contact">
               <Link
                 to="/contact"
+                className="site-nav__drawer-contact-link"
                 tabIndex={menuOpen ? 0 : -1}
                 onClick={() => setMenuOpen(false)}
               >
                 Contact
               </Link>
-            </div>
-          </div>
-          <div className="site-nav__drawer-contact-row">
-            <span className="site-nav__drawer-contact-label">S.</span>
-            <div>
-              <a href="#" aria-label="Instagram" tabIndex={menuOpen ? 0 : -1}>
-                Instagram
-              </a>
-              {' / '}
-              <a href="#" aria-label="LinkedIn" tabIndex={menuOpen ? 0 : -1}>
-                LinkedIn
-              </a>
+              <div className="site-nav__drawer-socials">
+                <a href="#" aria-label="Instagram" tabIndex={menuOpen ? 0 : -1}>
+                  Instagram
+                </a>
+                <span className="site-nav__drawer-social-sep" aria-hidden="true">
+                  /
+                </span>
+                <a href="#" aria-label="LinkedIn" tabIndex={menuOpen ? 0 : -1}>
+                  LinkedIn
+                </a>
+              </div>
             </div>
           </div>
         </div>

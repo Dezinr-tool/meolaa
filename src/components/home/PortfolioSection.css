@@ -453,12 +453,12 @@
     text-align: left;
   }
 
-  /* Fit each name on one line at this width instead of wrapping — smaller,
-     no max-width cap so the text can use the full row. */
   .brand-row__name {
-    max-width: none;
+    max-width: 100%;
     font-size: clamp(0.85rem, 4.6vw, 1.15rem);
-    white-space: nowrap;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    text-wrap: balance;
   }
 }
 

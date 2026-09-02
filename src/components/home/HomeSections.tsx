@@ -342,7 +342,7 @@ const PRESS_ITEMS = [
 
 export function PressSection() {
   return (
-    <section className="press-feed" data-section="press" id="press">
+    <section className="press-feed press-feed--await-motion" data-section="press" id="press">
       {/* Split header: type stack left, action right. The stack wrapper is what
           lets the CTA be a row sibling rather than a fourth item in the
           centred column — see .section-head--split. */}

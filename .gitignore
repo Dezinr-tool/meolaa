@@ -63,4 +63,8 @@ tmp-*
 .footer-*.png
 .investors-verify.png
 .metrics-*.png
+.qa-screenshots/
+.diag/
 scripts/_*.mjs
+scripts/*-verify.mjs
+scripts/diag-*.mjs
