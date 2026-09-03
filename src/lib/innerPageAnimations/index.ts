@@ -1,5 +1,6 @@
 export {
   initAboutFold1Intro,
+  initAboutLeadership,
   initAboutLoop,
   initAboutRoadmap,
   initMissionVision,
@@ -12,6 +13,7 @@ export { waitForScroller, refreshScrollTriggers } from './shared'
 
 import {
   initAboutFold1Intro,
+  initAboutLeadership,
   initAboutLoop,
   initAboutRoadmap,
   initMissionVision,
@@ -38,6 +40,7 @@ export function initInnerPageAnimations(): () => void {
   disposers.push(safeInit('aboutFold1Intro', initAboutFold1Intro))
   disposers.push(safeInit('aboutLoop', initAboutLoop))
   disposers.push(safeInit('aboutRoadmap', initAboutRoadmap))
+  disposers.push(safeInit('aboutLeadership', initAboutLeadership))
   disposers.push(safeInit('missionVision', initMissionVision))
   disposers.push(safeInit('pillars', initPillars))
   disposers.push(safeInit('storyRail', initStoryRail))

@@ -1,24 +1,17 @@
 .au-why {
   background: var(--color-primary, #002f3a);
   color: var(--color-ecru, #f8ece4);
-  padding: clamp(96px, 14vh, 160px) clamp(24px, 5vw, 64px);
+  padding: clamp(72px, 11vh, 140px) var(--pad-x-sm);
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
 }
 
-.au-why__eyebrow {
-  color: color-mix(in srgb, var(--color-ecru, #f8ece4) 62%, transparent);
-  margin: 0 0 20px;
+.au-why__head.section-head {
+  max-width: min(42rem, 94vw);
 }
 
-.au-why__statement {
-  margin: 0;
-  max-width: 20ch;
-  font-family: var(--font-display);
-  font-size: clamp(28px, 4vw, 48px);
-  font-weight: var(--fw-medium);
-  line-height: 1.25;
-  letter-spacing: -0.01em;
+.au-why .section-head__title {
+  max-width: 28ch;
 }

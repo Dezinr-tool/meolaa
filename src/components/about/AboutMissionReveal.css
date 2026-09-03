@@ -1,12 +1,11 @@
 /**
- * About — "The Model" fold. Same pinned clip-mask reveal mechanic as the
- * zoox.com/about "A rider revolution" panel (SVG-style clip window growing
- * open on a scroll-scrub), adapted with:
- *  - sharp corners everywhere (border-radius: 0, site-wide rule — no
- *    exceptions), instead of Zoox's rounded clip.
- *  - a single image throughout — only the clip window grows/holds, it never
- *    swaps to a second photo. Only the copy (Mission → Vision) crossfades
- *    over that one image.
+ * About — "The Model" fold. Same pinned clip-mask mechanic as the
+ * zoox.com homepage "Spend your time…" section:
+ *   1. Full-bleed photo sits under a clip window.
+ *   2. Window starts as a left-hand card; copy sits in the right gutter.
+ *   3. On scroll-scrub the clip grows toward full stage, copy slides off.
+ *   4. Window then settles as a right-hand card with Vision copy on the left.
+ * Sharp corners throughout (site-wide rule — no rounded clip).
  */
 
 .au-reveal {
@@ -14,10 +13,13 @@
 }
 
 .au-reveal__intro {
-  max-width: 900px;
   margin: 0 auto;
-  padding: clamp(56px, 8vh, 88px) clamp(24px, 4vw, 64px) clamp(32px, 5vh, 48px);
+  padding: clamp(72px, 11vh, 140px) var(--pad-x-sm) var(--space-7);
   text-align: center;
+}
+
+.au-reveal__intro .section-head__title span {
+  color: var(--section-head-accent);
 }
 
 /* ——— Pinned stage ——— */
@@ -31,21 +33,15 @@
   position: relative;
   width: 100%;
   height: 100%;
-  display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
-  align-items: center;
-  gap: clamp(24px, 4vw, 64px);
-  padding: 0 clamp(24px, 4vw, 64px);
-  box-sizing: border-box;
+  overflow: hidden;
 }
 
-.au-reveal__media {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 4 / 5;
-  overflow: hidden;
-  border-radius: 0;
-  background: #111;
+.au-reveal__clip {
+  position: absolute;
+  inset: 0;
+  /* Start: left-hand card. Scrubbed to expanded, then to a right-hand card. */
+  clip-path: inset(24px 48% 24px 24px);
+  will-change: clip-path;
 }
 
 .au-reveal__img {
@@ -55,46 +51,65 @@
   height: 100%;
   object-fit: cover;
   display: block;
-  /* Scrubbed via clip-path inline style (JS) — starts inset, grows to 0. */
-  /* Asymmetric start — mostly hidden below a sliver at the bottom, so the
-     reveal reads as the frame growing up/open rather than a uniform
-     center-out crop (matches the reference's directional grow). */
-  clip-path: inset(58% 4% 4% 4% round 0);
-  will-change: clip-path;
 }
 
 .au-reveal__copy-stack {
-  position: relative;
-  min-height: 220px;
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
 }
 
 .au-reveal__copy {
-  grid-column: 1;
-  grid-row: 1;
   position: absolute;
-  inset: 0;
+  top: 0;
+  bottom: 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 10px;
-  opacity: 0;
-  visibility: hidden;
+  gap: 0;
+  box-sizing: border-box;
+  padding: var(--space-6) var(--pad-x-sm);
+  pointer-events: auto;
   will-change: opacity, transform;
 }
 
-.au-reveal__copy[data-reveal-copy='mission'] {
+.au-reveal__copy.section-head {
+  max-width: none;
+  margin-inline: 0;
+}
+
+.au-reveal__copy--mission {
+  left: 52%;
+  right: 0;
   opacity: 1;
   visibility: visible;
 }
 
-.au-reveal__support {
-  color: color-mix(in srgb, var(--color-primary, #002f3a) 68%, transparent);
+.au-reveal__copy--vision {
+  left: 0;
+  right: 52%;
+  opacity: 0;
+  visibility: hidden;
 }
 
-.au-reveal__link {
-  margin-top: 6px;
-  color: var(--color-primary, #002f3a);
+.au-reveal__support {
+  margin: 0;
+  margin-top: var(--section-head-title-sub-gap, 12px);
+  font-family: var(--font-sans);
+  font-size: var(--section-head-sub-size);
+  font-weight: var(--section-head-sub-weight);
+  line-height: var(--section-head-sub-lh);
+  color: var(--section-head-on-light-muted);
+  max-width: var(--section-head-sub-max);
+}
+
+.au-reveal__copy.section-head > .au-reveal__link {
+  margin-top: var(--space-5);
+  font-family: var(--font-sans);
+  font-size: var(--section-head-sub-size);
   font-weight: var(--fw-medium, 500);
+  color: var(--color-primary, #002f3a);
   text-decoration: none;
   border-bottom: 1px solid currentColor;
   width: fit-content;
@@ -106,30 +121,43 @@
 }
 
 .au-reveal.is-static .au-reveal__stage {
-  grid-template-columns: 1fr;
-  padding: clamp(24px, 4vw, 48px);
-  gap: 32px;
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
+  gap: var(--space-7);
+  padding: 0 var(--pad-x-sm) var(--space-7);
 }
 
-.au-reveal.is-static .au-reveal__media {
+.au-reveal.is-static .au-reveal__clip {
+  position: relative;
+  inset: auto;
+  width: 100%;
   aspect-ratio: 16 / 10;
+  clip-path: none;
+  overflow: hidden;
 }
 
 .au-reveal.is-static .au-reveal__img {
-  clip-path: none;
+  position: absolute;
 }
 
 .au-reveal.is-static .au-reveal__copy-stack {
-  min-height: 0;
+  position: relative;
+  inset: auto;
   display: flex;
   flex-direction: column;
   gap: clamp(32px, 6vh, 48px);
+  pointer-events: auto;
 }
 
-.au-reveal.is-static .au-reveal__copy {
+.au-reveal.is-static .au-reveal__copy,
+.au-reveal.is-static .au-reveal__copy--mission,
+.au-reveal.is-static .au-reveal__copy--vision {
   position: relative;
   inset: auto;
-  grid-row: auto;
+  left: auto;
+  right: auto;
+  padding: 0;
   opacity: 1;
   visibility: visible;
 }

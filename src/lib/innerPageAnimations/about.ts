@@ -3,10 +3,6 @@ import { initLoop } from '../loopAnimations'
 import {
   ROADMAP_END_TIP_HIDE,
   ROADMAP_STEPS,
-  VIEW_MIN_X,
-  VIEW_W,
-  roadmapBulletsVisible,
-  roadmapDrawProgress,
   roadmapRingVisible,
   samplePathTipLocal,
 } from '../aboutRoadmapPath'
@@ -39,19 +35,20 @@ export function initAboutRoadmap(): () => void {
   const pin = root.querySelector<HTMLElement>('[data-au-roadmap-pin]')
   const drawn = root.querySelector<SVGPathElement>('[data-au-roadmap-drawn]')
   const tipEl = root.querySelector<SVGCircleElement>('[data-au-roadmap-tip]')
-  const track = root.querySelector<HTMLElement>('[data-au-roadmap-track]')
-  const camera = root.querySelector<HTMLElement>('[data-au-roadmap-camera]')
-  const viewport = root.querySelector<HTMLElement>('[data-au-roadmap-viewport]')
-  const steps = Array.from(
-    root.querySelectorAll<HTMLElement>('[data-au-roadmap-step]'),
-  )
+  const steps = Array.from(root.querySelectorAll<HTMLElement>('[data-au-roadmap-step]'))
   if (!pin || !drawn || !steps.length) return () => {}
 
-  const stepThresholds = steps.map(
-    (el) => Number(el.dataset.s) || 0,
+  const stepThresholds = steps.map((el) => Number(el.dataset.s) || 0)
+  const headerLines = Array.from(
+    root.querySelectorAll<HTMLElement>(
+      '.au-roadmap__header .section-head__eyebrow, .au-roadmap__header .section-head__title, .au-roadmap__header .section-head__sub',
+    ),
   )
+  const artboard = root.querySelector<HTMLElement>('[data-au-roadmap-artboard]')
+  const ghost = root.querySelector<SVGPathElement>('.au-roadmap__ghost')
 
   let scrollTrigger: ST | null = null
+  let introTrigger: ST | null = null
   let mode: 'static' | 'scrub' | null = null
   const cleanups: (() => void)[] = []
 
@@ -73,93 +70,96 @@ export function initAboutRoadmap(): () => void {
   }
 
   function applyStepFocus(stage: number, progress: number) {
-    root!.dataset.auRoadmapStage = String(stage)
     steps.forEach((step, i) => {
       const reached = roadmapRingVisible(i, stage, progress)
       step.classList.toggle('is-reached', reached)
-      step.classList.toggle('is-copy-visible', roadmapBulletsVisible(i, stage))
+      step.classList.toggle('is-copy-visible', i === stage && stage >= 0)
       step.setAttribute('aria-current', i === stage ? 'step' : 'false')
     })
   }
 
   function syncTipGraphics(progress: number, pathLen: number) {
-    const tipDist = progress * pathLen
-    gsap.set(drawn!, { strokeDashoffset: pathLen - tipDist })
+    gsap.set(drawn, { strokeDashoffset: pathLen - progress * pathLen })
 
-    const tip = samplePathTipLocal(drawn!, progress)
+    const tip = samplePathTipLocal(drawn, progress)
     if (tipEl && tip) {
       tipEl.setAttribute('cx', String(tip.x))
       tipEl.setAttribute('cy', String(tip.y))
-      tipEl.style.opacity =
-        progress <= 0.001 || progress >= ROADMAP_END_TIP_HIDE ? '0' : '1'
-    }
-  }
-
-  /**
-   * Camera pan — the Figma frames show the viewport tracking along a path
-   * far wider than the frame, so the drawing tip stays on screen while the
-   * rest of the curve scrolls past. Pans by the tip's own x rather than
-   * linearly with progress: the path doubles back on itself twice, so a
-   * linear pan would run ahead of the tip through the loops.
-   */
-  function syncCamera(progress: number) {
-    if (!camera || !viewport) return
-    if (isNarrow()) {
-      camera.style.transform = ''
-      return
-    }
-    const tip = samplePathTipLocal(drawn!, progress)
-    if (!tip) return
-
-    const camW = camera.scrollWidth || camera.getBoundingClientRect().width
-    const viewW = viewport.clientWidth
-    if (camW <= 0 || viewW <= 0) return
-
-    /* Path units → camera px. */
-    const tipPx = ((tip.x - VIEW_MIN_X) / VIEW_W) * camW
-    const maxPan = Math.max(0, camW - viewW)
-    const pan = Math.min(maxPan, Math.max(0, tipPx - viewW / 2))
-    camera.style.transform = `translate3d(${-pan}px, 0, 0)`
-  }
-
-  function sync(progress: number, immediate = false) {
-    const pathLen = drawn!.getTotalLength()
-    syncTipGraphics(progress, pathLen)
-    syncCamera(progress)
-    const stage = activeIndex(progress)
-    applyStepFocus(stage, progress)
-    root!.classList.add('is-roadmap-ready')
-
-    if (immediate && isNarrow() && stage >= 0) {
-      scrollActiveIntoView(stage)
+      tipEl.style.opacity = progress >= ROADMAP_END_TIP_HIDE ? '0' : '1'
     }
   }
 
   function scrollActiveIntoView(index: number) {
-    if (!isNarrow() || !track) return
-    const el = steps[index]
-    if (!el) return
-    const viewport = root!.querySelector<HTMLElement>('[data-au-roadmap-viewport]')
-    if (!viewport) return
-    const left = el.offsetLeft - (viewport.clientWidth - el.offsetWidth) / 2
-    viewport.scrollTo({ left: Math.max(0, left), behavior: 'smooth' })
+    if (!isNarrow()) return
+    const viewport = root.querySelector<HTMLElement>('[data-au-roadmap-viewport]')
+    const marker = steps[index]?.querySelector<HTMLElement>('.au-roadmap__marker')
+    if (!viewport || !marker) return
+
+    const vpRect = viewport.getBoundingClientRect()
+    const mRect = marker.getBoundingClientRect()
+    const delta = mRect.left + mRect.width / 2 - (vpRect.left + vpRect.width / 2)
+    viewport.scrollTo({ left: viewport.scrollLeft + delta, behavior: 'smooth' })
+  }
+
+  function sync(progress: number, immediate = false) {
+    const pathLen = drawn.getTotalLength()
+    syncTipGraphics(progress, pathLen)
+    const stage = activeIndex(progress)
+    applyStepFocus(stage, progress)
+    root.classList.add('is-roadmap-ready')
+
+    if (immediate && stage >= 0) scrollActiveIntoView(stage)
+  }
+
+  function setupIntro() {
+    introTrigger?.kill()
+    introTrigger = null
+    gsap.set([...headerLines, artboard, ghost].filter(Boolean), {
+      clearProps: 'opacity,transform,y',
+    })
+
+    if (prefersReducedMotion() || mode === 'static') return
+
+    if (headerLines.length) gsap.set(headerLines, { opacity: 0, y: 28 })
+    if (artboard) gsap.set(artboard, { opacity: 0 })
+    if (ghost) gsap.set(ghost, { opacity: 0 })
+
+    introTrigger = ScrollTrigger.create({
+      trigger: root,
+      start: 'top 80%',
+      once: true,
+      onEnter: () => {
+        if (headerLines.length) {
+          gsap.to(headerLines, {
+            opacity: 1,
+            y: 0,
+            duration: 0.75,
+            stagger: 0.11,
+            ease: 'power3.out',
+          })
+        }
+        if (artboard) {
+          gsap.to(artboard, { opacity: 1, duration: 0.9, delay: 0.15, ease: 'power2.out' })
+        }
+        if (ghost) {
+          gsap.to(ghost, { opacity: 1, duration: 0.85, delay: 0.35, ease: 'power2.out' })
+        }
+      },
+    })
   }
 
   function killScrollTrigger() {
     scrollTrigger?.kill()
     scrollTrigger = null
-    root!.classList.remove('is-pinning')
+    root.classList.remove('is-pinning')
   }
 
   function buildScrub() {
     killScrollTrigger()
-    root!.classList.remove('is-static')
+    root.classList.remove('is-static')
 
-    const pathLen = drawn!.getTotalLength()
-    gsap.set(drawn, {
-      strokeDasharray: pathLen,
-      strokeDashoffset: pathLen,
-    })
+    const pathLen = drawn.getTotalLength()
+    gsap.set(drawn, { strokeDasharray: pathLen, strokeDashoffset: pathLen })
 
     scrollTrigger = ScrollTrigger.create({
       trigger: root,
@@ -172,52 +172,43 @@ export function initAboutRoadmap(): () => void {
       anticipatePin: 0,
       invalidateOnRefresh: true,
       fastScrollEnd: true,
-      onEnter: () => root!.classList.add('is-pinning'),
-      onEnterBack: () => root!.classList.add('is-pinning'),
-      onLeave: () => root!.classList.remove('is-pinning'),
-      onLeaveBack: () => root!.classList.remove('is-pinning'),
+      onEnter: () => root.classList.add('is-pinning'),
+      onEnterBack: () => root.classList.add('is-pinning'),
+      onLeave: () => root.classList.remove('is-pinning'),
+      onLeaveBack: () => root.classList.remove('is-pinning'),
       onUpdate: (self) => {
-        const progress = roadmapDrawProgress(self.progress)
-        sync(progress)
-        if (isNarrow()) scrollActiveIntoView(activeIndex(progress))
+        sync(self.progress)
+        if (isNarrow()) scrollActiveIntoView(activeIndex(self.progress))
       },
       onRefresh: (self) => {
-        const pathLenRefresh = drawn!.getTotalLength()
-        gsap.set(drawn, {
-          strokeDasharray: pathLenRefresh,
-        })
-        sync(roadmapDrawProgress(self.progress), true)
+        const pathLenRefresh = drawn.getTotalLength()
+        gsap.set(drawn, { strokeDasharray: pathLenRefresh })
+        sync(self.progress, true)
       },
     })
 
+    setupIntro()
     sync(0, true)
   }
 
   function buildStatic() {
     killScrollTrigger()
-    root!.classList.add('is-static')
+    root.classList.add('is-static')
 
-    const pathLen = drawn!.getTotalLength()
-    gsap.set(drawn, {
-      strokeDasharray: pathLen,
-      strokeDashoffset: 0,
-    })
+    const pathLen = drawn.getTotalLength()
+    gsap.set(drawn, { strokeDasharray: pathLen, strokeDashoffset: 0 })
 
     if (tipEl) tipEl.style.opacity = '0'
 
     steps.forEach((step, i) => {
+      const last = i === ROADMAP_STEPS.length - 1
       step.classList.toggle('is-reached', true)
-      step.classList.toggle(
-        'is-copy-visible',
-        i === ROADMAP_STEPS.length - 1,
-      )
-      step.setAttribute(
-        'aria-current',
-        i === ROADMAP_STEPS.length - 1 ? 'step' : 'false',
-      )
+      step.classList.toggle('is-copy-visible', last)
+      step.setAttribute('aria-current', last ? 'step' : 'false')
     })
 
-    root!.classList.add('is-roadmap-ready')
+    root.classList.add('is-roadmap-ready')
+    setupIntro()
   }
 
   function applyMode(force = false) {
@@ -236,7 +227,7 @@ export function initAboutRoadmap(): () => void {
         scrollActiveIntoView(i)
         return
       }
-      const p = steps.length <= 1 ? 0 : i / (steps.length - 1)
+      const p = stepThresholds[i] ?? (steps.length <= 1 ? 0 : i / (steps.length - 1))
       scrollToY(scrollTrigger.start + (scrollTrigger.end - scrollTrigger.start) * p)
     }
     el.addEventListener('click', onClick)
@@ -265,8 +256,10 @@ export function initAboutRoadmap(): () => void {
   return () => {
     cleanups.forEach((fn) => fn())
     killScrollTrigger()
+    introTrigger?.kill()
     root.classList.remove('is-roadmap-ready', 'is-static', 'is-pinning')
     gsap.set(drawn, { clearProps: 'strokeDasharray,strokeDashoffset' })
+    gsap.set([...headerLines, artboard, ghost], { clearProps: 'opacity,transform,y' })
   }
 }
 
@@ -304,38 +297,51 @@ export function initAboutFold1Intro(): () => void {
 }
 
 const REVEAL_MQ = '(max-width: 900px)'
-const REVEAL_SCRUB_VH = 1.5
+const REVEAL_SCRUB_VH = 2.6
+const REVEAL_PAD = 24
 
 /**
- * About — "The Model" fold. zoox.com/about-style pinned clip-mask reveal:
- * a single image's clip window grows open on scroll-scrub while the copy
- * crossfades Mission → Vision over it. Sharp corners throughout (no
- * rounded clip — site-wide rule), and the image itself never swaps.
+ * About — "The Model" fold. zoox.com homepage "Spend your time…" mechanic:
+ * a full-bleed photo is masked by a clip window that starts as a left-hand
+ * card (copy in the right gutter), grows toward the stage on scroll-scrub,
+ * then settles as a right-hand card while Mission → Vision copy crossfades.
+ * Sharp corners throughout (no rounded clip — site-wide rule).
  */
 export function initMissionVision(): () => void {
   const root = document.querySelector<HTMLElement>('.au-reveal')
   if (!root) return () => {}
 
   const pin = root.querySelector<HTMLElement>('[data-reveal-pin]')
-  const img = root.querySelector<HTMLElement>('.au-reveal__img')
+  const clip = root.querySelector<HTMLElement>('[data-reveal-clip]')
   const copyMission = root.querySelector<HTMLElement>('[data-reveal-copy="mission"]')
   const copyVision = root.querySelector<HTMLElement>('[data-reveal-copy="vision"]')
-  if (!pin || !img) return () => {}
+  if (!pin || !clip) return () => {}
 
   let tl: gsap.core.Timeline | null = null
-  let trigger: ST | null = null
   let mode: 'motion' | 'static' | null = null
 
   function isStatic() {
     return prefersReducedMotion() || window.matchMedia(REVEAL_MQ).matches
   }
 
+  function clipValue(top: number, right: number, bottom: number, left: number) {
+    return `inset(${top}px ${right}px ${bottom}px ${left}px)`
+  }
+
+  function clips() {
+    const w = pin!.clientWidth
+    const gutter = Math.round(w * 0.48)
+    return {
+      leftCard: clipValue(REVEAL_PAD, gutter, REVEAL_PAD, REVEAL_PAD),
+      expanded: clipValue(REVEAL_PAD, REVEAL_PAD + 1, REVEAL_PAD, REVEAL_PAD),
+      rightCard: clipValue(REVEAL_PAD, REVEAL_PAD, REVEAL_PAD, gutter),
+    }
+  }
+
   function kill() {
     tl?.kill()
     tl = null
-    trigger?.kill()
-    trigger = null
-    gsap.set([img, copyMission, copyVision].filter(Boolean) as gsap.TweenTarget[], {
+    gsap.set([clip, copyMission, copyVision].filter(Boolean) as gsap.TweenTarget[], {
       clearProps: 'all',
     })
   }
@@ -349,9 +355,15 @@ export function initMissionVision(): () => void {
     kill()
     root!.classList.remove('is-static')
 
-    gsap.set(img, { clipPath: 'inset(58% 4% 4% 4% round 0)' })
-    if (copyMission) gsap.set(copyMission, { opacity: 1, visibility: 'visible', y: 0 })
-    if (copyVision) gsap.set(copyVision, { opacity: 0, visibility: 'hidden', y: 12 })
+    const { leftCard, expanded, rightCard } = clips()
+
+    gsap.set(clip, { clipPath: leftCard })
+    if (copyMission) {
+      gsap.set(copyMission, { opacity: 1, visibility: 'visible', x: 0 })
+    }
+    if (copyVision) {
+      gsap.set(copyVision, { opacity: 0, visibility: 'hidden', x: -24 })
+    }
 
     const timeline = gsap.timeline({
       defaults: { ease: 'none' },
@@ -362,40 +374,47 @@ export function initMissionVision(): () => void {
         pin,
         pinSpacing: true,
         pinType: editorialPinType(),
-        scrub: true,
+        scrub: 0.6,
         anticipatePin: 0,
         invalidateOnRefresh: true,
       },
     })
 
-    // 0 → 0.55: the clip window grows from a centred inset to full bleed.
-    timeline.to(img, { clipPath: 'inset(0% 0% 0% 0% round 0)', duration: 0.55 })
-
-    // Hold the fully-revealed frame briefly before swapping copy. Both
-    // visibility toggles are plain GSAP .set() calls (not a one-shot
-    // onComplete callback) so they apply/unapply correctly when the user
-    // scrubs backward through this point, not just moving forward.
+    /* 0 → 0.5: left card grows toward a padded full-stage window; copy
+       slides off with the shrinking gutter — same move as Zoox. */
+    const slideOut = Math.round(pin.clientWidth * 0.42)
+    timeline.to(clip, { clipPath: expanded, duration: 0.5 })
     if (copyMission) {
-      timeline.to(copyMission, { opacity: 0, y: -10, duration: 0.12 }, 0.62)
-      timeline.set(copyMission, { visibility: 'hidden' }, 0.74)
+      timeline.to(
+        copyMission,
+        { opacity: 0, x: slideOut, duration: 0.32 },
+        0,
+      )
+      timeline.set(copyMission, { visibility: 'hidden' }, 0.36)
     }
+
+    /* Brief hold on the expanded frame. */
+    timeline.to({}, { duration: 0.1 })
+
+    /* 0.6 → 0.92: window settles as a right-hand card; Vision arrives
+       once the left gutter is open (Zoox /about side-swap, second beat). */
+    timeline.to(clip, { clipPath: rightCard, duration: 0.32 }, 0.6)
     if (copyVision) {
-      timeline.set(copyVision, { visibility: 'visible' }, 0.62)
-      timeline.to(copyVision, { opacity: 1, y: 0, duration: 0.18 }, 0.68)
+      timeline.set(copyVision, { visibility: 'visible' }, 0.84)
+      timeline.to(
+        copyVision,
+        { opacity: 1, x: 0, duration: 0.14 },
+        0.84,
+      )
     }
-    timeline.to({}, { duration: 0.14 })
+    timeline.to({}, { duration: 0.08 })
 
     tl = timeline
-    trigger = timeline.scrollTrigger ?? null
+
     refreshScrollTriggers()
 
-    // The pin/scrub start-end is measured off live layout at refresh time —
-    // if the mission photo hasn't finished loading yet, the page is still
-    // shorter than its final height, so the trigger's start/end land stale
-    // (progress then reads wrong for the rest of the session). Re-refresh
-    // once it's actually in.
-    const imgEl = img as HTMLImageElement
-    if (!imgEl.complete) {
+    const imgEl = clip.querySelector('img')
+    if (imgEl && !imgEl.complete) {
       imgEl.addEventListener('load', () => refreshScrollTriggers(), { once: true })
     }
   }
@@ -413,7 +432,7 @@ export function initMissionVision(): () => void {
   let resizeTimer: ReturnType<typeof setTimeout>
   const onResize = () => {
     clearTimeout(resizeTimer)
-    resizeTimer = setTimeout(() => sync(), 160)
+    resizeTimer = setTimeout(() => sync(true), 160)
   }
   window.addEventListener('resize', onResize)
 
@@ -427,6 +446,55 @@ export function initMissionVision(): () => void {
     kill()
     root.classList.remove('is-static')
   }
+}
+
+/** About — leadership grid scroll reveal. */
+export function initAboutLeadership(): () => void {
+  const root = document.querySelector<HTMLElement>('[data-au-leadership]')
+  if (!root || prefersReducedMotion()) return () => {}
+
+  const intro = root.querySelector<HTMLElement>('.lead-grid__cell--intro')
+  const headerLines = intro
+    ? Array.from(
+        intro.querySelectorAll<HTMLElement>(
+          '.section-head__eyebrow, .section-head__title, .section-head__sub',
+        ),
+      )
+    : []
+  const cards = Array.from(root.querySelectorAll<HTMLElement>('.lead-grid__cell--person'))
+  const cardImgs = cards
+    .map((card) => card.querySelector<HTMLElement>('.lead-grid__img img'))
+    .filter(Boolean) as HTMLElement[]
+
+  if (!headerLines.length && !cards.length) return () => {}
+
+  const ctx = gsap.context(() => {
+    if (headerLines.length) gsap.set(headerLines, { opacity: 0, y: 28 })
+    if (cards.length) gsap.set(cards, { opacity: 0, y: 40 })
+    if (cardImgs.length) gsap.set(cardImgs, { scale: 1.07 })
+
+    const tl = gsap.timeline({
+      scrollTrigger: { trigger: root, start: 'top 80%', once: true },
+      defaults: { ease: 'power3.out' },
+    })
+
+    if (headerLines.length) {
+      tl.to(headerLines, { opacity: 1, y: 0, duration: 0.72, stagger: 0.1 })
+    }
+    if (cards.length) {
+      tl.to(
+        cards,
+        { opacity: 1, y: 0, duration: 0.78, stagger: 0.11 },
+        headerLines.length ? '-=0.38' : 0,
+      )
+      if (cardImgs.length) {
+        tl.to(cardImgs, { scale: 1, duration: 1.05, stagger: 0.11, ease: 'power2.out' }, '<')
+      }
+    }
+  }, root)
+
+  refreshScrollTriggers()
+  return () => ctx.revert()
 }
 
 export function initPillars(): () => void {

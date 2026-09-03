@@ -393,6 +393,13 @@ html.is-nav-menu-open body {
 
 /* ——— Inner pages ——— */
 @media (max-width: 900px) {
+  .app--home {
+    --mweb-section-x: clamp(16px, 4vw, 24px);
+    --mweb-section-pad: clamp(40px, 6vh, 56px);
+    --mweb-section-pad-top: 100px;
+    --mweb-section-line: color-mix(in srgb, var(--color-black, #000) 10%, transparent);
+  }
+
   .inner-hero__inner,
   .app--inner .pg-pad,
   .app--inner .page-editorial {
@@ -446,19 +453,53 @@ html.is-nav-menu-open body {
     grid-template-columns: 1fr;
   }
 
-  /* Metrics / Proof — 2×2 grid + head spacing (chart layout in proto-style.css). */
-  .metrics {
-    --metrics-pad-y: 24px;
-    gap: clamp(20px, 4vw, 28px);
-    padding: 24px clamp(16px, 4vw, 24px) clamp(24px, 4vh, 40px);
+  /* Metrics — section shell owns vertical rhythm; head/chart/investors align to token. */
+  .metrics,
+  [data-section='metrics'] {
+    padding: 0 !important;
+    gap: clamp(16px, 2.5vh, 24px) !important;
   }
 
   .metrics__head.section-head {
-    padding: 0;
+    padding: var(--mweb-section-pad-top) var(--mweb-section-x) 0 !important;
+    border-top: none;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   .metrics__head .section-head__sub {
     max-width: 34ch;
+    margin-inline: auto;
+  }
+
+  .metrics__chart {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    height: auto;
+    min-height: 0;
+    margin-inline: 0;
+  }
+
+  /* Investors — section break below metrics (divider + pad, no desktop overlap). */
+  .investors,
+  [data-section='investors'] {
+    margin-top: 0 !important;
+    padding: var(--mweb-section-pad) var(--mweb-section-x) clamp(32px, 5vh, 48px) !important;
+    border-top: 1px solid var(--mweb-section-line) !important;
+    gap: 0 !important;
+  }
+
+  /* Press — flush after investors on mweb; dweb keeps fold height + vertical pad. */
+  .press-feed {
+    min-height: 0 !important;
+    height: auto !important;
+    max-height: none !important;
+    justify-content: flex-start !important;
+    padding: 0 0 clamp(32px, 5vh, 48px) !important;
+  }
+
+  .press-feed__head {
+    margin-bottom: clamp(16px, 2.5vh, 24px);
   }
 }
 

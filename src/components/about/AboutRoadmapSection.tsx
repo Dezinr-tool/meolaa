@@ -1,6 +1,6 @@
 /**
- * About roadmap — scroll-pinned horizontal timeline (Loop-style).
- * Pin/scrub + path draw live in initAboutRoadmap (innerPageAnimations/about.ts).
+ * About roadmap — scroll-pinned timeline (full path visible, stroke draw on scrub).
+ * Pin/scrub lives in initAboutRoadmap (innerPageAnimations/about.ts).
  */
 import { useLayoutEffect, useRef, useState } from 'react'
 import {
@@ -8,13 +8,11 @@ import {
   ROADMAP_STEPS,
   ROADMAP_TIP_RADIUS,
   PATH_STROKE_WIDTH,
-  PATH_TRANSFORM,
   VIEW_H,
   VIEW_W,
   VIEW_MIN_X,
   VIEW_MIN_Y,
   artboardToContainerFraction,
-  pathLength,
   sampleRoadmapStepPoints,
   type RoadmapScreenPoint,
 } from '../../lib/aboutRoadmapPath'
@@ -41,10 +39,8 @@ export function AboutRoadmapSection() {
     if (!path || !svg) return
 
     const syncLayout = () => {
-      pathLength(path)
+      path.getTotalLength()
       const artboardPts = sampleRoadmapStepPoints(path)
-      /* Path units → px, so the per-step copy offsets scale with the camera
-         instead of resolving against the (zero-width) step element. */
       const rect = svg.getBoundingClientRect()
       const unitPx = rect.width > 0 ? rect.width / VIEW_W : 0
       setPoints(
@@ -77,24 +73,17 @@ export function AboutRoadmapSection() {
     >
       <div className="au-roadmap__pin" data-au-roadmap-pin>
         <div className="au-roadmap__card">
-          <header className="au-roadmap__header">
-            <div className="au-roadmap__intro">
-              <p className="au-roadmap__caption">Milestones</p>
-              <h2 className="au-roadmap__title">Our Story</h2>
-              <p className="au-roadmap__subtitle">
-                From incorporation to one operating system.
-              </p>
-            </div>
-            <p className="au-roadmap__desc">
-              Meolaa is an AI-native house of consumer brands — built to read
-              demand and launch faster than any traditional FMCG company can
-              move. These are the moments that shaped the model.
+          <header className="au-roadmap__header section-head section-head--on-light">
+            <p className="section-head__eyebrow">Milestones</p>
+            <h2 className="section-head__title">Our Story</h2>
+            <p className="section-head__sub">
+              From incorporation to one operating system.
             </p>
           </header>
 
           <div className="au-roadmap__stage">
             <div className="au-roadmap__viewport" data-au-roadmap-viewport>
-              <div className="au-roadmap__camera" data-au-roadmap-camera>
+              <div className="au-roadmap__artboard" data-au-roadmap-artboard>
                 <svg
                   ref={svgRef}
                   className="au-roadmap__svg"
@@ -104,50 +93,53 @@ export function AboutRoadmapSection() {
                   overflow="visible"
                   preserveAspectRatio="xMidYMid meet"
                 >
-                  <g transform={PATH_TRANSFORM || undefined}>
-                    <path
-                      ref={pathRef}
-                      id="au-roadmap-path"
-                      className="au-roadmap__drawn"
-                      data-au-roadmap-drawn
-                      d={ROADMAP_PATH}
-                      strokeWidth={PATH_STROKE_WIDTH}
-                    />
-                    <circle
-                      className="au-roadmap__tip"
-                      data-au-roadmap-tip
-                      r={ROADMAP_TIP_RADIUS}
-                      cx="0"
-                      cy="0"
-                    />
-                  </g>
+                  <path
+                    className="au-roadmap__ghost"
+                    d={ROADMAP_PATH}
+                    strokeWidth={PATH_STROKE_WIDTH}
+                  />
+                  <path
+                    ref={pathRef}
+                    id="au-roadmap-path"
+                    className="au-roadmap__drawn"
+                    data-au-roadmap-drawn
+                    d={ROADMAP_PATH}
+                    strokeWidth={PATH_STROKE_WIDTH}
+                  />
+                  <circle
+                    className="au-roadmap__tip"
+                    data-au-roadmap-tip
+                    r={ROADMAP_TIP_RADIUS}
+                    cx="0"
+                    cy="0"
+                  />
                 </svg>
 
-                <div className="au-roadmap__track" data-au-roadmap-track role="list">
+                <div className="au-roadmap__track" role="list">
                   {ROADMAP_STEPS.map((step, i) => {
                     const pt = points[i] ?? FALLBACK_POINTS[i]
                     return (
                       <article
                         key={step.capsule}
-                        className="au-roadmap__step"
+                        className={`au-roadmap__step au-roadmap__step--copy-${step.copyAnchor}`}
                         data-au-roadmap-step
-                        data-au-roadmap-index={i}
                         data-s={step.s}
                         role="listitem"
                         style={{
                           left: `${pt.x * 100}%`,
                           top: `${pt.y * 100}%`,
-                          ['--au-rm-copy-dx' as string]: `${pt.dxPx}px`,
-                          ['--au-rm-copy-dy' as string]: `${pt.dyPx}px`,
                         }}
                       >
                         <span className="au-roadmap__marker" aria-hidden="true">
-                          <span className="au-roadmap__diamond" data-au-roadmap-diamond />
+                          <span className="au-roadmap__diamond" />
                         </span>
-                        {/* Loop-style connector line + card — same language as
-                            the homepage Loop section's orbit cards. */}
-                        <span className="au-roadmap__connector" aria-hidden="true" />
-                        <div className="au-roadmap__copy">
+                        <div
+                          className="au-roadmap__copy"
+                          style={{
+                            '--au-rm-copy-dx': `${pt.dxPx}px`,
+                            '--au-rm-copy-dy': `${pt.dyPx}px`,
+                          } as React.CSSProperties}
+                        >
                           <p className="au-roadmap__copy-label">{step.label}</p>
                           <h3 className="au-roadmap__copy-title">{step.title}</h3>
                           <p className="au-roadmap__copy-body">{step.body}</p>

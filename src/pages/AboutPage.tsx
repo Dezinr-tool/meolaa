@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { AboutRoadmapSection } from '../components/about/AboutRoadmapSection'
 import '../components/about/AboutMissionReveal.css'
 import { AboutWhyExistSection } from '../components/about/AboutWhyExistSection'
+import { InnerPageSectionHead } from '../components/layout/InnerPageSectionHead'
 import { PageLayout } from '../components/layout/PageLayout'
 
 const PILLARS = [
@@ -104,23 +105,23 @@ export function AboutPage() {
 
       <section className="au-reveal" id="mission" aria-label="The Model">
         <div className="au-reveal__intro">
-          <p className="section-head__eyebrow">The Model</p>
-          <p className="au-fold2__lede">
-            <span>AI-native, digitally-native,</span>{' '}
-            <span>and built to move at the speed of demand.</span>
-          </p>
-          <p className="pg-body au-fold2__body">
-            Every function — insight, product, brand, distribution — is
-            designed around the same data layer, so a small team can do what
-            used to take a large one.
-          </p>
+          <InnerPageSectionHead
+            eyebrow="The Model"
+            title={
+              <>
+                AI-native, digitally{'\u2011'}native,{' '}
+                <span>and built to move at the speed of demand.</span>
+              </>
+            }
+            sub="Every function — insight, product, brand, distribution — is designed around the same data layer, so a small team can do what used to take a large one."
+            tone="on-light"
+            align="center"
+          />
         </div>
 
         <div className="au-reveal__pin" data-reveal-pin>
           <div className="au-reveal__stage">
-            {/* Single image throughout — only the clip window grows/holds as
-                you scroll; it never swaps to a second photo. */}
-            <div className="au-reveal__media" data-reveal-media>
+            <div className="au-reveal__clip" data-reveal-clip>
               <img
                 className="au-reveal__img"
                 src="/assets/pages/about-mission.jpg"
@@ -128,10 +129,15 @@ export function AboutPage() {
               />
             </div>
             <div className="au-reveal__copy-stack">
-              <div className="au-reveal__copy" data-reveal-copy="mission">
-                <p className="pg-eyebrow pg-eyebrow--dark">Mission</p>
-                <h2 className="pg-display">Our Mission</h2>
-                <p className="pg-body">Compress the distance from insight to shelf.</p>
+              <div
+                className="au-reveal__copy au-reveal__copy--mission section-head section-head--on-light section-head--start"
+                data-reveal-copy="mission"
+              >
+                <p className="section-head__eyebrow">Mission</p>
+                <h2 className="section-head__title">Our Mission</h2>
+                <p className="section-head__sub">
+                  Compress the distance from insight to shelf.
+                </p>
                 <p className="pg-body au-reveal__support">
                   Meolaa is an AI-native house of consumer brands, built to read
                   demand and launch faster than any traditional FMCG company can
@@ -141,10 +147,15 @@ export function AboutPage() {
                   Our story →
                 </Link>
               </div>
-              <div className="au-reveal__copy" data-reveal-copy="vision">
-                <p className="pg-eyebrow pg-eyebrow--dark">Vision</p>
-                <h2 className="pg-display">Our Vision</h2>
-                <p className="pg-body">A category for every validated signal.</p>
+              <div
+                className="au-reveal__copy au-reveal__copy--vision section-head section-head--on-light section-head--start"
+                data-reveal-copy="vision"
+              >
+                <p className="section-head__eyebrow">Vision</p>
+                <h2 className="section-head__title">Our Vision</h2>
+                <p className="section-head__sub">
+                  A category for every validated signal.
+                </p>
               </div>
             </div>
           </div>
@@ -154,7 +165,13 @@ export function AboutPage() {
       <AboutWhyExistSection />
 
       <section className="fold pillars" data-section="pillars" aria-label="How we build brands">
-        <h2 className="pillars__title">HOW WE BUILD BRANDS</h2>
+        <InnerPageSectionHead
+          className="pillars__head"
+          eyebrow="How we work"
+          title="How we build brands"
+          tone="on-dark"
+          align="center"
+        />
         <div className="pillars__track">
           {PILLARS.map((pillar) => (
             <article key={pillar.label} className="pillar-card">
@@ -173,16 +190,20 @@ export function AboutPage() {
 
       <AboutRoadmapSection />
 
-      <section className="lead-grid" id="leadership">
+      <section className="lead-grid" id="leadership" data-au-leadership>
         <div className="lead-grid__cell lead-grid__cell--intro">
-          <p className="lead-grid__eyebrow">
-            <span aria-hidden="true" /> OUR LEADERSHIP TEAM
-          </p>
-          <h2 className="lead-grid__title">
-            Meet our
-            <br />
-            visionaries.
-          </h2>
+          <InnerPageSectionHead
+            eyebrow="Our leadership team"
+            title={
+              <>
+                Meet our
+                <br />
+                visionaries.
+              </>
+            }
+            tone="on-light"
+            align="start"
+          />
         </div>
         {LEADERS.map((person) => (
           <article key={person.name} className="lead-grid__cell lead-grid__cell--person">
@@ -203,7 +224,7 @@ export function AboutPage() {
       </section>
 
       <section className="val-rows">
-        <p className="pg-eyebrow pg-eyebrow--dark">CULTURE VALUES</p>
+        <p className="section-head__eyebrow">Culture values</p>
         <div className="val-rows__list">
           {VALUES.map((v) => (
             <div key={v.num} className="val-row">

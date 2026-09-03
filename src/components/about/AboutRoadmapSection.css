@@ -1,22 +1,13 @@
 /**
- * About roadmap — Loop-style horizontal timeline.
- * White card on dark/secondary ground; joyous yellow path; planet blue milestones.
+ * About roadmap — full-path timeline with scroll-draw stroke.
  */
 
 .au-roadmap {
   --au-rm-bg: var(--color-black, #000);
   --au-rm-card: var(--color-white, #fff);
   --au-rm-fg: var(--color-primary, #002f3a);
-  --au-rm-fg-muted: color-mix(in srgb, var(--color-primary, #002f3a) 62%, transparent);
-  /* Figma runs a high-contrast stroke against its ground (white path on the
-     dark frame). This card is white, so Primary is the equivalent — Joyous
-     Yellow on white read as almost invisible. */
   --au-rm-track: var(--color-primary, #002f3a);
   --au-rm-tip: var(--color-primary, #002f3a);
-  --au-rm-pill-inactive: var(--color-ecru, #f8ece4);
-  --au-rm-pill-active: var(--color-primary, #002f3a);
-  --au-rm-pill-active-ink: var(--color-white, #fff);
-  --au-rm-diamond: 10px;
 
   position: relative;
   z-index: auto;
@@ -32,10 +23,10 @@
   min-height: 100vh;
   height: 100vh;
   display: flex;
-  align-items: center;
+  align-items: stretch;
   justify-content: center;
   box-sizing: border-box;
-  padding: clamp(72px, 10vh, 100px) 0 clamp(40px, 6vh, 64px);
+  padding: var(--nav-height, 80px) 0 clamp(12px, 2vh, 24px);
   background: var(--au-rm-bg);
 }
 
@@ -43,16 +34,17 @@
   will-change: transform;
 }
 
-/* Full-bleed — fills the fold edge to edge like every section around it,
-   instead of floating as an inset card. */
 .au-roadmap__card {
+  --au-rm-pad-x: clamp(24px, 4vw, 64px);
+
   width: 100%;
-  min-height: min(560px, calc(100vh - 140px));
+  height: 100%;
+  min-height: 0;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  gap: clamp(36px, 6vh, 64px);
-  padding: clamp(28px, 4vw, 48px) clamp(24px, 4vw, 64px) clamp(32px, 5vh, 48px);
+  justify-content: flex-start;
+  gap: clamp(16px, 2.5vh, 28px);
+  padding: clamp(12px, 2vh, 24px) var(--au-rm-pad-x) clamp(12px, 2vh, 20px);
   border: none;
   border-radius: 0;
   background: var(--au-rm-card);
@@ -60,87 +52,56 @@
 }
 
 .au-roadmap__header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: clamp(16px, 2.5vw, 24px);
-  max-width: 720px;
-  margin: 0 auto;
+  flex: 0 0 auto;
+  gap: 0;
+  width: 100%;
+  max-width: none;
   text-align: center;
+  align-items: center;
 }
 
-.au-roadmap__caption {
-  margin: 0 0 10px;
-  font-family: var(--font-mono);
-  font-size: var(--text-eyebrow);
-  font-weight: var(--fw-semibold);
-  letter-spacing: var(--tracking-eyebrow);
-  text-transform: uppercase;
-  color: var(--au-rm-fg-muted);
-  line-height: 1.3;
+.au-roadmap__header .section-head__eyebrow {
+  color: var(--section-head-accent);
 }
 
-.au-roadmap__title {
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: var(--section-head-title-size, var(--text-h2-lg));
-  font-weight: var(--section-head-title-weight, var(--fw-medium));
-  letter-spacing: var(--section-head-title-tracking, -0.01em);
-  line-height: var(--section-head-title-lh, var(--lh-display));
-  text-transform: uppercase;
+.au-roadmap__header .section-head__title {
   color: var(--au-rm-fg);
 }
 
-.au-roadmap__subtitle {
-  margin: 10px 0 0;
-  font-family: var(--font-sans);
-  font-size: var(--section-head-sub-size, var(--text-body-lg));
-  line-height: var(--section-head-sub-lh, var(--lh-body));
-  font-weight: var(--fw-regular);
-  color: var(--au-rm-fg-muted);
-}
-
-.au-roadmap__desc {
-  margin: 0;
-  max-width: 36em;
-  font-family: var(--font-sans);
-  font-size: var(--text-body);
-  font-weight: var(--fw-regular);
-  line-height: var(--lh-body);
-  color: var(--au-rm-fg-muted);
+.au-roadmap__header .section-head__sub {
+  color: var(--section-head-on-light-muted);
 }
 
 .au-roadmap__stage {
   position: relative;
   flex: 1 1 auto;
-  min-height: 280px;
+  min-height: 0;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
+  width: calc(100% + 2 * var(--au-rm-pad-x));
+  margin-inline: calc(-1 * var(--au-rm-pad-x));
 }
 
-/* Window onto the path. Its aspect matches the Figma frame's visible slice
-   (1422 × 1000 path units) so the camera below — which is the full path
-   bounds (2660u) wide — renders the curve at exactly the design's scale
-   with no letterboxing. Must stay in step with VIEW_W/VIEW_H. */
+/* Entire path visible — no horizontal camera pan / clipping. */
 .au-roadmap__viewport {
   position: relative;
+  flex: 1 1 auto;
   width: 100%;
-  aspect-ratio: 1422 / 1000;
-  height: auto;
   min-height: 0;
-  overflow: hidden;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  overflow: visible;
+  padding-top: 0;
 }
 
-/* Wider than the viewport by the ratio of the full path bounds (2660u) to
-   the Figma frame window (1422u) — that surplus is exactly what the camera
-   pans across as the path draws. */
-.au-roadmap__camera {
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: calc(100% * (2660 / 1422));
-  height: 100%;
-  will-change: transform;
+.au-roadmap__artboard {
+  position: relative;
+  width: 100%;
+  max-height: 100%;
+  aspect-ratio: 2660 / 1000;
+  transform: translateY(clamp(-20px, -2.5vh, -8px));
 }
 
 .au-roadmap__svg {
@@ -159,14 +120,18 @@
   opacity: 0;
 }
 
-/* No ghost/underlay path — only the drawn stroke exists, so nothing shows
-   ahead of the tip (explicitly requested). */
+.au-roadmap__ghost {
+  fill: none;
+  stroke: color-mix(in srgb, var(--au-rm-track) 22%, transparent);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 .au-roadmap__drawn {
   fill: none;
   stroke: var(--au-rm-track);
   stroke-linecap: round;
   stroke-linejoin: round;
-  vector-effect: non-scaling-stroke;
 }
 
 .au-roadmap__tip {
@@ -174,6 +139,7 @@
   stroke: none;
   pointer-events: none;
   transition: opacity 0.35s ease;
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--au-rm-tip) 35%, transparent));
 }
 
 .au-roadmap__track {
@@ -206,16 +172,16 @@
 }
 
 .au-roadmap__diamond {
-  width: var(--au-rm-diamond);
-  height: var(--au-rm-diamond);
+  width: 12px;
+  height: 12px;
   border: 1.5px solid var(--au-rm-tip);
-  background: transparent;
+  background: var(--color-white);
   transform: rotate(45deg);
+  transform-origin: center;
   box-sizing: border-box;
   transition:
     background 0.35s cubic-bezier(0.33, 1, 0.68, 1),
-    border-color 0.35s cubic-bezier(0.33, 1, 0.68, 1),
-    transform 0.35s cubic-bezier(0.33, 1, 0.68, 1);
+    border-color 0.35s cubic-bezier(0.33, 1, 0.68, 1);
 }
 
 .au-roadmap__step.is-reached .au-roadmap__diamond {
@@ -223,83 +189,111 @@
   border-color: var(--au-rm-tip);
 }
 
-/* Figma draws no connector between the marker and its copy — the dot sits
-   on the path and the text block hangs below it. Kept in the DOM (harmless)
-   but not rendered, so the markup stays stable. */
-.au-roadmap__connector {
-  display: none;
+.au-roadmap__step[aria-current='step'] .au-roadmap__diamond {
+  transform: rotate(45deg) scale(1.2);
 }
 
-/* Copy block: left edge aligned to the marker, hanging below it — matching
-   the Figma frames (marker x=110/y=387 → text x=110/y=455). Left-aligned
-   rather than centred also keeps it clear of the curve it labels. */
 .au-roadmap__copy {
+  --au-rm-copy-dx: 0px;
+  --au-rm-copy-dy: 0px;
+
   position: absolute;
-  top: calc(var(--au-rm-diamond) / 2 + 26px);
-  bottom: auto;
-  left: 0;
-  /* Per-step nudge (px, set from JS in path-unit space) keeps each block off
-     the stroke where the curve doubles back. */
-  margin-left: var(--au-rm-copy-dx, 0px);
-  margin-top: var(--au-rm-copy-dy, 0px);
-  transform: translate(0, 10px);
-  z-index: 2;
-  box-sizing: border-box;
-  width: clamp(200px, 20vw, 260px);
-  /* Figma sets the milestone copy as plain text on the frame — no filled
-     card behind it — so the path stays the graphic element. */
-  padding: 0;
-  border-radius: 0;
-  background: transparent;
+  left: 50%;
+  top: 50%;
+  z-index: 3;
+  width: clamp(190px, 20vw, 280px);
+  padding: 6px 10px 6px 0;
+  text-align: left;
+  background: color-mix(in srgb, var(--au-rm-card) 92%, transparent);
   opacity: 0;
   visibility: hidden;
+  transform: translate(calc(-50% + var(--au-rm-copy-dx)), calc(-50% + var(--au-rm-copy-dy)))
+    translateY(8px);
   pointer-events: none;
-  text-align: left;
   transition:
     opacity 0.4s cubic-bezier(0.33, 1, 0.68, 1),
     transform 0.4s cubic-bezier(0.33, 1, 0.68, 1),
     visibility 0s linear 0.4s;
 }
 
+.au-roadmap__step--copy-below .au-roadmap__copy {
+  transform: translate(calc(-12px + var(--au-rm-copy-dx)), calc(18px + var(--au-rm-copy-dy)))
+    translateY(8px);
+}
+
+.au-roadmap__step--copy-below.is-copy-visible .au-roadmap__copy {
+  transform: translate(calc(-12px + var(--au-rm-copy-dx)), calc(18px + var(--au-rm-copy-dy)))
+    translateY(0);
+}
+
+.au-roadmap__step--copy-above .au-roadmap__copy {
+  transform: translate(calc(-12px + var(--au-rm-copy-dx)), calc(-100% + var(--au-rm-copy-dy)))
+    translateY(8px);
+}
+
+.au-roadmap__step--copy-above.is-copy-visible .au-roadmap__copy {
+  transform: translate(calc(-12px + var(--au-rm-copy-dx)), calc(-100% + var(--au-rm-copy-dy)))
+    translateY(0);
+}
+
+.au-roadmap__step--copy-left .au-roadmap__copy {
+  transform: translate(calc(-100% + var(--au-rm-copy-dx)), calc(-50% + var(--au-rm-copy-dy)))
+    translateY(8px);
+}
+
+.au-roadmap__step--copy-left.is-copy-visible .au-roadmap__copy {
+  transform: translate(calc(-100% + var(--au-rm-copy-dx)), calc(-50% + var(--au-rm-copy-dy)))
+    translateY(0);
+}
+
+.au-roadmap__step--copy-right .au-roadmap__copy {
+  transform: translate(calc(12px + var(--au-rm-copy-dx)), calc(-50% + var(--au-rm-copy-dy)))
+    translateY(8px);
+}
+
+.au-roadmap__step--copy-right.is-copy-visible .au-roadmap__copy {
+  transform: translate(calc(12px + var(--au-rm-copy-dx)), calc(-50% + var(--au-rm-copy-dy)))
+    translateY(0);
+}
+
 .au-roadmap__step.is-copy-visible .au-roadmap__copy {
   opacity: 1;
   visibility: visible;
-  transform: translate(0, 0);
   pointer-events: auto;
-  transition:
-    opacity 0.4s cubic-bezier(0.33, 1, 0.68, 1),
-    transform 0.4s cubic-bezier(0.33, 1, 0.68, 1),
-    visibility 0s linear 0s;
+  transition-delay: 0s;
 }
 
 .au-roadmap__copy-label {
-  margin: 0 0 12px;
+  margin: 0 0 6px;
   font-family: var(--font-sans);
-  font-size: 0.8rem;
+  font-size: 0.8125rem;
   font-weight: var(--fw-medium, 500);
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--color-black, #000);
+  color: var(--section-head-on-light-ink);
   line-height: 1.2;
 }
 
 .au-roadmap__copy-title {
-  margin: 0 0 8px;
+  margin: 0 0 4px;
   font-family: var(--font-display);
-  font-size: clamp(1rem, 1.3vw, 1.2rem);
-  font-weight: var(--fw-bold, 700);
-  line-height: 1.15;
+  font-size: clamp(1rem, 1.5vw, 1.35rem);
+  font-weight: var(--section-head-title-weight);
+  letter-spacing: var(--section-head-title-tracking);
+  line-height: 1.1;
   text-transform: uppercase;
-  color: var(--color-black, #000);
+  color: var(--section-head-on-light-ink);
+  max-width: 16ch;
 }
 
 .au-roadmap__copy-body {
   margin: 0;
+  max-width: 26ch;
   font-family: var(--font-sans);
-  font-size: 0.85rem;
-  font-weight: var(--fw-regular, 400);
-  line-height: 1.3;
-  color: color-mix(in srgb, var(--color-black, #000) 68%, transparent);
+  font-size: clamp(0.8125rem, 1vw, 0.9375rem);
+  font-weight: var(--section-head-sub-weight);
+  line-height: 1.35;
+  color: var(--section-head-on-light-muted);
 }
 
 /* Static / reduced-motion */
@@ -310,6 +304,11 @@
 .au-roadmap.is-static .au-roadmap__pin {
   height: auto;
   min-height: 0;
+  padding-bottom: clamp(48px, 8vh, 80px);
+}
+
+.au-roadmap.is-static .au-roadmap__artboard {
+  max-height: none;
 }
 
 .au-roadmap.is-static .au-roadmap__drawn {
@@ -317,58 +316,47 @@
 }
 
 .au-roadmap.is-static .au-roadmap__step .au-roadmap__diamond {
-  opacity: 1;
   background: var(--au-rm-tip);
   border-color: var(--au-rm-tip);
 }
 
-.au-roadmap.is-static .au-roadmap__step .au-roadmap__copy {
+.au-roadmap.is-static .au-roadmap__step.is-copy-visible .au-roadmap__copy {
   opacity: 1;
   visibility: visible;
-  transform: translate(0, 0);
+  pointer-events: auto;
 }
 
 @media (max-width: 900px) {
-  .au-roadmap__header {
-    grid-template-columns: 1fr;
-    gap: 18px;
+  .au-roadmap__copy {
+    width: clamp(160px, 42vw, 220px);
   }
 
-  .au-roadmap__desc {
-    justify-self: start;
-    max-width: none;
+  .au-roadmap__copy-title {
+    font-size: clamp(0.95rem, 3.5vw, 1.15rem);
   }
 }
 
 @media (max-width: 720px) {
   .au-roadmap__pin {
     height: auto;
-    min-height: 100vh;
-    padding: 88px 12px 48px;
-    align-items: stretch;
+    min-height: 100svh;
+    padding: 88px 0 40px;
   }
 
   .au-roadmap__card {
-    min-height: auto;
-    flex: 1;
-    gap: 40px;
-    padding: 24px 16px 28px;
+    --au-rm-pad-x: 16px;
+    gap: 20px;
+    padding: 16px var(--au-rm-pad-x) 20px;
   }
 
-  .au-roadmap__title {
+  .au-roadmap__header .section-head__title {
     font-size: clamp(30px, 9vw, 40px);
   }
 
-  .au-roadmap__stage {
-    min-height: 300px;
-    overflow: visible;
-  }
-
   .au-roadmap__viewport {
-    height: auto;
-    min-height: 300px;
     overflow-x: auto;
     overflow-y: visible;
+    justify-content: flex-start;
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
@@ -378,43 +366,22 @@
     display: none;
   }
 
-  .au-roadmap__camera {
-    position: relative;
-    min-width: 640px;
-    height: 300px;
+  .au-roadmap__artboard {
+    flex: 0 0 auto;
+    width: min(920px, 240vw);
+    max-height: none;
+    aspect-ratio: 2660 / 1000;
   }
 
   .au-roadmap__step {
     scroll-snap-align: center;
   }
-
-  .au-roadmap__copy {
-    width: clamp(180px, 60vw, 220px);
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .au-roadmap__diamond,
-  .au-roadmap__connector,
   .au-roadmap__copy,
   .au-roadmap__tip {
     transition: none !important;
   }
-}
-
-/* Whatever section follows the roadmap must fully cover its pinned remnants
-   once it unpins — was targeting .fold.pillars back when pillars came right
-   after the roadmap; the roadmap now sits after pillars instead, so
-   lead-grid (leadership) is the one directly downstream. */
-.page-editorial .lead-grid {
-  position: relative;
-  z-index: 1;
-  isolation: isolate;
-}
-
-.page-editorial .fold.pillars {
-  position: relative;
-  z-index: 1;
-  isolation: isolate;
-  background: var(--color-planet-blue, #002f3a);
 }

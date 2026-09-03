@@ -1281,6 +1281,13 @@ section.investors,
     min-height: 100svh;
   }
 
+  /* Cancel desktop-only top inset — mobile spacing lives on .metrics__head. */
+  .metrics,
+  [data-section='metrics'] {
+    padding-top: 0 !important;
+    padding-inline: 0 !important;
+  }
+
   /* 2×2 grid — pastel metric tiles (mweb). */
   .metrics__chart {
     display: grid;
@@ -1294,8 +1301,8 @@ section.investors,
     left: auto;
     width: 100%;
     height: auto;
-    min-height: clamp(132px, 36vw, 156px);
-    padding: clamp(28px, 6vw, 40px) clamp(16px, 4vw, 24px);
+    min-height: clamp(96px, 24vw, 112px);
+    padding: clamp(16px, 3.5vw, 20px) clamp(10px, 2.5vw, 14px);
     box-shadow: none;
     border: none;
     justify-content: center;
@@ -1332,12 +1339,14 @@ section.investors,
   }
 
   .metric strong {
-    font-size: clamp(2.25rem, 12vw, 3.25rem);
+    font-size: clamp(1.75rem, 9vw, 2.25rem);
   }
 
   .metric span {
-    max-width: min(24ch, 92%);
-    font-size: clamp(0.875rem, 3.8vw, 1rem);
+    margin-top: 6px;
+    max-width: min(14ch, 100%);
+    font-size: clamp(0.8125rem, 3.2vw, 0.9375rem);
+    line-height: 1.25;
   }
 }
 
