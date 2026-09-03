@@ -162,6 +162,8 @@ export function AboutPage() {
         </div>
       </section>
 
+      <AboutRoadmapSection />
+
       <AboutWhyExistSection />
 
       <section className="fold pillars" data-section="pillars" aria-label="How we build brands">
@@ -187,8 +189,6 @@ export function AboutPage() {
           ))}
         </div>
       </section>
-
-      <AboutRoadmapSection />
 
       <section className="lead-grid" id="leadership" data-au-leadership>
         <div className="lead-grid__cell lead-grid__cell--intro">

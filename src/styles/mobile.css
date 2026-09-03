@@ -349,6 +349,16 @@ html.is-nav-menu-open body {
     width: 100%;
   }
 
+  /* Panel/actions go full-width right above, but the lede itself kept the
+     desktop 34ch cap — it wrapped to 3 cramped lines while the CTA row
+     below it stretched edge to edge, reading as misaligned. Widen it to
+     match and let `balance` pick an even 2-line break instead of a ragged
+     one. */
+  .hero--blank .hero__lede {
+    max-width: 46ch;
+    text-wrap: balance;
+  }
+
   .hero--blank .hero__actions {
     display: flex;
     flex-direction: row;

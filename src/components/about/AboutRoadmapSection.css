@@ -421,3 +421,11 @@
     transition: none !important;
   }
 }
+
+/* Pillars must fully cover anything underneath after roadmap unpins */
+.page-editorial .fold.pillars {
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
+  background: var(--color-planet-blue, #002f3a);
+}
