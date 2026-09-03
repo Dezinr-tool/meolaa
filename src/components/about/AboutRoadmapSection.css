@@ -326,55 +326,91 @@
   pointer-events: auto;
 }
 
-@media (max-width: 900px) {
-  .au-roadmap__copy {
-    width: clamp(160px, 42vw, 220px);
-  }
-
-  .au-roadmap__copy-title {
-    font-size: clamp(0.95rem, 3.5vw, 1.15rem);
-  }
+.au-roadmap__caption {
+  display: none;
 }
 
-@media (max-width: 720px) {
-  .au-roadmap__pin {
+@media (max-width: 900px) {
+  .au-roadmap.is-static {
+    min-height: 0;
+  }
+
+  .au-roadmap.is-static .au-roadmap__pin {
     height: auto;
+    min-height: 0;
+    padding: clamp(40px, 6vh, 56px) 0;
+  }
+
+  .au-roadmap.is-mobile-play .au-roadmap__pin {
+    height: 100svh;
     min-height: 100svh;
-    padding: 88px 0 40px;
+    align-items: center;
+    padding: calc(var(--nav-height, 80px) + 8px) 0 20px;
+  }
+
+  .au-roadmap.is-mobile-play .au-roadmap__card {
+    height: auto;
+    max-height: calc(100svh - var(--nav-height, 80px) - 28px);
+    justify-content: center;
+    gap: clamp(20px, 3vh, 28px);
   }
 
   .au-roadmap__card {
-    --au-rm-pad-x: 16px;
-    gap: 20px;
-    padding: 16px var(--au-rm-pad-x) 20px;
+    --au-rm-pad-x: clamp(16px, 4vw, 24px);
+    gap: clamp(12px, 2vh, 20px);
+    padding: 12px var(--au-rm-pad-x) 16px;
   }
 
   .au-roadmap__header .section-head__title {
-    font-size: clamp(30px, 9vw, 40px);
+    font-size: clamp(28px, 8vw, 40px);
   }
 
-  .au-roadmap__viewport {
-    overflow-x: auto;
-    overflow-y: visible;
-    justify-content: flex-start;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
+  .au-roadmap.is-mobile-play .au-roadmap__stage {
+    flex: 0 0 auto;
+    min-height: 0;
+    width: calc(100% + 2 * var(--au-rm-pad-x));
+    margin-inline: calc(-1 * var(--au-rm-pad-x));
   }
 
-  .au-roadmap__viewport::-webkit-scrollbar {
+  .au-roadmap.is-mobile-play .au-roadmap__viewport {
+    overflow: visible;
+    justify-content: center;
+    align-items: center;
+    flex: 0 0 auto;
+  }
+
+  .au-roadmap.is-mobile-play .au-roadmap__artboard {
+    width: 100%;
+    max-height: none;
+    aspect-ratio: 2660 / 1000;
+    transform: none;
+  }
+
+  .au-roadmap.is-mobile-play .au-roadmap__copy {
     display: none;
   }
 
-  .au-roadmap__artboard {
-    flex: 0 0 auto;
-    width: min(920px, 240vw);
-    max-height: none;
-    aspect-ratio: 2660 / 1000;
+  .au-roadmap.is-mobile-play .au-roadmap__caption {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    max-width: 34rem;
+    margin-inline: auto;
+    min-height: 7.5rem;
+    padding-top: clamp(8px, 1.5vh, 12px);
+    text-align: center;
   }
 
-  .au-roadmap__step {
-    scroll-snap-align: center;
+  .au-roadmap.is-mobile-play .au-roadmap__caption .au-roadmap__copy-title {
+    max-width: 22ch;
+    font-size: clamp(1.05rem, 5vw, 1.35rem);
+  }
+
+  .au-roadmap.is-mobile-play .au-roadmap__caption .au-roadmap__copy-body {
+    max-width: 32ch;
+    color: var(--section-head-on-light-muted);
   }
 }
 

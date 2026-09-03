@@ -151,6 +151,16 @@ export function AboutRoadmapSection() {
               </div>
             </div>
           </div>
+
+          <div
+            className="au-roadmap__caption"
+            data-au-roadmap-caption
+            aria-live="polite"
+          >
+            <p className="au-roadmap__copy-label">{ROADMAP_STEPS[0]?.label}</p>
+            <h3 className="au-roadmap__copy-title">{ROADMAP_STEPS[0]?.title}</h3>
+            <p className="au-roadmap__copy-body">{ROADMAP_STEPS[0]?.body}</p>
+          </div>
         </div>
       </div>
     </section>

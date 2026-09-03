@@ -163,7 +163,51 @@
 }
 
 @media (max-width: 900px) {
+  .au-reveal__intro {
+    padding: clamp(40px, 6vh, 56px) clamp(16px, 4vw, 24px) clamp(24px, 4vh, 32px);
+  }
+
   .au-reveal__pin {
     height: auto;
+  }
+
+  .au-reveal__stage {
+    display: flex;
+    flex-direction: column;
+    overflow: visible;
+    gap: var(--space-7);
+    padding: 0 clamp(16px, 4vw, 24px) clamp(40px, 6vh, 56px);
+  }
+
+  .au-reveal__clip {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    clip-path: none;
+    overflow: hidden;
+  }
+
+  .au-reveal__copy-stack {
+    position: relative;
+    inset: auto;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(32px, 6vh, 48px);
+    pointer-events: auto;
+  }
+
+  .au-reveal__copy,
+  .au-reveal__copy--mission,
+  .au-reveal__copy--vision {
+    position: relative;
+    inset: auto;
+    left: auto;
+    right: auto;
+    top: auto;
+    bottom: auto;
+    padding: 0;
+    opacity: 1;
+    visibility: visible;
   }
 }

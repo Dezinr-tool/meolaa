@@ -877,6 +877,42 @@
   .app--inner .pillars__track {
     grid-template-columns: 1fr;
   }
+
+  /* ——— About page ——— */
+  .app--inner .au-fold1 {
+    min-height: auto;
+  }
+
+  .app--inner .au-fold1__pin {
+    min-height: auto;
+    padding: calc(var(--nav-height) + 20px) clamp(16px, 4vw, 24px) clamp(40px, 6vh, 56px);
+  }
+
+  .app--inner .au-fold1__head {
+    width: 100%;
+  }
+
+  .app--inner .au-fold1__video-box {
+    width: 100%;
+    margin-top: clamp(24px, 4vh, 32px);
+  }
+
+  .app--inner .fold.pillars {
+    padding: clamp(40px, 6vh, 56px) clamp(16px, 4vw, 24px);
+  }
+
+  .app--inner .lead-grid {
+    padding: clamp(40px, 6vh, 56px) clamp(16px, 4vw, 24px);
+    gap: 16px;
+  }
+
+  .app--inner .val-rows {
+    padding-block: clamp(40px, 6vh, 56px) 0;
+  }
+
+  .app--inner .val-rows .section-head__eyebrow {
+    padding-inline: clamp(16px, 4vw, 24px);
+  }
 }
 
 /* ——— Readability: static editorial layout (no scroll-hide) ——— */

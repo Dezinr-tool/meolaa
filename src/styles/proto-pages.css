@@ -3417,9 +3417,11 @@
     padding: 24px 16px 32px;
   }
   .lead-grid__cell--person .lead-grid__img {
-    aspect-ratio: 3 / 4;
     flex: none;
-    min-height: 280px;
+    width: 100%;
+    aspect-ratio: 5 / 4;
+    max-height: clamp(200px, 38vh, 260px);
+    min-height: 0;
   }
   .lead-grid__cell--text {
     min-height: 160px;

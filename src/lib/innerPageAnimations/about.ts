@@ -16,9 +16,15 @@ import {
 } from './shared'
 
 const SCRUB = 0.55
+const SCRUB_MOBILE = 0.85
 const PIN_VH_DESKTOP = 3.2
-const PIN_VH_MOBILE = 2.3
+const PIN_VH_MOBILE = 5.2
 const STEP_ARRIVE_BIAS = 0.015
+const ABOUT_MOBILE_MQ = '(max-width: 900px)'
+
+function aboutIsMobile() {
+  return window.matchMedia(ABOUT_MOBILE_MQ).matches
+}
 
 /** Homepage Loop fold on About — scroll-pinned path draw + camera. */
 export function initAboutLoop(): () => void {
@@ -46,19 +52,17 @@ export function initAboutRoadmap(): () => void {
   )
   const artboard = root.querySelector<HTMLElement>('[data-au-roadmap-artboard]')
   const ghost = root.querySelector<SVGPathElement>('.au-roadmap__ghost')
+  const caption = root.querySelector<HTMLElement>('[data-au-roadmap-caption]')
+  const captionLabel = caption?.querySelector<HTMLElement>('.au-roadmap__copy-label')
+  const captionTitle = caption?.querySelector<HTMLElement>('.au-roadmap__copy-title')
+  const captionBody = caption?.querySelector<HTMLElement>('.au-roadmap__copy-body')
 
   let scrollTrigger: ST | null = null
   let introTrigger: ST | null = null
+  let captionTween: gsap.core.Tween | null = null
   let mode: 'static' | 'scrub' | null = null
+  let lastCaptionStage = -1
   const cleanups: (() => void)[] = []
-
-  function isNarrow() {
-    return window.matchMedia('(max-width: 720px)').matches
-  }
-
-  function pinVh() {
-    return isNarrow() ? PIN_VH_MOBILE : PIN_VH_DESKTOP
-  }
 
   function activeIndex(progress: number) {
     if (progress <= 0.001) return -1
@@ -69,6 +73,29 @@ export function initAboutRoadmap(): () => void {
     return idx
   }
 
+  function setCaption(stage: number) {
+    if (!aboutIsMobile() || stage < 0 || stage === lastCaptionStage || !caption) return
+    lastCaptionStage = stage
+    const data = ROADMAP_STEPS[stage]
+    if (!data) return
+
+    if (captionLabel) captionLabel.textContent = data.label
+    if (captionTitle) captionTitle.textContent = data.title
+    if (captionBody) captionBody.textContent = data.body
+
+    if (prefersReducedMotion()) {
+      gsap.set(caption, { opacity: 1, y: 0 })
+      return
+    }
+
+    captionTween?.kill()
+    captionTween = gsap.fromTo(
+      caption,
+      { opacity: 0.35, y: 8 },
+      { opacity: 1, y: 0, duration: 0.28, ease: 'power2.out' },
+    )
+  }
+
   function applyStepFocus(stage: number, progress: number) {
     steps.forEach((step, i) => {
       const reached = roadmapRingVisible(i, stage, progress)
@@ -76,6 +103,7 @@ export function initAboutRoadmap(): () => void {
       step.classList.toggle('is-copy-visible', i === stage && stage >= 0)
       step.setAttribute('aria-current', i === stage ? 'step' : 'false')
     })
+    if (aboutIsMobile() && stage >= 0) setCaption(stage)
   }
 
   function syncTipGraphics(progress: number, pathLen: number) {
@@ -89,26 +117,11 @@ export function initAboutRoadmap(): () => void {
     }
   }
 
-  function scrollActiveIntoView(index: number) {
-    if (!isNarrow()) return
-    const viewport = root.querySelector<HTMLElement>('[data-au-roadmap-viewport]')
-    const marker = steps[index]?.querySelector<HTMLElement>('.au-roadmap__marker')
-    if (!viewport || !marker) return
-
-    const vpRect = viewport.getBoundingClientRect()
-    const mRect = marker.getBoundingClientRect()
-    const delta = mRect.left + mRect.width / 2 - (vpRect.left + vpRect.width / 2)
-    viewport.scrollTo({ left: viewport.scrollLeft + delta, behavior: 'smooth' })
-  }
-
-  function sync(progress: number, immediate = false) {
+  function sync(progress: number) {
     const pathLen = drawn.getTotalLength()
     syncTipGraphics(progress, pathLen)
-    const stage = activeIndex(progress)
-    applyStepFocus(stage, progress)
+    applyStepFocus(activeIndex(progress), progress)
     root.classList.add('is-roadmap-ready')
-
-    if (immediate && stage >= 0) scrollActiveIntoView(stage)
   }
 
   function setupIntro() {
@@ -148,6 +161,11 @@ export function initAboutRoadmap(): () => void {
     })
   }
 
+  function killCaption() {
+    captionTween?.kill()
+    captionTween = null
+  }
+
   function killScrollTrigger() {
     scrollTrigger?.kill()
     scrollTrigger = null
@@ -155,20 +173,26 @@ export function initAboutRoadmap(): () => void {
   }
 
   function buildScrub() {
+    killCaption()
     killScrollTrigger()
+    introTrigger?.kill()
+    introTrigger = null
     root.classList.remove('is-static')
+    root.classList.toggle('is-mobile-play', aboutIsMobile())
+    lastCaptionStage = -1
 
     const pathLen = drawn.getTotalLength()
     gsap.set(drawn, { strokeDasharray: pathLen, strokeDashoffset: pathLen })
+    if (aboutIsMobile() && caption) gsap.set(caption, { opacity: 0, y: 12 })
 
     scrollTrigger = ScrollTrigger.create({
       trigger: root,
       start: 'top top',
-      end: () => `+=${window.innerHeight * pinVh()}`,
+      end: () => `+=${window.innerHeight * (aboutIsMobile() ? PIN_VH_MOBILE : PIN_VH_DESKTOP)}`,
       pin,
       pinSpacing: true,
       pinType: editorialPinType(),
-      scrub: SCRUB,
+      scrub: aboutIsMobile() ? SCRUB_MOBILE : SCRUB,
       anticipatePin: 0,
       invalidateOnRefresh: true,
       fastScrollEnd: true,
@@ -176,24 +200,25 @@ export function initAboutRoadmap(): () => void {
       onEnterBack: () => root.classList.add('is-pinning'),
       onLeave: () => root.classList.remove('is-pinning'),
       onLeaveBack: () => root.classList.remove('is-pinning'),
-      onUpdate: (self) => {
-        sync(self.progress)
-        if (isNarrow()) scrollActiveIntoView(activeIndex(self.progress))
-      },
+      onUpdate: (self) => sync(self.progress),
       onRefresh: (self) => {
         const pathLenRefresh = drawn.getTotalLength()
         gsap.set(drawn, { strokeDasharray: pathLenRefresh })
-        sync(self.progress, true)
+        sync(self.progress)
       },
     })
 
     setupIntro()
-    sync(0, true)
+    sync(0)
   }
 
   function buildStatic() {
+    killCaption()
     killScrollTrigger()
+    introTrigger?.kill()
+    introTrigger = null
     root.classList.add('is-static')
+    root.classList.remove('is-mobile-play')
 
     const pathLen = drawn.getTotalLength()
     gsap.set(drawn, { strokeDasharray: pathLen, strokeDashoffset: 0 })
@@ -201,11 +226,11 @@ export function initAboutRoadmap(): () => void {
     if (tipEl) tipEl.style.opacity = '0'
 
     steps.forEach((step, i) => {
-      const last = i === ROADMAP_STEPS.length - 1
       step.classList.toggle('is-reached', true)
-      step.classList.toggle('is-copy-visible', last)
-      step.setAttribute('aria-current', last ? 'step' : 'false')
+      step.classList.toggle('is-copy-visible', i === 0)
+      step.setAttribute('aria-current', i === 0 ? 'step' : 'false')
     })
+    lastCaptionStage = -1
 
     root.classList.add('is-roadmap-ready')
     setupIntro()
@@ -223,8 +248,7 @@ export function initAboutRoadmap(): () => void {
   steps.forEach((el, i) => {
     const onClick = () => {
       if (mode !== 'scrub' || !scrollTrigger) {
-        applyStepFocus(i, stepThresholds[i] ?? 0)
-        scrollActiveIntoView(i)
+        applyStepFocus(i, 1)
         return
       }
       const p = stepThresholds[i] ?? (steps.length <= 1 ? 0 : i / (steps.length - 1))
@@ -242,7 +266,7 @@ export function initAboutRoadmap(): () => void {
     resizeTimer = setTimeout(() => {
       const next = prefersReducedMotion() ? 'static' : 'scrub'
       if (next !== mode) applyMode(true)
-      else if (mode === 'scrub') ScrollTrigger.refresh()
+      else if (mode === 'scrub') applyMode(true)
     }, 160)
   }
   window.addEventListener('resize', onResize)
@@ -255,11 +279,14 @@ export function initAboutRoadmap(): () => void {
 
   return () => {
     cleanups.forEach((fn) => fn())
+    killCaption()
     killScrollTrigger()
     introTrigger?.kill()
-    root.classList.remove('is-roadmap-ready', 'is-static', 'is-pinning')
+    root.classList.remove('is-roadmap-ready', 'is-static', 'is-pinning', 'is-mobile-play')
     gsap.set(drawn, { clearProps: 'strokeDasharray,strokeDashoffset' })
-    gsap.set([...headerLines, artboard, ghost], { clearProps: 'opacity,transform,y' })
+    gsap.set([...headerLines, artboard, ghost, caption].filter(Boolean), {
+      clearProps: 'opacity,transform,y',
+    })
   }
 }
 
@@ -279,7 +306,7 @@ export function initAboutFold1Intro(): () => void {
   const targets = [eyebrow, title, ctas, media].filter(Boolean) as HTMLElement[]
   if (!targets.length) return () => {}
 
-  if (prefersReducedMotion()) return () => {}
+  if (prefersReducedMotion() || aboutIsMobile()) return () => {}
 
   const ctx = gsap.context(() => {
     gsap.set(targets, { opacity: 0, y: 24 })
@@ -451,7 +478,7 @@ export function initMissionVision(): () => void {
 /** About — leadership grid scroll reveal. */
 export function initAboutLeadership(): () => void {
   const root = document.querySelector<HTMLElement>('[data-au-leadership]')
-  if (!root || prefersReducedMotion()) return () => {}
+  if (!root || prefersReducedMotion() || aboutIsMobile()) return () => {}
 
   const intro = root.querySelector<HTMLElement>('.lead-grid__cell--intro')
   const headerLines = intro
