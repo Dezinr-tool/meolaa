@@ -236,7 +236,7 @@ html {
    the reliable way to beat both without chasing a third override later. */
 .hero__headline-word--fill {
   display: inline !important;
-  color: var(--color-lilac, #a8a3e3);
+  color: var(--color-ecru, #f8ece4);
 }
 
 /* "AI era" — outline only, true stroke (dilation-based text-shadow closes
@@ -602,8 +602,7 @@ section.investors,
   /* Extra bottom padding is breathing room before Press — stays inside this
      section's own white background, unlike a margin on Press itself, which
      would sit outside .press-feed's box and expose the dark app shell. */
-  padding: clamp(16px, 2.5vh, 28px) clamp(24px, 4vw, 64px)
-    calc(clamp(16px, 2.5vh, 28px) + 100px) !important;
+  padding: clamp(16px, 2.5vh, 28px) clamp(24px, 4vw, 64px) calc(clamp(16px, 2.5vh, 28px) + 100px) !important;
   gap: 0 !important;
 }
 
@@ -682,6 +681,7 @@ section.investors,
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   .press-feed--await-motion .press-feed__head .section-head__eyebrow,
   .press-feed--await-motion .press-feed__head .section-head__title,
   .press-feed--await-motion .press-feed__head .section-head__sub,
@@ -795,12 +795,20 @@ section.investors,
 
 @media (max-width: 900px) {
 
-  .fold.loop,
+  /* Loop is a pinned viewport fold — needs a real vh floor. `min-height: 100%`
+     collapses when the parent has no explicit height and clips the lifted header. */
+  .fold.loop {
+    height: auto;
+    max-height: none;
+    min-height: 100svh;
+    overflow: visible;
+  }
+
   .portfolio--fold,
   .press-feed {
     height: auto;
     max-height: none;
-    min-height: 100svh;
+    min-height: 100%;
   }
 
   .press-feed__slider {
@@ -991,11 +999,9 @@ body {
    corner, so this only needs to lift the very bottom. */
 .hero--blank .hero__shade {
   display: block !important;
-  background: linear-gradient(
-    180deg,
-    rgba(5, 7, 10, 0) 45%,
-    rgba(5, 7, 10, 0.55) 100%
-  ) !important;
+  background: linear-gradient(180deg,
+      rgba(5, 7, 10, 0) 45%,
+      rgba(5, 7, 10, 0.55) 100%) !important;
 }
 
 .fold.hero .hero__headline,
@@ -1012,6 +1018,7 @@ body {
 }
 
 @media (max-width: 900px) {
+
   /* Lines only — no chip/box over the hero. */
   .site-nav--home:not(.is-scrolled) .site-nav__toggle {
     color: var(--color-ecru, #f8ece4) !important;
@@ -1056,7 +1063,7 @@ body {
 /* Exact match to the Loop title — same clamp, weight, line-height,
    tracking. Now split across three lines (was two) specifically so this
    larger size has room without breaking out of the fold. */
-.vision__headline > [data-vision-line] {
+.vision__headline>[data-vision-line] {
   font-size: clamp(2rem, 6vw, 5rem) !important;
   font-weight: var(--fw-bold, 700) !important;
   line-height: var(--loop-title-lh, 0.95) !important;
@@ -1075,8 +1082,8 @@ body {
  * even with the stroke, down to 320px.
  */
 @media (max-width: 900px) {
-  .vision__headline > [data-vision-line] {
-    font-size: clamp(1.2rem, 4.8vw, 2rem) !important;
+  .vision__headline>[data-vision-line] {
+    font-size: clamp(2rem, 7vw, 4rem) !important;
     line-height: 1.12 !important;
     letter-spacing: -0.02em !important;
     white-space: nowrap !important;

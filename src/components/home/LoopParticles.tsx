@@ -108,8 +108,9 @@ export function LoopParticles() {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const small = window.matchMedia('(max-width: 900px)').matches
     const RING_COUNT = small ? 6000 : 13000
-    const GRID_X = small ? 200 : 320
-    const GRID_Z = small ? 92 : 156
+    const GRID_X = small ? 220 : 320
+    /* Deeper Z on phone so the dune reaches the bottom of the tall fold. */
+    const GRID_Z = small ? 140 : 156
     const SPACING = 6.36
 
     let W = host.clientWidth
@@ -119,6 +120,9 @@ export function LoopParticles() {
     scene.fog = new THREE.FogExp2(0xffffff, 0.0011)
 
     const camera = new THREE.PerspectiveCamera(BASE_FOV, W / H, 1, 4000)
+    /* Keep the same framing as desktop so the particle ring stays registered
+       with the artboard dots/cards. Terrain is scaled separately below to
+       full-bleed the fold bottom on phone — do not tilt the camera. */
     camera.position.set(0, 40, 720)
     camera.lookAt(0, 60, 0)
 
@@ -419,7 +423,15 @@ export function LoopParticles() {
     })
 
     const terrainPoints = new THREE.Points(terrainGeo, terrainMat)
-    terrainPoints.position.set(0, -150, -260)
+    /* On phone the fold is ~100svh and much taller than the artboard, so
+       artboard-matched FOV opens a tall frustum with white under the dune.
+       Drop + pull + scale the terrain so it full-bleeds the fold bottom. */
+    if (small) {
+      terrainPoints.position.set(0, -360, 40)
+      terrainPoints.scale.set(1.45, 1.25, 2.1)
+    } else {
+      terrainPoints.position.set(0, -150, -260)
+    }
     scene.add(terrainPoints)
 
     /* Highlight cap stays a pale neutral, not pure white — noise peaks get
@@ -612,6 +624,8 @@ export function LoopParticles() {
       W = host.clientWidth
       H = host.clientHeight
       camera.aspect = W / H
+      /* FOV tracks artboard height so the ring's pixel size matches the
+         CSS orbit dots on every viewport — including tall mobile folds. */
       camera.fov = fovForHeight(H, artboard?.clientHeight ?? H)
       camera.updateProjectionMatrix()
       renderer.setSize(W, H)

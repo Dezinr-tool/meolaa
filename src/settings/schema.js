@@ -145,7 +145,7 @@ export const DEFAULT_SETTINGS = {
   textScale: 1.05,
   // bloom
   intensity: 2.4,
-  luminanceThreshold: 0.08,
+  luminanceThreshold: 0,
   luminanceSmoothing: 0.9,
   radius: 0.85,
   // post
