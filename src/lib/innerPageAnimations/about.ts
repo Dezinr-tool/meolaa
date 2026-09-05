@@ -109,7 +109,7 @@ export function initAboutRoadmap(): () => void {
   function syncTipGraphics(progress: number, pathLen: number) {
     gsap.set(drawn, { strokeDashoffset: pathLen - progress * pathLen })
 
-    const tip = samplePathTipLocal(drawn, progress)
+    const tip = samplePathTipLocal(drawn!, progress)
     if (tipEl && tip) {
       tipEl.setAttribute('cx', String(tip.x))
       tipEl.setAttribute('cy', String(tip.y))
@@ -118,10 +118,10 @@ export function initAboutRoadmap(): () => void {
   }
 
   function sync(progress: number) {
-    const pathLen = drawn.getTotalLength()
+    const pathLen = drawn!.getTotalLength()
     syncTipGraphics(progress, pathLen)
     applyStepFocus(activeIndex(progress), progress)
-    root.classList.add('is-roadmap-ready')
+    root!.classList.add('is-roadmap-ready')
   }
 
   function setupIntro() {
@@ -169,7 +169,7 @@ export function initAboutRoadmap(): () => void {
   function killScrollTrigger() {
     scrollTrigger?.kill()
     scrollTrigger = null
-    root.classList.remove('is-pinning')
+    root!.classList.remove('is-pinning')
   }
 
   function buildScrub() {
@@ -177,11 +177,11 @@ export function initAboutRoadmap(): () => void {
     killScrollTrigger()
     introTrigger?.kill()
     introTrigger = null
-    root.classList.remove('is-static')
-    root.classList.toggle('is-mobile-play', aboutIsMobile())
+    root!.classList.remove('is-static')
+    root!.classList.toggle('is-mobile-play', aboutIsMobile())
     lastCaptionStage = -1
 
-    const pathLen = drawn.getTotalLength()
+    const pathLen = drawn!.getTotalLength()
     gsap.set(drawn, { strokeDasharray: pathLen, strokeDashoffset: pathLen })
     if (aboutIsMobile() && caption) gsap.set(caption, { opacity: 0, y: 12 })
 
@@ -196,13 +196,13 @@ export function initAboutRoadmap(): () => void {
       anticipatePin: 0,
       invalidateOnRefresh: true,
       fastScrollEnd: true,
-      onEnter: () => root.classList.add('is-pinning'),
-      onEnterBack: () => root.classList.add('is-pinning'),
-      onLeave: () => root.classList.remove('is-pinning'),
-      onLeaveBack: () => root.classList.remove('is-pinning'),
+      onEnter: () => root!.classList.add('is-pinning'),
+      onEnterBack: () => root!.classList.add('is-pinning'),
+      onLeave: () => root!.classList.remove('is-pinning'),
+      onLeaveBack: () => root!.classList.remove('is-pinning'),
       onUpdate: (self) => sync(self.progress),
       onRefresh: (self) => {
-        const pathLenRefresh = drawn.getTotalLength()
+        const pathLenRefresh = drawn!.getTotalLength()
         gsap.set(drawn, { strokeDasharray: pathLenRefresh })
         sync(self.progress)
       },
@@ -217,10 +217,10 @@ export function initAboutRoadmap(): () => void {
     killScrollTrigger()
     introTrigger?.kill()
     introTrigger = null
-    root.classList.add('is-static')
-    root.classList.remove('is-mobile-play')
+    root!.classList.add('is-static')
+    root!.classList.remove('is-mobile-play')
 
-    const pathLen = drawn.getTotalLength()
+    const pathLen = drawn!.getTotalLength()
     gsap.set(drawn, { strokeDasharray: pathLen, strokeDashoffset: 0 })
 
     if (tipEl) tipEl.style.opacity = '0'
@@ -232,7 +232,7 @@ export function initAboutRoadmap(): () => void {
     })
     lastCaptionStage = -1
 
-    root.classList.add('is-roadmap-ready')
+    root!.classList.add('is-roadmap-ready')
     setupIntro()
   }
 
@@ -409,7 +409,7 @@ export function initMissionVision(): () => void {
 
     /* 0 → 0.5: left card grows toward a padded full-stage window; copy
        slides off with the shrinking gutter — same move as Zoox. */
-    const slideOut = Math.round(pin.clientWidth * 0.42)
+    const slideOut = Math.round(pin!.clientWidth * 0.42)
     timeline.to(clip, { clipPath: expanded, duration: 0.5 })
     if (copyMission) {
       timeline.to(
@@ -440,7 +440,7 @@ export function initMissionVision(): () => void {
 
     refreshScrollTriggers()
 
-    const imgEl = clip.querySelector('img')
+    const imgEl = clip!.querySelector('img')
     if (imgEl && !imgEl.complete) {
       imgEl.addEventListener('load', () => refreshScrollTriggers(), { once: true })
     }
